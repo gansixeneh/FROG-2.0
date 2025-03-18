@@ -353,7 +353,7 @@ if __name__ == "__main__":
 
     wikidata_rag = WikidataRAG()
 
-    question = "Who was the director of Inception"
+    question = "What is the name of Lebron James' children?"
     result = wikidata_rag.answer_question(question)
 
     print(f"Question: {question}")
