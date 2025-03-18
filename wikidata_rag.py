@@ -1,10 +1,5 @@
-import pandas as pd
-import requests
 from tqdm import tqdm
 import time
-import torch
-from transformers import AutoTokenizer, AutoModel
-import numpy as np
 import google.generativeai as genai
 from query_engine import QueryEngine
 from entity_property_retrieval import EntityPropertyRetrieval
