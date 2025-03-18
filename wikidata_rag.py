@@ -90,51 +90,54 @@ class WikidataRAG:
 
             tqdm.__init__ = original_tqdm
 
-    # Modified verbalize_path
     def verbalize_path(self, path):
         if not path:
             return ""
-        
+
         temp_path = path.copy()
         if len(temp_path) % 2 == 0:
             temp_path.append({"label": "Unknown entity"})
-            
-        # If the path contains only one element (an entity), return its label (with description if available)
+
         if len(temp_path) == 1:
             entity = temp_path[0]
             label = entity.get("label") or entity.get("entity_id", "")
-            return f"{label} ({entity.get('description')})" if entity.get("description") else label
+            return (
+                f"{label} ({entity.get('description')})"
+                if entity.get("description")
+                else label
+            )
 
         sentences = []
-        # We assume the temp_path alternates: entity, property, entity, property, entity, ...
+
         for i in range(1, len(temp_path), 2):
             if i + 1 >= len(temp_path):
                 break
             prop_node = temp_path[i]
             prev_entity = temp_path[i - 1]
             next_entity = temp_path[i + 1]
-            
-            # Helper to format an entity with its description.
+
             def format_entity(entity):
                 text = entity.get("label") or entity.get("entity_id", "")
-                return f"{text} ({entity.get('description')})" if entity.get("description") else text
+                return (
+                    f"{text} ({entity.get('description')})"
+                    if entity.get("description")
+                    else text
+                )
 
             prop_label = prop_node.get("label") or prop_node.get("property_id", "")
             direction = prop_node.get("direction", "tail")
             if direction == "tail":
                 sentence = f"{format_entity(prev_entity)} has relation {prop_label} with {format_entity(next_entity)}"
             else:
-                # For head relationships, reverse the subject and object.
+
                 sentence = f"{format_entity(next_entity)} has relation {prop_label} with {format_entity(prev_entity)}"
             sentences.append(sentence)
-            
+
         return ". ".join(sentences)
 
-    # Modified get_entity_properties
     def get_entity_properties(self, entity_id):
         properties = []
-        
-        # Tail properties: where the entity is the subject.
+
         query_tail = f"""
             SELECT DISTINCT ?property ?propertyLabel
             WHERE {{
@@ -146,13 +149,14 @@ class WikidataRAG:
         results_tail = self.query_engine.run_query(query_tail)
         if not results_tail.empty:
             for _, row in results_tail.iterrows():
-                properties.append({
-                    "property_id": row.get("property", "").split("/")[-1],
-                    "property_label": row.get("propertyLabel", ""),
-                    "direction": "tail"
-                })
-        
-        # Head properties: where the entity is the object.
+                properties.append(
+                    {
+                        "property_id": row.get("property", "").split("/")[-1],
+                        "property_label": row.get("propertyLabel", ""),
+                        "direction": "tail",
+                    }
+                )
+
         query_head = f"""
             SELECT DISTINCT ?property ?propertyLabel
             WHERE {{
@@ -164,15 +168,15 @@ class WikidataRAG:
         results_head = self.query_engine.run_query(query_head)
         if not results_head.empty:
             for _, row in results_head.iterrows():
-                properties.append({
-                    "property_id": row.get("property", "").split("/")[-1],
-                    "property_label": row.get("propertyLabel", ""),
-                    "direction": "head"
-                })
+                properties.append(
+                    {
+                        "property_id": row.get("property", "").split("/")[-1],
+                        "property_label": row.get("propertyLabel", ""),
+                        "direction": "head",
+                    }
+                )
         return properties
 
-
-    # Modified get_property_targets
     def get_property_targets(self, entity_id, property_id, direction, limit=10):
         if direction == "tail":
             query = f"""
@@ -184,7 +188,7 @@ class WikidataRAG:
                         DATATYPE(?target) IN (xsd:dateTime, xsd:decimal, xsd:integer))
                 }}
             """
-        else:  # Head direction: the roles of entity and target are reversed.
+        else:
             query = f"""
                 SELECT ?source ?sourceLabel ?sourceDescription
                 WHERE {{
@@ -197,7 +201,7 @@ class WikidataRAG:
         results = self.query_engine.run_query(query)
         targets = []
         if not results.empty:
-            # Limit the number of results if necessary
+
             if len(results) > limit:
                 results = results.sample(n=limit)
             for _, row in results.iterrows():
@@ -205,20 +209,24 @@ class WikidataRAG:
                     target_id = row.get("target", "")
                     if "wikidata.org/entity/" in target_id:
                         target_id = target_id.split("/")[-1]
-                    targets.append({
-                        "entity_id": target_id,
-                        "label": row.get("targetLabel", ""),
-                        "description": row.get("targetDescription", "")
-                    })
-                else:  # For head relationship, extract from the "source" variable.
+                    targets.append(
+                        {
+                            "entity_id": target_id,
+                            "label": row.get("targetLabel", ""),
+                            "description": row.get("targetDescription", ""),
+                        }
+                    )
+                else:
                     source_id = row.get("source", "")
                     if "wikidata.org/entity/" in source_id:
                         source_id = source_id.split("/")[-1]
-                    targets.append({
-                        "entity_id": source_id,
-                        "label": row.get("sourceLabel", ""),
-                        "description": row.get("sourceDescription", "")
-                    })
+                    targets.append(
+                        {
+                            "entity_id": source_id,
+                            "label": row.get("sourceLabel", ""),
+                            "description": row.get("sourceDescription", ""),
+                        }
+                    )
         return targets
 
     def beam_search(self, question):
@@ -241,94 +249,94 @@ class WikidataRAG:
 
         beam = []
         for name in entity_names:
-            entities = self.entity_retriever.search_entities(name, limit=self.beam_width)
+            entities = self.entity_retriever.search_entities(
+                name, limit=self.beam_width
+            )
             for _, entity in entities.iterrows():
-                path = [{
-                    "entity_id": entity["entity_id"],
-                    "label": entity["label"],
-                    "description": entity["description"],
-                }]
+                path = [
+                    {
+                        "entity_id": entity["entity_id"],
+                        "label": entity["label"],
+                        "description": entity["description"],
+                    }
+                ]
                 path_text = self.verbalize_path(path)
                 score = self.get_similarity_score(question, path_text)
                 beam.append({"path": path, "score": score, "verbalized": path_text})
 
-        # Keep only the top beam_width initial candidates.
-        beam = sorted(beam, key=lambda x: x["score"], reverse=True)[:self.beam_width]
+        beam = sorted(beam, key=lambda x: x["score"], reverse=True)[: self.beam_width]
 
-        # Store all beams found at each depth.
-        all_beams = beam[:]  
+        all_beams = beam[:]
         current_beam = beam[:]
 
         for depth in range(self.max_depth):
             new_candidates = []
 
-            for path_item in tqdm(current_beam, desc=f"Depth {depth+1}/{self.max_depth}"):
+            for path_item in tqdm(
+                current_beam, desc=f"Depth {depth+1}/{self.max_depth}"
+            ):
                 current_path = path_item["path"]
                 last_entity = current_path[-1]
-                
-                # Step 1: Get all distinct properties for the entity
+
                 properties = self.get_entity_properties(last_entity["entity_id"])
-                
-                # Step 2: Rank properties by evaluating them in the context of the question
+
                 property_candidates = []
                 for prop in properties:
                     temp_path = current_path.copy()
-                    temp_path.append({
-                        "property_id": prop["property_id"],
-                        "label": prop["property_label"],
-                        "direction": prop["direction"],
-                    })
+                    temp_path.append(
+                        {
+                            "property_id": prop["property_id"],
+                            "label": prop["property_label"],
+                            "direction": prop["direction"],
+                        }
+                    )
                     path_text = self.verbalize_path(temp_path)
                     score = self.get_similarity_score(question, path_text)
-                    property_candidates.append({
-                        "property": prop,
-                        "score": score,
-                        "path": temp_path
-                    })
-                    
-                    if last_entity['entity_id'] == 'Q36159':
-                        print(f"Path: {temp_path} (score: {score:.4f})")
-                
-                # Get top properties based on relevance
-                top_properties = sorted(property_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
-                
-                # Step 3: For each top property, explore up to 10 target entities
+                    property_candidates.append(
+                        {"property": prop, "score": score, "path": temp_path}
+                    )
+
+                top_properties = sorted(
+                    property_candidates, key=lambda x: x["score"], reverse=True
+                )[: self.beam_width]
+
                 for prop_item in top_properties:
                     property_id = prop_item["property"]["property_id"]
                     direction = prop_item["property"]["direction"]
                     prop_path = prop_item["path"]
-                    
+
                     targets = self.get_property_targets(
-                        last_entity["entity_id"], 
-                        property_id, 
+                        last_entity["entity_id"],
+                        property_id,
                         direction,
                         limit=10,
                     )
-                    
+
                     for target in targets:
                         new_path = prop_path.copy()
-                        new_path.append({
-                            "entity_id": target["entity_id"],
-                            "label": target["label"],
-                            "description": target["description"],
-                            "direction": direction,
-                        })
-                        
+                        new_path.append(
+                            {
+                                "entity_id": target["entity_id"],
+                                "label": target["label"],
+                                "description": target["description"],
+                                "direction": direction,
+                            }
+                        )
+
                         path_text = self.verbalize_path(new_path)
                         score = self.get_similarity_score(question, path_text)
-                        
-                        new_candidates.append({
-                            "path": new_path, 
-                            "score": score, 
-                            "verbalized": path_text
-                        })
-                
+
+                        new_candidates.append(
+                            {"path": new_path, "score": score, "verbalized": path_text}
+                        )
+
                 time.sleep(0.1)
 
-            # Only expand the beams from the previous iteration.
-            current_beam = sorted(new_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
+            current_beam = sorted(
+                new_candidates, key=lambda x: x["score"], reverse=True
+            )[: self.beam_width]
             all_beams.extend(current_beam)
-        
+
         return all_beams
 
     def answer_question(self, question):
