@@ -94,28 +94,32 @@ class WikidataRAG:
     def verbalize_path(self, path):
         if not path:
             return ""
+        
+        temp_path = path.copy()
+        if len(temp_path) % 2 == 0:
+            temp_path.append({"label": "Unknown entity"})
             
         # If the path contains only one element (an entity), return its label (with description if available)
-        if len(path) == 1:
-            entity = path[0]
+        if len(temp_path) == 1:
+            entity = temp_path[0]
             label = entity.get("label") or entity.get("entity_id", "")
             return f"{label} ({entity.get('description')})" if entity.get("description") else label
 
         sentences = []
-        # We assume the path alternates: entity, property, entity, property, entity, ...
-        for i in range(1, len(path), 2):
-            if i + 1 >= len(path):
+        # We assume the temp_path alternates: entity, property, entity, property, entity, ...
+        for i in range(1, len(temp_path), 2):
+            if i + 1 >= len(temp_path):
                 break
-            prop_node = path[i]
-            prev_entity = path[i - 1]
-            next_entity = path[i + 1]
+            prop_node = temp_path[i]
+            prev_entity = temp_path[i - 1]
+            next_entity = temp_path[i + 1]
             
             # Helper to format an entity with its description.
             def format_entity(entity):
                 text = entity.get("label") or entity.get("entity_id", "")
                 return f"{text} ({entity.get('description')})" if entity.get("description") else text
 
-            prop_label = prop_node.get("property_label") or prop_node.get("property_id", "")
+            prop_label = prop_node.get("label") or prop_node.get("property_id", "")
             direction = prop_node.get("direction", "tail")
             if direction == "tail":
                 sentence = f"{format_entity(prev_entity)} has relation {prop_label} with {format_entity(next_entity)}"
@@ -134,7 +138,8 @@ class WikidataRAG:
         query_tail = f"""
             SELECT DISTINCT ?property ?propertyLabel
             WHERE {{
-            wd:{entity_id} ?property ?target .
+            wd:{entity_id} ?prop ?target .
+            ?property wikibase:directClaim ?prop .
             SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
             }}
         """
@@ -229,7 +234,7 @@ class WikidataRAG:
         Returns:
         --------
         list
-            Top-N paths with highest relevance scores
+            All stored beams from each depth with their relevance scores
         """
         entity_names = self.extract_entities_from_question(question)
         print("Extracted entities:", entity_names)
@@ -247,12 +252,17 @@ class WikidataRAG:
                 score = self.get_similarity_score(question, path_text)
                 beam.append({"path": path, "score": score, "verbalized": path_text})
 
+        # Keep only the top beam_width initial candidates.
         beam = sorted(beam, key=lambda x: x["score"], reverse=True)[:self.beam_width]
+
+        # Store all beams found at each depth.
+        all_beams = beam[:]  
+        current_beam = beam[:]
 
         for depth in range(self.max_depth):
             new_candidates = []
 
-            for path_item in tqdm(beam, desc=f"Depth {depth+1}/{self.max_depth}"):
+            for path_item in tqdm(current_beam, desc=f"Depth {depth+1}/{self.max_depth}"):
                 current_path = path_item["path"]
                 last_entity = current_path[-1]
                 
@@ -275,6 +285,9 @@ class WikidataRAG:
                         "score": score,
                         "path": temp_path
                     })
+                    
+                    if last_entity['entity_id'] == 'Q36159':
+                        print(f"Path: {temp_path} (score: {score:.4f})")
                 
                 # Get top properties based on relevance
                 top_properties = sorted(property_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
@@ -312,9 +325,11 @@ class WikidataRAG:
                 
                 time.sleep(0.1)
 
-            beam = sorted(beam + new_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
-
-        return beam
+            # Only expand the beams from the previous iteration.
+            current_beam = sorted(new_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
+            all_beams.extend(current_beam)
+        
+        return all_beams
 
     def answer_question(self, question):
         """
@@ -334,7 +349,7 @@ class WikidataRAG:
         paths = self.beam_search(question)
 
         context = "\n\n".join(
-            [f"Path {i+1}: {path['verbalized']}" for i, path in enumerate(paths[:3])]
+            [f"Path {i+1}: {path['verbalized']}" for i, path in enumerate(paths)]
         )
 
         prompt = f"""
@@ -352,7 +367,7 @@ class WikidataRAG:
         return {
             "answer": response.text,
             "supporting_paths": [
-                {"path": p["verbalized"], "score": p["score"]} for p in paths[:3]
+                {"path": p["verbalized"], "score": p["score"]} for p in paths
             ],
         }
 
