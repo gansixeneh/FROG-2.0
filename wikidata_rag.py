@@ -4,8 +4,7 @@ import google.generativeai as genai
 from query_engine import QueryEngine
 from entity_property_retrieval import EntityPropertyRetrieval
 from config import GEMINI_API_KEY
-from simcse import SimCSE
-
+from sentence_transformers import SentenceTransformer, util
 
 class WikidataRAG:
     def __init__(self, gemini_api_key=GEMINI_API_KEY, beam_width=3, max_depth=3):
@@ -29,7 +28,7 @@ class WikidataRAG:
         genai.configure(api_key=gemini_api_key)
         self.gemini_model = genai.GenerativeModel("gemini-2.0-flash")
 
-        self.model = SimCSE("princeton-nlp/sup-simcse-roberta-large")
+        self.model = SentenceTransformer("multi-qa-mpnet-base-cos-v1")
 
     def extract_entities_from_question(self, question):
         """
@@ -46,11 +45,11 @@ class WikidataRAG:
             List of potential entity names
         """
         prompt = f"""
-		          Extract the main entities from this question that I should search for in a knowledge base:
-		          Question: {question}
-		          
-		          Return only the entity names as a comma-separated list, with no additional text.
-		          """
+                  Extract the main entities from this question that I should search for in a knowledge base:
+                  Question: {question}
+                  
+                  Return only the entity names as a comma-separated list, with no additional text.
+                  """
 
         response = self.gemini_model.generate_content(prompt)
         entity_text = response.text.strip()
@@ -59,7 +58,7 @@ class WikidataRAG:
 
     def get_similarity_score(self, question, path_text):
         """
-        Calculate similarity between question and a verbalized path using SimCSE.
+        Calculate similarity between question and a verbalized path using SentenceTransformer.
 
         Parameters:
         -----------
@@ -73,7 +72,6 @@ class WikidataRAG:
         float
             Similarity score
         """
-
         original_tqdm = tqdm.__init__
 
         def silent_tqdm_init(*args, **kwargs):
@@ -83,11 +81,10 @@ class WikidataRAG:
         tqdm.__init__ = silent_tqdm_init
 
         try:
-
-            similarity = self.model.similarity(question, path_text)
-            return similarity
+            embeddings = self.model.encode([question, path_text], convert_to_tensor=True)
+            cosine_scores = util.cos_sim(embeddings[0], embeddings[1])
+            return float(cosine_scores)
         finally:
-
             tqdm.__init__ = original_tqdm
 
     def verbalize_path(self, path):
@@ -96,7 +93,10 @@ class WikidataRAG:
 
         temp_path = path.copy()
         if len(temp_path) % 2 == 0:
-            temp_path.append({"label": "Unknown entity"})
+            # temp_path.append({"label": "Unknown entity"})
+            prop_node = temp_path[-1]
+            prop_label = prop_node.get("label") or prop_node.get("property_id", "")
+            return prop_label
 
         if len(temp_path) == 1:
             entity = temp_path[0]
@@ -129,11 +129,9 @@ class WikidataRAG:
             if direction == "tail":
                 sentence = f"{format_entity(prev_entity)} has relation {prop_label} with {format_entity(next_entity)}"
             else:
-
                 sentence = f"{format_entity(next_entity)} has relation {prop_label} with {format_entity(prev_entity)}"
             sentences.append(sentence)
 
-        # return ". ".join(sentences)
         return sentences[-1]
 
     def get_entity_properties(self, entity_id):
@@ -202,7 +200,6 @@ class WikidataRAG:
         results = self.query_engine.run_query(query)
         targets = []
         if not results.empty:
-
             if len(results) > limit:
                 results = results.sample(n=limit)
             for _, row in results.iterrows():
@@ -365,14 +362,14 @@ class WikidataRAG:
         )
 
         prompt = f"""
-		          Question: {question}
-		          
-		          Based on the following information from a knowledge graph:
-		          
-		          {context}
-		          
-		          Please provide a concise and accurate answer to the question.
-		          """
+                  Question: {question}
+                  
+                  Based on the following information from a knowledge graph:
+                  
+                  {context}
+                  
+                  Please provide a concise and accurate answer to the question.
+                  """
 
         response = self.gemini_model.generate_content(prompt)
 
@@ -388,7 +385,7 @@ if __name__ == "__main__":
 
     wikidata_rag = WikidataRAG()
 
-    question = "Who was Tom Hanks married to?"
+    question = "Which High School did Allen Ginsberg attend?"
     result = wikidata_rag.answer_question(question)
 
     print(f"Question: {question}")
