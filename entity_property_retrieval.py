@@ -3,9 +3,12 @@ import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
+from weaviate.auth import AuthApiKey
+from weaviate.classes.init import Auth
 import uuid
 import time
 import os
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from query_engine import QueryEngine
 
@@ -15,7 +18,7 @@ class EntityPropertyRetrieval:
         self,
         weaviate_url,
         weaviate_api_key,
-        model_name="jina-embeddings-v3",
+        model_name="jinaai/jina-embeddings-v3",
         batch_size=100,
         data_dir="data",
     ):
@@ -36,11 +39,12 @@ class EntityPropertyRetrieval:
             Directory to store CSV files
         """
         # Connect to Weaviate.io
-        self.client = weaviate.Client(
-            url=weaviate_url,
-            auth_client_secret=weaviate.AuthApiKey(api_key=weaviate_api_key),
+        auth_config = weaviate.auth.AuthApiKey(api_key=weaviate_api_key)
+        self.client = weaviate.connect_to_weaviate_cloud(
+            cluster_url=weaviate_url,
+            auth_credentials=Auth.api_key(weaviate_api_key),
         )
-        self.model = SentenceTransformer(model_name)
+        self.model = SentenceTransformer(model_name, trust_remote_code=True)
         self.batch_size = batch_size
         self.query_engine = QueryEngine()  # Assuming QueryEngine is defined elsewhere
 
@@ -493,17 +497,12 @@ class EntityPropertyRetrieval:
 
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-
-    # Load environment variables from .env file
-    load_dotenv()
+    from config import WEAVIATE_URL, WEAVIATE_API_KEY
 
     # Initialize the retrieval system with Weaviate.io credentials from environment variables
     retriever = EntityPropertyRetrieval(
-        weaviate_url=os.getenv(
-            "WEAVIATE_URL"
-        ),  # e.g., "https://your-cluster-id.weaviate.cloud"
-        weaviate_api_key=os.getenv("WEAVIATE_API_KEY"),  # Your Weaviate.io API key
+        weaviate_url=WEAVIATE_URL,
+        weaviate_api_key=WEAVIATE_API_KEY,
     )
 
     # The initialization will automatically load entities and properties if needed
