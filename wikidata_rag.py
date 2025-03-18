@@ -133,7 +133,8 @@ class WikidataRAG:
                 sentence = f"{format_entity(next_entity)} has relation {prop_label} with {format_entity(prev_entity)}"
             sentences.append(sentence)
 
-        return ". ".join(sentences)
+        # return ". ".join(sentences)
+        return sentences[-1]
 
     def get_entity_properties(self, entity_id):
         properties = []
@@ -313,6 +314,9 @@ class WikidataRAG:
                     )
 
                     for target in targets:
+                        candidate_id = target["entity_id"]
+                        if any(node.get("entity_id") == candidate_id for node in prop_path):
+                            continue
                         new_path = prop_path.copy()
                         new_path.append(
                             {
@@ -384,7 +388,7 @@ if __name__ == "__main__":
 
     wikidata_rag = WikidataRAG()
 
-    question = "What is the name of Lebron James' children?"
+    question = "Who was Tom Hanks married to?"
     result = wikidata_rag.answer_question(question)
 
     print(f"Question: {question}")
