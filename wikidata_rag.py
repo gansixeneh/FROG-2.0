@@ -8,7 +8,7 @@ from simcse import SimCSE
 
 
 class WikidataRAG:
-    def __init__(self, gemini_api_key=GEMINI_API_KEY, beam_width=5, max_depth=3):
+    def __init__(self, gemini_api_key=GEMINI_API_KEY, beam_width=3, max_depth=3):
         """
         Initialize WikidataRAG with beam search parameters.
 
@@ -122,9 +122,9 @@ class WikidataRAG:
 
         return " → ".join(text_parts)
 
-    def get_entity_neighbors(self, entity_id):
+    def get_entity_properties(self, entity_id):
         """
-        Get all neighboring properties and entities for a given entity.
+        Get all distinct properties for a given entity.
 
         Parameters:
         -----------
@@ -134,50 +134,88 @@ class WikidataRAG:
         Returns:
         --------
         list
-            List of dictionaries containing property and target entity information
+            List of dictionaries containing property information
         """
         query = f"""
-		         SELECT ?property ?propertyLabel ?target ?targetLabel ?targetDescription
-		         WHERE {{
-		           wd:{entity_id} ?prop ?target .
-		           ?property wikibase:directClaim ?prop .
-		           
-		           
-		           SERVICE wikibase:label {{
-		             bd:serviceParam wikibase:language "en" .
-		           }}
-		           
-		           
-		           FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/") || DATATYPE(?target) IN (xsd:dateTime, xsd:decimal, xsd:integer))
-		         }}
-		         LIMIT 100
-		         """
+                 SELECT DISTINCT ?property ?propertyLabel
+                 WHERE {{
+                   wd:{entity_id} ?prop ?target .
+                   ?property wikibase:directClaim ?prop .
+                   
+                   SERVICE wikibase:label {{
+                     bd:serviceParam wikibase:language "en" .
+                   }}
+                 }}
+                 """
 
         results = self.query_engine.run_query(query)
-        neighbors = []
+        properties = []
 
         if not results.empty:
             for _, row in results.iterrows():
+                properties.append({
+                    "property_id": row.get("property", "").split("/")[-1],
+                    "property_label": row.get("propertyLabel", "")
+                })
 
+        return properties
+
+    def get_property_targets(self, entity_id, property_id, limit=10):
+        """
+        Get target entities for a specific property of an entity.
+
+        Parameters:
+        -----------
+        entity_id : str
+            Wikidata entity ID (Q number)
+        property_id : str
+            Wikidata property ID (P number)
+        limit : int
+            Maximum number of targets to return (randomly selected if more exist)
+
+        Returns:
+        --------
+        list
+            List of dictionaries containing target entity information
+        """
+        query = f"""
+                 SELECT ?target ?targetLabel ?targetDescription
+                 WHERE {{
+                   wd:{entity_id} wdt:{property_id} ?target .
+                   
+                   SERVICE wikibase:label {{
+                     bd:serviceParam wikibase:language "en" .
+                   }}
+                   
+                   FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/") || DATATYPE(?target) IN (xsd:dateTime, xsd:decimal, xsd:integer))
+                 }}
+                 """
+
+        results = self.query_engine.run_query(query)
+        targets = []
+
+        if not results.empty:
+            # Randomly sample if more than limit
+            if len(results) > limit:
+                results = results.sample(n=limit)
+                
+            for _, row in results.iterrows():
                 target_id = row.get("target", "")
                 if "wikidata.org/entity/" in target_id:
                     target_id = target_id.split("/")[-1]
 
-                neighbors.append(
-                    {
-                        "property_id": row.get("property", "").split("/")[-1],
-                        "property_label": row.get("propertyLabel", ""),
-                        "target_id": target_id,
-                        "target_label": row.get("targetLabel", ""),
-                        "target_description": row.get("targetDescription", ""),
-                    }
-                )
+                targets.append({
+                    "target_id": target_id,
+                    "target_label": row.get("targetLabel", ""),
+                    "target_description": row.get("targetDescription", "")
+                })
 
-        return neighbors
+        return targets
 
     def beam_search(self, question):
         """
         Perform beam search to find relevant paths in the knowledge graph.
+        First retrieves properties, ranks them, then explores targets for top properties.
 
         Parameters:
         -----------
@@ -189,29 +227,23 @@ class WikidataRAG:
         list
             Top-N paths with highest relevance scores
         """
-
         entity_names = self.extract_entities_from_question(question)
-
         print("Extracted entities:", entity_names)
 
         beam = []
         for name in entity_names:
-            entities = self.entity_retriever.search_entities(
-                name, limit=self.beam_width
-            )
+            entities = self.entity_retriever.search_entities(name, limit=self.beam_width)
             for _, entity in entities.iterrows():
-                path = [
-                    {
-                        "entity_id": entity["entity_id"],
-                        "label": entity["label"],
-                        "description": entity["description"],
-                    }
-                ]
+                path = [{
+                    "entity_id": entity["entity_id"],
+                    "label": entity["label"],
+                    "description": entity["description"],
+                }]
                 path_text = self.verbalize_path(path)
                 score = self.get_similarity_score(question, path_text)
                 beam.append({"path": path, "score": score, "verbalized": path_text})
 
-        beam = sorted(beam, key=lambda x: x["score"], reverse=True)[: self.beam_width]
+        beam = sorted(beam, key=lambda x: x["score"], reverse=True)[:self.beam_width]
 
         for depth in range(self.max_depth):
             new_candidates = []
@@ -219,40 +251,60 @@ class WikidataRAG:
             for path_item in tqdm(beam, desc=f"Depth {depth+1}/{self.max_depth}"):
                 current_path = path_item["path"]
                 last_entity = current_path[-1]
-
-                neighbors = self.get_entity_neighbors(last_entity["entity_id"])
-
-                for neighbor in neighbors:
-
-                    new_path = current_path.copy()
-
-                    new_path.append(
-                        {
-                            "property_id": neighbor["property_id"],
-                            "label": neighbor["property_label"],
-                        }
-                    )
-
-                    new_path.append(
-                        {
-                            "entity_id": neighbor["target_id"],
-                            "label": neighbor["target_label"],
-                            "description": neighbor["target_description"],
-                        }
-                    )
-
-                    path_text = self.verbalize_path(new_path)
+                
+                # Step 1: Get all distinct properties for the entity
+                properties = self.get_entity_properties(last_entity["entity_id"])
+                
+                # Step 2: Rank properties by evaluating them in the context of the question
+                property_candidates = []
+                for prop in properties:
+                    temp_path = current_path.copy()
+                    temp_path.append({
+                        "property_id": prop["property_id"],
+                        "label": prop["property_label"]
+                    })
+                    path_text = self.verbalize_path(temp_path)
                     score = self.get_similarity_score(question, path_text)
-
-                    new_candidates.append(
-                        {"path": new_path, "score": score, "verbalized": path_text}
+                    property_candidates.append({
+                        "property": prop,
+                        "score": score,
+                        "path": temp_path
+                    })
+                
+                # Get top properties based on relevance
+                top_properties = sorted(property_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
+                
+                # Step 3: For each top property, explore up to 10 target entities
+                for prop_item in top_properties:
+                    property_id = prop_item["property"]["property_id"]
+                    prop_path = prop_item["path"]
+                    
+                    targets = self.get_property_targets(
+                        last_entity["entity_id"], 
+                        property_id, 
+                        limit=10
                     )
-
+                    
+                    for target in targets:
+                        new_path = prop_path.copy()
+                        new_path.append({
+                            "entity_id": target["target_id"],
+                            "label": target["target_label"],
+                            "description": target["target_description"]
+                        })
+                        
+                        path_text = self.verbalize_path(new_path)
+                        score = self.get_similarity_score(question, path_text)
+                        
+                        new_candidates.append({
+                            "path": new_path, 
+                            "score": score, 
+                            "verbalized": path_text
+                        })
+                
                 time.sleep(0.1)
 
-            beam = sorted(
-                beam + new_candidates, key=lambda x: x["score"], reverse=True
-            )[: self.beam_width]
+            beam = sorted(beam + new_candidates, key=lambda x: x["score"], reverse=True)[:self.beam_width]
 
         return beam
 
