@@ -1,14 +1,14 @@
 import weaviate
 import pandas as pd
-import numpy as np
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
-from weaviate.auth import AuthApiKey
 from weaviate.classes.init import Auth
+import weaviate.classes as wvc
 import uuid
 import time
 import os
-from langchain_huggingface import HuggingFaceEmbeddings
+from config import WEAVIATE_URL, WEAVIATE_API_KEY
+from weaviate.classes.config import Property, DataType
 
 from query_engine import QueryEngine
 
@@ -16,8 +16,8 @@ from query_engine import QueryEngine
 class EntityPropertyRetrieval:
     def __init__(
         self,
-        weaviate_url,
-        weaviate_api_key,
+        weaviate_url=WEAVIATE_URL,
+        weaviate_api_key=WEAVIATE_API_KEY,
         model_name="jinaai/jina-embeddings-v3",
         batch_size=100,
         data_dir="data",
@@ -39,7 +39,6 @@ class EntityPropertyRetrieval:
             Directory to store CSV files
         """
         # Connect to Weaviate.io
-        auth_config = weaviate.auth.AuthApiKey(api_key=weaviate_api_key)
         self.client = weaviate.connect_to_weaviate_cloud(
             cluster_url=weaviate_url,
             auth_credentials=Auth.api_key(weaviate_api_key),
@@ -55,9 +54,19 @@ class EntityPropertyRetrieval:
         self.properties_csv_path = os.path.join(
             self.data_dir, "wikidata_properties.csv"
         )
-
-        # Create schema if it doesn't exist and load data if needed
-        self._create_schema_if_not_exists()
+        
+        # Check if collections exist in Weaviate
+        if not self.client.collections.exists("WikidataEntity"):
+            self.collection = self.client.collections.create(
+                name="WikidataEntity",
+                vectorizer_config=wvc.config.Configure.Vectorizer.none(),
+            )
+        
+        if not self.client.collections.exists("WikidataProperty"):
+            self.collection = self.client.collections.create(
+                name="WikidataProperty",
+                vectorizer_config=wvc.config.Configure.Vectorizer.none(),
+            )
 
         # Check if data needs to be loaded
         entity_count = self._get_entity_count()
@@ -76,73 +85,13 @@ class EntityPropertyRetrieval:
             print(
                 f"Found {property_count} properties in Weaviate. Skipping property loading."
             )
-
-    def _create_schema_if_not_exists(self):
-        """Create Wikidata entity and property schemas in Weaviate if they don't exist."""
-        schema = self.client.schema.get()
-        classes = [c["class"] for c in schema["classes"]] if "classes" in schema else []
-
-        # Create Entity class if it doesn't exist
-        if "WikidataEntity" not in classes:
-            entity_class = {
-                "class": "WikidataEntity",
-                "description": "Wikidata entities with embeddings",
-                "vectorizer": "none",  # We'll provide our own vectors
-                "properties": [
-                    {
-                        "name": "entity_id",
-                        "dataType": ["string"],
-                        "description": "Wikidata entity ID (Q...)",
-                    },
-                    {
-                        "name": "label",
-                        "dataType": ["string"],
-                        "description": "Entity label",
-                    },
-                    {
-                        "name": "description",
-                        "dataType": ["string"],
-                        "description": "Entity description",
-                    },
-                ],
-            }
-            self.client.schema.create_class(entity_class)
-            print("Created WikidataEntity class in Weaviate")
-
-        # Create Property class if it doesn't exist
-        if "WikidataProperty" not in classes:
-            property_class = {
-                "class": "WikidataProperty",
-                "description": "Wikidata properties with embeddings",
-                "vectorizer": "none",  # We'll provide our own vectors
-                "properties": [
-                    {
-                        "name": "property_id",
-                        "dataType": ["string"],
-                        "description": "Wikidata property ID (P...)",
-                    },
-                    {
-                        "name": "label",
-                        "dataType": ["string"],
-                        "description": "Property label",
-                    },
-                    {
-                        "name": "description",
-                        "dataType": ["string"],
-                        "description": "Property description",
-                    },
-                ],
-            }
-            self.client.schema.create_class(property_class)
-            print("Created WikidataProperty class in Weaviate")
-
+            
     def _get_entity_count(self):
         """Get the count of entities in Weaviate."""
         try:
-            result = (
-                self.client.query.aggregate("WikidataEntity").with_meta_count().do()
-            )
-            return result["data"]["Aggregate"]["WikidataEntity"][0]["meta"]["count"]
+            # Check if the collection exists first
+            collection = self.client.collections.get("WikidataEntity")
+            return collection.aggregate.over_all().total_count
         except Exception as e:
             print(f"Error getting entity count: {e}")
             return 0
@@ -150,14 +99,13 @@ class EntityPropertyRetrieval:
     def _get_property_count(self):
         """Get the count of properties in Weaviate."""
         try:
-            result = (
-                self.client.query.aggregate("WikidataProperty").with_meta_count().do()
-            )
-            return result["data"]["Aggregate"]["WikidataProperty"][0]["meta"]["count"]
+            # Check if the collection exists first
+            collection = self.client.collections.get("WikidataProperty")
+            return collection.aggregate.over_all().total_count
         except Exception as e:
             print(f"Error getting property count: {e}")
             return 0
-
+        
     def _csv_exists(self, file_path):
         """Check if a CSV file exists and is not empty."""
         return os.path.isfile(file_path) and os.path.getsize(file_path) > 0
@@ -432,26 +380,23 @@ class EntityPropertyRetrieval:
         # Generate embedding for query
         query_embedding = self.model.encode(query_text)
 
-        # Search Weaviate
-        result = (
-            self.client.query.get(
-                "WikidataEntity", ["entity_id", "label", "description"]
+        try:
+            # Search Weaviate using v4 API
+            collection = self.client.collections.get("WikidataEntity")
+            results = collection.query.near_vector(
+                near_vector=query_embedding,
+                limit=limit,
+                return_properties=["entity_id", "label", "description"]
             )
-            .with_near_vector({"vector": query_embedding})
-            .with_limit(limit)
-            .do()
-        )
-
-        # Convert to DataFrame
-        if (
-            "data" in result
-            and "Get" in result["data"]
-            and "WikidataEntity" in result["data"]["Get"]
-        ):
-            entities = result["data"]["Get"]["WikidataEntity"]
-            if entities:
+            
+            # Convert to DataFrame
+            if results.objects:
+                entities = [obj.properties for obj in results.objects]
                 return pd.DataFrame(entities)
-
+                
+        except Exception as e:
+            print(f"Error searching entities: {e}")
+            
         return pd.DataFrame(columns=["entity_id", "label", "description"])
 
     def search_properties(self, query_text, limit=10):
@@ -473,37 +418,29 @@ class EntityPropertyRetrieval:
         # Generate embedding for query
         query_embedding = self.model.encode(query_text)
 
-        # Search Weaviate
-        result = (
-            self.client.query.get(
-                "WikidataProperty", ["property_id", "label", "description"]
+        try:
+            # Search Weaviate using v4 API
+            collection = self.client.collections.get("WikidataProperty")
+            results = collection.query.near_vector(
+                near_vector=query_embedding,
+                limit=limit,
+                return_properties=["property_id", "label", "description"]
             )
-            .with_near_vector({"vector": query_embedding})
-            .with_limit(limit)
-            .do()
-        )
-
-        # Convert to DataFrame
-        if (
-            "data" in result
-            and "Get" in result["data"]
-            and "WikidataProperty" in result["data"]["Get"]
-        ):
-            properties = result["data"]["Get"]["WikidataProperty"]
-            if properties:
+            
+            # Convert to DataFrame
+            if results.objects:
+                properties = [obj.properties for obj in results.objects]
                 return pd.DataFrame(properties)
-
+                
+        except Exception as e:
+            print(f"Error searching properties: {e}")
+            
         return pd.DataFrame(columns=["property_id", "label", "description"])
-
+    
 
 if __name__ == "__main__":
-    from config import WEAVIATE_URL, WEAVIATE_API_KEY
-
     # Initialize the retrieval system with Weaviate.io credentials from environment variables
-    retriever = EntityPropertyRetrieval(
-        weaviate_url=WEAVIATE_URL,
-        weaviate_api_key=WEAVIATE_API_KEY,
-    )
+    retriever = EntityPropertyRetrieval()
 
     # The initialization will automatically load entities and properties if needed
 
