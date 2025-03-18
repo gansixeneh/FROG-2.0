@@ -9,6 +9,7 @@ import google.generativeai as genai
 from query_engine import QueryEngine
 from entity_property_retrieval import EntityPropertyRetrieval
 from config import GEMINI_API_KEY
+from simcse import SimCSE
 
 class WikidataRAG:
     def __init__(self, gemini_api_key=GEMINI_API_KEY, beam_width=5, max_depth=3):
@@ -34,10 +35,7 @@ class WikidataRAG:
         self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
         
         # Initialize SimCSE model for similarity scoring
-        self.simcse_tokenizer = AutoTokenizer.from_pretrained("princeton-nlp/sup-simcse-roberta-large")
-        self.simcse_model = AutoModel.from_pretrained("princeton-nlp/sup-simcse-roberta-large")
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.simcse_model.to(self.device)
+        self.model = SimCSE("princeton-nlp/sup-simcse-roberta-large")
         
     def extract_entities_from_question(self, question):
         """
@@ -81,17 +79,7 @@ class WikidataRAG:
         float
             Similarity score
         """
-        # Tokenize inputs
-        inputs = self.simcse_tokenizer([question, path_text], padding=True, truncation=True, 
-                                       return_tensors="pt").to(self.device)
-        
-        # Get embeddings
-        with torch.no_grad():
-            embeddings = self.simcse_model(**inputs, output_hidden_states=True, return_dict=True).pooler_output
-        
-        # Calculate cosine similarity
-        embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
-        similarity = torch.mm(embeddings[0:1], embeddings[1:].t()).item()
+        similarity = self.model.similarity(question, path_text)
         
         return similarity
     
@@ -188,6 +176,8 @@ class WikidataRAG:
         """
         # Extract entities from question
         entity_names = self.extract_entities_from_question(question)
+        
+        print("Extracted entities:", entity_names)
         
         # Initialize beam with top-N entities from Wikidata search
         beam = []
