@@ -79,13 +79,28 @@ class WikidataRAG:
         float
             Similarity score
         """
-        similarity = self.model.similarity(question, path_text)
+        # Temporarily disable tqdm progress bars
+        original_tqdm = tqdm.__init__
         
-        return similarity
+        # Replace tqdm.__init__ with a version that sets disable=True
+        def silent_tqdm_init(*args, **kwargs):
+            kwargs['disable'] = True
+            return original_tqdm(*args, **kwargs)
+        
+        tqdm.__init__ = silent_tqdm_init
+        
+        try:
+            # Calculate similarity with progress bars disabled
+            similarity = self.model.similarity(question, path_text)
+            return similarity
+        finally:
+            # Restore original tqdm behavior
+            tqdm.__init__ = original_tqdm
     
     def verbalize_path(self, path):
         """
-        Convert a path of entities and properties to natural language.
+        Convert a path of entities and properties to natural language,
+        including descriptions where available.
         
         Parameters:
         -----------
@@ -95,17 +110,20 @@ class WikidataRAG:
         Returns:
         --------
         str
-            Natural language representation of the path
+            Natural language representation of the path with descriptions
         """
         if not path:
             return ""
         
         text_parts = []
         for i, node in enumerate(path):
-            if i % 2 == 0:  # Entity
-                text_parts.append(node.get('label', node.get('entity_id', '')))
-            else:  # Property
-                text_parts.append(node.get('label', node.get('property_id', '')))
+            label = node.get('label', node.get('entity_id' if i % 2 == 0 else 'property_id', ''))
+            description = node.get('description', '')
+            
+            if description:
+                text_parts.append(f"{label} ({description})")
+            else:
+                text_parts.append(label)
         
         return " → ".join(text_parts)
     
