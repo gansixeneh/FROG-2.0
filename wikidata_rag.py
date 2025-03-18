@@ -90,126 +90,130 @@ class WikidataRAG:
 
             tqdm.__init__ = original_tqdm
 
+    # Modified verbalize_path
     def verbalize_path(self, path):
-        """
-        Convert a path of entities and properties to natural language,
-        including descriptions where available.
-
-        Parameters:
-        -----------
-        path : list
-            List of dictionaries representing entities and properties
-
-        Returns:
-        --------
-        str
-            Natural language representation of the path with descriptions
-        """
         if not path:
             return ""
+            
+        # If the path contains only one element (an entity), return its label (with description if available)
+        if len(path) == 1:
+            entity = path[0]
+            label = entity.get("label") or entity.get("entity_id", "")
+            return f"{label} ({entity.get('description')})" if entity.get("description") else label
 
-        text_parts = []
-        for i, node in enumerate(path):
-            label = node.get(
-                "label", node.get("entity_id" if i % 2 == 0 else "property_id", "")
-            )
-            description = node.get("description", "")
+        sentences = []
+        # We assume the path alternates: entity, property, entity, property, entity, ...
+        for i in range(1, len(path), 2):
+            if i + 1 >= len(path):
+                break
+            prop_node = path[i]
+            prev_entity = path[i - 1]
+            next_entity = path[i + 1]
+            
+            # Helper to format an entity with its description.
+            def format_entity(entity):
+                text = entity.get("label") or entity.get("entity_id", "")
+                return f"{text} ({entity.get('description')})" if entity.get("description") else text
 
-            if description:
-                text_parts.append(f"{label} ({description})")
+            prop_label = prop_node.get("property_label") or prop_node.get("property_id", "")
+            direction = prop_node.get("direction", "tail")
+            if direction == "tail":
+                sentence = f"{format_entity(prev_entity)} has relation {prop_label} with {format_entity(next_entity)}"
             else:
-                text_parts.append(label)
+                # For head relationships, reverse the subject and object.
+                sentence = f"{format_entity(next_entity)} has relation {prop_label} with {format_entity(prev_entity)}"
+            sentences.append(sentence)
+            
+        return ". ".join(sentences)
 
-        return " → ".join(text_parts)
-
+    # Modified get_entity_properties
     def get_entity_properties(self, entity_id):
-        """
-        Get all distinct properties for a given entity.
-
-        Parameters:
-        -----------
-        entity_id : str
-            Wikidata entity ID (Q number)
-
-        Returns:
-        --------
-        list
-            List of dictionaries containing property information
-        """
-        query = f"""
-                 SELECT DISTINCT ?property ?propertyLabel
-                 WHERE {{
-                   wd:{entity_id} ?prop ?target .
-                   ?property wikibase:directClaim ?prop .
-                   
-                   SERVICE wikibase:label {{
-                     bd:serviceParam wikibase:language "en" .
-                   }}
-                 }}
-                 """
-
-        results = self.query_engine.run_query(query)
         properties = []
-
-        if not results.empty:
-            for _, row in results.iterrows():
+        
+        # Tail properties: where the entity is the subject.
+        query_tail = f"""
+            SELECT DISTINCT ?property ?propertyLabel
+            WHERE {{
+            wd:{entity_id} ?property ?target .
+            SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+            }}
+        """
+        results_tail = self.query_engine.run_query(query_tail)
+        if not results_tail.empty:
+            for _, row in results_tail.iterrows():
                 properties.append({
                     "property_id": row.get("property", "").split("/")[-1],
-                    "property_label": row.get("propertyLabel", "")
+                    "property_label": row.get("propertyLabel", ""),
+                    "direction": "tail"
                 })
-
+        
+        # Head properties: where the entity is the object.
+        query_head = f"""
+            SELECT DISTINCT ?property ?propertyLabel
+            WHERE {{
+            ?subject ?prop wd:{entity_id} .
+            ?property wikibase:directClaim ?prop .
+            SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+            }}
+        """
+        results_head = self.query_engine.run_query(query_head)
+        if not results_head.empty:
+            for _, row in results_head.iterrows():
+                properties.append({
+                    "property_id": row.get("property", "").split("/")[-1],
+                    "property_label": row.get("propertyLabel", ""),
+                    "direction": "head"
+                })
         return properties
 
-    def get_property_targets(self, entity_id, property_id, limit=10):
-        """
-        Get target entities for a specific property of an entity.
 
-        Parameters:
-        -----------
-        entity_id : str
-            Wikidata entity ID (Q number)
-        property_id : str
-            Wikidata property ID (P number)
-        limit : int
-            Maximum number of targets to return (randomly selected if more exist)
-
-        Returns:
-        --------
-        list
-            List of dictionaries containing target entity information
-        """
-        query = f"""
-                 SELECT ?target ?targetLabel ?targetDescription
-                 WHERE {{
-                   wd:{entity_id} wdt:{property_id} ?target .
-                   
-                   SERVICE wikibase:label {{
-                     bd:serviceParam wikibase:language "en" .
-                   }}
-                   
-                   FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/") || DATATYPE(?target) IN (xsd:dateTime, xsd:decimal, xsd:integer))
-                 }}
-                 """
-
+    # Modified get_property_targets
+    def get_property_targets(self, entity_id, property_id, direction, limit=10):
+        if direction == "tail":
+            query = f"""
+                SELECT ?target ?targetLabel ?targetDescription
+                WHERE {{
+                wd:{entity_id} wdt:{property_id} ?target .
+                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+                FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/") ||
+                        DATATYPE(?target) IN (xsd:dateTime, xsd:decimal, xsd:integer))
+                }}
+            """
+        else:  # Head direction: the roles of entity and target are reversed.
+            query = f"""
+                SELECT ?source ?sourceLabel ?sourceDescription
+                WHERE {{
+                ?source wdt:{property_id} wd:{entity_id} .
+                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+                FILTER(STRSTARTS(STR(?source), "http://www.wikidata.org/entity/") ||
+                        DATATYPE(?source) IN (xsd:dateTime, xsd:decimal, xsd:integer))
+                }}
+            """
         results = self.query_engine.run_query(query)
         targets = []
-
         if not results.empty:
-            # Randomly sample if more than limit
+            # Limit the number of results if necessary
             if len(results) > limit:
                 results = results.sample(n=limit)
-                
             for _, row in results.iterrows():
-                target_id = row.get("target", "")
-                if "wikidata.org/entity/" in target_id:
-                    target_id = target_id.split("/")[-1]
-
-                targets.append({
-                    "target_id": target_id,
-                    "target_label": row.get("targetLabel", ""),
-                    "target_description": row.get("targetDescription", "")
-                })
-
+                if direction == "tail":
+                    target_id = row.get("target", "")
+                    if "wikidata.org/entity/" in target_id:
+                        target_id = target_id.split("/")[-1]
+                    targets.append({
+                        "entity_id": target_id,
+                        "label": row.get("targetLabel", ""),
+                        "description": row.get("targetDescription", "")
+                    })
+                else:  # For head relationship, extract from the "source" variable.
+                    source_id = row.get("source", "")
+                    if "wikidata.org/entity/" in source_id:
+                        source_id = source_id.split("/")[-1]
+                    targets.append({
+                        "entity_id": source_id,
+                        "label": row.get("sourceLabel", ""),
+                        "description": row.get("sourceDescription", "")
+                    })
         return targets
 
     def beam_search(self, question):
@@ -261,7 +265,8 @@ class WikidataRAG:
                     temp_path = current_path.copy()
                     temp_path.append({
                         "property_id": prop["property_id"],
-                        "label": prop["property_label"]
+                        "label": prop["property_label"],
+                        "direction": prop["direction"],
                     })
                     path_text = self.verbalize_path(temp_path)
                     score = self.get_similarity_score(question, path_text)
@@ -277,20 +282,23 @@ class WikidataRAG:
                 # Step 3: For each top property, explore up to 10 target entities
                 for prop_item in top_properties:
                     property_id = prop_item["property"]["property_id"]
+                    direction = prop_item["property"]["direction"]
                     prop_path = prop_item["path"]
                     
                     targets = self.get_property_targets(
                         last_entity["entity_id"], 
                         property_id, 
-                        limit=10
+                        direction,
+                        limit=10,
                     )
                     
                     for target in targets:
                         new_path = prop_path.copy()
                         new_path.append({
-                            "entity_id": target["target_id"],
-                            "label": target["target_label"],
-                            "description": target["target_description"]
+                            "entity_id": target["entity_id"],
+                            "label": target["label"],
+                            "description": target["description"],
+                            "direction": direction,
                         })
                         
                         path_text = self.verbalize_path(new_path)
