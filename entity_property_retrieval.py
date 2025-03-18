@@ -10,7 +10,7 @@ from query_engine import QueryEngine
 
 class EntityPropertyRetrieval:
     def __init__(self, weaviate_url, weaviate_api_key, 
-                 model_name="all-MiniLM-L6-v2",
+                 model_name="jina-embeddings-v3",
                  batch_size=100):
         """
         Initialize the EntityPropertyRetrieval class with Weaviate.io connection.
