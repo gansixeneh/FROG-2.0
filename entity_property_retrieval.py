@@ -1,369 +1,21 @@
-import weaviate
 import pandas as pd
-from sentence_transformers import SentenceTransformer
+import requests
 from tqdm import tqdm
-from weaviate.classes.init import Auth
-import weaviate.classes as wvc
-import uuid
 import time
-import os
-from config import WEAVIATE_URL, WEAVIATE_API_KEY
-from weaviate.classes.config import Property, DataType
-
 from query_engine import QueryEngine
 
-
 class EntityPropertyRetrieval:
-    def __init__(
-        self,
-        weaviate_url=WEAVIATE_URL,
-        weaviate_api_key=WEAVIATE_API_KEY,
-        model_name="jinaai/jina-embeddings-v3",
-        batch_size=100,
-        data_dir="data",
-    ):
+    def __init__(self):
         """
-        Initialize the EntityPropertyRetrieval class with Weaviate.io connection.
-
-        Parameters:
-        -----------
-        weaviate_url : str
-            URL of your Weaviate.io cluster
-        weaviate_api_key : str
-            API key for Weaviate.io
-        model_name : str
-            Name of the sentence transformer model to use for embeddings
-        batch_size : int
-            Batch size for adding data to Weaviate
-        data_dir : str
-            Directory to store CSV files
+        Initialize the EntityPropertyRetrieval class to search Wikidata entities and properties.
+        Uses the Wikidata API directly without local storage.
         """
-        # Connect to Weaviate.io
-        self.client = weaviate.connect_to_weaviate_cloud(
-            cluster_url=weaviate_url,
-            auth_credentials=Auth.api_key(weaviate_api_key),
-        )
-        self.model = SentenceTransformer(model_name, trust_remote_code=True)
-        self.batch_size = batch_size
-        self.query_engine = QueryEngine()  # Assuming QueryEngine is defined elsewhere
-
-        # Set up data directory and file paths
-        self.data_dir = data_dir
-        os.makedirs(self.data_dir, exist_ok=True)
-        self.entities_csv_path = os.path.join(self.data_dir, "wikidata_entities.csv")
-        self.properties_csv_path = os.path.join(
-            self.data_dir, "wikidata_properties.csv"
-        )
+        self.query_engine = QueryEngine()  # For SPARQL queries if needed
+        self.wikidata_api_url = "https://www.wikidata.org/w/api.php"
         
-        # Check if collections exist in Weaviate
-        if not self.client.collections.exists("WikidataEntity"):
-            self.collection = self.client.collections.create(
-                name="WikidataEntity",
-                vectorizer_config=wvc.config.Configure.Vectorizer.none(),
-            )
-        
-        if not self.client.collections.exists("WikidataProperty"):
-            self.collection = self.client.collections.create(
-                name="WikidataProperty",
-                vectorizer_config=wvc.config.Configure.Vectorizer.none(),
-            )
-
-        # Check if data needs to be loaded
-        entity_count = self._get_entity_count()
-        property_count = self._get_property_count()
-
-        if entity_count == 0:
-            self.load_entities_if_needed()
-        else:
-            print(
-                f"Found {entity_count} entities in Weaviate. Skipping entity loading."
-            )
-
-        if property_count == 0:
-            self.load_properties_if_needed()
-        else:
-            print(
-                f"Found {property_count} properties in Weaviate. Skipping property loading."
-            )
-            
-    def _get_entity_count(self):
-        """Get the count of entities in Weaviate."""
-        try:
-            # Check if the collection exists first
-            collection = self.client.collections.get("WikidataEntity")
-            return collection.aggregate.over_all().total_count
-        except Exception as e:
-            print(f"Error getting entity count: {e}")
-            return 0
-
-    def _get_property_count(self):
-        """Get the count of properties in Weaviate."""
-        try:
-            # Check if the collection exists first
-            collection = self.client.collections.get("WikidataProperty")
-            return collection.aggregate.over_all().total_count
-        except Exception as e:
-            print(f"Error getting property count: {e}")
-            return 0
-        
-    def _csv_exists(self, file_path):
-        """Check if a CSV file exists and is not empty."""
-        return os.path.isfile(file_path) and os.path.getsize(file_path) > 0
-
-    def _query_and_save_entities(self, batch_limit=1000):
-        """Query Wikidata for entities and save to CSV file."""
-        print("Querying Wikidata for entities...")
-
-        all_entities = []
-        offset = 0
-        total_fetched = 0
-
-        while True:
-            # Query to get entities with labels and descriptions in batches
-            query = f"""
-            SELECT ?entity ?entityLabel ?entityDescription
-            WHERE {{
-              ?entity wdt:P31 ?instance .
-              SERVICE wikibase:label {{ 
-                bd:serviceParam wikibase:language "en" . 
-                ?entity rdfs:label ?entityLabel .
-                ?entity schema:description ?entityDescription .
-              }}
-            }}
-            LIMIT {batch_limit}
-            OFFSET {offset}
-            """
-
-            # Get entities from Wikidata
-            df = self.query_engine.run_query(query)
-            if df.empty:
-                print(
-                    f"No more entities found or reached API limit. Total fetched: {total_fetched}"
-                )
-                break
-
-            # Clean entity IDs to extract Q numbers
-            df["entity_id"] = df["entity"].str.extract(r"(Q\d+)")
-
-            # Add to our collection
-            all_entities.append(df[["entity_id", "entityLabel", "entityDescription"]])
-
-            total_fetched += len(df)
-            print(f"Fetched batch of {len(df)} entities. Total so far: {total_fetched}")
-
-            # Increment offset for next batch
-            offset += batch_limit
-
-            # Add a delay between batches to avoid rate limiting
-            time.sleep(2)
-
-        # Combine all batches and save to CSV
-        if all_entities:
-            final_df = pd.concat(all_entities)
-            final_df.rename(
-                columns={"entityLabel": "label", "entityDescription": "description"},
-                inplace=True,
-            )
-            final_df.to_csv(self.entities_csv_path, index=False)
-            print(f"Saved {len(final_df)} entities to {self.entities_csv_path}")
-            return final_df
-        else:
-            print("No entities were fetched from Wikidata.")
-            return pd.DataFrame(columns=["entity_id", "label", "description"])
-
-    def _query_and_save_properties(self, batch_limit=1000):
-        """Query Wikidata for properties and save to CSV file."""
-        print("Querying Wikidata for properties...")
-
-        all_properties = []
-        offset = 0
-        total_fetched = 0
-
-        while True:
-            # Query to get properties with labels and descriptions in batches
-            query = f"""
-            SELECT ?property ?propertyLabel ?propertyDescription
-            WHERE {{
-              ?property a wikibase:Property .
-              SERVICE wikibase:label {{ 
-                bd:serviceParam wikibase:language "en" . 
-                ?property rdfs:label ?propertyLabel .
-                ?property schema:description ?propertyDescription .
-              }}
-            }}
-            LIMIT {batch_limit}
-            OFFSET {offset}
-            """
-
-            # Get properties from Wikidata
-            df = self.query_engine.run_query(query)
-            if df.empty:
-                print(
-                    f"No more properties found or reached API limit. Total fetched: {total_fetched}"
-                )
-                break
-
-            # Clean property IDs to extract P numbers
-            df["property_id"] = df["property"].str.extract(r"(P\d+)")
-
-            # Add to our collection
-            all_properties.append(
-                df[["property_id", "propertyLabel", "propertyDescription"]]
-            )
-
-            total_fetched += len(df)
-            print(
-                f"Fetched batch of {len(df)} properties. Total so far: {total_fetched}"
-            )
-
-            # Increment offset for next batch
-            offset += batch_limit
-
-            # Add a delay between batches to avoid rate limiting
-            time.sleep(2)
-
-        # Combine all batches and save to CSV
-        if all_properties:
-            final_df = pd.concat(all_properties)
-            final_df.rename(
-                columns={
-                    "propertyLabel": "label",
-                    "propertyDescription": "description",
-                },
-                inplace=True,
-            )
-            final_df.to_csv(self.properties_csv_path, index=False)
-            print(f"Saved {len(final_df)} properties to {self.properties_csv_path}")
-            return final_df
-        else:
-            print("No properties were fetched from Wikidata.")
-            return pd.DataFrame(columns=["property_id", "label", "description"])
-
-    def _load_entities_to_weaviate(self, df):
-        """Load entities from DataFrame to Weaviate."""
-        print(f"Loading {len(df)} entities to Weaviate...")
-
-        with self.client.batch as batch:
-            batch.batch_size = self.batch_size
-
-            for i, row in tqdm(
-                df.iterrows(), total=len(df), desc="Adding entities to Weaviate"
-            ):
-                # Skip if missing data
-                if pd.isna(row["label"]) or pd.isna(row["entity_id"]):
-                    continue
-
-                # Create text for embedding
-                text = f"{row['label']}"
-                if not pd.isna(row["description"]):
-                    text += f": {row['description']}"
-
-                # Generate embedding
-                embedding = self.model.encode(text)
-
-                # Add to Weaviate
-                entity_object = {
-                    "entity_id": row["entity_id"],
-                    "label": row["label"],
-                    "description": (
-                        row["description"] if not pd.isna(row["description"]) else ""
-                    ),
-                }
-
-                batch.add_data_object(
-                    data_object=entity_object,
-                    class_name="WikidataEntity",
-                    uuid=uuid.uuid5(uuid.NAMESPACE_DNS, row["entity_id"]),
-                    vector=embedding,
-                )
-
-                # Small delay to prevent overloading
-                if i % 100 == 0:
-                    time.sleep(0.1)
-
-    def _load_properties_to_weaviate(self, df):
-        """Load properties from DataFrame to Weaviate."""
-        print(f"Loading {len(df)} properties to Weaviate...")
-
-        with self.client.batch as batch:
-            batch.batch_size = self.batch_size
-
-            for i, row in tqdm(
-                df.iterrows(), total=len(df), desc="Adding properties to Weaviate"
-            ):
-                # Skip if missing data
-                if pd.isna(row["label"]) or pd.isna(row["property_id"]):
-                    continue
-
-                # Create text for embedding
-                text = f"{row['label']}"
-                if not pd.isna(row["description"]):
-                    text += f": {row['description']}"
-
-                # Generate embedding
-                embedding = self.model.encode(text)
-
-                # Add to Weaviate
-                property_object = {
-                    "property_id": row["property_id"],
-                    "label": row["label"],
-                    "description": (
-                        row["description"] if not pd.isna(row["description"]) else ""
-                    ),
-                }
-
-                batch.add_data_object(
-                    data_object=property_object,
-                    class_name="WikidataProperty",
-                    uuid=uuid.uuid5(uuid.NAMESPACE_DNS, row["property_id"]),
-                    vector=embedding,
-                )
-
-                # Small delay to prevent overloading
-                if i % 100 == 0:
-                    time.sleep(0.1)
-
-    def load_entities_if_needed(self, batch_limit=1000):
-        """
-        Load Wikidata entities into Weaviate, using CSV cache if available.
-
-        Parameters:
-        -----------
-        batch_limit : int
-            Number of entities to fetch in each batch from Wikidata
-        """
-        if self._csv_exists(self.entities_csv_path):
-            print(f"Loading entities from existing CSV file: {self.entities_csv_path}")
-            df = pd.read_csv(self.entities_csv_path)
-            self._load_entities_to_weaviate(df)
-        else:
-            print("No cached entity data found. Querying Wikidata...")
-            df = self._query_and_save_entities(batch_limit)
-            self._load_entities_to_weaviate(df)
-
-    def load_properties_if_needed(self, batch_limit=1000):
-        """
-        Load Wikidata properties into Weaviate, using CSV cache if available.
-
-        Parameters:
-        -----------
-        batch_limit : int
-            Number of properties to fetch in each batch from Wikidata
-        """
-        if self._csv_exists(self.properties_csv_path):
-            print(
-                f"Loading properties from existing CSV file: {self.properties_csv_path}"
-            )
-            df = pd.read_csv(self.properties_csv_path)
-            self._load_properties_to_weaviate(df)
-        else:
-            print("No cached property data found. Querying Wikidata...")
-            df = self._query_and_save_properties(batch_limit)
-            self._load_properties_to_weaviate(df)
-
     def search_entities(self, query_text, limit=10):
         """
-        Search for Wikidata entities based on text query.
+        Search for Wikidata entities based on text query using Wikidata API.
 
         Parameters:
         -----------
@@ -377,31 +29,39 @@ class EntityPropertyRetrieval:
         pandas.DataFrame
             Top matching entities
         """
-        # Generate embedding for query
-        query_embedding = self.model.encode(query_text)
-
         try:
-            # Search Weaviate using v4 API
-            collection = self.client.collections.get("WikidataEntity")
-            results = collection.query.near_vector(
-                near_vector=query_embedding,
-                limit=limit,
-                return_properties=["entity_id", "label", "description"]
-            )
+            # Prepare API parameters
+            params = {
+                'action': 'wbsearchentities',
+                'search': query_text,
+                'language': 'en',
+                'format': 'json',
+                'limit': limit
+            }
             
-            # Convert to DataFrame
-            if results.objects:
-                entities = [obj.properties for obj in results.objects]
-                return pd.DataFrame(entities)
+            # Make API request
+            response = requests.get(self.wikidata_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract entity information
+            results = []
+            for entity in data.get('search', []):
+                results.append({
+                    'entity_id': entity.get('id', ''),
+                    'label': entity.get('label', ''),
+                    'description': entity.get('description', '')
+                })
                 
+            return pd.DataFrame(results)
+            
         except Exception as e:
             print(f"Error searching entities: {e}")
-            
-        return pd.DataFrame(columns=["entity_id", "label", "description"])
+            return pd.DataFrame(columns=["entity_id", "label", "description"])
 
     def search_properties(self, query_text, limit=10):
         """
-        Search for Wikidata properties based on text query.
+        Search for Wikidata properties based on text query using Wikidata API.
 
         Parameters:
         -----------
@@ -415,39 +75,73 @@ class EntityPropertyRetrieval:
         pandas.DataFrame
             Top matching properties
         """
-        # Generate embedding for query
-        query_embedding = self.model.encode(query_text)
-
         try:
-            # Search Weaviate using v4 API
-            collection = self.client.collections.get("WikidataProperty")
-            results = collection.query.near_vector(
-                near_vector=query_embedding,
-                limit=limit,
-                return_properties=["property_id", "label", "description"]
-            )
+            # Prepare API parameters
+            params = {
+                'action': 'wbsearchentities',
+                'search': query_text,
+                'type': 'property',
+                'language': 'en',
+                'format': 'json',
+                'limit': limit
+            }
             
-            # Convert to DataFrame
-            if results.objects:
-                properties = [obj.properties for obj in results.objects]
-                return pd.DataFrame(properties)
+            # Make API request
+            response = requests.get(self.wikidata_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract property information
+            results = []
+            for prop in data.get('search', []):
+                results.append({
+                    'property_id': prop.get('id', ''),
+                    'label': prop.get('label', ''),
+                    'description': prop.get('description', '')
+                })
                 
+            return pd.DataFrame(results)
+            
         except Exception as e:
             print(f"Error searching properties: {e}")
+            return pd.DataFrame(columns=["property_id", "label", "description"])
+
+    def get_entity_details(self, entity_id):
+        """
+        Get detailed information about a specific entity.
+        
+        Parameters:
+        -----------
+        entity_id : str
+            Wikidata entity ID (Q number)
             
-        return pd.DataFrame(columns=["property_id", "label", "description"])
-    
+        Returns:
+        --------
+        dict
+            Entity details
+        """
+        try:
+            params = {
+                'action': 'wbgetentities',
+                'ids': entity_id,
+                'languages': 'en',
+                'format': 'json'
+            }
+            
+            response = requests.get(self.wikidata_api_url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except Exception as e:
+            print(f"Error getting entity details: {e}")
+            return {}
 
 if __name__ == "__main__":
-    # Initialize the retrieval system with Weaviate.io credentials from environment variables
+    # Initialize the retrieval system
     retriever = EntityPropertyRetrieval()
 
-    # The initialization will automatically load entities and properties if needed
-
     # Search for entities
-    entity_results = retriever.search_entities(
-        "scientist who developed theory of relativity"
-    )
+    entity_results = retriever.search_entities("lebron james")
     print("Top entity matches:")
     print(entity_results)
 
