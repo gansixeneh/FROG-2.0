@@ -6,31 +6,39 @@ import google.generativeai as genai
 from config import GEMINI_API_KEY
 from tools.base import WikidataBaseTool
 
+
 class SPARQLGenerationInput(BaseModel):
     question: str = Field(..., description="The user's question")
-    entities: List[Dict[str, Any]] = Field(..., description="The linked entities with their Wikidata IDs")
-    properties: Optional[List[Dict[str, Any]]] = Field(None, description="Optional properties for the entities")
-    ontology: Optional[Dict[str, Any]] = Field(None, description="Optional ontology information")
+    entities: List[Dict[str, Any]] = Field(
+        ..., description="The linked entities with their Wikidata IDs"
+    )
+    properties: Optional[List[Dict[str, Any]]] = Field(
+        None, description="Optional properties for the entities"
+    )
+    ontology: Optional[Dict[str, Any]] = Field(
+        None, description="Optional ontology information"
+    )
+
 
 class SPARQLGenerationTool(WikidataBaseTool):
     name: str = "sparql_generation_tool"
     description: str = "Generate SPARQL queries to answer the user question."
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-pro")
-    
+        self.model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
     def _run(self, input_data: SPARQLGenerationInput) -> Dict[str, Any]:
         """
         Generate SPARQL queries to answer the user question.
-        
+
         Parameters:
         -----------
         input_data : SPARQLGenerationInput
             The user's question, linked entities, and optional properties and ontology
-            
+
         Returns:
         --------
         Dict[str, Any]
@@ -40,30 +48,40 @@ class SPARQLGenerationTool(WikidataBaseTool):
         entities = input_data.entities
         properties = input_data.properties or []
         ontology = input_data.ontology or {}
-        
+
         # Build context for the prompt
-        entity_context = "\n".join([
-            f"- Entity: {e['label']} (ID: {e['entity_id']})" +
-            (f", Description: {e['description']}" if e.get('description') else "")
-            for e in entities
-        ])
-        
+        entity_context = "\n".join(
+            [
+                f"- Entity: {e['label']} (ID: {e['entity_id']})"
+                + (f", Description: {e['description']}" if e.get("description") else "")
+                for e in entities
+            ]
+        )
+
         property_context = ""
         if properties:
-            property_context = "\nRelevant properties:\n" + "\n".join([
-                f"- Property: {p['label']} (ID: {p['property_id']})" +
-                (f", Description: {p['description']}" if p.get('description') else "") +
-                f", Direction: {p.get('direction', 'outgoing')}"
-                for p in properties
-            ])
-        
+            property_context = "\nRelevant properties:\n" + "\n".join(
+                [
+                    f"- Property: {p['label']} (ID: {p['property_id']})"
+                    + (
+                        f", Description: {p['description']}"
+                        if p.get("description")
+                        else ""
+                    )
+                    + f", Direction: {p.get('direction', 'outgoing')}"
+                    for p in properties
+                ]
+            )
+
         ontology_context = ""
-        if ontology and ontology.get('types'):
-            ontology_context = "\nEntity types:\n" + "\n".join([
-                f"- Type: {t['label']} (ID: {t['type_id']})"
-                for t in ontology.get('types', [])
-            ])
-        
+        if ontology and ontology.get("types"):
+            ontology_context = "\nEntity types:\n" + "\n".join(
+                [
+                    f"- Type: {t['label']} (ID: {t['type_id']})"
+                    for t in ontology.get("types", [])
+                ]
+            )
+
         # Create the prompt
         prompt = f"""
         Generate a SPARQL query for Wikidata to answer the following question:
@@ -84,31 +102,33 @@ class SPARQLGenerationTool(WikidataBaseTool):
         
         Complete SPARQL query:
         """
-        
+
         try:
             # Generate the SPARQL query
             response = self.model.generate_content(prompt)
             sparql_query = response.text.strip()
-            
+
             # Remove any markdown code blocks if present
             if sparql_query.startswith("```sparql"):
-                sparql_query = sparql_query.replace("```sparql", "").replace("```", "").strip()
+                sparql_query = (
+                    sparql_query.replace("```sparql", "").replace("```", "").strip()
+                )
             elif sparql_query.startswith("```"):
                 sparql_query = sparql_query.replace("```", "").strip()
-            
+
             result = {
                 "sparql_query": sparql_query,
                 "original_question": question,
-                "entities": entities
+                "entities": entities,
             }
-            
+
             self._log_input_output(input_data, result)
             return result
-            
+
         except Exception as e:
             self.logger.error(f"Error generating SPARQL query: {e}")
             return {
                 "error": str(e),
                 "original_question": question,
-                "entities": entities
+                "entities": entities,
             }
