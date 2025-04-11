@@ -1,4 +1,3 @@
-# utils/wikidata_utils.py
 import requests
 import logging
 from typing import Dict, List, Any, Optional, Tuple

@@ -1,4 +1,3 @@
-# tools/answer_generation.py
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import ClassVar, List, Dict, Any, Optional

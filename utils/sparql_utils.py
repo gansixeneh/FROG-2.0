@@ -1,4 +1,3 @@
-# utils/sparql_utils.py
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
 from config import WIKIDATA_ENDPOINT

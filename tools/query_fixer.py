@@ -1,4 +1,3 @@
-# tools/query_fixer.py
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import ClassVar, Dict, Any

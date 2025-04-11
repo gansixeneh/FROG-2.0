@@ -1,4 +1,3 @@
-# tools/base.py
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import Any, Dict, List, Optional, ClassVar, Union, Type

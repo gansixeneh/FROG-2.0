@@ -1,0 +1,2748 @@
+================================================================================
+FILE: config.py
+================================================================================
+
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# API Keys and Endpoints
+WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+# Tool Configuration
+MAX_ENTITY_CANDIDATES = 5
+MAX_PROPERTY_CANDIDATES = 10
+MAX_QUERY_ATTEMPTS = 3
+SIMILARITY_THRESHOLD = 0.7
+
+# Model Configuration
+SENTENCE_TRANSFORMER_MODEL = "multi-qa-mpnet-base-cos-v1"
+
+================================================================================
+FILE: list_python_files.py
+================================================================================
+
+import os
+
+def list_python_files_with_contents(directory='.', output_file='python_files_list.txt'):
+    """
+    Lists all Python files in the specified directory and its subdirectories,
+    along with their contents, and saves to a text file with clear file separators.
+    
+    Args:
+        directory (str): The directory to search for Python files. Defaults to current directory.
+        output_file (str): Path to the output text file.
+    """
+    # Open the output file
+    with open(output_file, 'w', encoding='utf-8') as out_f:
+        # Walk through the directory tree
+        for root, dirs, files in os.walk(directory):
+            # Find Python files
+            for file in files:
+                if file.endswith('.py'):
+                    # Create the relative path
+                    file_path = os.path.join(root, file)
+                    
+                    # Remove leading './' if present
+                    if file_path.startswith('./'):
+                        file_path = file_path[2:]
+                    
+                    # Write a clear file separator with the file path
+                    out_f.write(f"{'=' * 80}\n")
+                    out_f.write(f"FILE: {file_path}\n")
+                    out_f.write(f"{'=' * 80}\n\n")
+                    
+                    # Read and write the file contents
+                    try:
+                        with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
+                            out_f.write(f.read())
+                    except Exception as e:
+                        out_f.write(f"Error reading file: {e}\n")
+                    
+                    # Add space between files
+                    out_f.write("\n\n")
+    
+    print(f"Output has been saved to {output_file}")
+
+if __name__ == "__main__":
+    # You can specify a directory and output file as command-line arguments
+    import sys
+    dir_to_search = sys.argv[1] if len(sys.argv) > 1 else '.'
+    output_file = sys.argv[2] if len(sys.argv) > 2 else 'python_files_list.txt'
+    
+    list_python_files_with_contents(dir_to_search, output_file)
+
+================================================================================
+FILE: main.py
+================================================================================
+
+from dotenv import load_dotenv
+import logging
+import argparse
+from tools.orchestrator import EnsembleOrchestratorTool, OrchestratorInput
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Load environment variables
+load_dotenv()
+
+def main():
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Enhanced Wikidata Question Answering System")
+    parser.add_argument("--question", type=str, help="Question to answer")
+    parser.add_argument("--language", type=str, default="en", help="Language for the answer (default: en)")
+    parser.add_argument("--interactive", action="store_true", help="Run in interactive mode")
+    parser.add_argument("--verbose", action="store_true", help="Show detailed information about the answering process")
+    args = parser.parse_args()
+    
+    # Initialize the orchestrator tool
+    orchestrator = EnsembleOrchestratorTool()
+    
+    if args.interactive:
+        # Run in interactive mode
+        print("Enhanced Wikidata QA System - Interactive Mode")
+        print("Type 'exit' or 'quit' to end the session")
+        
+        while True:
+            question = input("\nQuestion: ")
+            if question.lower() in ["exit", "quit"]:
+                break
+                
+            try:
+                input_data = OrchestratorInput(question=question, language=args.language)
+                result = orchestrator._run(input_data)
+                
+                print("\nAnswer:", result["answer"])
+                
+                if args.verbose:
+                    print("\nEntities:", ", ".join(result.get("entities", [])))
+                    print("Found paths:", result.get("paths", 0))
+                    if result.get("query"):
+                        print("\nQuery used:", result["query"])
+                    if result.get("query_explanation"):
+                        print("Query approach:", result["query_explanation"])
+                    if result.get("result_count"):
+                        print("Results found:", result["result_count"])
+                    
+                print("\n" + "-" * 80)
+            except Exception as e:
+                logger.error(f"Error processing question: {e}")
+                print(f"\nError: {str(e)}")
+    
+    elif args.question:
+        # Run with a single question
+        try:
+            input_data = OrchestratorInput(question=args.question, language=args.language)
+            result = orchestrator._run(input_data)
+            
+            print("\nQuestion:", args.question)
+            print("Answer:", result["answer"])
+            
+            if args.verbose:
+                print("\nEntities:", ", ".join(result.get("entities", [])))
+                print("Found paths:", result.get("paths", 0))
+                if result.get("query"):
+                    print("\nQuery used:", result["query"])
+                if result.get("query_explanation"):
+                    print("Query approach:", result["query_explanation"])
+                if result.get("result_count"):
+                    print("Results found:", result["result_count"])
+        except Exception as e:
+            logger.error(f"Error processing question: {e}")
+            print(f"Error: {str(e)}")
+    
+    else:
+        # No question provided
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
+
+================================================================================
+FILE: tools/sparql_generation.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+from tools.base import WikidataBaseTool
+
+
+class SPARQLGenerationInput(BaseModel):
+    question: str = Field(..., description="The user's question")
+    entities: List[Dict[str, Any]] = Field(
+        ..., description="The linked entities with their Wikidata IDs"
+    )
+    paths: Optional[List[Dict[str, Any]]] = Field(
+        None, description="Optional paths discovered in the graph"
+    )
+    properties: Optional[List[Dict[str, Any]]] = Field(
+        None, description="Optional properties for the entities"
+    )
+    ontology: Optional[Dict[str, Any]] = Field(
+        None, description="Optional ontology information"
+    )
+    num_queries: int = Field(3, description="Number of different queries to generate")
+
+
+class SPARQLGenerationTool(WikidataBaseTool):
+    name: ClassVar[str] = "sparql_generation_tool"
+    description: ClassVar[str] = "Generate multiple SPARQL queries to answer the user question."
+
+    _model = PrivateAttr()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize Gemini
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
+    def _run(self, input_data: SPARQLGenerationInput) -> Dict[str, Any]:
+        """
+        Generate multiple SPARQL queries to answer the user question.
+
+        Parameters:
+        -----------
+        input_data : SPARQLGenerationInput
+            The user's question, linked entities, paths, and optional properties and ontology
+
+        Returns:
+        --------
+        Dict[str, Any]
+            The generated SPARQL queries
+        """
+        question = input_data.question
+        entities = input_data.entities
+        paths = input_data.paths or []
+        properties = input_data.properties or []
+        ontology = input_data.ontology or {}
+        num_queries = input_data.num_queries
+
+        # Build context for the prompt
+        entity_context = "\n".join(
+            [
+                f"- Entity: {e['label']} (ID: {e['entity_id']})"
+                + (f", Description: {e['description']}" if e.get("description") else "")
+                for e in entities
+            ]
+        )
+
+        path_context = ""
+        if paths:
+            path_context = "\nDiscovered paths in the knowledge graph:\n"
+            for i, path in enumerate(paths):
+                distance = path.get("distance", 0)
+                if distance == 1:
+                    path_context += (f"- Path {i+1} (distance 1): {path.get('start_entity', '')} → "
+                                    f"{path['path'][0]['property_label']} → {path['end_entity']['label']}\n")
+                elif distance == 2:
+                    intermediate = path["path"][1]["intermediate_entity"]
+                    path_context += (f"- Path {i+1} (distance 2): {path.get('start_entity', '')} → "
+                                    f"{path['path'][0]['property_label']} → {intermediate['label']} → "
+                                    f"{path['path'][2]['property_label']} → {path['end_entity']['label']}\n")
+                elif distance == 3:
+                    inter1 = path["path"][1]["intermediate_entity"]
+                    inter2 = path["path"][3]["intermediate_entity"]
+                    path_context += (f"- Path {i+1} (distance 3): {path.get('start_entity', '')} → "
+                                    f"{path['path'][0]['property_label']} → {inter1['label']} → "
+                                    f"{path['path'][2]['property_label']} → {inter2['label']} → "
+                                    f"{path['path'][4]['property_label']} → {path['end_entity']['label']}\n")
+
+        property_context = ""
+        if properties:
+            property_context = "\nRelevant properties:\n" + "\n".join(
+                [
+                    f"- Property: {p['label']} (ID: {p['property_id']})"
+                    + (
+                        f", Description: {p['description']}"
+                        if p.get("description")
+                        else ""
+                    )
+                    + f", Direction: {p.get('direction', 'outgoing')}"
+                    for p in properties
+                ]
+            )
+
+        ontology_context = ""
+        if ontology and ontology.get("types"):
+            ontology_context = "\nEntity types:\n" + "\n".join(
+                [
+                    f"- Type: {t['label']} (ID: {t['type_id']})"
+                    for t in ontology.get("types", [])
+                ]
+            )
+
+        # Create the prompt
+        prompt = f"""
+        Generate {num_queries} different SPARQL queries for Wikidata to answer the following question:
+        
+        Question: {question}
+        
+        Entities identified:
+        {entity_context}
+        {path_context}
+        {property_context}
+        {ontology_context}
+        
+        Important guidelines:
+        1. Use the PREFIX wd: <http://www.wikidata.org/entity/> for entities
+        2. Use the PREFIX wdt: <http://www.wikidata.org/prop/direct/> for properties
+        3. Include SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        4. Use proper variable names that reflect the entities/properties
+        5. Create {num_queries} different queries that approach the question in different ways
+        6. Provide a brief explanation for each query to explain how it addresses the question
+        7. Format your response as:
+           QUERY 1:
+           ```sparql
+           [SPARQL query 1]
+           ```
+           Explanation: [short explanation of query 1 approach]
+
+           QUERY 2:
+           ```sparql
+           [SPARQL query 2]
+           ```
+           Explanation: [short explanation of query 2 approach]
+           
+           ... and so on.
+        8. Prioritize using the discovered paths if they are relevant to the question
+        
+        Please generate {num_queries} different SPARQL queries:
+        """
+
+        try:
+            # Generate the SPARQL queries
+            response = self._model.generate_content(prompt)
+            query_text = response.text.strip()
+
+            # Parse the generated queries
+            queries = self._parse_queries(query_text, num_queries)
+
+            result = {
+                "sparql_queries": queries,
+                "original_question": question,
+                "entities": entities,
+            }
+
+            self._log_input_output(input_data, result)
+            return result
+
+        except Exception as e:
+            self._logger.error(f"Error generating SPARQL query: {e}")
+            return {
+                "error": str(e),
+                "original_question": question,
+                "entities": entities,
+            }
+    
+    def _parse_queries(self, query_text: str, expected_count: int) -> List[Dict[str, Any]]:
+        """
+        Parse the generated text into a list of query objects.
+        
+        Parameters:
+        -----------
+        query_text : str
+            The generated text containing the queries
+        expected_count : int
+            The expected number of queries
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            List of parsed queries with explanations
+        """
+        queries = []
+        
+        try:
+            # Split by QUERY n:
+            sections = query_text.split("QUERY ")
+            
+            # Remove any empty sections
+            sections = [s for s in sections if s.strip()]
+            
+            for section in sections:
+                # Extract the query number, SPARQL code, and explanation
+                query_obj = {"query_id": len(queries) + 1}
+                
+                # Extract the SPARQL query from the code block
+                if "```sparql" in section:
+                    sparql_parts = section.split("```sparql")
+                    if len(sparql_parts) > 1:
+                        query_code = sparql_parts[1].split("```")[0].strip()
+                        query_obj["sparql_query"] = query_code
+                elif "```" in section:
+                    sparql_parts = section.split("```")
+                    if len(sparql_parts) > 1:
+                        query_code = sparql_parts[1].strip()
+                        query_obj["sparql_query"] = query_code
+                
+                # Extract the explanation
+                if "Explanation:" in section:
+                    explanation = section.split("Explanation:")[1].strip()
+                    # If there's another query after this, trim the explanation
+                    if "QUERY" in explanation:
+                        explanation = explanation.split("QUERY")[0].strip()
+                    query_obj["explanation"] = explanation
+                
+                # Add to list if it has a query
+                if "sparql_query" in query_obj:
+                    queries.append(query_obj)
+                    
+                # Stop if we've reached the expected count
+                if len(queries) >= expected_count:
+                    break
+        except Exception as e:
+            self._logger.error(f"Error parsing queries: {e}")
+        
+        # If we parsed fewer queries than expected, log a warning
+        if len(queries) < expected_count:
+            self._logger.warning(f"Expected {expected_count} queries but only parsed {len(queries)}")
+        
+        # Ensure we have at least one query
+        if not queries:
+            # Try a simpler parsing approach as fallback
+            try:
+                # Just look for code blocks
+                code_blocks = query_text.split("```")
+                for i in range(1, len(code_blocks), 2):
+                    code = code_blocks[i].strip()
+                    if code.startswith("sparql"):
+                        code = code[6:].strip()
+                    
+                    queries.append({
+                        "query_id": len(queries) + 1,
+                        "sparql_query": code,
+                        "explanation": "Generated query"
+                    })
+                    
+                    if len(queries) >= expected_count:
+                        break
+            except Exception as e:
+                self._logger.error(f"Error in fallback query parsing: {e}")
+                
+        return queries
+
+================================================================================
+FILE: tools/sparql_execution.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, Dict, Any, Union
+from utils.sparql_utils import QueryEngine
+from tools.base import WikidataBaseTool
+
+class SPARQLExecutionInput(BaseModel):
+    query: str = Field(..., description="The SPARQL query to execute")
+
+class SPARQLExecutionTool(WikidataBaseTool):
+    name: ClassVar[str] = "sparql_execution_tool"
+    description: ClassVar[str] = "Execute SPARQL queries against the Wikidata endpoint."
+    
+    _query_engine = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._query_engine = QueryEngine()
+    
+    def _run(self, input_data: SPARQLExecutionInput) -> Union[Dict[str, Any], Any]:
+        """
+        Execute a SPARQL query and return the results.
+        
+        Parameters:
+        -----------
+        input_data : SPARQLExecutionInput
+            The SPARQL query to execute
+            
+        Returns:
+        --------
+        Union[Dict[str, Any], Any]
+            Query results or error information
+        """
+        query = input_data.query
+        
+        self._logger.info(f"Executing SPARQL query: {query}")
+        result = self._query_engine.run_query(query)
+        
+        # Check if there was an error
+        if isinstance(result, dict) and "error" in result:
+            self._logger.error(f"Query execution error: {result['error']}")
+            return {
+                "success": False,
+                "error": result["error"],
+                "original_query": query
+            }
+        
+        # Return the successful result
+        return {
+            "success": True,
+            "data": result.to_dict(orient='records') if not result.empty else [],
+            "column_names": result.columns.tolist() if not result.empty else [],
+            "row_count": len(result) if not result.empty else 0
+        }
+
+================================================================================
+FILE: tools/query_fixer.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, Dict, Any
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+from tools.base import WikidataBaseTool
+
+
+class QueryFixerInput(BaseModel):
+    query: str = Field(..., description="The original SPARQL query that failed")
+    error: str = Field(..., description="The error message from the SPARQL endpoint")
+
+
+class QueryFixerTool(WikidataBaseTool):
+    name: ClassVar[str] = "query_fixer_tool"
+    description: ClassVar[str] = (
+        "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
+    )
+
+    _model = PrivateAttr()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize Gemini
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
+    def _run(self, input_data: QueryFixerInput) -> Dict[str, Any]:
+        """
+        Fix a SPARQL query based on the error message.
+
+        Parameters:
+        -----------
+        input_data : QueryFixerInput
+            The original query and error message
+
+        Returns:
+        --------
+        Dict[str, Any]
+            The fixed query or error information
+        """
+        original_query = input_data.query
+        error_message = input_data.error
+
+        self._logger.info(f"Attempting to fix query with error: {error_message}")
+
+        # Prompt for the model
+        prompt = f"""
+        You are a SPARQL query fixer. Fix the following SPARQL query for Wikidata that resulted in an error.
+        
+        Original Query:
+        ```sparql
+        {original_query}
+        ```
+        
+        Error Message:
+        ```
+        {error_message}
+        ```
+        
+        Please provide only the fixed SPARQL query without any explanations or additional text.
+        Make sure the query follows Wikidata's SPARQL syntax and conventions.
+        """
+
+        try:
+            # Generate the fixed query
+            response = self._model.generate_content(prompt)
+            fixed_query = response.text.strip()
+
+            # Remove any markdown code blocks if present
+            if fixed_query.startswith("```sparql"):
+                fixed_query = (
+                    fixed_query.replace("```sparql", "").replace("```", "").strip()
+                )
+            elif fixed_query.startswith("```"):
+                fixed_query = fixed_query.replace("```", "").strip()
+
+            self._logger.info(f"Fixed query: {fixed_query}")
+
+            return {
+                "success": True,
+                "original_query": original_query,
+                "fixed_query": fixed_query,
+                "error_message": error_message,
+            }
+
+        except Exception as e:
+            self._logger.error(f"Error in query fixing: {e}")
+            return {
+                "success": False,
+                "original_query": original_query,
+                "error": str(e),
+                "error_message": error_message,
+            }
+
+
+================================================================================
+FILE: tools/__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: tools/answer_generation.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+from tools.base import WikidataBaseTool
+
+
+class AnswerGenerationInput(BaseModel):
+    question: str = Field(..., description="The user's question")
+    query_results: List[Dict[str, Any]] = Field(
+        ..., description="The results from SPARQL query execution"
+    )
+    sparql_query: Optional[str] = Field(
+        None, description="The SPARQL query used (optional)"
+    )
+    entities: Optional[List[Dict[str, Any]]] = Field(
+        None, description="The linked entities (optional)"
+    )
+
+
+class AnswerGenerationTool(WikidataBaseTool):
+    name: ClassVar[str] = "answer_generation_tool"
+    description: ClassVar[str] = (
+        "Convert the raw SPARQL query result into a natural language answer."
+    )
+
+    _model = PrivateAttr()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize Gemini
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
+    def _run(self, input_data: AnswerGenerationInput) -> Dict[str, Any]:
+        """
+        Generate a natural language answer from query results.
+
+        Parameters:
+        -----------
+        input_data : AnswerGenerationInput
+            The user's question, query results, and optional query and entities
+
+        Returns:
+        --------
+        Dict[str, Any]
+            The generated answer and related information
+        """
+        question = input_data.question
+        query_results = input_data.query_results
+        sparql_query = input_data.sparql_query
+        entities = input_data.entities or []
+
+        # Check if we have results
+        if not query_results:
+            return self._generate_no_results_answer(question, entities)
+
+        # Format results for the prompt
+        results_text = self._format_results(query_results)
+
+        # Create the prompt
+        prompt = f"""
+        Based on the following data from Wikidata, please answer this question:
+        
+        Question: {question}
+        
+        Data from Wikidata:
+        {results_text}
+        
+        Please provide a clear, concise answer in natural language. Focus on directly answering the question.
+        If the data doesn't contain a clear answer, acknowledge this and explain what information is available.
+        """
+
+        try:
+            # Generate the answer
+            response = self._model.generate_content(prompt)
+            answer = response.text.strip()
+
+            result = {
+                "answer": answer,
+                "original_question": question,
+                "has_results": True,
+                "result_count": len(query_results),
+            }
+
+            self._log_input_output(input_data, result)
+            return result
+
+        except Exception as e:
+            self._logger.error(f"Error generating answer: {e}")
+            return {
+                "answer": f"I encountered an error while generating your answer: {str(e)}",
+                "original_question": question,
+                "has_results": True,
+                "result_count": len(query_results),
+                "error": str(e),
+            }
+
+    def _format_results(self, results: List[Dict[str, Any]]) -> str:
+        """Format results as a string for the prompt."""
+        if not results:
+            return "No results found."
+
+        # Get all columns from the first result
+        columns = list(results[0].keys())
+
+        # Build a table-like representation
+        formatted_results = []
+        for i, result in enumerate(results[:10]):  # Limit to 10 results for readability
+            formatted_result = f"Result {i+1}:"
+            for col in columns:
+                value = result.get(col, "")
+                formatted_result += f"\n  {col}: {value}"
+            formatted_results.append(formatted_result)
+
+        # Add a note if there are more results
+        if len(results) > 10:
+            formatted_results.append(f"\n(Showing 10 of {len(results)} results)")
+
+        return "\n\n".join(formatted_results)
+
+    def _generate_no_results_answer(
+        self, question: str, entities: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Generate an answer when no results are found."""
+        entity_text = ", ".join(
+            [e.get("label", e.get("entity_id", "")) for e in entities]
+        )
+
+        prompt = f"""
+        I need to answer this question: "{question}"
+        
+        I searched for information about {entity_text if entities else "relevant entities"} in Wikidata,
+        but couldn't find any results. Please generate a polite response explaining that no information
+        was found in Wikidata to answer this question.
+        """
+
+        try:
+            response = self._model.generate_content(prompt)
+            answer = response.text.strip()
+
+            return {
+                "answer": answer,
+                "original_question": question,
+                "has_results": False,
+                "entities": entities,
+            }
+
+        except Exception as e:
+            self._logger.error(f"Error generating no-results answer: {e}")
+            return {
+                "answer": "I couldn't find any information in Wikidata to answer your question.",
+                "original_question": question,
+                "has_results": False,
+                "entities": entities,
+            }
+
+
+================================================================================
+FILE: tools/reranking.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
+from tools.base import WikidataBaseTool
+from sentence_transformers import SentenceTransformer, util
+from config import SENTENCE_TRANSFORMER_MODEL
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+class RerankingInput(BaseModel):
+    question: str = Field(..., description="The original user question")
+    query_results: List[Dict[str, Any]] = Field(..., description="List of query objects with their results")
+    entities: List[Dict[str, Any]] = Field(..., description="The linked entities from the question")
+
+class RerankingTool(WikidataBaseTool):
+    name: ClassVar[str] = "reranking_tool"
+    description: ClassVar[str] = "Score multiple SPARQL queries and their results to pick the best answer."
+    
+    _model = PrivateAttr()
+    _sentence_model = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize sentence transformer for semantic similarity
+        self._sentence_model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
+        
+        # Initialize Gemini for LLM-based ranking
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+    
+    def _run(self, input_data: RerankingInput) -> Dict[str, Any]:
+        """
+        Rerank queries based on their results and relevance to the question.
+        
+        Parameters:
+        -----------
+        input_data : RerankingInput
+            The original question, query results, and linked entities
+            
+        Returns:
+        --------
+        Dict[str, Any]
+            The best ranked query, results, and ranking information
+        """
+        question = input_data.question
+        query_results = input_data.query_results
+        entities = input_data.entities
+        
+        if not query_results:
+            return {
+                "success": False,
+                "error": "No query results provided for reranking",
+                "best_result": None
+            }
+        
+        # If only one result, return it directly
+        if len(query_results) == 1:
+            return {
+                "success": True,
+                "best_result": query_results[0],
+                "ranking": [{"index": 0, "score": 1.0}]
+            }
+        
+        # Step 1: Calculate statistical scores
+        ranked_results = []
+        for i, result in enumerate(query_results):
+            # Extract relevant information
+            query = result.get("sparql_query", "")
+            explanation = result.get("explanation", "")
+            data = result.get("data", [])
+            
+            # Calculate different score components
+            query_relevance = self._calculate_query_relevance(question, query)
+            result_quality = self._calculate_result_quality(data)
+            
+            # Add to ranking list
+            ranked_results.append({
+                "index": i,
+                "result": result,
+                "query_relevance": query_relevance,
+                "result_quality": result_quality,
+                # Preliminary score, will be updated by LLM
+                "score": 0.7 * query_relevance + 0.3 * result_quality
+            })
+        
+        # Step 2: Use LLM to evaluate and re-rank the results
+        llm_ranked_results = self._llm_ranking(question, query_results, ranked_results)
+        
+        # Sort by the final score
+        llm_ranked_results.sort(key=lambda x: x["score"], reverse=True)
+        
+        # Get the best result
+        best_index = llm_ranked_results[0]["index"]
+        best_result = query_results[best_index]
+        
+        return {
+            "success": True,
+            "best_result": best_result,
+            "ranking": llm_ranked_results
+        }
+    
+    def _calculate_query_relevance(self, question: str, query: str) -> float:
+        """Calculate semantic similarity between question and query."""
+        try:
+            # Clean up the query for better comparison
+            cleaned_query = ' '.join(line.strip() for line in query.split('\n'))
+            
+            # Calculate embeddings and similarity
+            embeddings = self._sentence_model.encode([question, cleaned_query], convert_to_tensor=True)
+            similarity = float(util.cos_sim(embeddings[0], embeddings[1])[0][0])
+            
+            return similarity
+        except Exception as e:
+            self._logger.error(f"Error calculating query relevance: {e}")
+            return 0.5  # Default middle score
+    
+    def _calculate_result_quality(self, results: List[Dict[str, Any]]) -> float:
+        """Calculate result quality based on number of results and completeness."""
+        if not results:
+            return 0.0
+        
+        # Simple quality metric based on number of results
+        num_results = len(results)
+        
+        # Normalize: 0 results = 0.0, 1-3 results = 0.6-0.8, 4+ results = 0.9-1.0
+        if num_results == 0:
+            return 0.0
+        elif num_results <= 3:
+            return 0.6 + (num_results - 1) * 0.1
+        else:
+            return min(0.9 + (num_results - 4) * 0.02, 1.0)
+    
+    def _llm_ranking(self, question: str, query_results: List[Dict[str, Any]], 
+                    preliminary_ranking: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Use LLM to evaluate and rank the query results.
+        
+        Parameters:
+        -----------
+        question : str
+            The original question
+        query_results : List[Dict[str, Any]]
+            List of query results to rank
+        preliminary_ranking : List[Dict[str, Any]]
+            Preliminary ranking based on statistical metrics
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Updated ranking with LLM scores
+        """
+        # Format query results for the prompt
+        formatted_results = []
+        
+        for i, result in enumerate(query_results):
+            query = result.get("sparql_query", "Unknown query")
+            explanation = result.get("explanation", "No explanation provided")
+            data = result.get("data", [])
+            
+            # Format the data (limit to 5 rows for readability)
+            data_str = "No results found."
+            if data:
+                data_rows = []
+                for j, row in enumerate(data[:5]):
+                    row_str = f"Row {j+1}: " + ", ".join([f"{k}={v}" for k, v in row.items()])
+                    data_rows.append(row_str)
+                
+                data_str = "\n".join(data_rows)
+                if len(data) > 5:
+                    data_str += f"\n(... and {len(data) - 5} more rows)"
+            
+            # Add to formatted results
+            formatted_results.append(
+                f"QUERY {i+1}:\n"
+                f"Explanation: {explanation}\n"
+                f"Results: {len(data)} rows found\n"
+                f"Sample data:\n{data_str}\n"
+                f"Statistical scores: Query relevance = {preliminary_ranking[i]['query_relevance']:.2f}, "
+                f"Result quality = {preliminary_ranking[i]['result_quality']:.2f}\n"
+            )
+        
+        formatted_results_str = "\n\n".join(formatted_results)
+        
+        # Create the prompt
+        prompt = f"""
+        I need to determine which of the following SPARQL query results best answers this question:
+        
+        Question: {question}
+        
+        Query Results:
+        {formatted_results_str}
+        
+        Please analyze each query result and rate them on a scale of 0.0 to 1.0 based on:
+        1. Relevance - How directly the result addresses the question
+        2. Completeness - Whether the result contains all information needed
+        3. Accuracy - Whether the result appears correct based on the data
+        4. Overall quality - Your overall assessment of how well it answers the question
+        
+        For each query, provide a score in this format:
+        QUERY 1: score=X.XX
+        QUERY 2: score=X.XX
+        ... and so on
+        
+        Then, provide a brief explanation of your ranking decision. Which query provides the best answer and why?
+        """
+        
+        try:
+            # Get LLM's evaluation
+            response = self._model.generate_content(prompt)
+            evaluation_text = response.text.strip()
+            
+            # Extract scores
+            for i in range(len(query_results)):
+                score_marker = f"QUERY {i+1}: score="
+                if score_marker in evaluation_text:
+                    score_text = evaluation_text.split(score_marker)[1].split("\n")[0].strip()
+                    try:
+                        llm_score = float(score_text)
+                        # Update the score in our ranking
+                        preliminary_ranking[i]["llm_score"] = llm_score
+                        # Combine with statistical score (weighted)
+                        preliminary_ranking[i]["score"] = 0.3 * preliminary_ranking[i]["score"] + 0.7 * llm_score
+                    except ValueError:
+                        self._logger.warning(f"Could not parse LLM score: {score_text}")
+            
+            # Add explanation to the result
+            explanation_parts = evaluation_text.split("explanation", 1)
+            if len(explanation_parts) > 1:
+                explanation = explanation_parts[1].strip()
+                for item in preliminary_ranking:
+                    item["ranking_explanation"] = explanation
+            
+            return preliminary_ranking
+            
+        except Exception as e:
+            self._logger.error(f"Error in LLM ranking: {e}")
+            # Fall back to the preliminary ranking
+            return preliminary_ranking
+
+================================================================================
+FILE: tools/orchestrator.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
+from tools.base import WikidataBaseTool
+from tools.entity_ontology_retrieval import EntityOntologyRetrievalTool, EntityOntologyRetrievalInput
+from tools.property_retrieval import PropertyRetrievalTool, PropertyRetrievalInput
+from tools.entity_linking import EntityLinkingTool, EntityLinkingInput
+from tools.sparql_generation import SPARQLGenerationTool, SPARQLGenerationInput
+from tools.sparql_execution import SPARQLExecutionTool, SPARQLExecutionInput
+from tools.query_fixer import QueryFixerTool, QueryFixerInput
+from tools.reranking import RerankingTool, RerankingInput
+from tools.answer_generation import AnswerGenerationTool, AnswerGenerationInput
+from config import MAX_QUERY_ATTEMPTS
+
+class OrchestratorInput(BaseModel):
+    question: str = Field(..., description="The user's question")
+    language: str = Field("en", description="The language to generate the answer in")
+
+class EnsembleOrchestratorTool(WikidataBaseTool):
+    name: ClassVar[str] = "ensemble_orchestrator_tool"
+    description: ClassVar[str] = "Orchestrate the flow of information through multiple approaches to answer the question."
+    
+    _entity_ontology_retrieval_tool = PrivateAttr()
+    _property_retrieval_tool = PrivateAttr()
+    _entity_linking_tool = PrivateAttr()
+    _sparql_generation_tool = PrivateAttr()
+    _sparql_execution_tool = PrivateAttr()
+    _query_fixer_tool = PrivateAttr()
+    _reranking_tool = PrivateAttr()
+    _answer_generation_tool = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize all tools
+        self._entity_ontology_retrieval_tool = EntityOntologyRetrievalTool()
+        self._property_retrieval_tool = PropertyRetrievalTool()
+        self._entity_linking_tool = EntityLinkingTool()
+        self._sparql_generation_tool = SPARQLGenerationTool()
+        self._sparql_execution_tool = SPARQLExecutionTool()
+        self._query_fixer_tool = QueryFixerTool()
+        self._reranking_tool = RerankingTool()
+        self._answer_generation_tool = AnswerGenerationTool()
+    
+    def _run(self, input_data: OrchestratorInput) -> Dict[str, Any]:
+        """
+        Orchestrate the entire question answering pipeline.
+        
+        Parameters:
+        -----------
+        input_data : OrchestratorInput
+            The user's question and preferred language
+            
+        Returns:
+        --------
+        Dict[str, Any]
+            The answer and related information
+        """
+        question = input_data.question
+        language = input_data.language
+        
+        self._logger.info(f"Processing question: {question}")
+        
+        # Step 1: Combined Entity and Ontology Retrieval
+        entity_retrieval_input = EntityOntologyRetrievalInput(query=question)
+        entity_retrieval_result = self._entity_ontology_retrieval_tool._run(entity_retrieval_input)
+        
+        if not entity_retrieval_result.get("entities"):
+            self._logger.warning("No entities found in the question.")
+            return {
+                "answer": "I couldn't identify any specific entities in your question. Could you please rephrase it?",
+                "success": False,
+                "question": question
+            }
+        
+        entities = entity_retrieval_result["entities"]
+        self._logger.info(f"Retrieved entities: {[e['label'] for e in entities]}")
+        
+        # Step 2: Entity Linking with Graph Traversal
+        entity_linking_input = EntityLinkingInput(question=question)
+        entity_linking_result = self._entity_linking_tool._run(entity_linking_input)
+        
+        linked_entities = entity_linking_result.get("linked_entities", [])
+        paths = entity_linking_result.get("paths", [])
+        
+        self._logger.info(f"Graph traversal found {len(paths)} relevant paths")
+        
+        # Step 3: Property Retrieval for the most relevant entity
+        if entities:
+            main_entity = entities[0]
+            property_retrieval_input = PropertyRetrievalInput(
+                question=question,
+                entity_id=main_entity["entity_id"]
+            )
+            property_result = self._property_retrieval_tool._run(property_retrieval_input)
+            properties = property_result.get("properties", [])
+        else:
+            properties = []
+        
+        # Step 4: Generate multiple SPARQL queries
+        sparql_generation_input = SPARQLGenerationInput(
+            question=question,
+            entities=entities,
+            paths=paths,
+            properties=properties,
+            num_queries=3
+        )
+        sparql_result = self._sparql_generation_tool._run(sparql_generation_input)
+        
+        if "error" in sparql_result:
+            self._logger.error(f"Error in SPARQL generation: {sparql_result['error']}")
+            return {
+                "answer": "I had trouble generating queries to answer your question. Could you please rephrase it?",
+                "success": False,
+                "question": question
+            }
+        
+        # Step 5: Execute multiple SPARQL queries with retry mechanism
+        sparql_queries = sparql_result.get("sparql_queries", [])
+        
+        if not sparql_queries:
+            self._logger.error("No SPARQL queries were generated")
+            return {
+                "answer": "I couldn't generate appropriate queries for your question. Could you please rephrase it?",
+                "success": False,
+                "question": question
+            }
+        
+        query_results = []
+        
+        for query_obj in sparql_queries:
+            query_id = query_obj.get("query_id", len(query_results) + 1)
+            sparql_query = query_obj.get("sparql_query", "")
+            explanation = query_obj.get("explanation", "No explanation provided")
+            
+            self._logger.info(f"Processing query {query_id}: {explanation}")
+            
+            # Try to execute with retries
+            success = False
+            data = []
+            final_query = sparql_query
+            
+            for attempt in range(MAX_QUERY_ATTEMPTS):
+                self._logger.info(f"Executing SPARQL query {query_id} (attempt {attempt+1}/{MAX_QUERY_ATTEMPTS})")
+                
+                sparql_execution_input = SPARQLExecutionInput(query=final_query)
+                execution_result = self._sparql_execution_tool._run(sparql_execution_input)
+                
+                if execution_result.get("success", False):
+                    success = True
+                    data = execution_result.get("data", [])
+                    column_names = execution_result.get("column_names", [])
+                    row_count = execution_result.get("row_count", 0)
+                    break
+                
+                # Query failed, try to fix it
+                if attempt < MAX_QUERY_ATTEMPTS - 1:
+                    self._logger.info(f"Query {query_id} failed, attempting to fix")
+                    query_fixer_input = QueryFixerInput(
+                        query=final_query,
+                        error=execution_result.get("error", "Unknown error")
+                    )
+                    fixed_result = self._query_fixer_tool._run(query_fixer_input)
+                    
+                    if fixed_result.get("success", False):
+                        final_query = fixed_result["fixed_query"]
+                    else:
+                        self._logger.error(f"Failed to fix query {query_id}")
+                        break
+            
+            # Add to results
+            query_results.append({
+                "query_id": query_id,
+                "sparql_query": final_query,
+                "original_query": sparql_query,
+                "explanation": explanation,
+                "success": success,
+                "data": data[:5] if len(data) > 5 else data,  # Limit to 5 rows for reranking
+                "full_data": data,
+                "row_count": len(data)
+            })
+        
+        # Step 6: Rerank the results
+        if any(qr.get("success", False) for qr in query_results):
+            # Only rerank successful queries
+            successful_queries = [qr for qr in query_results if qr.get("success", False)]
+            
+            if successful_queries:
+                reranking_input = RerankingInput(
+                    question=question,
+                    query_results=successful_queries,
+                    entities=entities
+                )
+                reranking_result = self._reranking_tool._run(reranking_input)
+                
+                best_result = reranking_result.get("best_result", successful_queries[0])
+                
+                # Step 7: Generate Answer
+                answer_input = AnswerGenerationInput(
+                    question=question,
+                    query_results=best_result.get("full_data", best_result.get("data", [])),
+                    sparql_query=best_result.get("sparql_query", ""),
+                    entities=entities
+                )
+                answer_result = self._answer_generation_tool._run(answer_input)
+                
+                return {
+                    "answer": answer_result["answer"],
+                    "success": True,
+                    "question": question,
+                    "entities": [e["label"] for e in entities],
+                    "paths": len(paths),
+                    "query": best_result.get("sparql_query", ""),
+                    "result_count": best_result.get("row_count", 0),
+                    "query_explanation": best_result.get("explanation", "")
+                }
+        
+        # No successful queries or empty results
+        self._logger.warning("No successful queries with results")
+        answer_input = AnswerGenerationInput(
+            question=question,
+            query_results=[],
+            entities=entities
+        )
+        answer_result = self._answer_generation_tool._run(answer_input)
+        
+        return {
+            "answer": answer_result["answer"],
+            "success": False,
+            "question": question,
+            "entities": [e["label"] for e in entities],
+            "paths": len(paths),
+            "query": sparql_queries[0].get("sparql_query", "") if sparql_queries else None
+        }
+
+================================================================================
+FILE: tools/property_retrieval.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
+import requests
+from utils.sparql_utils import QueryEngine
+from tools.base import WikidataBaseTool
+import google.generativeai as genai
+from config import GEMINI_API_KEY, MAX_PROPERTY_CANDIDATES
+
+class PropertyRetrievalInput(BaseModel):
+    question: str = Field(..., description="The user's question")
+    entity_id: str = Field(None, description="Optional Wikidata entity ID for context")
+    limit: int = Field(MAX_PROPERTY_CANDIDATES, description="Maximum number of properties to retrieve")
+
+class PropertyRetrievalTool(WikidataBaseTool):
+    name: ClassVar[str] = "property_retrieval_tool"
+    description: ClassVar[str] = "Retrieve properties relevant to the user's question."
+    
+    _query_engine = PrivateAttr()
+    _wikidata_api_url = PrivateAttr()
+    _model = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._query_engine = QueryEngine()
+        self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        
+        # Initialize Gemini for property extraction and ranking
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+    
+    def _run(self, input_data: PropertyRetrievalInput) -> Dict[str, Any]:
+        """
+        Retrieve properties relevant to the question.
+        
+        Parameters:
+        -----------
+        input_data : PropertyRetrievalInput
+            The user's question, optional entity ID, and limit
+            
+        Returns:
+        --------
+        Dict[str, Any]
+            The relevant properties
+        """
+        question = input_data.question
+        entity_id = input_data.entity_id
+        limit = input_data.limit
+        
+        # Step 1: Extract potential property concepts from the question
+        property_concepts = self._extract_property_concepts(question, entity_id)
+        self._logger.info(f"Extracted property concepts: {property_concepts}")
+        
+        if not property_concepts:
+            return {
+                "properties": [],
+                "question": question,
+                "entity_id": entity_id
+            }
+        
+        # Step 2: Find matching Wikidata properties for each concept
+        all_properties = []
+        for concept in property_concepts:
+            properties = self._search_wikidata_properties(concept)
+            all_properties.extend(properties)
+        
+        # Step 3: Rank properties using LLM
+        ranked_properties = self._rank_properties_with_llm(question, all_properties, limit)
+        
+        result = {
+            "properties": ranked_properties,
+            "question": question,
+            "entity_id": entity_id,
+            "total_properties_found": len(all_properties)
+        }
+        
+        self._log_input_output(input_data, result)
+        return result
+    
+    def _extract_property_concepts(self, question: str, entity_id: str = None) -> List[str]:
+        """
+        Extract potential property concepts from the question using LLM.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        entity_id : str, optional
+            Optional entity ID for context
+            
+        Returns:
+        --------
+        List[str]
+            List of property concepts
+        """
+        # If entity_id is provided, get entity information for context
+        entity_context = ""
+        if entity_id:
+            try:
+                params = {
+                    'action': 'wbgetentities',
+                    'ids': entity_id,
+                    'languages': 'en',
+                    'format': 'json'
+                }
+                
+                response = requests.get(self._wikidata_api_url, params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    entity = data.get('entities', {}).get(entity_id, {})
+                    
+                    label = entity.get('labels', {}).get('en', {}).get('value', entity_id)
+                    description = entity.get('descriptions', {}).get('en', {}).get('value', '')
+                    
+                    entity_context = f"Context entity: {label} ({entity_id})"
+                    if description:
+                        entity_context += f"\nDescription: {description}"
+            except Exception as e:
+                self._logger.error(f"Error getting entity context: {e}")
+        
+        # Create the prompt
+        prompt = f"""
+        Extract the properties, relationships, or attributes that would be relevant to answer this question using Wikidata:
+        
+        Question: {question}
+        {entity_context}
+        
+        Return only the property concepts as a comma-separated list. Focus on general property concepts, not specific Wikidata property IDs.
+        Example properties might be: date of birth, spouse, capital, population, etc.
+        """
+        
+        try:
+            # Generate property concepts
+            response = self._model.generate_content(prompt)
+            property_text = response.text.strip()
+            
+            # Parse the comma-separated list
+            properties = [p.strip() for p in property_text.split(",")]
+            return properties
+        except Exception as e:
+            self._logger.error(f"Error extracting property concepts: {e}")
+            # Fallback: extract possible property terms
+            words = question.lower().split()
+            possible_properties = ["date", "time", "location", "place", "name", "creator", "author", 
+                                  "birth", "death", "founded", "created", "located", "population", 
+                                  "height", "width", "size", "capital", "country", "member"]
+            
+            return [word for word in words if word in possible_properties]
+    
+    def _search_wikidata_properties(self, property_concept: str) -> List[Dict[str, Any]]:
+        """
+        Search for Wikidata properties matching a concept.
+        
+        Parameters:
+        -----------
+        property_concept : str
+            The property concept to search for
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            List of matching properties
+        """
+        params = {
+            'action': 'wbsearchentities',
+            'search': property_concept,
+            'language': 'en',
+            'format': 'json',
+            'type': 'property',
+            'limit': 5  # Get top 5 for each concept
+        }
+        
+        try:
+            # Make API request
+            response = requests.get(self._wikidata_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract property information
+            properties = []
+            for prop in data.get('search', []):
+                properties.append({
+                    'property_id': prop.get('id', ''),
+                    'label': prop.get('label', ''),
+                    'description': prop.get('description', ''),
+                    'search_term': property_concept,
+                    'direction': 'unknown'  # No direction since we're not traversing the graph
+                })
+            
+            return properties
+            
+        except Exception as e:
+            self._logger.error(f"Error in Wikidata property search: {e}")
+            return []
+    
+    def _rank_properties_with_llm(self, question: str, properties: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+        """
+        Rank properties by their relevance to the question using LLM.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        properties : List[Dict[str, Any]]
+            List of properties to rank
+        limit : int
+            Maximum number of properties to return
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Ranked properties
+        """
+        if not properties:
+            return []
+        
+        # Remove duplicates by property_id
+        unique_properties = {}
+        for prop in properties:
+            prop_id = prop.get('property_id')
+            if prop_id and prop_id not in unique_properties:
+                unique_properties[prop_id] = prop
+        
+        properties = list(unique_properties.values())
+        
+        # If we have fewer properties than limit, return all
+        if len(properties) <= limit:
+            return properties
+        
+        # Format properties for LLM prompt
+        property_descriptions = []
+        for i, prop in enumerate(properties):
+            description = (
+                f"Property {i+1}: {prop['label']} (ID: {prop['property_id']})\n"
+                f"Description: {prop.get('description', 'N/A')}\n"
+                f"Search term: {prop.get('search_term', 'N/A')}\n"
+            )
+            property_descriptions.append(description)
+        
+        # Create the prompt
+        prompt = f"""
+        Rank these Wikidata properties based on their relevance to answering the following question:
+        
+        Question: {question}
+        
+        Property candidates:
+        {''.join(property_descriptions)}
+        
+        Return a ranking as a comma-separated list of property numbers, from most relevant to least relevant.
+        For example: "2, 5, 1, 3, 4" means Property 2 is most relevant, followed by Property 5, etc.
+        Only include the properties that are actually relevant to answering the question.
+        """
+        
+        try:
+            # Generate ranking
+            response = self._model.generate_content(prompt)
+            ranking_text = response.text.strip()
+            
+            # Parse the ranking
+            ranking = []
+            for item in ranking_text.replace(" ", "").split(","):
+                try:
+                    index = int(item) - 1  # Convert to zero-based index
+                    if 0 <= index < len(properties):
+                        ranking.append(index)
+                except ValueError:
+                    continue
+            
+            # If ranking failed, return properties in original order
+            if not ranking:
+                return properties[:limit]
+            
+            # Reorder properties based on ranking
+            ranked_properties = []
+            for index in ranking:
+                if index < len(properties):
+                    ranked_properties.append(properties[index])
+            
+            # Add any remaining properties not in the ranking
+            for i, prop in enumerate(properties):
+                if i not in ranking and len(ranked_properties) < limit:
+                    ranked_properties.append(prop)
+            
+            return ranked_properties[:limit]
+            
+        except Exception as e:
+            self._logger.error(f"Error in LLM ranking: {e}")
+            return properties[:limit]
+
+================================================================================
+FILE: tools/entity_linking.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional, Tuple
+from tools.base import WikidataBaseTool
+from tools.entity_ontology_retrieval import EntityOntologyRetrievalTool, EntityOntologyRetrievalInput
+import google.generativeai as genai
+from sentence_transformers import SentenceTransformer, util
+import random
+from utils.sparql_utils import QueryEngine
+from config import GEMINI_API_KEY, SENTENCE_TRANSFORMER_MODEL
+
+
+class EntityLinkingInput(BaseModel):
+    question: str = Field(..., description="The user's question")
+    context: Optional[str] = Field(None, description="Optional additional context")
+
+
+class EntityLinkingTool(WikidataBaseTool):
+    name: ClassVar[str] = "entity_linking_tool"
+    description: ClassVar[str] = (
+        "Link mentions in the user's question to Wikidata entities and traverse the graph."
+    )
+
+    _entity_retrieval_tool = PrivateAttr()
+    _model = PrivateAttr()
+    _query_engine = PrivateAttr()
+    _sentence_model = PrivateAttr()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Initialize dependent tools
+        self._entity_retrieval_tool = EntityOntologyRetrievalTool()
+        self._query_engine = QueryEngine()
+
+        # Initialize Gemini
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+        
+        # Initialize sentence transformer for path ranking
+        self._sentence_model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
+
+    def _run(self, input_data: EntityLinkingInput) -> Dict[str, Any]:
+        """
+        Link entities in the question to Wikidata entities and traverse the graph.
+
+        Parameters:
+        -----------
+        input_data : EntityLinkingInput
+            The user's question and optional context
+
+        Returns:
+        --------
+        Dict[str, Any]
+            The linked entities, paths, and structured representations
+        """
+        question = input_data.question
+
+        # 1. Get top entities using the combined entity-ontology retrieval
+        retrieval_input = EntityOntologyRetrievalInput(query=question, limit=5)
+        entity_result = self._entity_retrieval_tool._run(retrieval_input)
+        
+        if not entity_result.get("entities"):
+            return {
+                "linked_entities": [],
+                "paths": [],
+                "original_question": question,
+                "error": "No entities found in the question"
+            }
+        
+        # 2. Extract the top 3 entities to use as starting points
+        top_entities = entity_result["entities"][:3]
+        
+        # 3. Traverse the graph starting from these entities
+        all_paths = []
+        for entity in top_entities:
+            # Get paths at different distances
+            paths_dist_1 = self._find_paths(question, entity, distance=1)
+            paths_dist_2 = self._find_paths(question, entity, distance=2)
+            paths_dist_3 = self._find_paths(question, entity, distance=3)
+            
+            # Add all paths to the list
+            all_paths.extend(paths_dist_1)
+            all_paths.extend(paths_dist_2)
+            all_paths.extend(paths_dist_3)
+        
+        # 4. Rank all paths by relevance to the question
+        ranked_paths = self._rank_paths(question, all_paths)
+        
+        result = {
+            "linked_entities": [
+                {
+                    "entity_id": e["entity_id"],
+                    "label": e["label"],
+                    "description": e.get("description", ""),
+                    "score": e["score"],
+                    "ontology": e.get("ontology", {})
+                }
+                for e in top_entities
+            ],
+            "paths": ranked_paths[:9],  # Top 9 paths (3 from each distance)
+            "original_question": question
+        }
+
+        self._log_input_output(input_data, result)
+        return result
+
+    def _find_paths(self, question: str, entity: Dict[str, Any], distance: int) -> List[Dict[str, Any]]:
+        """
+        Find paths in the graph starting from the given entity.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        entity : Dict[str, Any]
+            The starting entity
+        distance : int
+            The path distance to explore
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Paths found in the graph
+        """
+        entity_id = entity["entity_id"]
+        
+        if distance == 1:
+            # Direct properties (1-hop)
+            return self._find_direct_paths(entity_id, question)
+        elif distance == 2:
+            # 2-hop paths
+            return self._find_two_hop_paths(entity_id, question)
+        elif distance == 3:
+            # 3-hop paths
+            return self._find_three_hop_paths(entity_id, question)
+        else:
+            return []
+    
+    def _find_direct_paths(self, entity_id: str, question: str) -> List[Dict[str, Any]]:
+        """Find direct (1-hop) paths from the entity."""
+        # Query for outgoing properties (entity as subject)
+        outgoing_query = f"""
+        SELECT ?prop ?propLabel ?object ?objectLabel ?objectDescription
+        WHERE {{
+          wd:{entity_id} ?p ?object .
+          ?prop wikibase:directClaim ?p .
+          OPTIONAL {{ ?object schema:description ?objectDescription . FILTER(LANG(?objectDescription) = "en") }}
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 50
+        """
+        
+        # Query for incoming properties (entity as object)
+        incoming_query = f"""
+        SELECT ?prop ?propLabel ?subject ?subjectLabel ?subjectDescription
+        WHERE {{
+          ?subject ?p wd:{entity_id} .
+          ?prop wikibase:directClaim ?p .
+          OPTIONAL {{ ?subject schema:description ?subjectDescription . FILTER(LANG(?subjectDescription) = "en") }}
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 50
+        """
+        
+        # Execute queries
+        outgoing_results = self._query_engine.run_query(outgoing_query)
+        incoming_results = self._query_engine.run_query(incoming_query)
+        
+        paths = []
+        
+        # Process outgoing paths
+        if not isinstance(outgoing_results, dict) and not outgoing_results.empty:
+            for _, row in outgoing_results.iterrows():
+                prop_id = row.get("prop", "").split("/")[-1]
+                object_id = row.get("object", "").split("/")[-1]
+                
+                # Only include paths to entities (Q-ids)
+                if object_id.startswith("Q"):
+                    paths.append({
+                        "distance": 1,
+                        "direction": "outgoing",
+                        "start_entity": entity_id,
+                        "path": [
+                            {
+                                "property_id": prop_id,
+                                "property_label": row.get("propLabel", "")
+                            }
+                        ],
+                        "end_entity": {
+                            "entity_id": object_id,
+                            "label": row.get("objectLabel", ""),
+                            "description": row.get("objectDescription", "")
+                        }
+                    })
+        
+        # Process incoming paths
+        if not isinstance(incoming_results, dict) and not incoming_results.empty:
+            for _, row in incoming_results.iterrows():
+                prop_id = row.get("prop", "").split("/")[-1]
+                subject_id = row.get("subject", "").split("/")[-1]
+                
+                # Only include paths from entities (Q-ids)
+                if subject_id.startswith("Q"):
+                    paths.append({
+                        "distance": 1,
+                        "direction": "incoming",
+                        "start_entity": entity_id,
+                        "path": [
+                            {
+                                "property_id": prop_id,
+                                "property_label": row.get("propLabel", "")
+                            }
+                        ],
+                        "end_entity": {
+                            "entity_id": subject_id,
+                            "label": row.get("subjectLabel", ""),
+                            "description": row.get("subjectDescription", "")
+                        }
+                    })
+        
+        # If we have too many paths, randomly sample before ranking
+        if len(paths) > 20:
+            paths = random.sample(paths, 20)
+        
+        # Rank paths by relevance to the question and return top 3
+        return self._rank_paths(question, paths)[:3]
+    
+    def _find_two_hop_paths(self, entity_id: str, question: str) -> List[Dict[str, Any]]:
+        """Find 2-hop paths from the entity."""
+        # Query for 2-hop outgoing paths
+        outgoing_query = f"""
+        SELECT 
+          ?prop1 ?prop1Label 
+          ?mid ?midLabel ?midDescription
+          ?prop2 ?prop2Label
+          ?end ?endLabel ?endDescription
+        WHERE {{
+          wd:{entity_id} ?p1 ?mid .
+          ?prop1 wikibase:directClaim ?p1 .
+          ?mid ?p2 ?end .
+          ?prop2 wikibase:directClaim ?p2 .
+          FILTER(isIRI(?mid) && STRSTARTS(STR(?mid), "http://www.wikidata.org/entity/Q"))
+          FILTER(isIRI(?end) && STRSTARTS(STR(?end), "http://www.wikidata.org/entity/Q"))
+          OPTIONAL {{ ?mid schema:description ?midDescription . FILTER(LANG(?midDescription) = "en") }}
+          OPTIONAL {{ ?end schema:description ?endDescription . FILTER(LANG(?endDescription) = "en") }}
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 50
+        """
+        
+        # Execute query
+        results = self._query_engine.run_query(outgoing_query)
+        
+        paths = []
+        
+        # Process results
+        if not isinstance(results, dict) and not results.empty:
+            for _, row in results.iterrows():
+                prop1_id = row.get("prop1", "").split("/")[-1]
+                mid_id = row.get("mid", "").split("/")[-1]
+                prop2_id = row.get("prop2", "").split("/")[-1]
+                end_id = row.get("end", "").split("/")[-1]
+                
+                paths.append({
+                    "distance": 2,
+                    "start_entity": entity_id,
+                    "path": [
+                        {
+                            "property_id": prop1_id,
+                            "property_label": row.get("prop1Label", "")
+                        },
+                        {
+                            "intermediate_entity": {
+                                "entity_id": mid_id,
+                                "label": row.get("midLabel", ""),
+                                "description": row.get("midDescription", "")
+                            }
+                        },
+                        {
+                            "property_id": prop2_id,
+                            "property_label": row.get("prop2Label", "")
+                        }
+                    ],
+                    "end_entity": {
+                        "entity_id": end_id,
+                        "label": row.get("endLabel", ""),
+                        "description": row.get("endDescription", "")
+                    }
+                })
+        
+        # If we have too many paths, randomly sample before ranking
+        if len(paths) > 20:
+            paths = random.sample(paths, 20)
+        
+        # Rank paths by relevance to the question and return top 3
+        return self._rank_paths(question, paths)[:3]
+    
+    def _find_three_hop_paths(self, entity_id: str, question: str) -> List[Dict[str, Any]]:
+        """Find 3-hop paths from the entity."""
+        # For 3-hop paths, we'll use a simplified query to avoid complexity
+        # This is a simplified version that may not find all possible 3-hop paths
+        query = f"""
+        SELECT 
+          ?prop1 ?prop1Label 
+          ?mid1 ?mid1Label ?mid1Description
+          ?prop2 ?prop2Label
+          ?mid2 ?mid2Label ?mid2Description
+          ?prop3 ?prop3Label
+          ?end ?endLabel ?endDescription
+        WHERE {{
+          wd:{entity_id} ?p1 ?mid1 .
+          ?prop1 wikibase:directClaim ?p1 .
+          ?mid1 ?p2 ?mid2 .
+          ?prop2 wikibase:directClaim ?p2 .
+          ?mid2 ?p3 ?end .
+          ?prop3 wikibase:directClaim ?p3 .
+          
+          FILTER(isIRI(?mid1) && STRSTARTS(STR(?mid1), "http://www.wikidata.org/entity/Q"))
+          FILTER(isIRI(?mid2) && STRSTARTS(STR(?mid2), "http://www.wikidata.org/entity/Q"))
+          FILTER(isIRI(?end) && STRSTARTS(STR(?end), "http://www.wikidata.org/entity/Q"))
+          OPTIONAL {{ ?mid1 schema:description ?mid1Description . FILTER(LANG(?mid1Description) = "en") }}
+          OPTIONAL {{ ?mid2 schema:description ?mid2Description . FILTER(LANG(?mid2Description) = "en") }}
+          OPTIONAL {{ ?end schema:description ?endDescription . FILTER(LANG(?endDescription) = "en") }}
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 25
+        """
+        
+        # Execute query
+        results = self._query_engine.run_query(query)
+        
+        paths = []
+        
+        # Process results
+        if not isinstance(results, dict) and not results.empty:
+            for _, row in results.iterrows():
+                prop1_id = row.get("prop1", "").split("/")[-1]
+                mid1_id = row.get("mid1", "").split("/")[-1]
+                prop2_id = row.get("prop2", "").split("/")[-1]
+                mid2_id = row.get("mid2", "").split("/")[-1]
+                prop3_id = row.get("prop3", "").split("/")[-1]
+                end_id = row.get("end", "").split("/")[-1]
+                
+                paths.append({
+                    "distance": 3,
+                    "start_entity": entity_id,
+                    "path": [
+                        {
+                            "property_id": prop1_id,
+                            "property_label": row.get("prop1Label", "")
+                        },
+                        {
+                            "intermediate_entity": {
+                                "entity_id": mid1_id,
+                                "label": row.get("mid1Label", ""),
+                                "description": row.get("mid1Description", "")
+                            }
+                        },
+                        {
+                            "property_id": prop2_id,
+                            "property_label": row.get("prop2Label", "")
+                        },
+                        {
+                            "intermediate_entity": {
+                                "entity_id": mid2_id,
+                                "label": row.get("mid2Label", ""),
+                                "description": row.get("mid2Description", "")
+                            }
+                        },
+                        {
+                            "property_id": prop3_id,
+                            "property_label": row.get("prop3Label", "")
+                        }
+                    ],
+                    "end_entity": {
+                        "entity_id": end_id,
+                        "label": row.get("endLabel", ""),
+                        "description": row.get("endDescription", "")
+                    }
+                })
+        
+        # If we have too many paths, randomly sample before ranking
+        if len(paths) > 20:
+            paths = random.sample(paths, 20)
+        
+        # Rank paths by relevance to the question and return top 3
+        return self._rank_paths(question, paths)[:3]
+    
+    def _rank_paths(self, question: str, paths: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Rank paths by their relevance to the question.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        paths : List[Dict[str, Any]]
+            List of paths to rank
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Ranked paths
+        """
+        if not paths:
+            return []
+        
+        # Create path descriptions for comparison
+        path_texts = []
+        for path in paths:
+            # Construct a text representation of the path
+            if path["distance"] == 1:
+                text = f"{path.get('start_entity', '')} → {path['path'][0]['property_label']} → {path['end_entity']['label']}"
+                if path['end_entity'].get('description'):
+                    text += f" ({path['end_entity']['description']})"
+            elif path["distance"] == 2:
+                intermediate = path["path"][1]["intermediate_entity"]
+                text = (f"{path.get('start_entity', '')} → {path['path'][0]['property_label']} → "
+                       f"{intermediate['label']} → {path['path'][2]['property_label']} → {path['end_entity']['label']}")
+            elif path["distance"] == 3:
+                inter1 = path["path"][1]["intermediate_entity"]
+                inter2 = path["path"][3]["intermediate_entity"]
+                text = (f"{path.get('start_entity', '')} → {path['path'][0]['property_label']} → "
+                       f"{inter1['label']} → {path['path'][2]['property_label']} → "
+                       f"{inter2['label']} → {path['path'][4]['property_label']} → {path['end_entity']['label']}")
+            
+            path_texts.append(text)
+        
+        # Calculate similarities
+        question_embedding = self._sentence_model.encode(question, convert_to_tensor=True)
+        path_embeddings = self._sentence_model.encode(path_texts, convert_to_tensor=True)
+        similarities = util.cos_sim(question_embedding, path_embeddings)[0]
+        
+        # Add relevance scores to paths
+        for i, path in enumerate(paths):
+            path['relevance_score'] = float(similarities[i])
+        
+        # Sort by relevance score
+        ranked_paths = sorted(paths, key=lambda x: x['relevance_score'], reverse=True)
+        
+        return ranked_paths
+
+================================================================================
+FILE: tools/entity_ontology_retrieval.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
+import requests
+from sentence_transformers import SentenceTransformer, util
+import torch
+from utils.sparql_utils import QueryEngine
+from config import SENTENCE_TRANSFORMER_MODEL, MAX_ENTITY_CANDIDATES
+from tools.base import WikidataBaseTool
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+class EntityOntologyRetrievalInput(BaseModel):
+    query: str = Field(..., description="The user's question")
+    limit: int = Field(MAX_ENTITY_CANDIDATES, description="Maximum number of entities to retrieve")
+
+class EntityOntologyRetrievalTool(WikidataBaseTool):
+    name: ClassVar[str] = "entity_ontology_retrieval_tool"
+    description: ClassVar[str] = "Retrieve candidate entities with their ontological context from Wikidata."
+    
+    _wikidata_api_url = PrivateAttr()
+    _model = PrivateAttr()
+    _query_engine = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        self._query_engine = QueryEngine()
+        
+        # Initialize Gemini for entity extraction and ranking
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+        
+    def _run(self, input_data: EntityOntologyRetrievalInput) -> Dict[str, Any]:
+        """
+        Retrieve entities with ontological context for a given query.
+        
+        Parameters:
+        -----------
+        input_data : EntityOntologyRetrievalInput
+            The query to search for and limit of results
+            
+        Returns:
+        --------
+        Dict[str, Any]
+            List of entity candidates with ontology information
+        """
+        query = input_data.query
+        limit = input_data.limit
+        
+        # Step 1: Extract possible entities from user's question using LLM
+        possible_entities = self._extract_entities(query)
+        self._logger.info(f"Extracted entities: {possible_entities}")
+        
+        if not possible_entities:
+            return {"entities": [], "query": query, "error": "No entities identified"}
+        
+        # Step 2: Retrieve entity candidates from Wikidata for each possible entity
+        all_candidates = []
+        for entity_name in possible_entities:
+            candidates = self._search_wikidata_entities(entity_name)
+            all_candidates.extend(candidates)
+        
+        # Step 3: Enrich top candidates with ontology information
+        enriched_candidates = []
+        for candidate in all_candidates[:10]:  # Limit to top 10 for efficiency
+            ontology = self._get_entity_ontology(candidate['entity_id'])
+            candidate['ontology'] = ontology
+            enriched_candidates.append(candidate)
+        
+        # Step 4: Rerank using LLM to get final top 5
+        top_entities = self._rerank_with_llm(query, enriched_candidates, limit)
+        
+        result = {
+            "entities": top_entities[:limit],
+            "query": query
+        }
+        
+        self._log_input_output(input_data, result)
+        return result
+            
+    def _extract_entities(self, query: str) -> List[str]:
+        """
+        Extract potential entity mentions from the query using LLM.
+        
+        Parameters:
+        -----------
+        query : str
+            The user's question
+            
+        Returns:
+        --------
+        List[str]
+            List of potential entity names
+        """
+        prompt = f"""
+        Extract the main entities from this question that I should search for in Wikidata:
+        
+        Question: {query}
+        
+        Return only the entity names as a comma-separated list, with no additional text.
+        """
+        
+        try:
+            response = self._model.generate_content(prompt)
+            entity_text = response.text.strip()
+            entities = [e.strip() for e in entity_text.split(",")]
+            return entities
+        except Exception as e:
+            self._logger.error(f"Error extracting entities: {e}")
+            # Fallback: simple extraction based on capitalized words
+            words = query.split()
+            candidates = [w for w in words if w[0].isupper() and len(w) > 1]
+            return candidates or [query]  # Return the whole query if no candidates
+    
+    def _search_wikidata_entities(self, entity_name: str) -> List[Dict[str, Any]]:
+        """
+        Search for entities in Wikidata by name.
+        
+        Parameters:
+        -----------
+        entity_name : str
+            The entity name to search for
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            List of entity candidates
+        """
+        params = {
+            'action': 'wbsearchentities',
+            'search': entity_name,
+            'language': 'en',
+            'format': 'json',
+            'limit': 5  # Get top 5 for each entity mention
+        }
+        
+        try:
+            # Make API request
+            response = requests.get(self._wikidata_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract entity information
+            candidates = []
+            for entity in data.get('search', []):
+                candidates.append({
+                    'entity_id': entity.get('id', ''),
+                    'label': entity.get('label', ''),
+                    'description': entity.get('description', ''),
+                    'search_term': entity_name
+                })
+            
+            return candidates
+            
+        except Exception as e:
+            self._logger.error(f"Error in Wikidata search: {e}")
+            return []
+    
+    def _get_entity_ontology(self, entity_id: str) -> Dict[str, Any]:
+        """Get ontological information for an entity."""
+        ontology = {
+            "types": self._get_entity_types(entity_id),
+            "superclasses": self._get_entity_superclasses(entity_id),
+            "subclasses": self._get_entity_subclasses(entity_id),
+        }
+        
+        # Add derived field for convenience
+        ontology["is_class"] = len(ontology["subclasses"]) > 0
+        
+        return ontology
+    
+    def _get_entity_types(self, entity_id: str) -> List[Dict[str, Any]]:
+        """Get the types/classes of the entity."""
+        query = f"""
+        SELECT ?type ?typeLabel ?typeDescription
+        WHERE {{
+          wd:{entity_id} wdt:P31 ?type .
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 10
+        """
+        
+        results = self._query_engine.run_query(query)
+        types = []
+        
+        if not isinstance(results, dict) and not results.empty:
+            for _, row in results.iterrows():
+                type_id = row.get("type", "").split("/")[-1]
+                types.append({
+                    "type_id": type_id,
+                    "label": row.get("typeLabel", ""),
+                    "description": row.get("typeDescription", "")
+                })
+                
+        return types
+    
+    def _get_entity_superclasses(self, entity_id: str) -> List[Dict[str, Any]]:
+        """Get the superclasses of the entity (if it's a class)."""
+        query = f"""
+        SELECT ?superclass ?superclassLabel ?superclassDescription
+        WHERE {{
+          wd:{entity_id} wdt:P279 ?superclass .
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 10
+        """
+        
+        results = self._query_engine.run_query(query)
+        superclasses = []
+        
+        if not isinstance(results, dict) and not results.empty:
+            for _, row in results.iterrows():
+                superclass_id = row.get("superclass", "").split("/")[-1]
+                superclasses.append({
+                    "superclass_id": superclass_id,
+                    "label": row.get("superclassLabel", ""),
+                    "description": row.get("superclassDescription", "")
+                })
+                
+        return superclasses
+    
+    def _get_entity_subclasses(self, entity_id: str) -> List[Dict[str, Any]]:
+        """Get the subclasses of the entity (if it's a class)."""
+        query = f"""
+        SELECT ?subclass ?subclassLabel ?subclassDescription
+        WHERE {{
+          ?subclass wdt:P279 wd:{entity_id} .
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+        }}
+        LIMIT 10
+        """
+        
+        results = self._query_engine.run_query(query)
+        subclasses = []
+        
+        if not isinstance(results, dict) and not results.empty:
+            for _, row in results.iterrows():
+                subclass_id = row.get("subclass", "").split("/")[-1]
+                subclasses.append({
+                    "subclass_id": subclass_id,
+                    "label": row.get("subclassLabel", ""),
+                    "description": row.get("subclassDescription", "")
+                })
+                
+        return subclasses
+    
+    def _rerank_with_llm(self, question: str, candidates: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+        """
+        Rerank entity candidates using LLM based on relevance to the question.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        candidates : List[Dict[str, Any]]
+            List of entity candidates with ontology information
+        limit : int
+            Maximum number of entities to return
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Reranked entities
+        """
+        if not candidates:
+            return []
+        
+        # Format candidate entities for LLM prompt
+        candidate_descriptions = []
+        for i, candidate in enumerate(candidates):
+            # Format the ontology information
+            types = ", ".join([t.get("label", "") for t in candidate.get("ontology", {}).get("types", [])])
+            
+            description = (
+                f"Entity {i+1}: {candidate['label']}\n"
+                f"ID: {candidate['entity_id']}\n"
+                f"Description: {candidate.get('description', 'N/A')}\n"
+                f"Types: {types or 'N/A'}\n"
+            )
+            candidate_descriptions.append(description)
+        
+        # Create the prompt
+        prompt = f"""
+        Rank these entity candidates based on their relevance to the following question:
+        
+        Question: {question}
+        
+        Entity candidates:
+        {''.join(candidate_descriptions)}
+        
+        Return a ranking as a comma-separated list of entity numbers, from most relevant to least relevant.
+        For example: "2, 5, 1, 3, 4" means Entity 2 is most relevant, followed by Entity 5, etc.
+        """
+        
+        try:
+            # Generate ranking
+            response = self._model.generate_content(prompt)
+            ranking_text = response.text.strip()
+            
+            # Parse the ranking
+            ranking = []
+            for item in ranking_text.replace(" ", "").split(","):
+                try:
+                    index = int(item) - 1  # Convert to zero-based index
+                    if 0 <= index < len(candidates):
+                        ranking.append(index)
+                except ValueError:
+                    continue
+            
+            # If ranking failed, return candidates in original order
+            if not ranking:
+                return candidates[:limit]
+            
+            # Reorder candidates based on ranking
+            ranked_candidates = []
+            for index in ranking:
+                if index < len(candidates):
+                    ranked_candidates.append(candidates[index])
+            
+            # Add any remaining candidates not in the ranking
+            for i, candidate in enumerate(candidates):
+                if i not in ranking and len(ranked_candidates) < limit:
+                    ranked_candidates.append(candidate)
+            
+            return ranked_candidates[:limit]
+            
+        except Exception as e:
+            self._logger.error(f"Error in LLM ranking: {e}")
+            return candidates[:limit]
+
+================================================================================
+FILE: tools/base.py
+================================================================================
+
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import Any, Dict, List, Optional, ClassVar, Union, Type
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+class WikidataBaseTool(BaseTool):
+    """Base class for all Wikidata QA tools with common utilities."""
+    
+    # Use ClassVar for class-level fields that are inherited
+    name: ClassVar[str]
+    description: ClassVar[str]
+    
+    # Use PrivateAttr for attributes that shouldn't be validated by Pydantic
+    _logger = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._logger = logging.getLogger(self.__class__.__name__)
+
+    def _log_input_output(self, input_data: Any, output: Any) -> None:
+        """Log tool input and output for debugging."""
+        self._logger.debug(f"Input: {input_data}")
+        self._logger.debug(f"Output: {output}")
+
+================================================================================
+FILE: utils/wikidata_utils.py
+================================================================================
+
+import requests
+import logging
+from typing import Dict, List, Any, Optional, Tuple
+
+logger = logging.getLogger(__name__)
+
+class WikidataUtils:
+    """Utility functions for working with Wikidata."""
+    
+    def __init__(self):
+        self.wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        self.entity_url_prefix = "http://www.wikidata.org/entity/"
+    
+    def get_entity_details(self, entity_id: str) -> Dict[str, Any]:
+        """
+        Get detailed information about a specific entity.
+        
+        Parameters:
+        -----------
+        entity_id : str
+            Wikidata entity ID (Q number)
+            
+        Returns:
+        --------
+        dict
+            Entity details
+        """
+        try:
+            params = {
+                'action': 'wbgetentities',
+                'ids': entity_id,
+                'languages': 'en',
+                'format': 'json'
+            }
+            
+            response = requests.get(self.wikidata_api_url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Error getting entity details: {e}")
+            return {}
+    
+    def extract_entity_id(self, uri: str) -> str:
+        """
+        Extract entity ID from a Wikidata URI.
+        
+        Parameters:
+        -----------
+        uri : str
+            Wikidata URI
+            
+        Returns:
+        --------
+        str
+            Entity ID (Q number or P number)
+        """
+        if self.entity_url_prefix in uri:
+            return uri.split(self.entity_url_prefix)[-1]
+        return uri
+    
+    def format_sparql_prefixes(self) -> str:
+        """
+        Return common SPARQL prefixes for Wikidata queries.
+        
+        Returns:
+        --------
+        str
+            Formatted SPARQL prefixes
+        """
+        return """
+        PREFIX wd: <http://www.wikidata.org/entity/>
+        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+        PREFIX wikibase: <http://wikiba.se/ontology#>
+        PREFIX p: <http://www.wikidata.org/prop/>
+        PREFIX ps: <http://www.wikidata.org/prop/statement/>
+        PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX bd: <http://www.bigdata.com/rdf#>
+        """
+    
+    def prepare_entity_label(self, entity: Dict[str, Any]) -> str:
+        """
+        Format entity information for display.
+        
+        Parameters:
+        -----------
+        entity : Dict[str, Any]
+            Entity information
+            
+        Returns:
+        --------
+        str
+            Formatted entity label with description if available
+        """
+        label = entity.get("label", entity.get("entity_id", "Unknown entity"))
+        description = entity.get("description", "")
+        
+        if description:
+            return f"{label} ({description})"
+        return label
+    
+    def validate_entity_id(self, entity_id: str) -> bool:
+        """
+        Validate if a string is a proper Wikidata entity ID.
+        
+        Parameters:
+        -----------
+        entity_id : str
+            Entity ID to validate
+            
+        Returns:
+        --------
+        bool
+            True if valid, False otherwise
+        """
+        if not entity_id:
+            return False
+        
+        # Q entities (items) or P entities (properties)
+        return (entity_id.startswith('Q') or entity_id.startswith('P')) and entity_id[1:].isdigit()
+    
+    def get_label_and_description(self, entity_id: str) -> Tuple[str, str]:
+        """
+        Get the English label and description for an entity.
+        
+        Parameters:
+        -----------
+        entity_id : str
+            Wikidata entity ID
+            
+        Returns:
+        --------
+        Tuple[str, str]
+            (label, description) for the entity
+        """
+        entity_data = self.get_entity_details(entity_id)
+        
+        label = "Unknown"
+        description = ""
+        
+        if entity_data and "entities" in entity_data and entity_id in entity_data["entities"]:
+            entity = entity_data["entities"][entity_id]
+            
+            if "labels" in entity and "en" in entity["labels"]:
+                label = entity["labels"]["en"]["value"]
+                
+            if "descriptions" in entity and "en" in entity["descriptions"]:
+                description = entity["descriptions"]["en"]["value"]
+                
+        return label, description
+
+================================================================================
+FILE: utils/sparql_utils.py
+================================================================================
+
+import pandas as pd
+from SPARQLWrapper import SPARQLWrapper, JSON
+from config import WIKIDATA_ENDPOINT
+import logging
+
+logger = logging.getLogger(__name__)
+
+class QueryEngine:
+    def __init__(self, endpoint=WIKIDATA_ENDPOINT):
+        """
+        Initialize the QueryEngine with a SPARQL endpoint.
+        
+        Parameters:
+        -----------
+        endpoint : str
+            The SPARQL endpoint URL (default is Wikidata's endpoint)
+        """
+        self.endpoint = endpoint
+        self.sparql = SPARQLWrapper(endpoint)
+        self.sparql.setReturnFormat(JSON)
+        
+    def run_query(self, query):
+        """
+        Execute a SPARQL query and return results as a pandas DataFrame.
+        
+        Parameters:
+        -----------
+        query : str
+            The SPARQL query to execute
+            
+        Returns:
+        --------
+        pandas.DataFrame
+            The query results in a DataFrame format
+        """
+        try:
+            # Set the query and execute it
+            self.sparql.setQuery(query)
+            results = self.sparql.query().convert()
+            
+            # Extract the results
+            bindings = results['results']['bindings']
+            
+            # If no results, return empty DataFrame
+            if not bindings:
+                return pd.DataFrame()
+            
+            # Transform the results into a DataFrame
+            df = pd.json_normalize(bindings)
+            
+            # Clean up column names by removing .value suffix
+            clean_columns = {}
+            for col in df.columns:
+                if col.endswith('.value'):
+                    clean_columns[col] = col[:-6]
+            
+            # Rename columns if needed
+            if clean_columns:
+                df = df.rename(columns=clean_columns)
+                
+            # Keep only value columns
+            value_cols = [col for col in df.columns if not col.endswith('.type') and not col.endswith('.xml:lang')]
+            df = df[value_cols]
+            
+            return df
+        
+        except Exception as e:
+            logger.error(f"Error executing query: {e}")
+            error_message = str(e)
+            return {"error": error_message}
+
+================================================================================
+FILE: utils/evaluation.py
+================================================================================
+
+from typing import Dict, List, Any, Optional
+import re
+import logging
+
+logger = logging.getLogger(__name__)
+
+class EvaluationUtils:
+    """Utilities for evaluating answer quality."""
+    
+    @staticmethod
+    def evaluate_answer_completeness(answer: str, expected_entities: List[str]) -> float:
+        """
+        Evaluate the completeness of an answer based on expected entities.
+        
+        Parameters:
+        -----------
+        answer : str
+            The answer text
+        expected_entities : List[str]
+            List of entity labels expected to be found in the answer
+            
+        Returns:
+        --------
+        float
+            Completeness score between 0.0 and 1.0
+        """
+        if not answer or not expected_entities:
+            return 0.0
+            
+        # Count how many expected entities are mentioned in the answer
+        mentioned_count = sum(1 for entity in expected_entities if entity.lower() in answer.lower())
+        
+        # Calculate completeness score
+        return mentioned_count / len(expected_entities)
+    
+    @staticmethod
+    def evaluate_result_correctness(results: List[Dict[str, Any]], expected_values: Dict[str, Any]) -> float:
+        """
+        Evaluate correctness of query results against expected values.
+        
+        Parameters:
+        -----------
+        results : List[Dict[str, Any]]
+            Query results
+        expected_values : Dict[str, Any]
+            Expected values for specific fields
+            
+        Returns:
+        --------
+        float
+            Correctness score between 0.0 and 1.0
+        """
+        if not results or not expected_values:
+            return 0.0
+            
+        # Count matches for each expected value
+        match_count = 0
+        
+        for field, expected in expected_values.items():
+            for result in results:
+                if field in result and str(result[field]).lower() == str(expected).lower():
+                    match_count += 1
+                    break
+        
+        # Calculate correctness score
+        return match_count / len(expected_values)
+    
+    @staticmethod
+    def evaluate_sparql_quality(query: str) -> float:
+        """
+        Evaluate the quality of a SPARQL query based on best practices.
+        
+        Parameters:
+        -----------
+        query : str
+            SPARQL query
+            
+        Returns:
+        --------
+        float
+            Quality score between 0.0 and 1.0
+        """
+        if not query:
+            return 0.0
+        
+        score = 1.0
+        deductions = []
+        
+        # Check for common issues
+        if "LIMIT" not in query.upper():
+            score -= 0.1
+            deductions.append("No LIMIT clause")
+            
+        if "SERVICE wikibase:label" not in query:
+            score -= 0.2
+            deductions.append("No label service")
+            
+        # Check for proper prefixes
+        prefixes = ["wd:", "wdt:", "wikibase:"]
+        missing_prefixes = [p for p in prefixes if p not in query]
+        if missing_prefixes:
+            score -= 0.1 * len(missing_prefixes)
+            deductions.append(f"Missing prefixes: {', '.join(missing_prefixes)}")
+            
+        # Check for FILTER usage
+        if "FILTER" not in query:
+            score -= 0.05
+            deductions.append("No FILTER clauses")
+            
+        # Check for variable naming
+        if re.search(r'\?[^a-zA-Z0-9_]', query):
+            score -= 0.1
+            deductions.append("Invalid variable names")
+            
+        # Log deductions
+        if deductions:
+            logger.debug(f"SPARQL quality deductions: {', '.join(deductions)}")
+            
+        return max(0.0, score)
+    
+    @staticmethod
+    def evaluate_answer_relevance(question: str, answer: str) -> float:
+        """
+        Simple heuristic for evaluating answer relevance to the question.
+        
+        Parameters:
+        -----------
+        question : str
+            The original question
+        answer : str
+            The provided answer
+            
+        Returns:
+        --------
+        float
+            Relevance score between 0.0 and 1.0
+        """
+        if not question or not answer:
+            return 0.0
+        
+        # Extract keywords from the question (simple approach)
+        question_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', question.lower()))
+        answer_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', answer.lower()))
+        
+        # Remove common stop words
+        stop_words = {"the", "and", "that", "what", "who", "where", "when", "how", "which", "this", "with"}
+        question_keywords = question_words - stop_words
+        
+        if not question_keywords:
+            return 0.5  # Default value if no meaningful keywords found
+        
+        # Count keyword matches
+        matches = question_keywords.intersection(answer_words)
+        match_ratio = len(matches) / len(question_keywords)
+        
+        # Adjust score - even with no matches, give a minimum score of 0.3
+        return 0.3 + (0.7 * match_ratio)
+
+================================================================================
+FILE: utils/__init__.py
+================================================================================
+
+
+
