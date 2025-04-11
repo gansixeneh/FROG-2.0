@@ -1,7 +1,7 @@
 # tools/ontology_retrieval.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
 from utils.sparql_utils import QueryEngine
 from tools.base import WikidataBaseTool
 
@@ -9,12 +9,14 @@ class OntologyRetrievalInput(BaseModel):
     entity_id: str = Field(..., description="The Wikidata entity ID (Q number)")
 
 class OntologyRetrievalTool(WikidataBaseTool):
-    name: str = "ontology_retrieval_tool"
-    description: str = "Retrieve class/type and hierarchy information about Wikidata entities."
+    name: ClassVar[str] = "ontology_retrieval_tool"
+    description: ClassVar[str] = "Retrieve class/type and hierarchy information about Wikidata entities."
+    
+    _query_engine = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.query_engine = QueryEngine()
+        self._query_engine = QueryEngine()
     
     def _run(self, input_data: OntologyRetrievalInput) -> Dict[str, Any]:
         """
@@ -62,7 +64,7 @@ class OntologyRetrievalTool(WikidataBaseTool):
         }}
         """
         
-        results = self.query_engine.run_query(query)
+        results = self._query_engine.run_query(query)
         types = []
         
         if not isinstance(results, dict) and not results.empty:
@@ -86,7 +88,7 @@ class OntologyRetrievalTool(WikidataBaseTool):
         }}
         """
         
-        results = self.query_engine.run_query(query)
+        results = self._query_engine.run_query(query)
         superclasses = []
         
         if not isinstance(results, dict) and not results.empty:
@@ -111,7 +113,7 @@ class OntologyRetrievalTool(WikidataBaseTool):
         LIMIT 100
         """
         
-        results = self.query_engine.run_query(query)
+        results = self._query_engine.run_query(query)
         subclasses = []
         
         if not isinstance(results, dict) and not results.empty:

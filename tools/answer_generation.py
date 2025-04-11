@@ -1,7 +1,7 @@
 # tools/answer_generation.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
 import google.generativeai as genai
 from config import GEMINI_API_KEY
 from tools.base import WikidataBaseTool
@@ -13,14 +13,16 @@ class AnswerGenerationInput(BaseModel):
     entities: Optional[List[Dict[str, Any]]] = Field(None, description="The linked entities (optional)")
 
 class AnswerGenerationTool(WikidataBaseTool):
-    name: str = "answer_generation_tool"
-    description: str = "Convert the raw SPARQL query result into a natural language answer."
+    name: ClassVar[str] = "answer_generation_tool"
+    description: ClassVar[str] = "Convert the raw SPARQL query result into a natural language answer."
+    
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+        self._model = genai.GenerativeModel("gemini-2.0-pro")
     
     def _run(self, input_data: AnswerGenerationInput) -> Dict[str, Any]:
         """
@@ -63,7 +65,7 @@ class AnswerGenerationTool(WikidataBaseTool):
         
         try:
             # Generate the answer
-            response = self.model.generate_content(prompt)
+            response = self._model.generate_content(prompt)
             answer = response.text.strip()
             
             result = {
@@ -77,7 +79,7 @@ class AnswerGenerationTool(WikidataBaseTool):
             return result
             
         except Exception as e:
-            self.logger.error(f"Error generating answer: {e}")
+            self._logger.error(f"Error generating answer: {e}")
             return {
                 "answer": f"I encountered an error while generating your answer: {str(e)}",
                 "original_question": question,
@@ -122,7 +124,7 @@ class AnswerGenerationTool(WikidataBaseTool):
         """
         
         try:
-            response = self.model.generate_content(prompt)
+            response = self._model.generate_content(prompt)
             answer = response.text.strip()
             
             return {
@@ -133,7 +135,7 @@ class AnswerGenerationTool(WikidataBaseTool):
             }
             
         except Exception as e:
-            self.logger.error(f"Error generating no-results answer: {e}")
+            self._logger.error(f"Error generating no-results answer: {e}")
             return {
                 "answer": "I couldn't find any information in Wikidata to answer your question.",
                 "original_question": question,

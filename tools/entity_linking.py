@@ -1,7 +1,7 @@
 # tools/entity_linking.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
 from tools.base import WikidataBaseTool
 from tools.entity_retrieval import EntityRetrievalTool, EntityRetrievalInput
 import google.generativeai as genai
@@ -12,17 +12,20 @@ class EntityLinkingInput(BaseModel):
     context: Optional[str] = Field(None, description="Optional additional context")
 
 class EntityLinkingTool(WikidataBaseTool):
-    name: str = "entity_linking_tool"
-    description: str = "Link mentions in the user's question to Wikidata entities."
+    name: ClassVar[str] = "entity_linking_tool"
+    description: ClassVar[str] = "Link mentions in the user's question to Wikidata entities."
+    
+    _entity_retrieval_tool = PrivateAttr()
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize dependent tools
-        self.entity_retrieval_tool = EntityRetrievalTool()
+        self._entity_retrieval_tool = EntityRetrievalTool()
         
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-pro")
+        self._model = genai.GenerativeModel("gemini-2.0-pro")
     
     def _run(self, input_data: EntityLinkingInput) -> Dict[str, Any]:
         """
@@ -48,7 +51,7 @@ class EntityLinkingTool(WikidataBaseTool):
         for mention in entity_mentions:
             # Use the entity retrieval tool
             retrieval_input = EntityRetrievalInput(query=mention, limit=MAX_ENTITY_CANDIDATES)
-            candidates = self.entity_retrieval_tool._run(retrieval_input)
+            candidates = self._entity_retrieval_tool._run(retrieval_input)
             
             if candidates:
                 # Take the top candidate
@@ -92,12 +95,12 @@ class EntityLinkingTool(WikidataBaseTool):
         """
         
         try:
-            response = self.model.generate_content(prompt)
+            response = self._model.generate_content(prompt)
             entity_text = response.text.strip()
             entities = [e.strip() for e in entity_text.split(",")]
             return entities
         except Exception as e:
-            self.logger.error(f"Error extracting entity mentions: {e}")
+            self._logger.error(f"Error extracting entity mentions: {e}")
             # Fallback: simple extraction based on capitalized words
             words = question.split()
             candidates = [w for w in words if w[0].isupper() and len(w) > 1]

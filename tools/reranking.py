@@ -1,7 +1,7 @@
 # tools/reranking.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
 from tools.base import WikidataBaseTool
 from sentence_transformers import SentenceTransformer, util
 from config import SENTENCE_TRANSFORMER_MODEL
@@ -11,12 +11,14 @@ class RerankingInput(BaseModel):
     queries: List[Dict[str, Any]] = Field(..., description="List of candidate queries with their results")
 
 class RerankingTool(WikidataBaseTool):
-    name: str = "reranking_tool"
-    description: str = "Score multiple candidate SPARQL queries to pick the best one."
+    name: ClassVar[str] = "reranking_tool"
+    description: ClassVar[str] = "Score multiple candidate SPARQL queries to pick the best one."
+    
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
+        self._model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
     
     def _run(self, input_data: RerankingInput) -> Dict[str, Any]:
         """
@@ -90,12 +92,12 @@ class RerankingTool(WikidataBaseTool):
             cleaned_query = ' '.join(line.strip() for line in query.split('\n'))
             
             # Calculate embeddings and similarity
-            embeddings = self.model.encode([question, cleaned_query], convert_to_tensor=True)
+            embeddings = self._model.encode([question, cleaned_query], convert_to_tensor=True)
             similarity = float(util.cos_sim(embeddings[0], embeddings[1])[0][0])
             
             return similarity
         except Exception as e:
-            self.logger.error(f"Error calculating query relevance: {e}")
+            self._logger.error(f"Error calculating query relevance: {e}")
             return 0.5  # Default middle score
     
     def _calculate_result_quality(self, results: List[Dict[str, Any]]) -> float:

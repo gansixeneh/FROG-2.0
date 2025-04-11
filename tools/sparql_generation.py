@@ -1,7 +1,7 @@
 # tools/sparql_generation.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any, Optional
 import google.generativeai as genai
 from config import GEMINI_API_KEY
 from tools.base import WikidataBaseTool
@@ -13,14 +13,16 @@ class SPARQLGenerationInput(BaseModel):
     ontology: Optional[Dict[str, Any]] = Field(None, description="Optional ontology information")
 
 class SPARQLGenerationTool(WikidataBaseTool):
-    name: str = "sparql_generation_tool"
-    description: str = "Generate SPARQL queries to answer the user question."
+    name: ClassVar[str] = "sparql_generation_tool"
+    description: ClassVar[str] = "Generate SPARQL queries to answer the user question."
+    
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-pro")
+        self._model = genai.GenerativeModel("gemini-2.0-pro")
     
     def _run(self, input_data: SPARQLGenerationInput) -> Dict[str, Any]:
         """
@@ -87,7 +89,7 @@ class SPARQLGenerationTool(WikidataBaseTool):
         
         try:
             # Generate the SPARQL query
-            response = self.model.generate_content(prompt)
+            response = self._model.generate_content(prompt)
             sparql_query = response.text.strip()
             
             # Remove any markdown code blocks if present
@@ -106,7 +108,7 @@ class SPARQLGenerationTool(WikidataBaseTool):
             return result
             
         except Exception as e:
-            self.logger.error(f"Error generating SPARQL query: {e}")
+            self._logger.error(f"Error generating SPARQL query: {e}")
             return {
                 "error": str(e),
                 "original_question": question,

@@ -1,7 +1,7 @@
 # tools/query_fixer.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import Dict, Any
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, Dict, Any
 import google.generativeai as genai
 from config import GEMINI_API_KEY
 from tools.base import WikidataBaseTool
@@ -11,14 +11,16 @@ class QueryFixerInput(BaseModel):
     error: str = Field(..., description="The error message from the SPARQL endpoint")
 
 class QueryFixerTool(WikidataBaseTool):
-    name: str = "query_fixer_tool"
-    description: str = "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
+    name: ClassVar[str] = "query_fixer_tool"
+    description: ClassVar[str] = "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
+    
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-pro")
+        self._model = genai.GenerativeModel("gemini-2.0-pro")
     
     def _run(self, input_data: QueryFixerInput) -> Dict[str, Any]:
         """
@@ -37,7 +39,7 @@ class QueryFixerTool(WikidataBaseTool):
         original_query = input_data.query
         error_message = input_data.error
         
-        self.logger.info(f"Attempting to fix query with error: {error_message}")
+        self._logger.info(f"Attempting to fix query with error: {error_message}")
         
         # Prompt for the model
         prompt = f"""
@@ -59,7 +61,7 @@ class QueryFixerTool(WikidataBaseTool):
         
         try:
             # Generate the fixed query
-            response = self.model.generate_content(prompt)
+            response = self._model.generate_content(prompt)
             fixed_query = response.text.strip()
             
             # Remove any markdown code blocks if present
@@ -68,7 +70,7 @@ class QueryFixerTool(WikidataBaseTool):
             elif fixed_query.startswith("```"):
                 fixed_query = fixed_query.replace("```", "").strip()
             
-            self.logger.info(f"Fixed query: {fixed_query}")
+            self._logger.info(f"Fixed query: {fixed_query}")
             
             return {
                 "success": True,
@@ -78,7 +80,7 @@ class QueryFixerTool(WikidataBaseTool):
             }
             
         except Exception as e:
-            self.logger.error(f"Error in query fixing: {e}")
+            self._logger.error(f"Error in query fixing: {e}")
             return {
                 "success": False,
                 "original_query": original_query,

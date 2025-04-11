@@ -1,7 +1,7 @@
 # tools/sparql_execution.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Union
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, Dict, Any, Union
 from utils.sparql_utils import QueryEngine
 from tools.base import WikidataBaseTool
 
@@ -9,12 +9,14 @@ class SPARQLExecutionInput(BaseModel):
     query: str = Field(..., description="The SPARQL query to execute")
 
 class SPARQLExecutionTool(WikidataBaseTool):
-    name: str = "sparql_execution_tool"
-    description: str = "Execute SPARQL queries against the Wikidata endpoint."
+    name: ClassVar[str] = "sparql_execution_tool"
+    description: ClassVar[str] = "Execute SPARQL queries against the Wikidata endpoint."
+    
+    _query_engine = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.query_engine = QueryEngine()
+        self._query_engine = QueryEngine()
     
     def _run(self, input_data: SPARQLExecutionInput) -> Union[Dict[str, Any], Any]:
         """
@@ -32,12 +34,12 @@ class SPARQLExecutionTool(WikidataBaseTool):
         """
         query = input_data.query
         
-        self.logger.info(f"Executing SPARQL query: {query}")
-        result = self.query_engine.run_query(query)
+        self._logger.info(f"Executing SPARQL query: {query}")
+        result = self._query_engine.run_query(query)
         
         # Check if there was an error
         if isinstance(result, dict) and "error" in result:
-            self.logger.error(f"Query execution error: {result['error']}")
+            self._logger.error(f"Query execution error: {result['error']}")
             return {
                 "success": False,
                 "error": result["error"],

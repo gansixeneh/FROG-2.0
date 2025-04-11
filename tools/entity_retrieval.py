@@ -1,7 +1,7 @@
 # tools/entity_retrieval.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
 import requests
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
@@ -14,13 +14,17 @@ class EntityRetrievalInput(BaseModel):
     limit: int = Field(MAX_ENTITY_CANDIDATES, description="Maximum number of entities to retrieve")
 
 class EntityRetrievalTool(WikidataBaseTool):
-    name: str = "entity_retrieval_tool"
-    description: str = "Retrieve candidate entities from Wikidata using text search and vector similarity."
+    name: ClassVar[str] = "entity_retrieval_tool"
+    description: ClassVar[str] = "Retrieve candidate entities from Wikidata using text search and vector similarity."
+    
+    # Use PrivateAttr for attributes that shouldn't be validated by Pydantic
+    _wikidata_api_url = PrivateAttr()
+    _model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.wikidata_api_url = "https://www.wikidata.org/w/api.php"
-        self.model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
+        self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        self._model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
         
     def _run(self, input_data: EntityRetrievalInput) -> List[Dict[str, Any]]:
         """
@@ -50,7 +54,7 @@ class EntityRetrievalTool(WikidataBaseTool):
         
         try:
             # Make API request
-            response = requests.get(self.wikidata_api_url, params=params)
+            response = requests.get(self._wikidata_api_url, params=params)
             response.raise_for_status()
             data = response.json()
             
@@ -72,7 +76,7 @@ class EntityRetrievalTool(WikidataBaseTool):
             return candidates
             
         except Exception as e:
-            self.logger.error(f"Error in entity retrieval: {e}")
+            self._logger.error(f"Error in entity retrieval: {e}")
             return []
     
     def _rerank_candidates(self, query: str, candidates: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
@@ -105,7 +109,7 @@ class EntityRetrievalTool(WikidataBaseTool):
             candidate_texts.append(text)
         
         # Calculate embeddings and similarities
-        embeddings = self.model.encode([query_text] + candidate_texts, convert_to_tensor=True)
+        embeddings = self._model.encode([query_text] + candidate_texts, convert_to_tensor=True)
         query_embedding = embeddings[0]
         candidate_embeddings = embeddings[1:]
         

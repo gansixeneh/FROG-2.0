@@ -1,7 +1,7 @@
 # tools/property_retrieval.py
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import ClassVar, List, Dict, Any
 import requests
 from utils.sparql_utils import QueryEngine
 from tools.base import WikidataBaseTool
@@ -11,13 +11,16 @@ class PropertyRetrievalInput(BaseModel):
     limit: int = Field(10, description="Maximum number of properties to retrieve")
 
 class PropertyRetrievalTool(WikidataBaseTool):
-    name: str = "property_retrieval_tool"
-    description: str = "Retrieve relevant properties of Wikidata entities."
+    name: ClassVar[str] = "property_retrieval_tool"
+    description: ClassVar[str] = "Retrieve relevant properties of Wikidata entities."
+    
+    _query_engine = PrivateAttr()
+    _wikidata_api_url = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.query_engine = QueryEngine()
-        self.wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        self._query_engine = QueryEngine()
+        self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
     
     def _run(self, input_data: PropertyRetrievalInput) -> Dict[str, Any]:
         """
@@ -73,7 +76,7 @@ class PropertyRetrievalTool(WikidataBaseTool):
         ORDER BY DESC(?count)
         """
         
-        results = self.query_engine.run_query(query)
+        results = self._query_engine.run_query(query)
         properties = []
         
         if not isinstance(results, dict) and not results.empty:
@@ -102,7 +105,7 @@ class PropertyRetrievalTool(WikidataBaseTool):
         ORDER BY DESC(?count)
         """
         
-        results = self.query_engine.run_query(query)
+        results = self._query_engine.run_query(query)
         properties = []
         
         if not isinstance(results, dict) and not results.empty:
