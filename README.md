@@ -1,30 +1,77 @@
-# FROG-2.0
+# Wikidata Question Answering System
 
-## AI-Powered Question Answering System with Knowledge Graph Integration
-
-FROG-2.0 is an advanced Question Answering (QA) system that leverages Knowledge Graph (KG) technology to provide accurate and contextually relevant answers.
-
-## Overview
-
-FROG-2.0 combines the power of modern AI agents with structured knowledge representation to create an intelligent QA system. By utilizing knowledge graphs, the system can understand complex relationships between entities and provide more nuanced answers than traditional QA systems.
+This is a Langchain-based system for answering questions using Wikidata as a knowledge source. The system uses a modular, tool-based approach to link entities, generate SPARQL queries, and produce natural language answers.
 
 ## Features
 
-- **Knowledge Graph Integration**: Structured representation of information for improved answer accuracy
-- **AI Agent Architecture**: Intelligent processing of natural language questions
-- **Context-Aware Responses**: Understanding of question context for more relevant answers
-- **Extensible Framework**: Easily expandable to new knowledge domains
-- **Fine-Tuning Capability**: Support for model adaptation to specific use cases
+- Entity linking to Wikidata entities
+- Property and ontology retrieval
+- SPARQL query generation and execution
+- Error correction for failed queries
+- Natural language answer generation
 
-## Architecture
+## Installation
 
-The system consists of the following main components:
+1. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/wikidata-qa.git
+   cd wikidata-qa
+   ```
 
-1. **Natural Language Processing Module**: Processes and understands user queries
-2. **Knowledge Graph Engine**: Manages and queries the structured knowledge base
-3. **AI Agent Interface**: Coordinates between user input and system components
-4. **Response Generation System**: Formulates human-readable answers from KG data
+2. Install the required packages:
+   ```
+   pip install -r requirements.txt
+   ```
 
-## Development
+3. Create a `.env` file with your API keys:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key
+   HF_TOKEN=your_huggingface_token
+   ```
 
-The project is currently in early development.
+## Usage
+
+### Command Line
+
+You can ask a single question:
+
+```
+python main.py --question "Who is the president of Indonesia in 2024?"
+```
+
+Or run in interactive mode:
+
+```
+python main.py --interactive
+```
+
+### As a Library
+
+```python
+from tools.orchestrator import EnsembleOrchestratorTool, OrchestratorInput
+
+# Initialize the orchestrator
+orchestrator = EnsembleOrchestratorTool()
+
+# Ask a question
+input_data = OrchestratorInput(question="Who is the CEO of Apple?")
+result = orchestrator._run(input_data)
+
+# Print the answer
+print(result["answer"])
+```
+
+## Tool Pipeline
+
+1. `EntityLinkingTool` - Identifies entities in the question
+2. `PropertyRetrievalTool` - Retrieves properties for identified entities
+3. `OntologyRetrievalTool` - Retrieves class/type information (optional)
+4. `SPARQLGenerationTool` - Generates SPARQL queries
+5. `SPARQLExecutionTool` - Executes SPARQL queries
+6. `QueryFixerTool` - Fixes failed queries
+7. `AnswerGenerationTool` - Generates natural language answers
+8. `EnsembleOrchestratorTool` - Coordinates the entire pipeline
+
+## License
+
+[MIT License](LICENSE)
