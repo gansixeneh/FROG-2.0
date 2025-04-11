@@ -13,8 +13,8 @@ class SPARQLGenerationInput(BaseModel):
     ontology: Optional[Dict[str, Any]] = Field(None, description="Optional ontology information")
 
 class SPARQLGenerationTool(WikidataBaseTool):
-    name = "sparql_generation_tool"
-    description = "Generate SPARQL queries to answer the user question."
+    name: str = "sparql_generation_tool"
+    description: str = "Generate SPARQL queries to answer the user question."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

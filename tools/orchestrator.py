@@ -17,8 +17,8 @@ class OrchestratorInput(BaseModel):
     language: str = Field("en", description="The language to generate the answer in")
 
 class EnsembleOrchestratorTool(WikidataBaseTool):
-    name = "ensemble_orchestrator_tool"
-    description = "Orchestrate multiple possible approaches to answering the question."
+    name: str = "ensemble_orchestrator_tool"
+    description: str = "Orchestrate multiple possible approaches to answering the question."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

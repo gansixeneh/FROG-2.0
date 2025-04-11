@@ -12,8 +12,8 @@ class EntityLinkingInput(BaseModel):
     context: Optional[str] = Field(None, description="Optional additional context")
 
 class EntityLinkingTool(WikidataBaseTool):
-    name = "entity_linking_tool"
-    description = "Link mentions in the user's question to Wikidata entities."
+    name: str = "entity_linking_tool"
+    description: str = "Link mentions in the user's question to Wikidata entities."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -11,8 +11,8 @@ class RerankingInput(BaseModel):
     queries: List[Dict[str, Any]] = Field(..., description="List of candidate queries with their results")
 
 class RerankingTool(WikidataBaseTool):
-    name = "reranking_tool"
-    description = "Score multiple candidate SPARQL queries to pick the best one."
+    name: str = "reranking_tool"
+    description: str = "Score multiple candidate SPARQL queries to pick the best one."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

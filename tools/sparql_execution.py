@@ -9,8 +9,8 @@ class SPARQLExecutionInput(BaseModel):
     query: str = Field(..., description="The SPARQL query to execute")
 
 class SPARQLExecutionTool(WikidataBaseTool):
-    name = "sparql_execution_tool"
-    description = "Execute SPARQL queries against the Wikidata endpoint."
+    name: str = "sparql_execution_tool"
+    description: str = "Execute SPARQL queries against the Wikidata endpoint."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

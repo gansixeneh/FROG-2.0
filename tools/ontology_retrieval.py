@@ -9,8 +9,8 @@ class OntologyRetrievalInput(BaseModel):
     entity_id: str = Field(..., description="The Wikidata entity ID (Q number)")
 
 class OntologyRetrievalTool(WikidataBaseTool):
-    name = "ontology_retrieval_tool"
-    description = "Retrieve class/type and hierarchy information about Wikidata entities."
+    name: str = "ontology_retrieval_tool"
+    description: str = "Retrieve class/type and hierarchy information about Wikidata entities."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

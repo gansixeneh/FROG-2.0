@@ -11,8 +11,8 @@ class QueryFixerInput(BaseModel):
     error: str = Field(..., description="The error message from the SPARQL endpoint")
 
 class QueryFixerTool(WikidataBaseTool):
-    name = "query_fixer_tool"
-    description = "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
+    name: str = "query_fixer_tool"
+    description: str = "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

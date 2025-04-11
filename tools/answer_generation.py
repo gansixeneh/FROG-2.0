@@ -13,14 +13,14 @@ class AnswerGenerationInput(BaseModel):
     entities: Optional[List[Dict[str, Any]]] = Field(None, description="The linked entities (optional)")
 
 class AnswerGenerationTool(WikidataBaseTool):
-    name = "answer_generation_tool"
-    description = "Convert the raw SPARQL query result into a natural language answer."
+    name: str = "answer_generation_tool"
+    description: str = "Convert the raw SPARQL query result into a natural language answer."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-pro")
+        self.model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
     
     def _run(self, input_data: AnswerGenerationInput) -> Dict[str, Any]:
         """

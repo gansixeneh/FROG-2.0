@@ -11,8 +11,8 @@ class PropertyRetrievalInput(BaseModel):
     limit: int = Field(10, description="Maximum number of properties to retrieve")
 
 class PropertyRetrievalTool(WikidataBaseTool):
-    name = "property_retrieval_tool"
-    description = "Retrieve relevant properties of Wikidata entities."
+    name: str = "property_retrieval_tool"
+    description: str = "Retrieve relevant properties of Wikidata entities."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

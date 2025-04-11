@@ -14,8 +14,8 @@ class EntityRetrievalInput(BaseModel):
     limit: int = Field(MAX_ENTITY_CANDIDATES, description="Maximum number of entities to retrieve")
 
 class EntityRetrievalTool(WikidataBaseTool):
-    name = "entity_retrieval_tool"
-    description = "Retrieve candidate entities from Wikidata using text search and vector similarity."
+    name: str = "entity_retrieval_tool"
+    description: str = "Retrieve candidate entities from Wikidata using text search and vector similarity."
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
