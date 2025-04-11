@@ -15,20 +15,22 @@ class EntityLinkingInput(BaseModel):
 
 class EntityLinkingTool(WikidataBaseTool):
     name: ClassVar[str] = "entity_linking_tool"
-    description: ClassVar[str] = "Link mentions in the user's question to Wikidata entities."
-    
+    description: ClassVar[str] = (
+        "Link mentions in the user's question to Wikidata entities."
+    )
+
     _entity_retrieval_tool = PrivateAttr()
     _model = PrivateAttr()
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize dependent tools
         self._entity_retrieval_tool = EntityRetrievalTool()
-        
+
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self._model = genai.GenerativeModel("gemini-2.0-pro")
-    
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
     def _run(self, input_data: EntityLinkingInput) -> Dict[str, Any]:
         """
         Link entities in the question to Wikidata entities.
@@ -52,9 +54,11 @@ class EntityLinkingTool(WikidataBaseTool):
         linked_entities = []
         for mention in entity_mentions:
             # Use the entity retrieval tool
-            retrieval_input = EntityRetrievalInput(query=mention, limit=MAX_ENTITY_CANDIDATES)
+            retrieval_input = EntityRetrievalInput(
+                query=mention, limit=MAX_ENTITY_CANDIDATES
+            )
             candidates = self._entity_retrieval_tool._run(retrieval_input)
-            
+
             if candidates:
                 # Take the top candidate
                 top_candidate = candidates[0]

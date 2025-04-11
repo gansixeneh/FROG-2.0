@@ -23,15 +23,15 @@ class SPARQLGenerationInput(BaseModel):
 class SPARQLGenerationTool(WikidataBaseTool):
     name: ClassVar[str] = "sparql_generation_tool"
     description: ClassVar[str] = "Generate SPARQL queries to answer the user question."
-    
+
     _model = PrivateAttr()
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self._model = genai.GenerativeModel("gemini-2.0-pro")
-    
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
     def _run(self, input_data: SPARQLGenerationInput) -> Dict[str, Any]:
         """
         Generate SPARQL queries to answer the user question.

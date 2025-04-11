@@ -14,16 +14,18 @@ class QueryFixerInput(BaseModel):
 
 class QueryFixerTool(WikidataBaseTool):
     name: ClassVar[str] = "query_fixer_tool"
-    description: ClassVar[str] = "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
-    
+    description: ClassVar[str] = (
+        "Fix SPARQL query errors based on error messages from the SPARQL endpoint."
+    )
+
     _model = PrivateAttr()
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Initialize Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        self._model = genai.GenerativeModel("gemini-2.0-pro")
-    
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
     def _run(self, input_data: QueryFixerInput) -> Dict[str, Any]:
         """
         Fix a SPARQL query based on the error message.
@@ -40,9 +42,9 @@ class QueryFixerTool(WikidataBaseTool):
         """
         original_query = input_data.query
         error_message = input_data.error
-        
+
         self._logger.info(f"Attempting to fix query with error: {error_message}")
-        
+
         # Prompt for the model
         prompt = f"""
         You are a SPARQL query fixer. Fix the following SPARQL query for Wikidata that resulted in an error.
@@ -73,9 +75,9 @@ class QueryFixerTool(WikidataBaseTool):
                 )
             elif fixed_query.startswith("```"):
                 fixed_query = fixed_query.replace("```", "").strip()
-            
+
             self._logger.info(f"Fixed query: {fixed_query}")
-            
+
             return {
                 "success": True,
                 "original_query": original_query,
