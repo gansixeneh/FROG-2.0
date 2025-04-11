@@ -1,63 +1,80 @@
-# tools/property_retrieval.py
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import ClassVar, List, Dict, Any
 import requests
 from utils.sparql_utils import QueryEngine
 from tools.base import WikidataBaseTool
+import google.generativeai as genai
+from config import GEMINI_API_KEY, MAX_PROPERTY_CANDIDATES
+from sentence_transformers import SentenceTransformer, util
 
 class PropertyRetrievalInput(BaseModel):
+    question: str = Field(..., description="The user's question")
     entity_id: str = Field(..., description="The Wikidata entity ID (Q number)")
-    limit: int = Field(10, description="Maximum number of properties to retrieve")
+    limit: int = Field(MAX_PROPERTY_CANDIDATES, description="Maximum number of properties to retrieve")
 
 class PropertyRetrievalTool(WikidataBaseTool):
     name: ClassVar[str] = "property_retrieval_tool"
-    description: ClassVar[str] = "Retrieve relevant properties of Wikidata entities."
+    description: ClassVar[str] = "Retrieve properties relevant to the user's question and a Wikidata entity."
     
     _query_engine = PrivateAttr()
     _wikidata_api_url = PrivateAttr()
+    _model = PrivateAttr()
+    _sentence_model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._query_engine = QueryEngine()
         self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
+        
+        # Initialize Gemini for contextual property selection
+        genai.configure(api_key=GEMINI_API_KEY)
+        self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+        
+        # Initialize sentence transformer for semantic similarity ranking
+        self._sentence_model = SentenceTransformer("multi-qa-mpnet-base-cos-v1")
     
     def _run(self, input_data: PropertyRetrievalInput) -> Dict[str, Any]:
         """
-        Retrieve properties for a given entity.
+        Retrieve properties relevant to the question and entity.
         
         Parameters:
         -----------
         input_data : PropertyRetrievalInput
-            The entity ID and limit
+            The user's question, entity ID, and limit
             
         Returns:
         --------
         Dict[str, Any]
-            The entity properties
+            The relevant properties
         """
+        question = input_data.question
         entity_id = input_data.entity_id
         limit = input_data.limit
         
-        # Get outgoing properties (entity as subject)
+        # Get common properties for this entity
         outgoing_properties = self._get_outgoing_properties(entity_id)
-        
-        # Get incoming properties (entity as object)
         incoming_properties = self._get_incoming_properties(entity_id)
         
-        # Combine and sort by usage count
+        # Combine all properties
         all_properties = outgoing_properties + incoming_properties
-        all_properties.sort(key=lambda x: x.get("count", 0), reverse=True)
         
-        # Limit the number of properties
-        properties = all_properties[:limit]
+        if not all_properties:
+            self._logger.warning(f"No properties found for entity {entity_id}")
+            return {
+                "entity_id": entity_id,
+                "properties": [],
+                "question": question
+            }
+        
+        # Rank properties by relevance to the question
+        ranked_properties = self._rank_properties_by_relevance(question, all_properties, limit)
         
         result = {
             "entity_id": entity_id,
-            "properties": properties,
-            "outgoing_count": len(outgoing_properties),
-            "incoming_count": len(incoming_properties),
-            "total_count": len(all_properties)
+            "properties": ranked_properties,
+            "question": question,
+            "total_properties_found": len(all_properties)
         }
         
         self._log_input_output(input_data, result)
@@ -74,6 +91,7 @@ class PropertyRetrievalTool(WikidataBaseTool):
         }}
         GROUP BY ?property ?propertyLabel ?propertyDescription
         ORDER BY DESC(?count)
+        LIMIT 50
         """
         
         results = self._query_engine.run_query(query)
@@ -103,6 +121,7 @@ class PropertyRetrievalTool(WikidataBaseTool):
         }}
         GROUP BY ?property ?propertyLabel ?propertyDescription
         ORDER BY DESC(?count)
+        LIMIT 50
         """
         
         results = self._query_engine.run_query(query)
@@ -120,3 +139,49 @@ class PropertyRetrievalTool(WikidataBaseTool):
                 })
                 
         return properties
+    
+    def _rank_properties_by_relevance(self, question: str, properties: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+        """
+        Rank properties by their relevance to the question using semantic similarity.
+        
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        properties : List[Dict[str, Any]]
+            List of properties to rank
+        limit : int
+            Maximum number of properties to return
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            Ranked properties
+        """
+        if not properties:
+            return []
+        
+        # Create property descriptions for semantic comparison
+        property_texts = []
+        for prop in properties:
+            text = f"{prop['label']}"
+            if prop.get('description'):
+                text += f": {prop['description']}"
+            property_texts.append(text)
+        
+        # Calculate embeddings
+        question_embedding = self._sentence_model.encode(question, convert_to_tensor=True)
+        property_embeddings = self._sentence_model.encode(property_texts, convert_to_tensor=True)
+        
+        # Calculate similarities
+        similarities = util.cos_sim(question_embedding, property_embeddings)[0]
+        
+        # Add similarity scores to properties
+        for i, prop in enumerate(properties):
+            prop['relevance_score'] = float(similarities[i])
+        
+        # Sort by relevance score
+        ranked_properties = sorted(properties, key=lambda x: x['relevance_score'], reverse=True)
+        
+        # Return top properties
+        return ranked_properties[:limit]

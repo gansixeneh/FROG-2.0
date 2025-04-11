@@ -16,10 +16,11 @@ load_dotenv()
 
 def main():
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Wikidata Question Answering System")
+    parser = argparse.ArgumentParser(description="Enhanced Wikidata Question Answering System")
     parser.add_argument("--question", type=str, help="Question to answer")
     parser.add_argument("--language", type=str, default="en", help="Language for the answer (default: en)")
     parser.add_argument("--interactive", action="store_true", help="Run in interactive mode")
+    parser.add_argument("--verbose", action="store_true", help="Show detailed information about the answering process")
     args = parser.parse_args()
     
     # Initialize the orchestrator tool
@@ -27,7 +28,7 @@ def main():
     
     if args.interactive:
         # Run in interactive mode
-        print("Wikidata QA System - Interactive Mode")
+        print("Enhanced Wikidata QA System - Interactive Mode")
         print("Type 'exit' or 'quit' to end the session")
         
         while True:
@@ -40,11 +41,16 @@ def main():
                 result = orchestrator._run(input_data)
                 
                 print("\nAnswer:", result["answer"])
-                print("\nEntities:", ", ".join(result.get("entities", [])))
-                if result.get("query"):
-                    print("\nQuery used:", result["query"])
-                if result.get("result_count"):
-                    print("Results found:", result["result_count"])
+                
+                if args.verbose:
+                    print("\nEntities:", ", ".join(result.get("entities", [])))
+                    print("Found paths:", result.get("paths", 0))
+                    if result.get("query"):
+                        print("\nQuery used:", result["query"])
+                    if result.get("query_explanation"):
+                        print("Query approach:", result["query_explanation"])
+                    if result.get("result_count"):
+                        print("Results found:", result["result_count"])
                     
                 print("\n" + "-" * 80)
             except Exception as e:
@@ -59,11 +65,16 @@ def main():
             
             print("\nQuestion:", args.question)
             print("Answer:", result["answer"])
-            print("\nEntities:", ", ".join(result.get("entities", [])))
-            if result.get("query"):
-                print("\nQuery used:", result["query"])
-            if result.get("result_count"):
-                print("Results found:", result["result_count"])
+            
+            if args.verbose:
+                print("\nEntities:", ", ".join(result.get("entities", [])))
+                print("Found paths:", result.get("paths", 0))
+                if result.get("query"):
+                    print("\nQuery used:", result["query"])
+                if result.get("query_explanation"):
+                    print("Query approach:", result["query_explanation"])
+                if result.get("result_count"):
+                    print("Results found:", result["result_count"])
         except Exception as e:
             logger.error(f"Error processing question: {e}")
             print(f"Error: {str(e)}")
