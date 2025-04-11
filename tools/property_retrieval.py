@@ -6,42 +6,37 @@ from utils.sparql_utils import QueryEngine
 from tools.base import WikidataBaseTool
 import google.generativeai as genai
 from config import GEMINI_API_KEY, MAX_PROPERTY_CANDIDATES
-from sentence_transformers import SentenceTransformer, util
 
 class PropertyRetrievalInput(BaseModel):
     question: str = Field(..., description="The user's question")
-    entity_id: str = Field(..., description="The Wikidata entity ID (Q number)")
+    entity_id: str = Field(None, description="Optional Wikidata entity ID for context")
     limit: int = Field(MAX_PROPERTY_CANDIDATES, description="Maximum number of properties to retrieve")
 
 class PropertyRetrievalTool(WikidataBaseTool):
     name: ClassVar[str] = "property_retrieval_tool"
-    description: ClassVar[str] = "Retrieve properties relevant to the user's question and a Wikidata entity."
+    description: ClassVar[str] = "Retrieve properties relevant to the user's question."
     
     _query_engine = PrivateAttr()
     _wikidata_api_url = PrivateAttr()
     _model = PrivateAttr()
-    _sentence_model = PrivateAttr()
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._query_engine = QueryEngine()
         self._wikidata_api_url = "https://www.wikidata.org/w/api.php"
         
-        # Initialize Gemini for contextual property selection
+        # Initialize Gemini for property extraction and ranking
         genai.configure(api_key=GEMINI_API_KEY)
         self._model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
-        
-        # Initialize sentence transformer for semantic similarity ranking
-        self._sentence_model = SentenceTransformer("multi-qa-mpnet-base-cos-v1")
     
     def _run(self, input_data: PropertyRetrievalInput) -> Dict[str, Any]:
         """
-        Retrieve properties relevant to the question and entity.
+        Retrieve properties relevant to the question.
         
         Parameters:
         -----------
         input_data : PropertyRetrievalInput
-            The user's question, entity ID, and limit
+            The user's question, optional entity ID, and limit
             
         Returns:
         --------
@@ -52,97 +47,155 @@ class PropertyRetrievalTool(WikidataBaseTool):
         entity_id = input_data.entity_id
         limit = input_data.limit
         
-        # Get common properties for this entity
-        outgoing_properties = self._get_outgoing_properties(entity_id)
-        incoming_properties = self._get_incoming_properties(entity_id)
+        # Step 1: Extract potential property concepts from the question
+        property_concepts = self._extract_property_concepts(question, entity_id)
+        self._logger.info(f"Extracted property concepts: {property_concepts}")
         
-        # Combine all properties
-        all_properties = outgoing_properties + incoming_properties
-        
-        if not all_properties:
-            self._logger.warning(f"No properties found for entity {entity_id}")
+        if not property_concepts:
             return {
-                "entity_id": entity_id,
                 "properties": [],
-                "question": question
+                "question": question,
+                "entity_id": entity_id
             }
         
-        # Rank properties by relevance to the question
-        ranked_properties = self._rank_properties_by_relevance(question, all_properties, limit)
+        # Step 2: Find matching Wikidata properties for each concept
+        all_properties = []
+        for concept in property_concepts:
+            properties = self._search_wikidata_properties(concept)
+            all_properties.extend(properties)
+        
+        # Step 3: Rank properties using LLM
+        ranked_properties = self._rank_properties_with_llm(question, all_properties, limit)
         
         result = {
-            "entity_id": entity_id,
             "properties": ranked_properties,
             "question": question,
+            "entity_id": entity_id,
             "total_properties_found": len(all_properties)
         }
         
         self._log_input_output(input_data, result)
         return result
     
-    def _get_outgoing_properties(self, entity_id: str) -> List[Dict[str, Any]]:
-        """Get properties where the entity is the subject."""
-        query = f"""
-        SELECT ?property ?propertyLabel ?propertyDescription (COUNT(?object) as ?count)
-        WHERE {{
-          wd:{entity_id} ?pred ?object .
-          ?property wikibase:directClaim ?pred .
-          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-        }}
-        GROUP BY ?property ?propertyLabel ?propertyDescription
-        ORDER BY DESC(?count)
-        LIMIT 50
+    def _extract_property_concepts(self, question: str, entity_id: str = None) -> List[str]:
         """
+        Extract potential property concepts from the question using LLM.
         
-        results = self._query_engine.run_query(query)
-        properties = []
-        
-        if not isinstance(results, dict) and not results.empty:
-            for _, row in results.iterrows():
-                property_id = row.get("property", "").split("/")[-1]
-                properties.append({
-                    "property_id": property_id,
-                    "label": row.get("propertyLabel", ""),
-                    "description": row.get("propertyDescription", ""),
-                    "count": int(row.get("count", 0)),
-                    "direction": "outgoing"
-                })
+        Parameters:
+        -----------
+        question : str
+            The user's question
+        entity_id : str, optional
+            Optional entity ID for context
+            
+        Returns:
+        --------
+        List[str]
+            List of property concepts
+        """
+        # If entity_id is provided, get entity information for context
+        entity_context = ""
+        if entity_id:
+            try:
+                params = {
+                    'action': 'wbgetentities',
+                    'ids': entity_id,
+                    'languages': 'en',
+                    'format': 'json'
+                }
                 
-        return properties
-    
-    def _get_incoming_properties(self, entity_id: str) -> List[Dict[str, Any]]:
-        """Get properties where the entity is the object."""
-        query = f"""
-        SELECT ?property ?propertyLabel ?propertyDescription (COUNT(?subject) as ?count)
-        WHERE {{
-          ?subject ?pred wd:{entity_id} .
-          ?property wikibase:directClaim ?pred .
-          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-        }}
-        GROUP BY ?property ?propertyLabel ?propertyDescription
-        ORDER BY DESC(?count)
-        LIMIT 50
+                response = requests.get(self._wikidata_api_url, params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    entity = data.get('entities', {}).get(entity_id, {})
+                    
+                    label = entity.get('labels', {}).get('en', {}).get('value', entity_id)
+                    description = entity.get('descriptions', {}).get('en', {}).get('value', '')
+                    
+                    entity_context = f"Context entity: {label} ({entity_id})"
+                    if description:
+                        entity_context += f"\nDescription: {description}"
+            except Exception as e:
+                self._logger.error(f"Error getting entity context: {e}")
+        
+        # Create the prompt
+        prompt = f"""
+        Extract the properties, relationships, or attributes that would be relevant to answer this question using Wikidata:
+        
+        Question: {question}
+        {entity_context}
+        
+        Return only the property concepts as a comma-separated list. Focus on general property concepts, not specific Wikidata property IDs.
+        Example properties might be: date of birth, spouse, capital, population, etc.
         """
         
-        results = self._query_engine.run_query(query)
-        properties = []
+        try:
+            # Generate property concepts
+            response = self._model.generate_content(prompt)
+            property_text = response.text.strip()
+            
+            # Parse the comma-separated list
+            properties = [p.strip() for p in property_text.split(",")]
+            return properties
+        except Exception as e:
+            self._logger.error(f"Error extracting property concepts: {e}")
+            # Fallback: extract possible property terms
+            words = question.lower().split()
+            possible_properties = ["date", "time", "location", "place", "name", "creator", "author", 
+                                  "birth", "death", "founded", "created", "located", "population", 
+                                  "height", "width", "size", "capital", "country", "member"]
+            
+            return [word for word in words if word in possible_properties]
+    
+    def _search_wikidata_properties(self, property_concept: str) -> List[Dict[str, Any]]:
+        """
+        Search for Wikidata properties matching a concept.
         
-        if not isinstance(results, dict) and not results.empty:
-            for _, row in results.iterrows():
-                property_id = row.get("property", "").split("/")[-1]
+        Parameters:
+        -----------
+        property_concept : str
+            The property concept to search for
+            
+        Returns:
+        --------
+        List[Dict[str, Any]]
+            List of matching properties
+        """
+        params = {
+            'action': 'wbsearchentities',
+            'search': property_concept,
+            'language': 'en',
+            'format': 'json',
+            'type': 'property',
+            'limit': 5  # Get top 5 for each concept
+        }
+        
+        try:
+            # Make API request
+            response = requests.get(self._wikidata_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract property information
+            properties = []
+            for prop in data.get('search', []):
                 properties.append({
-                    "property_id": property_id,
-                    "label": row.get("propertyLabel", ""),
-                    "description": row.get("propertyDescription", ""),
-                    "count": int(row.get("count", 0)),
-                    "direction": "incoming"
+                    'property_id': prop.get('id', ''),
+                    'label': prop.get('label', ''),
+                    'description': prop.get('description', ''),
+                    'search_term': property_concept,
+                    'direction': 'unknown'  # No direction since we're not traversing the graph
                 })
-                
-        return properties
+            
+            return properties
+            
+        except Exception as e:
+            self._logger.error(f"Error in Wikidata property search: {e}")
+            return []
     
-    def _rank_properties_by_relevance(self, question: str, properties: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+    def _rank_properties_with_llm(self, question: str, properties: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
         """
-        Rank properties by their relevance to the question using semantic similarity.
+        Rank properties by their relevance to the question using LLM.
         
         Parameters:
         -----------
@@ -161,27 +214,75 @@ class PropertyRetrievalTool(WikidataBaseTool):
         if not properties:
             return []
         
-        # Create property descriptions for semantic comparison
-        property_texts = []
+        # Remove duplicates by property_id
+        unique_properties = {}
         for prop in properties:
-            text = f"{prop['label']}"
-            if prop.get('description'):
-                text += f": {prop['description']}"
-            property_texts.append(text)
+            prop_id = prop.get('property_id')
+            if prop_id and prop_id not in unique_properties:
+                unique_properties[prop_id] = prop
         
-        # Calculate embeddings
-        question_embedding = self._sentence_model.encode(question, convert_to_tensor=True)
-        property_embeddings = self._sentence_model.encode(property_texts, convert_to_tensor=True)
+        properties = list(unique_properties.values())
         
-        # Calculate similarities
-        similarities = util.cos_sim(question_embedding, property_embeddings)[0]
+        # If we have fewer properties than limit, return all
+        if len(properties) <= limit:
+            return properties
         
-        # Add similarity scores to properties
+        # Format properties for LLM prompt
+        property_descriptions = []
         for i, prop in enumerate(properties):
-            prop['relevance_score'] = float(similarities[i])
+            description = (
+                f"Property {i+1}: {prop['label']} (ID: {prop['property_id']})\n"
+                f"Description: {prop.get('description', 'N/A')}\n"
+                f"Search term: {prop.get('search_term', 'N/A')}\n"
+            )
+            property_descriptions.append(description)
         
-        # Sort by relevance score
-        ranked_properties = sorted(properties, key=lambda x: x['relevance_score'], reverse=True)
+        # Create the prompt
+        prompt = f"""
+        Rank these Wikidata properties based on their relevance to answering the following question:
         
-        # Return top properties
-        return ranked_properties[:limit]
+        Question: {question}
+        
+        Property candidates:
+        {''.join(property_descriptions)}
+        
+        Return a ranking as a comma-separated list of property numbers, from most relevant to least relevant.
+        For example: "2, 5, 1, 3, 4" means Property 2 is most relevant, followed by Property 5, etc.
+        Only include the properties that are actually relevant to answering the question.
+        """
+        
+        try:
+            # Generate ranking
+            response = self._model.generate_content(prompt)
+            ranking_text = response.text.strip()
+            
+            # Parse the ranking
+            ranking = []
+            for item in ranking_text.replace(" ", "").split(","):
+                try:
+                    index = int(item) - 1  # Convert to zero-based index
+                    if 0 <= index < len(properties):
+                        ranking.append(index)
+                except ValueError:
+                    continue
+            
+            # If ranking failed, return properties in original order
+            if not ranking:
+                return properties[:limit]
+            
+            # Reorder properties based on ranking
+            ranked_properties = []
+            for index in ranking:
+                if index < len(properties):
+                    ranked_properties.append(properties[index])
+            
+            # Add any remaining properties not in the ranking
+            for i, prop in enumerate(properties):
+                if i not in ranking and len(ranked_properties) < limit:
+                    ranked_properties.append(prop)
+            
+            return ranked_properties[:limit]
+            
+        except Exception as e:
+            self._logger.error(f"Error in LLM ranking: {e}")
+            return properties[:limit]
