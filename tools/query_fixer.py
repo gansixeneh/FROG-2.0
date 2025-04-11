@@ -6,9 +6,11 @@ import google.generativeai as genai
 from config import GEMINI_API_KEY
 from tools.base import WikidataBaseTool
 
+
 class QueryFixerInput(BaseModel):
     query: str = Field(..., description="The original SPARQL query that failed")
     error: str = Field(..., description="The error message from the SPARQL endpoint")
+
 
 class QueryFixerTool(WikidataBaseTool):
     name: ClassVar[str] = "query_fixer_tool"
@@ -25,12 +27,12 @@ class QueryFixerTool(WikidataBaseTool):
     def _run(self, input_data: QueryFixerInput) -> Dict[str, Any]:
         """
         Fix a SPARQL query based on the error message.
-        
+
         Parameters:
         -----------
         input_data : QueryFixerInput
             The original query and error message
-            
+
         Returns:
         --------
         Dict[str, Any]
@@ -58,15 +60,17 @@ class QueryFixerTool(WikidataBaseTool):
         Please provide only the fixed SPARQL query without any explanations or additional text.
         Make sure the query follows Wikidata's SPARQL syntax and conventions.
         """
-        
+
         try:
             # Generate the fixed query
             response = self._model.generate_content(prompt)
             fixed_query = response.text.strip()
-            
+
             # Remove any markdown code blocks if present
             if fixed_query.startswith("```sparql"):
-                fixed_query = fixed_query.replace("```sparql", "").replace("```", "").strip()
+                fixed_query = (
+                    fixed_query.replace("```sparql", "").replace("```", "").strip()
+                )
             elif fixed_query.startswith("```"):
                 fixed_query = fixed_query.replace("```", "").strip()
             
@@ -76,14 +80,14 @@ class QueryFixerTool(WikidataBaseTool):
                 "success": True,
                 "original_query": original_query,
                 "fixed_query": fixed_query,
-                "error_message": error_message
+                "error_message": error_message,
             }
-            
+
         except Exception as e:
             self._logger.error(f"Error in query fixing: {e}")
             return {
                 "success": False,
                 "original_query": original_query,
                 "error": str(e),
-                "error_message": error_message
+                "error_message": error_message,
             }
