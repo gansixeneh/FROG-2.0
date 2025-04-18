@@ -94,7 +94,7 @@ def get_wikidata_labels(ids):
     return labels
 
 def main():
-    input_file = "dataset\qald_10\qald_10_converted.json"
+    input_file = "dataset\qald_9_plus\qald_9_plus_test_wikidata_converted.json"
     file_name = input_file.split("\\")[-1].split(".")[0]
     output_file = f"dataset\\labels\\{file_name}_labels.json"
     
@@ -121,7 +121,8 @@ def main():
         results.append({
             "question": question,
             "entity_ids": entities,
-            "property_ids": properties
+            "property_ids": properties,
+            "sparql": sparql
         })
     
     # Remove duplicates
@@ -146,7 +147,8 @@ def main():
         final_results.append({
             "question": item["question"],
             "entities": entity_label_list,
-            "properties": property_label_list
+            "properties": property_label_list,
+            "sparql": item["sparql"],
         })
     
     # Write the output file
