@@ -80,7 +80,7 @@ SELECT ?president ?presidentLabel WHERE {
 
         # Create a prompt template with system message and human input
         self.prompt = ChatPromptTemplate.from_messages([
-            ("system", system_message),
+            SystemMessage(content=system_message),
             ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad")
         ])
@@ -95,7 +95,7 @@ SELECT ?president ?presidentLabel WHERE {
             tools=self.tools,
             verbose=True,
             handle_parsing_errors=True,
-            max_iterations=5,  # Limit number of iterations to prevent infinite loops
+            max_iterations=20,  # Limit number of iterations to prevent infinite loops
         )
 
     def query(self, user_question: str) -> str:

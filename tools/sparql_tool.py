@@ -35,12 +35,15 @@ class ExecuteSPARQLTool(BaseTool):
             The query results or error information
         """
         try:
+            # Convert limit to integer explicitly to avoid float notation
+            limit_value = int(limit)
+            
             # Add limit if not already present in the query
             if "LIMIT" not in query.upper():
                 if "}" in query:
-                    query = query.replace("}", f" LIMIT {limit}" + " }")
+                    query = query.replace("}", f" LIMIT {limit_value}" + " }")
                 else:
-                    query += f" LIMIT {limit}"
+                    query += f" LIMIT {limit_value}"
             
             self._sparql.setQuery(query)
             results = self._sparql.query().convert()
