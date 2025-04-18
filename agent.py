@@ -50,6 +50,7 @@ IMPORTANT: You must provide traceability in your final answer. Always include th
 - The properties you searched for (with their labels and P-ids)
 - The SPARQL query you constructed and executed
 - How you interpreted the results to construct the final answer
+- References for the data if available (URLs, dates)
 
 Format your response like this:
 ```
@@ -69,6 +70,11 @@ TRACEABILITY:
 
 4. Results Interpretation:
 [Brief explanation of how the query results were interpreted to form the answer]
+
+5. References:
+   - [Reference URL if available]
+   - Reference date: [Date if available]
+   - [Any other reference information available]
 ```
 
 Remember:
@@ -76,10 +82,10 @@ Remember:
 - Wikidata properties start with P (like P31 for "instance of")
 - Make your SPARQL queries specific and focused
 - Always include relevant entity/property IDs in your SPARQL queries
-- Format your final answer in a clear, concise way for the user
-
-Important SPARQL tips:
 - Use labels with ?entity rdfs:label ?label . FILTER(LANG(?label) = "en")
+- When executing SPARQL queries, set include_references=True to get reference information
+- Look for refUrl and refDate fields in the query results to include in your References section
+- Format your final answer in a clear, concise way for the user
 
 Common SPARQL prefixes for Wikidata:
 PREFIX wd: <http://www.wikidata.org/entity/>
