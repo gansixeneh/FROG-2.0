@@ -7,7 +7,7 @@ def main():
     load_dotenv()
     
     # Get API key from environment or input
-    gemini_api_key = os.getenv("GOOGLE_API_KEY")
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
     if not gemini_api_key:
         gemini_api_key = input("Enter your Gemini API key: ")
     

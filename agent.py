@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import SystemMessage, HumanMessage
 
 from tools.search_tool import SearchWikidataTool
 from tools.sparql_tool import ExecuteSPARQLTool
@@ -25,7 +27,7 @@ class WikidataAgent:
         self.tools = [self.search_tool, self.sparql_tool]
 
         # Create the system message with detailed instructions
-        self.system_message = """You are an AI assistant that answers questions by querying Wikidata. 
+        system_message = """You are an AI assistant that answers questions by querying Wikidata. 
 You have access to two tools:
 
 1. search_entity_property: Use this to search for entities or properties in Wikidata.
@@ -76,10 +78,18 @@ SELECT ?president ?presidentLabel WHERE {
 ```
 """
 
+        # Create a prompt template with system message and human input
+        self.prompt = ChatPromptTemplate.from_messages([
+            SystemMessage(content=system_message),
+            MessagesPlaceholder(variable_name="chat_history"),
+            HumanMessage(content="{input}"),
+            MessagesPlaceholder(variable_name="agent_scratchpad")
+        ])
+
         # Initialize the model and agent
         self.llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2)
         self.agent = create_tool_calling_agent(
-            self.llm, self.tools, self.system_message
+            self.llm, self.tools, self.prompt
         )
         self.agent_executor = AgentExecutor.from_agent_and_tools(
             agent=self.agent,
