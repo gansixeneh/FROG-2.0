@@ -45,6 +45,32 @@ To answer a user's question, follow these steps:
    - Execute the new SPARQL query
 6. Once you have satisfactory results, formulate a natural language response to the user's question.
 
+IMPORTANT: You must provide traceability in your final answer. Always include the following information:
+- The entities you searched for (with their labels and Q-ids)
+- The properties you searched for (with their labels and P-ids)
+- The SPARQL query you constructed and executed
+- How you interpreted the results to construct the final answer
+
+Format your response like this:
+```
+ANSWER: [The direct answer to the user's question in natural language]
+
+TRACEABILITY:
+1. Entity Search:
+   - Searched for: [entity name]
+   - Selected: [entity label] (Wikidata ID: [Q-id])
+   
+2. Property Search:
+   - Searched for: [property name]
+   - Selected: [property label] (Wikidata ID: [P-id])
+   
+3. SPARQL Query:
+[The exact SPARQL query that was executed]
+
+4. Results Interpretation:
+[Brief explanation of how the query results were interpreted to form the answer]
+```
+
 Remember:
 - Wikidata entities start with Q (like Q42 for Douglas Adams)
 - Wikidata properties start with P (like P31 for "instance of")

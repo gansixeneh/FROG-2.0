@@ -1,3 +1,4 @@
+
 # Wikidata Agent
 
 A Python AI agent built with LangChain that answers questions by querying Wikidata. This agent uses Google's Gemini API to intelligently search for entities/properties and construct SPARQL queries.
@@ -8,6 +9,10 @@ A Python AI agent built with LangChain that answers questions by querying Wikida
 - Execute SPARQL queries against Wikidata's SPARQL endpoint
 - Intelligent query construction and refinement
 - Natural language answers based on query results
+- **Full traceability of the agent's reasoning process**
+  - Shows which entities and properties were searched for
+  - Displays the exact SPARQL query executed
+  - Explains how results were interpreted to form the answer
 
 ## Requirements
 
@@ -22,14 +27,13 @@ A Python AI agent built with LangChain that answers questions by querying Wikida
    git clone https://github.com/yourusername/wikidata-agent.git
    cd wikidata-agent
    ```
-
 2. Install required packages:
 
    ```
    pip install -r requirements.txt
    ```
-
 3. Set up your Google Gemini API key:
+
    - Option 1: Create a `.env` file in the project root with:
      ```
      GEMINI_API_KEY=your_gemini_api_key_here
@@ -61,6 +65,8 @@ python main.py
 The interactive prompt will allow you to:
 
 - Enter a question about something you want to know from Wikidata
+- Type "examples" to see example questions
+- Type "help" to see available commands
 - Exit the application with "exit", "quit", or "q"
 
 Example questions:
@@ -71,6 +77,42 @@ Example questions:
 4. "Which mountains in the Himalayas are higher than 8000 meters?"
 5. "What books did Isaac Asimov write?"
 
+## Traceability Feature
+
+This agent provides full transparency in its reasoning process. For each question you ask, you'll get:
+
+1. **The direct answer** to your question in natural language
+2. **The traceability information**:
+   - **Entity Search**: What entities were searched for and which ones were selected (with their Wikidata Q-ids)
+   - **Property Search**: What properties were searched for and which ones were selected (with their Wikidata P-ids)
+   - **SPARQL Query**: The exact query that was executed against Wikidata
+   - **Results Interpretation**: How the agent interpreted the query results to formulate the answer
+
+Example response with traceability:
+
+```
+ANSWER: Emmanuel Macron is the current president of France.
+
+TRACEABILITY:
+1. Entity Search:
+   - Searched for: France
+   - Selected: France (Wikidata ID: Q142)
+   
+2. Property Search:
+   - Searched for: president
+   - Selected: head of state (Wikidata ID: P35)
+   
+3. SPARQL Query:
+SELECT ?president ?presidentLabel WHERE {
+  wd:Q142 wdt:P35 ?president.
+  ?president rdfs:label ?presidentLabel.
+  FILTER(LANG(?presidentLabel) = "en")
+} LIMIT 5
+
+4. Results Interpretation:
+The query returned "Emmanuel Macron" as the value for the president of France.
+```
+
 ## How It Works
 
 1. The agent analyzes your question to identify key entities and properties
@@ -78,7 +120,7 @@ Example questions:
 3. It constructs a SPARQL query using these identifiers
 4. The agent executes the query against Wikidata's SPARQL endpoint
 5. If the results aren't satisfactory, it refines its query
-6. Finally, it presents the answer in natural language
+6. Finally, it presents the answer in natural language along with the full traceability information
 
 ## Limitations
 

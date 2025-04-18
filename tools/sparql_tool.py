@@ -40,10 +40,7 @@ class ExecuteSPARQLTool(BaseTool):
             
             # Add limit if not already present in the query
             if "LIMIT" not in query.upper():
-                if "}" in query:
-                    query = query.replace("}", f" LIMIT {limit_value}" + " }")
-                else:
-                    query += f" LIMIT {limit_value}"
+                query += f" LIMIT {limit_value}"
             
             self._sparql.setQuery(query)
             results = self._sparql.query().convert()

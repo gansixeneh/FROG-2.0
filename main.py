@@ -26,21 +26,33 @@ def main():
     ]
     
     print("\nWikidata Agent initialized. Ask a question or type 'exit' to quit.")
-    print("\nExample questions:")
-    for i, question in enumerate(example_questions, 1):
-        print(f"{i}. {question}")
+    print("Type 'examples' to see example questions.")
+    print("Type 'help' for more commands.")
     
     # Interactive loop
     while True:
         user_input = input("\nYour question: ")
+        
+        # Handle special commands
         if user_input.lower() in ["exit", "quit", "q"]:
             break
+        elif user_input.lower() == "examples":
+            print("\nExample questions:")
+            for i, question in enumerate(example_questions, 1):
+                print(f"{i}. {question}")
+            continue
+        elif user_input.lower() == "help":
+            print("\nAvailable commands:")
+            print("- 'exit', 'quit', or 'q': Exit the application")
+            print("- 'examples': Show example questions")
+            print("- 'help': Show this help message")
+            continue
         
         if user_input.strip():
             print("\nProcessing your question...")
             try:
                 response = agent.query(user_input)
-                print(f"\nAnswer: {response}")
+                print(f"\n{response}")
             except Exception as e:
                 print(f"\nError: {str(e)}")
                 print("Please try again with a different question.")
