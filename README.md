@@ -17,12 +17,14 @@ A Python AI agent built with LangChain that answers questions by querying Wikida
 ## Installation
 
 1. Clone this repository:
+
    ```
    git clone https://github.com/yourusername/wikidata-agent.git
    cd wikidata-agent
    ```
 
 2. Install required packages:
+
    ```
    pip install -r requirements.txt
    ```
@@ -30,7 +32,7 @@ A Python AI agent built with LangChain that answers questions by querying Wikida
 3. Set up your Google Gemini API key:
    - Option 1: Create a `.env` file in the project root with:
      ```
-     GOOGLE_API_KEY=your_gemini_api_key_here
+     GEMINI_API_KEY=your_gemini_api_key_here
      ```
    - Option 2: Provide the API key when prompted during runtime
 
@@ -51,15 +53,18 @@ wikidata_agent/
 ## Usage
 
 Run the application:
+
 ```
 python main.py
 ```
 
 The interactive prompt will allow you to:
+
 - Enter a question about something you want to know from Wikidata
 - Exit the application with "exit", "quit", or "q"
 
 Example questions:
+
 1. "Who is the current president of France?"
 2. "What is the capital of Japan and what is its population?"
 3. "List the spouses of Albert Einstein"

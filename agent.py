@@ -8,19 +8,22 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from tools.search_tool import SearchWikidataTool
 from tools.sparql_tool import ExecuteSPARQLTool
 
+
 class WikidataAgent:
     def __init__(self, gemini_api_key: str = None):
         # Set API key
         if gemini_api_key:
-            os.environ["GOOGLE_API_KEY"] = gemini_api_key
-        elif "GOOGLE_API_KEY" not in os.environ:
-            raise ValueError("Gemini API key must be provided or set as GOOGLE_API_KEY environment variable")
-        
+            os.environ["GEMINI_API_KEY"] = gemini_api_key
+        elif "GEMINI_API_KEY" not in os.environ:
+            raise ValueError(
+                "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
+            )
+
         # Initialize tools
         self.search_tool = SearchWikidataTool()
         self.sparql_tool = ExecuteSPARQLTool()
         self.tools = [self.search_tool, self.sparql_tool]
-        
+
         # Create the system message with detailed instructions
         self.system_message = """You are an AI assistant that answers questions by querying Wikidata. 
 You have access to two tools:
@@ -72,29 +75,27 @@ SELECT ?president ?presidentLabel WHERE {
 }
 ```
 """
-        
+
         # Initialize the model and agent
         self.llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2)
         self.agent = create_tool_calling_agent(
-            self.llm,
-            self.tools,
-            self.system_message
+            self.llm, self.tools, self.system_message
         )
         self.agent_executor = AgentExecutor.from_agent_and_tools(
             agent=self.agent,
             tools=self.tools,
             verbose=True,
             handle_parsing_errors=True,
-            max_iterations=5  # Limit number of iterations to prevent infinite loops
+            max_iterations=5,  # Limit number of iterations to prevent infinite loops
         )
-    
+
     def query(self, user_question: str) -> str:
         """
         Process a user question and return an answer based on Wikidata
-        
+
         Args:
             user_question: The user's natural language question
-            
+
         Returns:
             A natural language answer based on Wikidata information
         """
