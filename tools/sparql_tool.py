@@ -3,6 +3,7 @@ from langchain_core.tools import BaseTool
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
@@ -349,7 +350,20 @@ class ExecuteSPARQLTool(BaseTool):
             for binding in bindings:
                 processed_binding = {}
                 for key, value in binding.items():
-                    processed_binding[key] = value.get("value", "")
+                    # Format dates if they look like ISO format
+                    if 'date' in key.lower() and value.get("value", "").endswith('Z'):
+                        try:
+                            date_value = value.get("value", "")
+                            # Parse ISO 8601 date
+                            dt = datetime.fromisoformat(date_value.replace('Z', '+00:00'))
+                            # Format as a readable date
+                            processed_binding[key] = dt.strftime("%B %d, %Y")
+                        except (ValueError, TypeError):
+                            # If conversion fails, keep the original value
+                            processed_binding[key] = value.get("value", "")
+                    else:
+                        processed_binding[key] = value.get("value", "")
+                
                 processed_results.append(processed_binding)
             
             return {

@@ -66,14 +66,14 @@ TRACEABILITY:
    - Selected: [property label] (Wikidata ID: [P-id])
    
 3. SPARQL Query:
-[The exact SPARQL query that was executed]
+[The enhanced SPARQL query that was executed, from the 'enhanced_query' field in the tool response]
 
 4. Results Interpretation:
 [Brief explanation of how the query results were interpreted to form the answer]
 
 5. References:
    - [Reference URL if available]
-   - Reference date: [Date if available]
+   - Reference date: [Date in human-readable format if available]
    - [Any other reference information available]
 ```
 
