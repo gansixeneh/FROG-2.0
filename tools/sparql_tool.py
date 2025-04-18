@@ -1,114 +1,47 @@
-from typing import Optional, Dict, Any, ClassVar
+from typing import Optional, Dict, Any, List, Tuple
 from langchain_core.tools import BaseTool
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
+from dataclasses import dataclass
 
-class ExecuteSPARQLTool(BaseTool):
-    name: str = "execute_sparql"
-    description: str = """Execute a SPARQL query against Wikidata.
+
+@dataclass
+class TriplePattern:
+    """Represents a SPARQL triple pattern with subject, predicate, and object."""
+    subject: str
+    predicate: str
+    obj: str
+    is_wdt_pattern: bool = False
+    pattern_type: str = None
+
+
+class QueryParser:
+    """Parser for SPARQL queries to extract and manipulate components."""
     
-    Args:
-        query: The complete SPARQL query string to execute
-        limit: Maximum number of results to return (default: 5)
-        include_references: Whether to automatically enhance the query to include references (default: True)
-    
-    Returns:
-        The query results or error information if the query fails
-    """
-    
-    def __init__(self):
-        super().__init__()
-        # These are not Pydantic fields, just instance attributes
-        self._endpoint = "https://query.wikidata.org/sparql"
-        self._sparql = SPARQLWrapper(self._endpoint)
-        self._sparql.setReturnFormat(JSON)
-        # Set a user agent to be respectful to the Wikidata service
-        self._sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
-        
-    def _run(self, query: str, limit: int = 5, include_references: bool = True) -> Dict[str, Any]:
+    @staticmethod
+    def extract_query_parts(query: str) -> Tuple[str, str, str, str]:
         """
-        Execute a SPARQL query against Wikidata
+        Extract the different parts of a SPARQL query.
         
         Args:
             query: The SPARQL query string
-            limit: Maximum number of results to return (default: 5)
-            include_references: Whether to automatically enhance the query to include references (default: True)
             
         Returns:
-            The query results or error information
-        """
-        try:
-            # Convert limit to integer explicitly to avoid float notation
-            limit_value = int(limit)
-            
-            # Enhance the query to include references if requested
-            if include_references:
-                query = self._enhance_query_with_references(query)
-            
-            # Add limit if not already present in the query
-            if "LIMIT" not in query.upper():
-                query += f" LIMIT {limit_value}"
-            
-            self._sparql.setQuery(query)
-            results = self._sparql.query().convert()
-            
-            # Process results to make them more readable
-            processed_results = []
-            
-            if "results" in results and "bindings" in results["results"]:
-                bindings = results["results"]["bindings"]
-                
-                for binding in bindings:
-                    processed_binding = {}
-                    for key, value in binding.items():
-                        processed_binding[key] = value.get("value", "")
-                    processed_results.append(processed_binding)
-                
-                return {
-                    "success": True,
-                    "results": processed_results,
-                    "count": len(processed_results),
-                    "raw_results": bindings,  # Include raw results for reference
-                    "enhanced_query": query  # Include the enhanced query in the response
-                }
-            else:
-                # Handle other types of results
-                return {
-                    "success": True,
-                    "results": results,
-                    "count": 1,
-                    "enhanced_query": query
-                }
-        
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e).split('\n')[0],
-                "query": query
-            }
-            
-    def _enhance_query_with_references(self, query: str) -> str:
-        """
-        Enhance a SPARQL query to include reference information
-        
-        Args:
-            query: The original SPARQL query
-            
-        Returns:
-            An enhanced query that includes reference information
+            Tuple containing (before_select, select_vars, where_content, after_where)
         """
         # Extract the SELECT part and the WHERE clause
         select_match = re.search(r'SELECT\s+(.*?)\s+WHERE\s*\{', query, re.IGNORECASE | re.DOTALL)
         if not select_match:
-            return query  # Not a standard SELECT query, return as is
-            
+            return "", "", "", query  # Not a standard SELECT query
+        
         select_vars = select_match.group(1).strip()
+        before_select = query[:select_match.start()]
         
         # Find the opening and closing braces of the WHERE clause
         where_start_index = query.find('{')
         if where_start_index == -1:
-            return query  # Can't find the WHERE clause start
-            
+            return before_select, select_vars, "", query[select_match.end():]
+        
         # Find the closing brace, accounting for nested braces
         where_end_index = -1
         brace_count = 1
@@ -120,164 +53,27 @@ class ExecuteSPARQLTool(BaseTool):
                 if brace_count == 0:
                     where_end_index = i
                     break
-                    
+        
         if where_end_index == -1:
-            return query  # Can't find matching closing brace
-            
+            return before_select, select_vars, "", query[select_match.end():]
+        
         # Extract the WHERE clause content
         where_content = query[where_start_index + 1:where_end_index].strip()
-        
-        # Parse the query to identify triple patterns
-        # This is a simplified parser that handles basic SPARQL structure
-        triple_patterns = self._parse_query_into_patterns(where_content)
-        
-        # Process each triple pattern and identify wdt: patterns
-        enhanced_patterns = []
-        new_select_vars = []
-        counter = 1
-        
-        for pattern in triple_patterns:
-            # Keep the original pattern
-            enhanced_patterns.append(pattern)
-            
-            # Pattern 1: Subject is a Wikidata entity (wd:Q...)
-            # Example: wd:Q142 wdt:P35 ?president
-            wdt_entity_match = re.search(r'(wd:Q\d+)\s+(wdt:P\d+)\s+(\?[a-zA-Z0-9_]+)', pattern)
-            
-            # Pattern 2: Subject is a variable
-            # Example: ?mountain wdt:P31 wd:Q8502
-            wdt_var_to_entity_match = re.search(r'(\?[a-zA-Z0-9_]+)\s+(wdt:P\d+)\s+(wd:Q\d+)', pattern)
-            
-            # Pattern 3: Subject and object are both variables
-            # Example: ?mountain wdt:P4552 ?height
-            wdt_var_to_var_match = re.search(r'(\?[a-zA-Z0-9_]+)\s+(wdt:P\d+)\s+(\?[a-zA-Z0-9_]+)', pattern)
-            
-            # Handle Pattern 1: wd:Q142 wdt:P35 ?president
-            if wdt_entity_match:
-                subject = wdt_entity_match.group(1)
-                predicate = wdt_entity_match.group(2)
-                object_var = wdt_entity_match.group(3)
-                
-                statement_var = f"?statement{counter}"
-                ref_url_var = f"?refUrl{counter}"
-                ref_date_var = f"?refDate{counter}"
-                
-                new_select_vars.extend([ref_url_var, ref_date_var])
-                
-                # Generate reference patterns
-                ref_patterns = [
-                    f"{subject} p:{predicate[4:]} {statement_var}",
-                    f"{statement_var} ps:{predicate[4:]} {object_var}",
-                    f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
-                    f"}}"
-                ]
-                
-                enhanced_patterns.extend(ref_patterns)
-                counter += 1
-            
-            # Handle Pattern 2: ?mountain wdt:P31 wd:Q8502
-            elif wdt_var_to_entity_match:
-                subject_var = wdt_var_to_entity_match.group(1)
-                predicate = wdt_var_to_entity_match.group(2)
-                object_entity = wdt_var_to_entity_match.group(3)
-                
-                statement_var = f"?statement{counter}"
-                ref_url_var = f"?refUrl{counter}"
-                ref_date_var = f"?refDate{counter}"
-                
-                new_select_vars.extend([ref_url_var, ref_date_var])
-                
-                # Generate reference patterns
-                ref_patterns = [
-                    f"{subject_var} p:{predicate[4:]} {statement_var}",
-                    f"{statement_var} ps:{predicate[4:]} {object_entity}",
-                    f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
-                    f"}}"
-                ]
-                
-                enhanced_patterns.extend(ref_patterns)
-                counter += 1
-                
-            # Handle Pattern 3: ?mountain wdt:P4552 ?height
-            elif wdt_var_to_var_match:
-                subject_var = wdt_var_to_var_match.group(1)
-                predicate = wdt_var_to_var_match.group(2)
-                object_var = wdt_var_to_var_match.group(3)
-                
-                statement_var = f"?statement{counter}"
-                ref_url_var = f"?refUrl{counter}"
-                ref_date_var = f"?refDate{counter}"
-                
-                new_select_vars.extend([ref_url_var, ref_date_var])
-                
-                # Generate reference patterns
-                ref_patterns = [
-                    f"{subject_var} p:{predicate[4:]} {statement_var}",
-                    f"{statement_var} ps:{predicate[4:]} {object_var}",
-                    f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
-                    f"}}"
-                ]
-                
-                enhanced_patterns.extend(ref_patterns)
-                counter += 1
-        
-        # Update the SELECT clause to include new variables
-        if new_select_vars:
-            for var in new_select_vars:
-                if var not in select_vars:
-                    select_vars += f" {var}"
-        
-        # Rebuild the query
-        before_select = query[:select_match.start()]
-        select_clause = f"SELECT {select_vars} WHERE {{"
         after_where = query[where_end_index + 1:]
         
-        # Build the new query with proper formatting
-        enhanced_query = before_select + select_clause + "\n"
-        
-        # Add each pattern with proper formatting
-        for i, pattern in enumerate(enhanced_patterns):
-            if pattern.startswith("OPTIONAL {") or pattern.startswith("FILTER"):
-                enhanced_query += f"  {pattern}"
-            elif pattern.strip().startswith("{") or pattern.strip().startswith("}"):
-                enhanced_query += f"  {pattern}"
-            else:
-                enhanced_query += f"  {pattern} ."
-            
-            # Add newline after each pattern
-            if i < len(enhanced_patterns) - 1:
-                enhanced_query += "\n"
-        
-        enhanced_query += "\n}" + after_where
-        
-        # Fix any double periods
-        enhanced_query = enhanced_query.replace("..}", ".}")
-        enhanced_query = enhanced_query.replace(".. ", ". ")
-        
-        return enhanced_query
+        return before_select, select_vars, where_content, after_where
     
-    def _parse_query_into_patterns(self, where_content: str) -> list:
+    @staticmethod
+    def parse_triple_patterns(where_content: str) -> List[str]:
         """
-        Parse the WHERE clause content into patterns.
+        Parse the WHERE clause content into pattern strings.
         
         Args:
             where_content: The content of the WHERE clause
             
         Returns:
-            A list of patterns
+            A list of pattern strings
         """
-        # This is a simplified parser
-        # In a real implementation, you might want to use a proper SPARQL parser
-        
         patterns = []
         current_pattern = ""
         brace_level = 0
@@ -319,3 +115,279 @@ class ExecuteSPARQLTool(BaseTool):
             patterns.append(current_pattern.strip())
         
         return patterns
+    
+    @staticmethod
+    def analyze_triple_pattern(pattern: str) -> Optional[TriplePattern]:
+        """
+        Analyze a triple pattern string to extract its components.
+        
+        Args:
+            pattern: The triple pattern string
+            
+        Returns:
+            A TriplePattern object or None if not recognized
+        """
+        # Pattern 1: Entity -> Property -> Variable (wd:Q142 wdt:P35 ?president)
+        wdt_entity_match = re.search(r'(wd:Q\d+)\s+(wdt:P\d+)\s+(\?[a-zA-Z0-9_]+)', pattern)
+        if wdt_entity_match:
+            return TriplePattern(
+                subject=wdt_entity_match.group(1),
+                predicate=wdt_entity_match.group(2),
+                obj=wdt_entity_match.group(3),
+                is_wdt_pattern=True,
+                pattern_type="entity_to_var"
+            )
+        
+        # Pattern 2: Variable -> Property -> Entity (?mountain wdt:P31 wd:Q8502)
+        wdt_var_to_entity_match = re.search(r'(\?[a-zA-Z0-9_]+)\s+(wdt:P\d+)\s+(wd:Q\d+)', pattern)
+        if wdt_var_to_entity_match:
+            return TriplePattern(
+                subject=wdt_var_to_entity_match.group(1),
+                predicate=wdt_var_to_entity_match.group(2),
+                obj=wdt_var_to_entity_match.group(3),
+                is_wdt_pattern=True,
+                pattern_type="var_to_entity"
+            )
+        
+        # Pattern 3: Variable -> Property -> Variable (?mountain wdt:P4552 ?height)
+        wdt_var_to_var_match = re.search(r'(\?[a-zA-Z0-9_]+)\s+(wdt:P\d+)\s+(\?[a-zA-Z0-9_]+)', pattern)
+        if wdt_var_to_var_match:
+            return TriplePattern(
+                subject=wdt_var_to_var_match.group(1),
+                predicate=wdt_var_to_var_match.group(2),
+                obj=wdt_var_to_var_match.group(3),
+                is_wdt_pattern=True,
+                pattern_type="var_to_var"
+            )
+        
+        # Return the pattern as-is if it doesn't match any recognized pattern
+        return None
+
+
+class ReferenceEnhancer:
+    """Handles enhancing SPARQL queries with reference information."""
+    
+    @staticmethod
+    def generate_reference_patterns(pattern: TriplePattern, counter: int) -> Tuple[List[str], List[str]]:
+        """
+        Generate reference patterns for a triple pattern.
+        
+        Args:
+            pattern: The TriplePattern object
+            counter: A counter to ensure unique variable names
+            
+        Returns:
+            Tuple of (reference_patterns, new_select_vars)
+        """
+        statement_var = f"?statement{counter}"
+        ref_url_var = f"?refUrl{counter}"
+        ref_date_var = f"?refDate{counter}"
+        
+        # Extract property ID from predicate (remove the 'wdt:' prefix)
+        property_id = pattern.predicate[4:]
+        
+        ref_patterns = [
+            f"{pattern.subject} p:{property_id} {statement_var}",
+            f"{statement_var} ps:{property_id} {pattern.obj}",
+            f"OPTIONAL {{",
+            f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
+            f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
+            f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
+            f"}}"
+        ]
+        
+        new_select_vars = [ref_url_var, ref_date_var]
+        
+        return ref_patterns, new_select_vars
+
+
+class ExecuteSPARQLTool(BaseTool):
+    """Tool for executing SPARQL queries against Wikidata with reference enhancement."""
+    
+    name: str = "execute_sparql"
+    description: str = """Execute a SPARQL query against Wikidata.
+    
+    Args:
+        query: The complete SPARQL query string to execute
+        limit: Maximum number of results to return (default: 5)
+        include_references: Whether to automatically enhance the query to include references (default: True)
+    
+    Returns:
+        The query results or error information if the query fails
+    """
+    
+    def __init__(self):
+        super().__init__()
+        # These are not Pydantic fields, just instance attributes
+        self._endpoint = "https://query.wikidata.org/sparql"
+        self._sparql = SPARQLWrapper(self._endpoint)
+        self._sparql.setReturnFormat(JSON)
+        # Set a user agent to be respectful to the Wikidata service
+        self._sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
+    
+    def _run(self, query: str, limit: int = 5, include_references: bool = True) -> Dict[str, Any]:
+        """
+        Execute a SPARQL query against Wikidata
+        
+        Args:
+            query: The SPARQL query string
+            limit: Maximum number of results to return (default: 5)
+            include_references: Whether to automatically enhance the query to include references (default: True)
+            
+        Returns:
+            The query results or error information
+        """
+        try:
+            # Convert limit to integer explicitly to avoid float notation
+            limit_value = int(limit)
+            
+            # Enhance the query to include references if requested
+            if include_references:
+                query = self._enhance_query_with_references(query)
+            
+            # Add limit if not already present in the query
+            if "LIMIT" not in query.upper():
+                query += f" LIMIT {limit_value}"
+            
+            self._sparql.setQuery(query)
+            results = self._sparql.query().convert()
+            
+            return self._process_results(results, query)
+        
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e).split('\n')[0],
+                "query": query
+            }
+    
+    def _process_results(self, results: Dict[str, Any], query: str) -> Dict[str, Any]:
+        """
+        Process and format the query results.
+        
+        Args:
+            results: The raw query results
+            query: The query that was executed
+            
+        Returns:
+            Processed results with more readable format
+        """
+        processed_results = []
+        
+        if "results" in results and "bindings" in results["results"]:
+            bindings = results["results"]["bindings"]
+            
+            for binding in bindings:
+                processed_binding = {}
+                for key, value in binding.items():
+                    processed_binding[key] = value.get("value", "")
+                processed_results.append(processed_binding)
+            
+            return {
+                "success": True,
+                "results": processed_results,
+                "count": len(processed_results),
+                "raw_results": bindings,  # Include raw results for reference
+                "enhanced_query": query  # Include the enhanced query in the response
+            }
+        else:
+            # Handle other types of results
+            return {
+                "success": True,
+                "results": results,
+                "count": 1,
+                "enhanced_query": query
+            }
+    
+    def _enhance_query_with_references(self, query: str) -> str:
+        """
+        Enhance a SPARQL query to include reference information
+        
+        Args:
+            query: The original SPARQL query
+            
+        Returns:
+            An enhanced query that includes reference information
+        """
+        # Extract query parts
+        before_select, select_vars, where_content, after_where = QueryParser.extract_query_parts(query)
+        
+        # If not a standard SELECT query, return as is
+        if not where_content:
+            return query
+        
+        # Parse the WHERE clause into patterns
+        pattern_strings = QueryParser.parse_triple_patterns(where_content)
+        
+        # Process each pattern and identify wdt: patterns
+        enhanced_patterns = []
+        new_select_vars = []
+        counter = 1
+        
+        for pattern_str in pattern_strings:
+            # Keep the original pattern
+            enhanced_patterns.append(pattern_str)
+            
+            # Analyze the pattern
+            triple_pattern = QueryParser.analyze_triple_pattern(pattern_str)
+            
+            # Skip non-wdt patterns
+            if not triple_pattern or not triple_pattern.is_wdt_pattern:
+                continue
+            
+            # Generate reference patterns
+            ref_patterns, vars_to_add = ReferenceEnhancer.generate_reference_patterns(triple_pattern, counter)
+            enhanced_patterns.extend(ref_patterns)
+            new_select_vars.extend(vars_to_add)
+            counter += 1
+        
+        # Update the SELECT clause to include new variables
+        if new_select_vars:
+            for var in new_select_vars:
+                if var not in select_vars:
+                    select_vars += f" {var}"
+        
+        # Rebuild the query
+        enhanced_query = self._rebuild_query(before_select, select_vars, enhanced_patterns, after_where)
+        
+        return enhanced_query
+    
+    def _rebuild_query(self, before_select: str, select_vars: str, patterns: List[str], after_where: str) -> str:
+        """
+        Rebuild the query from its components.
+        
+        Args:
+            before_select: Content before the SELECT clause
+            select_vars: Variables in the SELECT clause
+            patterns: List of pattern strings for the WHERE clause
+            after_where: Content after the WHERE clause
+            
+        Returns:
+            The rebuilt query string
+        """
+        # Build the SELECT clause
+        select_clause = f"SELECT {select_vars} WHERE {{"
+        
+        # Build the query with proper formatting
+        enhanced_query = before_select + select_clause + "\n"
+        
+        # Add each pattern with proper formatting
+        for i, pattern in enumerate(patterns):
+            if pattern.startswith("OPTIONAL {") or pattern.startswith("FILTER"):
+                enhanced_query += f"  {pattern}"
+            elif pattern.strip().startswith("{") or pattern.strip().startswith("}"):
+                enhanced_query += f"  {pattern}"
+            else:
+                enhanced_query += f"  {pattern} ."
+            
+            # Add newline after each pattern
+            if i < len(patterns) - 1:
+                enhanced_query += "\n"
+        
+        enhanced_query += "\n}" + after_where
+        
+        # Fix any double periods
+        enhanced_query = enhanced_query.replace("..}", ".}")
+        enhanced_query = enhanced_query.replace(".. ", ". ")
+        
+        return enhanced_query
