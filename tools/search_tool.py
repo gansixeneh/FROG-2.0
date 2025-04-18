@@ -1,4 +1,3 @@
-from typing import Optional, List, Literal, Dict, Any, ClassVar
 from langchain_core.tools import BaseTool
 import requests
 
@@ -15,7 +14,7 @@ class SearchWikidataTool(BaseTool):
         A list of matching entities or properties with their details (id, label, description)
     """
     
-    def _run(self, term: str, type: Literal["entity", "property"] = "entity", limit: int = 5) -> List[Dict[str, Any]]:
+    def _run(self, term: str, type: str = "entity", limit: int = 5):
         """
         Search for entities or properties in Wikidata
         
@@ -34,7 +33,7 @@ class SearchWikidataTool(BaseTool):
         else:
             raise ValueError(f"Invalid search type: {type}. Must be 'entity' or 'property'")
     
-    def _search_entity(self, term: str, limit: int) -> List[Dict[str, Any]]:
+    def _search_entity(self, term: str, limit: int):
         url = "https://www.wikidata.org/w/api.php"
         params = {
             "action": "wbsearchentities",
@@ -60,7 +59,7 @@ class SearchWikidataTool(BaseTool):
             
         return results
     
-    def _search_property(self, term: str, limit: int) -> List[Dict[str, Any]]:
+    def _search_property(self, term: str, limit: int):
         url = "https://www.wikidata.org/w/api.php"
         params = {
             "action": "wbsearchentities",

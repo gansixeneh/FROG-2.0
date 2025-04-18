@@ -1,4 +1,3 @@
-from typing import Optional, Dict, Any, List, Tuple
 from langchain_core.tools import BaseTool
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
@@ -20,7 +19,7 @@ class QueryParser:
     """Parser for SPARQL queries to extract and manipulate components."""
     
     @staticmethod
-    def extract_query_parts(query: str) -> Tuple[str, str, str, str]:
+    def extract_query_parts(query: str):
         """
         Extract the different parts of a SPARQL query.
         
@@ -65,7 +64,7 @@ class QueryParser:
         return before_select, select_vars, where_content, after_where
     
     @staticmethod
-    def parse_triple_patterns(where_content: str) -> List[str]:
+    def parse_triple_patterns(where_content: str):
         """
         Parse the WHERE clause content into pattern strings.
         
@@ -118,7 +117,7 @@ class QueryParser:
         return patterns
     
     @staticmethod
-    def analyze_triple_pattern(pattern: str) -> Optional[TriplePattern]:
+    def analyze_triple_pattern(pattern: str):
         """
         Analyze a triple pattern string to extract its components.
         
@@ -169,7 +168,7 @@ class ReferenceEnhancer:
     """Handles enhancing SPARQL queries with reference information."""
     
     @staticmethod
-    def generate_reference_patterns(pattern: TriplePattern, counter: int) -> Tuple[List[str], List[str]]:
+    def generate_reference_patterns(pattern: TriplePattern, counter: int):
         """
         Generate reference patterns for a triple pattern.
         
@@ -206,7 +205,7 @@ class QueryFormatter:
     """Provides functionality to format and standardize SPARQL queries."""
     
     @staticmethod
-    def format_query(query: str) -> str:
+    def format_query(query: str):
         """
         Format a SPARQL query to standardize its structure.
         
@@ -289,7 +288,7 @@ class ExecuteSPARQLTool(BaseTool):
         # Set a user agent to be respectful to the Wikidata service
         self._sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
     
-    def _run(self, query: str, limit: int = 5, include_references: bool = True, format_query: bool = True) -> Dict[str, Any]:
+    def _run(self, query: str, limit: int = 5, include_references: bool = True, format_query: bool = True):
         """
         Execute a SPARQL query against Wikidata
         
@@ -331,7 +330,7 @@ class ExecuteSPARQLTool(BaseTool):
                 "query": query
             }
     
-    def _process_results(self, results: Dict[str, Any], query: str) -> Dict[str, Any]:
+    def _process_results(self, results, query: str):
         """
         Process and format the query results.
         
@@ -382,7 +381,7 @@ class ExecuteSPARQLTool(BaseTool):
                 "enhanced_query": query
             }
     
-    def _enhance_query_with_references(self, query: str) -> str:
+    def _enhance_query_with_references(self, query: str):
         """
         Enhance a SPARQL query to include reference information
         
@@ -435,7 +434,7 @@ class ExecuteSPARQLTool(BaseTool):
         
         return enhanced_query
     
-    def _rebuild_query(self, before_select: str, select_vars: str, patterns: List[str], after_where: str) -> str:
+    def _rebuild_query(self, before_select: str, select_vars: str, patterns, after_where: str):
         """
         Rebuild the query from its components.
         

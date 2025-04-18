@@ -1,11 +1,8 @@
 import os
-from typing import List
-from dotenv import load_dotenv
-from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage
 
 from tools.search_tool import SearchWikidataTool
 from tools.sparql_tool import ExecuteSPARQLTool
