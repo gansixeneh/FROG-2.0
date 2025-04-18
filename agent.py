@@ -79,9 +79,6 @@ Remember:
 - Format your final answer in a clear, concise way for the user
 
 Important SPARQL tips:
-- Use PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-- Use PREFIX wd: <http://www.wikidata.org/entity/>
-- Add LIMIT to your queries (default is 5)
 - Use labels with ?entity rdfs:label ?label . FILTER(LANG(?label) = "en")
 
 Common SPARQL prefixes for Wikidata:
