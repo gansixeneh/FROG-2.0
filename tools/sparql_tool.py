@@ -77,6 +77,6 @@ class ExecuteSPARQLTool(BaseTool):
         except Exception as e:
             return {
                 "success": False,
-                "error": str(e),
+                "error": str(e).split('\n')[0],
                 "query": query
             }
