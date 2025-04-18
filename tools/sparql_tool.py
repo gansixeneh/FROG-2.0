@@ -201,6 +201,69 @@ class ReferenceEnhancer:
         return ref_patterns, new_select_vars
 
 
+class QueryFormatter:
+    """Provides functionality to format and standardize SPARQL queries."""
+    
+    @staticmethod
+    def format_query(query: str) -> str:
+        """
+        Format a SPARQL query to standardize its structure.
+        
+        Args:
+            query: The SPARQL query string to format
+            
+        Returns:
+            A formatted SPARQL query string
+        """
+        # Extract query parts
+        before_select, select_vars, where_content, after_where = QueryParser.extract_query_parts(query)
+        
+        # If not a standard SELECT query, return as is with minimal formatting
+        if not where_content:
+            return query.strip()
+        
+        # Parse the WHERE clause into patterns
+        pattern_strings = QueryParser.parse_triple_patterns(where_content)
+        
+        # Format the SELECT clause
+        formatted_select = f"SELECT {select_vars}"
+        
+        # Format the WHERE clause
+        formatted_where = "WHERE {\n"
+        
+        # Format each pattern
+        for pattern in pattern_strings:
+            # Determine indentation level based on pattern content
+            indent = "  "
+            if pattern.strip().startswith("OPTIONAL") or pattern.strip().startswith("SERVICE"):
+                formatted_where += f"{indent}{pattern} .\n"
+            elif pattern.strip() == "}" or pattern.strip() == "{":
+                formatted_where += f"{indent}{pattern}\n"
+            else:
+                formatted_where += f"{indent}{pattern} .\n"
+        
+        formatted_where += "}"
+        
+        # Format content after WHERE clause
+        formatted_after = after_where.strip()
+        
+        # Combine the parts
+        formatted_query = before_select.strip()
+        if formatted_query and not formatted_query.endswith("\n"):
+            formatted_query += "\n"
+        
+        formatted_query += formatted_select + "\n" + formatted_where
+        
+        if formatted_after:
+            formatted_query += "\n" + formatted_after
+        
+        # Fix any double periods
+        formatted_query = formatted_query.replace("..", ".")
+        formatted_query = formatted_query.replace(". .", ".")
+        
+        return formatted_query
+
+
 class ExecuteSPARQLTool(BaseTool):
     """Tool for executing SPARQL queries against Wikidata with reference enhancement."""
     
@@ -225,7 +288,7 @@ class ExecuteSPARQLTool(BaseTool):
         # Set a user agent to be respectful to the Wikidata service
         self._sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
     
-    def _run(self, query: str, limit: int = 5, include_references: bool = True) -> Dict[str, Any]:
+    def _run(self, query: str, limit: int = 5, include_references: bool = True, format_query: bool = True) -> Dict[str, Any]:
         """
         Execute a SPARQL query against Wikidata
         
@@ -233,6 +296,7 @@ class ExecuteSPARQLTool(BaseTool):
             query: The SPARQL query string
             limit: Maximum number of results to return (default: 5)
             include_references: Whether to automatically enhance the query to include references (default: True)
+            format_query: Whether to format and standardize the query before execution (default: True)
             
         Returns:
             The query results or error information
@@ -249,6 +313,11 @@ class ExecuteSPARQLTool(BaseTool):
             if "LIMIT" not in query.upper():
                 query += f" LIMIT {limit_value}"
             
+            # Format the query if requested
+            if format_query:
+                query = QueryFormatter.format_query(query)
+            
+            # Execute the query
             self._sparql.setQuery(query)
             results = self._sparql.query().convert()
             
@@ -391,3 +460,15 @@ class ExecuteSPARQLTool(BaseTool):
         enhanced_query = enhanced_query.replace(".. ", ". ")
         
         return enhanced_query
+
+if __name__ == '__main__':
+    x = ExecuteSPARQLTool()
+    query = """
+    SELECT ?president ?presidentLabel WHERE {
+      wd:Q142 wdt:P35 ?president.
+      ?president rdfs:label ?presidentLabel.
+      FILTER(LANG(?presidentLabel) = "en")
+    }
+    """
+    result = x._run(query)
+    print(result)
