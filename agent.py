@@ -74,7 +74,7 @@ SELECT ?president ?presidentLabel WHERE {
 """
         
         # Initialize the model and agent
-        self.llm = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0.2)
+        self.llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2)
         self.agent = create_tool_calling_agent(
             self.llm,
             self.tools,

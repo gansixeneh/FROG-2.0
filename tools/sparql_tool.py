@@ -1,10 +1,10 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, ClassVar
 from langchain_core.tools import BaseTool
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 class ExecuteSPARQLTool(BaseTool):
-    name = "execute_sparql"
-    description = """Execute a SPARQL query against Wikidata.
+    name: str = "execute_sparql"
+    description: str = """Execute a SPARQL query against Wikidata.
     
     Args:
         query: The complete SPARQL query string to execute
@@ -16,11 +16,12 @@ class ExecuteSPARQLTool(BaseTool):
     
     def __init__(self):
         super().__init__()
-        self.endpoint = "https://query.wikidata.org/sparql"
-        self.sparql = SPARQLWrapper(self.endpoint)
-        self.sparql.setReturnFormat(JSON)
+        # These are not Pydantic fields, just instance attributes
+        self._endpoint = "https://query.wikidata.org/sparql"
+        self._sparql = SPARQLWrapper(self._endpoint)
+        self._sparql.setReturnFormat(JSON)
         # Set a user agent to be respectful to the Wikidata service
-        self.sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
+        self._sparql.addCustomHttpHeader("User-Agent", "LangChain Wikidata Agent/1.0")
         
     def _run(self, query: str, limit: int = 5) -> Dict[str, Any]:
         """
@@ -41,8 +42,8 @@ class ExecuteSPARQLTool(BaseTool):
                 else:
                     query += f" LIMIT {limit}"
             
-            self.sparql.setQuery(query)
-            results = self.sparql.query().convert()
+            self._sparql.setQuery(query)
+            results = self._sparql.query().convert()
             
             # Process results to make them more readable
             processed_results = []

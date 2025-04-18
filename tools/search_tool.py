@@ -1,11 +1,10 @@
-
-from typing import Optional, List, Literal, Dict, Any
+from typing import Optional, List, Literal, Dict, Any, ClassVar
 from langchain_core.tools import BaseTool
 import requests
 
 class SearchWikidataTool(BaseTool):
-    name = "search_entity_property"
-    description = """Search for entities or properties in Wikidata by name or label.
+    name: str = "search_entity_property"
+    description: str = """Search for entities or properties in Wikidata by name or label.
     
     Args:
         term: The search term to look for in Wikidata
