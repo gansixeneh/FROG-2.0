@@ -81,7 +81,6 @@ SELECT ?president ?presidentLabel WHERE {
         # Create a prompt template with system message and human input
         self.prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content=system_message),
-            MessagesPlaceholder(variable_name="chat_history"),
             HumanMessage(content="{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad")
         ])
