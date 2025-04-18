@@ -49,8 +49,6 @@ class ExecuteSPARQLTool(BaseTool):
             if "LIMIT" not in query.upper():
                 query += f" LIMIT {limit_value}"
             
-            return query
-            
             self._sparql.setQuery(query)
             results = self._sparql.query().convert()
             
@@ -129,39 +127,9 @@ class ExecuteSPARQLTool(BaseTool):
         # Extract the WHERE clause content
         where_content = query[where_start_index + 1:where_end_index].strip()
         
-        # Process the WHERE clause content to handle triple patterns
-        # First, normalize whitespace and ensure each clause ends with a period
-        normalized_content = re.sub(r'\s+', ' ', where_content)
-        normalized_content = re.sub(r'([^\.;])\s*\n\s*', r'\1 ', normalized_content)
-        
-        # Split by periods but preserve FILTER expressions
-        triple_patterns = []
-        current = ""
-        in_filter = False
-        in_optional = False
-        brace_level = 0
-        
-        for i, char in enumerate(normalized_content):
-            current += char
-            
-            if char == '{':
-                brace_level += 1
-                if normalized_content[i-8:i].upper().strip() == "OPTIONAL":
-                    in_optional = True
-            elif char == '}':
-                brace_level -= 1
-                if brace_level == 0 and in_optional:
-                    in_optional = False
-            
-            # Add a section when we hit a period outside of a FILTER or nested block
-            if char == '.' and brace_level == 0 and not in_filter:
-                if current.strip():
-                    triple_patterns.append(current.strip())
-                current = ""
-        
-        # Add final section if not empty
-        if current.strip():
-            triple_patterns.append(current.strip())
+        # Parse the query to identify triple patterns
+        # This is a simplified parser that handles basic SPARQL structure
+        triple_patterns = self._parse_query_into_patterns(where_content)
         
         # Process each triple pattern and identify wdt: patterns
         enhanced_patterns = []
@@ -201,9 +169,9 @@ class ExecuteSPARQLTool(BaseTool):
                     f"{subject} p:{predicate[4:]} {statement_var}",
                     f"{statement_var} ps:{predicate[4:]} {object_var}",
                     f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter} .",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }} # Reference URL",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }} # Reference date",
+                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
                     f"}}"
                 ]
                 
@@ -227,9 +195,9 @@ class ExecuteSPARQLTool(BaseTool):
                     f"{subject_var} p:{predicate[4:]} {statement_var}",
                     f"{statement_var} ps:{predicate[4:]} {object_entity}",
                     f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter} .",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }} # Reference URL",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }} # Reference date",
+                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
                     f"}}"
                 ]
                 
@@ -253,9 +221,9 @@ class ExecuteSPARQLTool(BaseTool):
                     f"{subject_var} p:{predicate[4:]} {statement_var}",
                     f"{statement_var} ps:{predicate[4:]} {object_var}",
                     f"OPTIONAL {{",
-                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter} .",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }} # Reference URL",
-                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }} # Reference date",
+                    f"  {statement_var} prov:wasDerivedFrom ?reference{counter}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
+                    f"  OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
                     f"}}"
                 ]
                 
@@ -273,27 +241,81 @@ class ExecuteSPARQLTool(BaseTool):
         select_clause = f"SELECT {select_vars} WHERE {{"
         after_where = query[where_end_index + 1:]
         
-        # Join the patterns with proper separators
-        joined_patterns = ""
+        # Build the new query with proper formatting
+        enhanced_query = before_select + select_clause + "\n"
+        
+        # Add each pattern with proper formatting
         for i, pattern in enumerate(enhanced_patterns):
-            joined_patterns += "\n  " + pattern
-            # Add period after each pattern except the last one or if it's an OPTIONAL block
-            if i < len(enhanced_patterns) - 1 and not pattern.endswith("}"):
-                if not pattern.endswith("."):
-                    joined_patterns += " ."
+            if pattern.startswith("OPTIONAL {") or pattern.startswith("FILTER"):
+                enhanced_query += f"  {pattern}"
+            elif pattern.strip().startswith("{") or pattern.strip().startswith("}"):
+                enhanced_query += f"  {pattern}"
+            else:
+                enhanced_query += f"  {pattern} ."
             
-        enhanced_query = before_select + select_clause + joined_patterns + "\n}" + after_where
+            # Add newline after each pattern
+            if i < len(enhanced_patterns) - 1:
+                enhanced_query += "\n"
+        
+        enhanced_query += "\n}" + after_where
+        
+        # Fix any double periods
+        enhanced_query = enhanced_query.replace("..}", ".}")
+        enhanced_query = enhanced_query.replace(".. ", ". ")
         
         return enhanced_query
-
-if __name__ == '__main__':
-    x = ExecuteSPARQLTool()
-    query = """
-    SELECT ?president ?presidentLabel WHERE {
-      wd:Q142 wdt:P35 ?president.
-      ?president rdfs:label ?presidentLabel.
-      FILTER(LANG(?presidentLabel) = "en")
-    }
-    """
-    result = x._run(query)
-    print(result)
+    
+    def _parse_query_into_patterns(self, where_content: str) -> list:
+        """
+        Parse the WHERE clause content into patterns.
+        
+        Args:
+            where_content: The content of the WHERE clause
+            
+        Returns:
+            A list of patterns
+        """
+        # This is a simplified parser
+        # In a real implementation, you might want to use a proper SPARQL parser
+        
+        patterns = []
+        current_pattern = ""
+        brace_level = 0
+        in_filter = False
+        
+        i = 0
+        while i < len(where_content):
+            char = where_content[i]
+            
+            # Check for FILTER keyword
+            if i + 6 < len(where_content) and where_content[i:i+6].upper() == "FILTER":
+                in_filter = True
+            
+            # Check for opening brace
+            if char == '{':
+                brace_level += 1
+            
+            # Check for closing brace
+            elif char == '}':
+                brace_level -= 1
+                if brace_level == 0:
+                    in_filter = False
+            
+            # Add character to current pattern
+            current_pattern += char
+            
+            # Check for pattern end
+            if char == '.' and brace_level == 0 and not in_filter:
+                # Remove trailing dot
+                current_pattern = current_pattern[:-1].strip()
+                if current_pattern:
+                    patterns.append(current_pattern)
+                current_pattern = ""
+            
+            i += 1
+        
+        # Add the last pattern if not empty
+        if current_pattern.strip():
+            patterns.append(current_pattern.strip())
+        
+        return patterns
