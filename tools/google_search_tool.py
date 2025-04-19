@@ -2,6 +2,7 @@ from langchain_core.tools import BaseTool
 from google import genai
 from google.genai import types
 import os
+import requests
 
 
 class GoogleSearchTool(BaseTool):
@@ -60,15 +61,41 @@ class GoogleSearchTool(BaseTool):
                 
                 # Extract search citations if available
                 citations = []
-                if hasattr(candidate, 'tool_calls') and candidate.tool_calls:
-                    for tool_call in candidate.tool_calls:
-                        if hasattr(tool_call, 'search_citations') and tool_call.search_citations:
-                            for citation in tool_call.search_citations:
-                                citations.append({
-                                    "title": citation.title if hasattr(citation, 'title') else "",
-                                    "url": citation.url if hasattr(citation, 'url') else "",
-                                    "snippet": citation.snippet if hasattr(citation, 'snippet') else ""
+                urls_to_resolve = []
+                
+                # First, collect all the proxy URLs
+                if hasattr(candidate, 'grounding_metadata') and candidate.grounding_metadata:
+                    grounding_chunks = getattr(candidate.grounding_metadata, 'grounding_chunks', [])
+                    for chunk in grounding_chunks:
+                        if hasattr(chunk, 'web') and chunk.web:
+                            web_info = chunk.web
+                            url = getattr(web_info, 'uri', "")
+                            title = getattr(web_info, 'title', "")
+                            domain = getattr(web_info, 'domain', "")
+                            
+                            # Check if this is a proxy URL
+                            if url and "vertexaisearch.cloud.google.com" in url:
+                                urls_to_resolve.append({
+                                    "proxy_url": url,
+                                    "title": title or domain,
+                                    "domain": domain
                                 })
+                
+                # Resolve the proxy URLs to their final destinations
+                for url_info in urls_to_resolve:
+                    try:
+                        final_url = self._resolve_redirect_url(url_info["proxy_url"])
+                        citations.append({
+                            "title": url_info["title"],
+                            "url": final_url
+                        })
+                    except Exception as e:
+                        # If we can't resolve the URL, use the original
+                        citations.append({
+                            "title": url_info["title"],
+                            "url": url_info["proxy_url"],
+                            "error": str(e)
+                        })
                 
                 search_results = {
                     "content": text_content,
@@ -88,3 +115,39 @@ class GoogleSearchTool(BaseTool):
                 "query": query,
                 "results": []
             }
+    
+    def _resolve_redirect_url(self, proxy_url):
+        """
+        Follow a redirect URL to get the final destination URL
+        
+        Args:
+            proxy_url: The proxy URL from Vertex AI Search
+            
+        Returns:
+            The final destination URL after following redirects
+        """
+        try:
+            # Send a HEAD request to follow redirects without downloading content
+            response = requests.head(
+                proxy_url, 
+                allow_redirects=True, 
+                timeout=5,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            )
+            return response.url
+        except Exception as e:
+            # If HEAD request fails, try with GET
+            try:
+                response = requests.get(
+                    proxy_url, 
+                    allow_redirects=True, 
+                    timeout=5,
+                    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+                    stream=True  # To avoid downloading the full content
+                )
+                # Close the connection without reading the content
+                response.close()
+                return response.url
+            except Exception:
+                # If both methods fail, return the original URL
+                return proxy_url
