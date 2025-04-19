@@ -89,7 +89,9 @@ TRACEABILITY:
    [Brief summary of the search results used for the answer]
 
 4. Sources:
-   - [List of sources/citations from the search results]
+   - [Source title] - [Complete URL]
+   - [Source title] - [Complete URL]
+   - [Additional sources with full URLs]
 ```
 
 Remember:
