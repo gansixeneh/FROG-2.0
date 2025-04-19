@@ -20,3 +20,5 @@ const App: React.FC = () => {
     </ChatProvider>
   );
 };
+
+export default App;

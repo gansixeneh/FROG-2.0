@@ -49,3 +49,5 @@ const MessageInput: React.FC = () => {
     </div>
   );
 };
+
+export default MessageInput;

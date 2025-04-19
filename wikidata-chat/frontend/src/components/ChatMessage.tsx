@@ -28,7 +28,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             return !inline && match ? (
               <SyntaxHighlighter
                 language={match[1]}
-                style={tomorrow}
+                style={tomorrow as any}
                 PreTag="div"
                 {...props}
               >
@@ -74,7 +74,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                 <div className="relative group">
                   <SyntaxHighlighter
                     language={match[1]}
-                    style={tomorrow}
+                    style={tomorrow as any}
                     PreTag="div"
                     {...props}
                   >
@@ -129,3 +129,5 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     </div>
   );
 };
+
+export default ChatMessage;

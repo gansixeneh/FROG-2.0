@@ -101,3 +101,5 @@ const ChatArea: React.FC = () => {
     </div>
   );
 };
+
+export default ChatArea;

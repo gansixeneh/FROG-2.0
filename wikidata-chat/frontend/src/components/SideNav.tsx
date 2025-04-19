@@ -64,3 +64,5 @@ const SideNav: React.FC = () => {
     </div>
   );
 };
+
+export default SideNav;
