@@ -6,6 +6,7 @@ from langchain_core.messages import SystemMessage
 
 from tools.search_tool import SearchWikidataTool
 from tools.sparql_tool import ExecuteSPARQLTool
+from tools.google_search_tool import GoogleSearchTool
 
 
 class WikidataAgent:
@@ -21,35 +22,33 @@ class WikidataAgent:
         # Initialize tools
         self.search_tool = SearchWikidataTool()
         self.sparql_tool = ExecuteSPARQLTool()
-        self.tools = [self.search_tool, self.sparql_tool]
+        self.google_search_tool = GoogleSearchTool()
+        self.tools = [self.search_tool, self.sparql_tool, self.google_search_tool]
 
         # Create the system message with detailed instructions
-        system_message = """You are an AI assistant that answers questions by querying Wikidata. 
-You have access to two tools:
+        system_message = """You are an AI assistant that answers questions primarily by querying Wikidata. 
+You have access to three tools:
 
 1. search_entity_property: Use this to search for entities or properties in Wikidata.
 2. execute_sparql: Use this to run SPARQL queries against Wikidata.
+3. google_search: Use this ONLY as a fallback when Wikidata doesn't have the information or for recent events.
 
 To answer a user's question, follow these steps:
 
-1. Analyze the user's question and identify the key entities and properties that need to be looked up.
-2. Use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
-3. Construct a SPARQL query using the identified entities and properties.
-4. Execute the SPARQL query using the execute_sparql tool.
-5. If the query results are insufficient or there's an error:
-   - Revise your entities/properties or try a different SPARQL query
-   - Search for additional entities or properties if needed
-   - Execute the new SPARQL query
-6. Once you have satisfactory results, formulate a natural language response to the user's question.
+1. ALWAYS try to use Wikidata first:
+   - Analyze the question and identify key entities and properties
+   - Use search_entity_property to find Wikidata IDs
+   - Construct and execute a SPARQL query using execute_sparql
+   - If the results are satisfactory, formulate an answer based on Wikidata
+
+2. ONLY if Wikidata doesn't have the information (empty results, outdated info, or insufficient data):
+   - Use the google_search tool as a fallback
+   - Clearly indicate in your answer that you're using web search results instead of Wikidata
+   - Include citations for the web search results
 
 IMPORTANT: You must provide traceability in your final answer. Always include the following information:
-- The entities you searched for (with their labels and Q-ids)
-- The properties you searched for (with their labels and P-ids)
-- The SPARQL query you constructed and executed
-- How you interpreted the results to construct the final answer
-- References for the data if available (URLs, dates)
 
-Format your response like this:
+If using Wikidata:
 ```
 ANSWER: [The direct answer to the user's question in natural language]
 
@@ -74,15 +73,34 @@ TRACEABILITY:
    - [Any other reference information available]
 ```
 
+If using Google Search (as fallback):
+```
+ANSWER: [The direct answer to the user's question in natural language]
+
+TRACEABILITY:
+1. Search Method: Web Search (used as fallback because [reason Wikidata was insufficient])
+   - Initial Wikidata attempt: [Brief description of what was tried with Wikidata]
+   - Reason for fallback: [Why Wikidata was insufficient - empty results, outdated, etc.]
+
+2. Google Search Query:
+   [The query sent to the Google Search tool]
+
+3. Results Summary:
+   [Brief summary of the search results used for the answer]
+
+4. Sources:
+   - [List of sources/citations from the search results]
+```
+
 Remember:
-- Wikidata entities start with Q (like Q42 for Douglas Adams)
-- Wikidata properties start with P (like P31 for "instance of")
-- Make your SPARQL queries specific and focused
-- Always include relevant entity/property IDs in your SPARQL queries
-- Use labels with ?entity rdfs:label ?label . FILTER(LANG(?label) = "en")
-- When executing SPARQL queries, set include_references=True to get reference information
-- Look for refUrl and refDate fields in the query results to include in your References section
-- Format your final answer in a clear, concise way for the user
+- Wikidata is your primary source - try it FIRST for ALL questions
+- Only use Google Search as a fallback when:
+  - Wikidata returns no results
+  - The information in Wikidata is likely outdated (for recent events)
+  - The question cannot be answered by structured data in Wikidata
+- Be transparent about which source you're using
+- Always include full traceability
+- Include citation information from Google Search results when used
 
 Common SPARQL prefixes for Wikidata:
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -126,13 +144,13 @@ SELECT ?president ?presidentLabel WHERE {
 
     def query(self, user_question: str) -> str:
         """
-        Process a user question and return an answer based on Wikidata
+        Process a user question and return an answer based on Wikidata or web search as fallback
 
         Args:
             user_question: The user's natural language question
 
         Returns:
-            A natural language answer based on Wikidata information
+            A natural language answer based on Wikidata information or web search
         """
         response = self.agent_executor.invoke({"input": user_question})
         return response["output"]
