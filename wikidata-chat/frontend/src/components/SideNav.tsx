@@ -4,7 +4,7 @@ import { useChat } from '../context/ChatContext';
 import { formatDistanceToNow } from 'date-fns';
 
 const SideNav: React.FC = () => {
-  const { chats, isNavOpen, loadChat, currentChat, startNewChat } = useChat();
+  const { chats, isNavOpen, loadChat, currentChat, startNewChat, toggleNav } = useChat();
   
   return (
     <div 
@@ -12,6 +12,28 @@ const SideNav: React.FC = () => {
         isNavOpen ? 'translate-x-0' : '-translate-x-full'
       } w-64 bg-gray-800 text-white transition-transform duration-300 ease-in-out z-20 pt-16`}
     >
+      {/* Add close button */}
+      <button
+        onClick={toggleNav}
+        className="absolute top-4 left-4 p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none"
+        aria-label="Close sidebar"
+      >
+        <svg 
+          className="h-6 w-6" 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M6 18L18 6M6 6l12 12" 
+          />
+        </svg>
+      </button>
+      
       <div className="p-4">
         <button
           onClick={startNewChat}
