@@ -122,7 +122,9 @@ TRACEABILITY:
    - Selected: [property label] (Wikidata ID: [P-id])
    
 3. SPARQL Query:
+```sparql
 [The enhanced SPARQL query that was executed, from the 'enhanced_query' field in the tool response]
+```
 
 4. Results Interpretation:
 [Brief explanation of how the query results were interpreted to form the answer]

@@ -4,6 +4,7 @@ import { Message } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { formatSparqlQuery } from '../utils/sparqlFormatter';
 
 interface ChatMessageProps {
   message: Message;
@@ -27,6 +28,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const processMessageContent = (content: string) => {
     // First, ensure there's a newline around the ```sparql tag
     let processedContent = content.replace(/(```sparql)/g, '\n$1').replace(/```(?!sparql)/g, '```\n');
+    
+    // Format any SPARQL code blocks
+    processedContent = processedContent.replace(
+      /```sparql\s*([\s\S]*?)```/g, 
+      (match, code) => {
+        try {
+          // Use more spaces for better readability in the UI
+          const formattedSparql = formatSparqlQuery(code, 'default', 2);
+          return '```sparql\n' + formattedSparql + '\n```';
+        } catch (e) {
+          console.error('Error formatting SPARQL:', e);
+          return match; // Return original if formatting fails
+        }
+      }
+    );
     
     // Look for URLs that aren't already in markdown link format: [text](url)
     const urlRegex = /(?<!\]\()https?:\/\/[^\s)>]+/g;
