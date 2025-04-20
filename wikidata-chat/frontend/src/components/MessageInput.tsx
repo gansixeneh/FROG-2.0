@@ -16,20 +16,20 @@ const MessageInput: React.FC = () => {
   
   return (
     <div className="border-t border-gray-200 bg-white p-4 fixed bottom-0 left-0 right-0">
-      <form onSubmit={handleSubmit} className="flex items-center">
+      <form onSubmit={handleSubmit} className="flex items-center mx-auto max-w-4xl">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={isProcessing ? "Waiting for response..." : "Ask a question..."}
-          className="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-grow h-12 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={!currentChat || isProcessing}
         />
         <button
           type="submit"
           className={`${
             isProcessing ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-          } text-white py-3 px-4 rounded-r-md transition-colors disabled:bg-gray-400`}
+          } text-white h-12 w-12 rounded-full ml-3 transition-colors disabled:bg-gray-400 flex items-center justify-center shadow-md`}
           disabled={!message.trim() || !currentChat || isProcessing}
         >
           {isProcessing ? (
@@ -46,7 +46,7 @@ const MessageInput: React.FC = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                d="M5 12h14M12 5l7 7-7 7"
               />
             </svg>
           )}
