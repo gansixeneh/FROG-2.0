@@ -1,6 +1,8 @@
 # backend/agent/agent.py
 import os
 import asyncio
+import queue
+import threading
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -8,56 +10,145 @@ from langchain_core.messages import SystemMessage
 from langchain.callbacks.base import BaseCallbackHandler
 
 class DebugHandler(BaseCallbackHandler):
-    """Callback handler for capturing debug information."""
+    """Callback handler for capturing debug information and sending it through WebSocket."""
     
     def __init__(self, callback_func=None):
         self.callback_func = callback_func
-        
-    def on_llm_start(self, serialized, prompts, **kwargs):
-        output = f"Starting LLM with prompts: {prompts}"
-        if self.callback_func:
-            self._call_callback(output)
+        # Create a thread-safe queue for passing messages between threads
+        self.message_queue = queue.Queue()
+        # Start a thread to process messages from the queue
+        self.is_running = True
+        self.processing_thread = threading.Thread(target=self._process_queue, daemon=True)
+        self.processing_thread.start()
     
-    def on_chain_start(self, serialized, inputs, **kwargs):
-        output = f"Entering new {serialized['name']} chain..."
-        if self.callback_func:
-            self._call_callback(output)
+    def _process_queue(self):
+        """Process messages from the queue and send them to the callback."""
+        while self.is_running:
+            try:
+                # Get message from queue with timeout to allow thread to exit
+                message = self.message_queue.get(timeout=0.1)
+                # Send message to callback
+                self._send_to_callback(message)
+                # Mark task as done
+                self.message_queue.task_done()
+            except queue.Empty:
+                # Queue is empty, continue waiting
+                continue
+            except Exception as e:
+                print(f"Error in debug handler processing thread: {e}")
     
-    def on_chain_end(self, outputs, **kwargs):
-        output = f"> Finished chain."
-        if self.callback_func:
-            self._call_callback(output)
-    
-    def on_tool_start(self, serialized, input_str, **kwargs):
-        output = f"Invoking: `{serialized['name']}` with `{input_str}`"
-        if self.callback_func:
-            self._call_callback(output)
-    
-    def on_tool_end(self, output, **kwargs):
-        if self.callback_func:
-            self._call_callback(str(output))
-    
-    def on_text(self, text, **kwargs):
-        if self.callback_func:
-            self._call_callback(text)
-    
-    def _call_callback(self, output):
-        """Helper method to call the callback function"""
+    def _send_to_callback(self, message):
+        """Send a message to the callback function, handling both sync and async callbacks."""
         if not self.callback_func:
             return
             
-        # Check if callback is a coroutine function
+        # Handle async callback functions
         if asyncio.iscoroutinefunction(self.callback_func):
-            # We're in a sync context, so we can't directly await
-            # Create a future and schedule it in the event loop
-            loop = asyncio.get_event_loop()
+            # Try to get the current event loop
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                # No event loop in this thread, create a new one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+            
+            # Schedule the callback in the event loop
             if loop.is_running():
-                asyncio.create_task(self.callback_func(output))
+                future = asyncio.run_coroutine_threadsafe(self.callback_func(message), loop)
+                # Optional: Wait for result with timeout
+                try:
+                    future.result(timeout=1.0)
+                except Exception as e:
+                    print(f"Error in async callback: {e}")
             else:
-                loop.run_until_complete(self.callback_func(output))
+                # Run the callback in the loop
+                loop.run_until_complete(self.callback_func(message))
         else:
-            # Regular function callback
-            self.callback_func(output)
+            # Regular synchronous callback
+            try:
+                self.callback_func(message)
+            except Exception as e:
+                print(f"Error in sync callback: {e}")
+    
+    def _add_to_queue(self, message):
+        """Add a message to the queue for processing."""
+        if self.is_running and self.callback_func:
+            self.message_queue.put(str(message))
+    
+    # ---- Callback methods overridden from BaseCallbackHandler ----
+    
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        self._add_to_queue("🧠 Starting to think about the question...")
+    
+    def on_llm_new_token(self, token, **kwargs):
+        # Only log token if needed for streaming (disabled for cleaner output)
+        pass
+    
+    def on_llm_end(self, response, **kwargs):
+        self._add_to_queue("✅ Finished thinking")
+    
+    def on_llm_error(self, error, **kwargs):
+        self._add_to_queue(f"❌ Error during thinking: {error}")
+    
+    def on_chain_start(self, serialized, inputs, **kwargs):
+        chain_name = serialized.get('name', 'unknown')
+        self._add_to_queue(f"📎 Starting reasoning chain: {chain_name}")
+    
+    def on_chain_end(self, outputs, **kwargs):
+        self._add_to_queue("📎 Reasoning chain completed")
+    
+    def on_chain_error(self, error, **kwargs):
+        self._add_to_queue(f"❌ Error in reasoning chain: {error}")
+    
+    def on_tool_start(self, serialized, input_str, **kwargs):
+        """Important: This captures the start of a tool call."""
+        tool_name = serialized.get('name', 'unknown tool')
+        formatted_input = input_str.replace('\n', ' ')
+        if len(formatted_input) > 100:
+            formatted_input = formatted_input[:100] + "..."
+        
+        # Format message based on tool type
+        if tool_name == "search_entity_property":
+            self._add_to_queue(f"🔍 Searching Wikidata for: {formatted_input}")
+        elif tool_name == "execute_sparql":
+            self._add_to_queue(f"🔧 Executing SPARQL query against Wikidata")
+        elif tool_name == "google_search":
+            self._add_to_queue(f"🌐 Searching the web for: {formatted_input}")
+        else:
+            self._add_to_queue(f"🔧 Using tool: {tool_name} with input: {formatted_input}")
+    
+    def on_tool_end(self, output, **kwargs):
+        """Important: This captures the result of a tool call."""
+        # Convert output to string and truncate if too long
+        output_str = str(output)
+        if len(output_str) > 200:
+            output_str = output_str[:200] + "... [output truncated]"
+        
+        self._add_to_queue(f"✓ Tool returned result: {output_str}")
+    
+    def on_tool_error(self, error, **kwargs):
+        self._add_to_queue(f"❌ Tool error: {error}")
+    
+    def on_text(self, text, **kwargs):
+        """Captures text output from the agent."""
+        self._add_to_queue(text)
+    
+    def on_agent_action(self, action, **kwargs):
+        """Captures when the agent decides to take an action."""
+        tool = getattr(action, 'tool', 'unknown')
+        tool_input = getattr(action, 'tool_input', '')
+        print(action)
+        self._add_to_queue(f"🤖 Agent decided to use: {tool}")
+    
+    def on_agent_finish(self, finish, **kwargs):
+        """Captures when the agent finishes its reasoning."""
+        self._add_to_queue(f"✅ Agent finished reasoning process")
+    
+    def __del__(self):
+        """Clean up resources when the handler is garbage collected."""
+        self.is_running = False
+        if hasattr(self, 'processing_thread') and self.processing_thread.is_alive():
+            self.processing_thread.join(timeout=1.0)
 
 
 # Import tools from the correct location
@@ -75,9 +166,8 @@ class WikidataAgent:
                 "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
             )
         
-        # Setup debug handler
-        self.debug_callback = debug_callback
-        self.debug_handler = DebugHandler(self._handle_debug_output)
+        # Setup debug handler - pass the callback directly
+        self.debug_handler = DebugHandler(debug_callback)
 
         # Initialize tools
         self.search_tool = SearchWikidataTool()
@@ -85,7 +175,7 @@ class WikidataAgent:
         self.google_search_tool = GoogleSearchTool()
         self.tools = [self.search_tool, self.sparql_tool, self.google_search_tool]
 
-        # Create the system message with detailed instructions (same as in your original code)
+        # Create the system message with detailed instructions
         system_message = """You are an AI assistant that answers questions primarily by querying Wikidata. 
 You have access to three tools:
 
@@ -190,26 +280,6 @@ Remember:
             max_iterations=20,
             callbacks=[self.debug_handler]
         )
-
-    def _handle_debug_output(self, output):
-        """Handle debug output from the agent."""
-        if self.debug_callback:
-            # If we're running in async context, we need to be careful
-            # The Debug Handler runs in sync context, but we need to pass
-            # the output to an async callback
-            import asyncio
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # We're in an async context, use create_task
-                    asyncio.create_task(self.debug_callback(output))
-                else:
-                    # We're not in an async context, run the coroutine directly
-                    loop.run_until_complete(self.debug_callback(output))
-            except RuntimeError:
-                # No event loop, so we're in a sync context - can't call the async callback
-                # This shouldn't normally happen since the agent is meant to be used in async context
-                pass
 
     def query(self, user_question: str) -> str:
         """
