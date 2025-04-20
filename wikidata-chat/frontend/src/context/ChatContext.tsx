@@ -65,10 +65,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Connect to WebSocket for this chat
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.hostname;
-      const wsPort = window.location.port ? `:${window.location.port}` : '';
-      const wsUrl = `${wsProtocol}//${wsHost}${wsPort}/ws/chat/${chatId}/`;
+      const wsUrl = `ws://localhost:8000/ws/chat/${chatId}/`;
+
+      console.log('Connecting to WebSocket:', wsUrl);
       
       const newSocket = new WebSocket(wsUrl);
       setSocket(newSocket);
