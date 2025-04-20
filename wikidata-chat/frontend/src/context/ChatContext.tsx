@@ -26,6 +26,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   // Fetch all chats on initial load
   useEffect(() => {
@@ -52,6 +53,94 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     loadChats();
   }, []);
 
+  // Create a separate effect for WebSocket connection
+  useEffect(() => {
+    // Clean up function to close the socket when component unmounts
+    // or when currentChat changes
+    return () => {
+      if (socket) {
+        console.log('Closing WebSocket connection due to effect cleanup');
+        socket.close();
+        setSocketConnected(false);
+      }
+    };
+  }, [currentChat?.id]);
+
+  // Setup WebSocket connection
+  const setupWebSocket = (chatId: string) => {
+    // Close existing socket if open
+    if (socket) {
+      console.log('Closing existing WebSocket connection');
+      socket.close();
+      setSocketConnected(false);
+    }
+
+    // Create new WebSocket connection
+    const wsUrl = `ws://localhost:8000/ws/chat/${chatId}/`;
+    console.log('Connecting to WebSocket:', wsUrl);
+    
+    const newSocket = new WebSocket(wsUrl);
+    setSocket(newSocket);
+    
+    // Set up WebSocket event handlers
+    newSocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      
+      if (data.debug) {
+        // Handle debug output
+        setDebugOutput(prev => [...prev, {
+          content: data.debug,
+          timestamp: new Date().toISOString()
+        }]);
+      } else if (data.role && data.message) {
+        // Handle new message
+        const newMessage: Message = {
+          id: `temp-${Date.now()}`,  // Temporary ID until we refresh
+          role: data.role,
+          content: data.message,
+          created_at: new Date().toISOString()
+        };
+        
+        setCurrentChat(prev => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            messages: [...prev.messages, newMessage]
+          };
+        });
+        
+        // If it's an assistant message, update the chat list without refreshing the whole chat
+        if (data.role === 'assistant') {
+          // Only refresh the chat list, not the entire chat with messages
+          refreshChatsList();
+        }
+      }
+    };
+    
+    newSocket.onopen = () => {
+      console.log('WebSocket connection established');
+      setSocketConnected(true);
+    };
+    
+    newSocket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setSocketConnected(false);
+    };
+    
+    newSocket.onclose = (event) => {
+      console.log('WebSocket connection closed', event.code, event.reason);
+      setSocketConnected(false);
+      
+      // If the socket closed unexpectedly (not by our code), attempt to reconnect
+      if (event.code !== 1000 && currentChat?.id === chatId) {
+        console.log('Attempting to reconnect WebSocket...');
+        setTimeout(() => setupWebSocket(chatId), 2000);
+      }
+    };
+
+    return newSocket;
+  };
+
   // Load a specific chat
   const loadChat = async (chatId: string) => {
     try {
@@ -59,67 +148,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const chatData = await fetchChat(chatId);
       setCurrentChat(chatData);
       
-      // Close existing socket if open
-      if (socket) {
-        socket.close();
-      }
-      
       // Connect to WebSocket for this chat
-      const wsUrl = `ws://localhost:8000/ws/chat/${chatId}/`;
-
-      console.log('Connecting to WebSocket:', wsUrl);
-      
-      const newSocket = new WebSocket(wsUrl);
-      setSocket(newSocket);
+      setupWebSocket(chatId);
       
       // Clear debug output for new chat
       setDebugOutput([]);
-      
-      // Set up WebSocket event handlers
-      newSocket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        
-        if (data.debug) {
-          // Handle debug output
-          setDebugOutput(prev => [...prev, {
-            content: data.debug,
-            timestamp: new Date().toISOString()
-          }]);
-        } else if (data.role && data.message) {
-          // Handle new message
-          const newMessage: Message = {
-            id: `temp-${Date.now()}`,  // Temporary ID until we refresh
-            role: data.role,
-            content: data.message,
-            created_at: new Date().toISOString()
-          };
-          
-          setCurrentChat(prev => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              messages: [...prev.messages, newMessage]
-            };
-          });
-          
-          // If it's a system message indicating completion, refresh the chat data
-          if (data.role === 'assistant') {
-            refreshCurrentChat();
-          }
-        }
-      };
-      
-      newSocket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-      
-      newSocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-      
-      newSocket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
       
       // Close sidebar on mobile after selecting a chat
       setIsNavOpen(false);
@@ -130,7 +163,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Refresh just the chats list without affecting the websocket
+  const refreshChatsList = async () => {
+    try {
+      const chatList = await fetchChats();
+      setChats(chatList);
+    } catch (error) {
+      console.error('Error refreshing chats list:', error);
+    }
+  };
+
   // Refresh current chat data from API
+  // Only use this when you want to completely refresh the chat
   const refreshCurrentChat = async () => {
     if (currentChat) {
       try {
@@ -138,8 +182,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setCurrentChat(refreshedChat);
         
         // Also refresh the chats list
-        const chatList = await fetchChats();
-        setChats(chatList);
+        refreshChatsList();
       } catch (error) {
         console.error('Error refreshing chat:', error);
       }
@@ -169,10 +212,41 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Send a message
   const sendMessage = (content: string) => {
     if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
-      console.error('WebSocket is not connected');
+      console.error('WebSocket is not connected, attempting to reconnect...');
+      // Try to reconnect if socket is not open
+      if (currentChat) {
+        const newSocket = setupWebSocket(currentChat.id);
+        
+        // Wait a short time for the connection to establish, then send the message
+        setTimeout(() => {
+          if (newSocket.readyState === WebSocket.OPEN) {
+            sendMessageToSocket(newSocket, content, currentChat);
+          } else {
+            // Give it one more chance after a longer delay
+            setTimeout(() => {
+              if (newSocket.readyState === WebSocket.OPEN) {
+                sendMessageToSocket(newSocket, content, currentChat);
+              } else {
+                console.error('Failed to reconnect WebSocket');
+                alert('Connection error. Please refresh the page and try again.');
+              }
+            }, 1000);
+          }
+        }, 300);
+      }
       return;
     }
     
+    // Socket is open, send message directly
+    sendMessageToSocket(socket, content, currentChat);
+  };
+
+  // Helper to send message to a socket
+  const sendMessageToSocket = (
+    socketToUse: WebSocket, 
+    content: string, 
+    chat: ChatWithMessages
+  ) => {
     // Add user message to UI immediately
     const newMessage: Message = {
       id: `temp-${Date.now()}`,
@@ -190,7 +264,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
     
     // Send message to WebSocket
-    socket.send(JSON.stringify({
+    socketToUse.send(JSON.stringify({
       message: content
     }));
   };
