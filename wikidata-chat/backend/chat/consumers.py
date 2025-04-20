@@ -35,6 +35,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Initialize the agent with a callback for debug output
         self.agent = WikidataAgent(gemini_api_key=gemini_api_key, debug_callback=self.debug_callback)
+        
+        # Add a message counter to prevent duplicate message issues
+        self.message_counter = 0
     
     async def disconnect(self, close_code):
         # Leave room group
@@ -68,25 +71,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'debug_message',
-                'message': output
+                'message': output,
+                'message_id': f"debug_{self.message_counter}"
             }
         )
+        self.message_counter += 1
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         
         # Save user message
-        await self.save_message(message, 'user')
+        message_obj = await self.save_message(message, 'user')
         
         # Send message to room group to indicate typing
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'system_message',
-                'message': 'Agent is thinking...'
+                'message': 'Agent is thinking...',
+                'message_id': f"system_{self.message_counter}"
             }
         )
+        self.message_counter += 1
         
         # Process the message with the agent
         try:
@@ -95,7 +102,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             response = await loop.run_in_executor(None, self.agent.query, message)
             
             # Save assistant message
-            await self.save_message(response, 'assistant')
+            assistant_message = await self.save_message(response, 'assistant')
             
             # Send message to room group
             await self.channel_layer.group_send(
@@ -103,47 +110,55 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': response,
-                    'role': 'assistant'
+                    'role': 'assistant',
+                    'message_id': str(assistant_message.id)
                 }
             )
         except Exception as e:
             error_message = f"Error: {str(e)}\n{traceback.format_exc()}"
-            await self.save_message(error_message, 'system')
+            error_msg_obj = await self.save_message(error_message, 'system')
             
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'system_message',
-                    'message': error_message
+                    'message': error_message,
+                    'message_id': str(error_msg_obj.id)
                 }
             )
     
     async def chat_message(self, event):
         message = event['message']
         role = event['role']
+        message_id = event.get('message_id', f"auto_{self.message_counter}")
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-            'role': role
+            'role': role,
+            'message_id': message_id
         }))
     
     async def debug_message(self, event):
         message = event['message']
+        message_id = event.get('message_id', f"debug_{self.message_counter}")
         
         # Send debug message to WebSocket
         await self.send(text_data=json.dumps({
             'debug': message,
-            'role': 'system'
+            'role': 'system',
+            'message_id': message_id
         }))
     
     async def system_message(self, event):
         message = event['message']
+        message_id = event.get('message_id', f"system_{self.message_counter}")
         
         # Send system message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-            'role': 'system'
+            'role': 'system',
+            'message_id': message_id
         }))
     
     @database_sync_to_async

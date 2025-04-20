@@ -21,4 +21,5 @@ export interface ChatWithMessages extends Chat {
 export interface DebugOutput {
   content: string;
   timestamp: string;
+  id?: string; // Added ID to track debug outputs
 }

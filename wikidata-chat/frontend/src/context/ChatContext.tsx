@@ -19,6 +19,9 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
+// Set of already processed message IDs to prevent duplicates
+const processedMessageIds = new Set<string>();
+
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
@@ -27,6 +30,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+
+  // Clear processed message IDs when switching chats
+  const clearProcessedMessageIds = () => {
+    processedMessageIds.clear();
+  };
 
   // Fetch all chats on initial load
   useEffect(() => {
@@ -75,6 +83,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setSocketConnected(false);
     }
 
+    // Clear the set of processed message IDs when setting up a new WebSocket
+    clearProcessedMessageIds();
+
     // Create new WebSocket connection
     const wsUrl = `ws://localhost:8000/ws/chat/${chatId}/`;
     console.log('Connecting to WebSocket:', wsUrl);
@@ -85,17 +96,28 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Set up WebSocket event handlers
     newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      const messageId = data.message_id || `fallback-${Date.now()}-${Math.random()}`;
+      
+      // Skip if we've already processed this message
+      if (processedMessageIds.has(messageId)) {
+        console.log(`Skipping duplicate message with ID: ${messageId}`);
+        return;
+      }
+      
+      // Add to processed message set
+      processedMessageIds.add(messageId);
       
       if (data.debug) {
         // Handle debug output
         setDebugOutput(prev => [...prev, {
           content: data.debug,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          id: messageId
         }]);
       } else if (data.role && data.message) {
         // Handle new message
         const newMessage: Message = {
-          id: `temp-${Date.now()}`,  // Temporary ID until we refresh
+          id: messageId,
           role: data.role,
           content: data.message,
           created_at: new Date().toISOString()
@@ -103,6 +125,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         setCurrentChat(prev => {
           if (!prev) return null;
+          
+          // Check if we already have this message
+          const messageExists = prev.messages.some(msg => msg.id === newMessage.id);
+          if (messageExists) {
+            return prev;
+          }
+          
           return {
             ...prev,
             messages: [...prev.messages, newMessage]
@@ -148,6 +177,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const chatData = await fetchChat(chatId);
       setCurrentChat(chatData);
       
+      // Clear processed message IDs when loading a new chat
+      clearProcessedMessageIds();
+      
+      // Add existing message IDs to the processed set
+      chatData.messages.forEach(msg => {
+        processedMessageIds.add(msg.id);
+      });
+      
       // Connect to WebSocket for this chat
       setupWebSocket(chatId);
       
@@ -170,22 +207,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setChats(chatList);
     } catch (error) {
       console.error('Error refreshing chats list:', error);
-    }
-  };
-
-  // Refresh current chat data from API
-  // Only use this when you want to completely refresh the chat
-  const refreshCurrentChat = async () => {
-    if (currentChat) {
-      try {
-        const refreshedChat = await fetchChat(currentChat.id);
-        setCurrentChat(refreshedChat);
-        
-        // Also refresh the chats list
-        refreshChatsList();
-      } catch (error) {
-        console.error('Error refreshing chat:', error);
-      }
     }
   };
 
@@ -247,9 +268,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     content: string, 
     chat: ChatWithMessages
   ) => {
+    // Create a temporary message ID
+    const tempId = `temp-${Date.now()}`;
+    
+    // Add to processed set to prevent duplication when real message comes back
+    processedMessageIds.add(tempId);
+    
     // Add user message to UI immediately
     const newMessage: Message = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       role: 'user',
       content,
       created_at: new Date().toISOString()
