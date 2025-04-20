@@ -14,7 +14,7 @@ interface ChatContextType {
   currentChat: ChatWithMessages | null;
   isNavOpen: boolean;
   isLoading: boolean;
-  isProcessing: boolean; // New state to track if a message is being processed
+  isProcessing: boolean; // Track if a message is being processed
   socket: WebSocket | null;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
@@ -34,7 +34,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false); // New state for message processing
+  const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
 
@@ -115,12 +115,29 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       // Add to processed message set
       processedMessageIds.add(messageId);
 
-      if (data.role && (data.message || data.debug)) {
-        // Handle new message
+      if (data.role === "system" && data.debug) {
+        // Handle debug message (system message with debug content)
+        const newMessage: Message = {
+          id: messageId,
+          role: "system",
+          content: data.debug,
+          created_at: new Date().toISOString(),
+        };
+
+        setCurrentChat((prev) => {
+          if (!prev) return null;
+
+          return {
+            ...prev,
+            messages: [...prev.messages, newMessage],
+          };
+        });
+      } else if (data.role && data.message) {
+        // Handle regular message
         const newMessage: Message = {
           id: messageId,
           role: data.role,
-          content: data.message || data.debug,
+          content: data.message,
           created_at: new Date().toISOString(),
         };
 

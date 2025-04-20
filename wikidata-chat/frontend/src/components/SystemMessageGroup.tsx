@@ -7,7 +7,7 @@ interface SystemMessageGroupProps {
 }
 
 const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Auto-expand tracing by default
   const [height, setHeight] = useState<number | undefined>(undefined);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -17,7 +17,7 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
   // Create a unique identifier for this group based on the first message ID
   const groupId = messages.length > 0 ? messages[0].id : "group-fallback";
 
-  // Calculate the content height when it becomes visible
+  // Calculate the content height when it becomes visible or when messages change
   useEffect(() => {
     if (isVisible && contentRef.current) {
       // Set max height to the actual content height (capped at 400px)
@@ -26,7 +26,17 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
     } else {
       setHeight(0);
     }
-  }, [isVisible]);
+  }, [isVisible, messages]); // Add messages as a dependency to recalculate when they change
+
+  // Auto-scroll to the bottom of the trace content when new messages arrive
+  useEffect(() => {
+    if (isVisible && contentRef.current) {
+      const container = contentRef.current.querySelector('.agent-trace-content');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+  }, [messages, isVisible]);
 
   return (
     <div className="mx-auto max-w-[680px] w-full mb-4">
