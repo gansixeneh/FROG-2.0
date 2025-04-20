@@ -26,8 +26,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   };
   
   const processMessageContent = (content: string) => {
+    // Ensure there's a line break before any markdown heading (# headings)
+    let processedContent = content.replace(/([^\n])(#{1,6}\s+)/g, '$1\n$2');
+    
     // First, ensure there's a newline around the ```sparql tag
-    let processedContent = content.replace(/(```sparql)/g, '\n$1').replace(/```(?!sparql)/g, '```\n');
+    processedContent = processedContent.replace(/(```sparql)/g, '\n$1').replace(/```(?!sparql)/g, '```\n');
     
     // Format any SPARQL code blocks
     processedContent = processedContent.replace(
