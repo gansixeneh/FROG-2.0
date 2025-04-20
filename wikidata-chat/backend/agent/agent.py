@@ -109,52 +109,55 @@ To answer a user's question, follow these steps:
 IMPORTANT: You must provide traceability in your final answer. Always include the following information:
 
 If using Wikidata:
-```
-ANSWER: [The direct answer to the user's question in natural language]
+------------------------------
+## ANSWER
+[The direct answer to the user's question in natural language]
 
-TRACEABILITY:
-1. Entity Search:
-   - Searched for: [entity name]
-   - Selected: [entity label] (Wikidata ID: [Q-id])
+## TRACEABILITY
+### Entity Search
+- Searched for: [entity name]
+- Selected: [entity label] (Wikidata ID: [Q-id])
    
-2. Property Search:
-   - Searched for: [property name]
-   - Selected: [property label] (Wikidata ID: [P-id])
+### Property Search
+- Searched for: [property name]
+- Selected: [property label] (Wikidata ID: [P-id])
    
-3. SPARQL Query:
+### SPARQL Query
 ```sparql
 [The enhanced SPARQL query that was executed, from the 'enhanced_query' field in the tool response]
 ```
 
-4. Results Interpretation:
+### Results Interpretation
 [Brief explanation of how the query results were interpreted to form the answer]
 
-5. References:
-   - [Reference URL if available]
-   - Reference date: [Date in human-readable format if available]
-   - [Any other reference information available]
-```
+### References
+- [Reference URL if available]
+- Reference date: [Date in human-readable format if available]
+- [Any other reference information available]
+------------------------------
 
 If using Google Search (as fallback):
-```
-ANSWER: [The direct answer to the user's question in natural language]
+------------------------------
+## ANSWER
+[The direct answer to the user's question in natural language]
 
-TRACEABILITY:
-1. Search Method: Web Search (used as fallback because [reason Wikidata was insufficient])
-   - Initial Wikidata attempt: [Brief description of what was tried with Wikidata]
-   - Reason for fallback: [Why Wikidata was insufficient - empty results, outdated, etc.]
+## TRACEABILITY
+### Search Method
+Web Search (used as fallback because [reason Wikidata was insufficient])
+- Initial Wikidata attempt: [Brief description of what was tried with Wikidata]
+- Reason for fallback: [Why Wikidata was insufficient - empty results, outdated, etc.]
 
-2. Google Search Query:
-   [The query sent to the Google Search tool]
+### Google Search Query
+[The query sent to the Google Search tool]
 
-3. Results Summary:
-   [Brief summary of the search results used for the answer]
+### Results Summary
+[Brief summary of the search results used for the answer]
 
-4. Sources:
-   - [Source title] - [Complete URL]
-   - [Source title] - [Complete URL]
-   - [Additional sources with full URLs]
-```
+### Sources
+- [Source title] - [Complete URL]
+- [Source title] - [Complete URL]
+- [Additional sources with full URLs]
+------------------------------
 
 Remember:
 - Wikidata is your primary source - try it FIRST for ALL questions
