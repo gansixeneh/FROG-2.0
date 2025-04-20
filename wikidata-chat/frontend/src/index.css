@@ -102,3 +102,40 @@ code {
   background-color: #f3f4f6;
   font-weight: 600;
 }
+
+/* Custom scrollbar for agent trace content */
+.agent-trace-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.agent-trace-content::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 4px;
+}
+
+.agent-trace-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #10B981, #059669);
+  border-radius: 4px;
+}
+
+.agent-trace-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #059669, #047857);
+}
+
+/* Terminal-like text with glow effect */
+.agent-trace-content pre {
+  text-shadow: 0 0 5px rgba(16, 185, 129, 0.4);
+  line-height: 1.5;
+}
+
+/* Subtle pulse animation for terminal feel */
+@keyframes terminalPulse {
+  0% { opacity: 0.98; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.agent-trace-content {
+  animation: terminalPulse 4s ease-in-out infinite;
+  padding-right: 8px; /* Add some padding for the scrollbar */
+}

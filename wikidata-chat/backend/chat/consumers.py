@@ -81,6 +81,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         
+        # Send message to room group to indicate typing
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'system_message',
+                'message': '🧠 Agent is thinking...',
+                'message_id': f"system_{self.message_counter}"
+            }
+        )
+        self.message_counter += 1
+        
         # Save user message
         message_obj = await self.save_message(message, 'user')
         

@@ -121,7 +121,7 @@ const ChatArea: React.FC = () => {
   const processedMessages = processMessages();
 
   return (
-    <div className="p-4 pb-20 h-full overflow-y-auto">
+    <div className="p-4 pb-20 h-full overflow-y-auto mx-auto max-w-4xl">
       {/* Messages */}
       <div className="flex flex-col space-y-4">
         {processedMessages.map((item, index) => {

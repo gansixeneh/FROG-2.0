@@ -201,8 +201,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       <div
         className={`inline-block ${
           message.role === "user"
-            ? "ml-auto max-w-[80%]"
-            : "mr-auto max-w-[80%]"
+            ? "ml-auto max-w-[65%]"
+            : "mr-auto max-w-[65%]"
         }`}
       >
         {message.role === "user" && renderUserMessage()}
