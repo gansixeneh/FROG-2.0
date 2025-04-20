@@ -60,10 +60,10 @@ class DebugHandler(BaseCallbackHandler):
             self.callback_func(output)
 
 
-# Import tools from the original code
-from tools.search_tool import SearchWikidataTool
-from tools.sparql_tool import ExecuteSPARQLTool
-from tools.google_search_tool import GoogleSearchTool
+# Import tools from the correct location
+from agent.tools.search_tool import SearchWikidataTool
+from agent.tools.sparql_tool import ExecuteSPARQLTool
+from agent.tools.google_search_tool import GoogleSearchTool
 
 class WikidataAgent:
     def __init__(self, gemini_api_key: str = None, debug_callback=None):

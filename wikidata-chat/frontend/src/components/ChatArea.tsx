@@ -69,7 +69,8 @@ const ChatArea: React.FC = () => {
     );
   }
   
-  if (!currentChat) {
+  // Show welcome screen if there's no current chat OR if current chat has no messages
+  if (!currentChat || (currentChat && currentChat.messages.length === 0)) {
     return renderWelcomeScreen();
   }
   

@@ -33,6 +33,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const chatList = await fetchChats();
         setChats(chatList);
+        
+        // If there are no chats, automatically create a new one
+        if (chatList.length === 0) {
+          await startNewChat();
+        } else if (!currentChat) {
+          // If there are chats but none is selected, load the most recent one
+          await loadChat(chatList[0].id);
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading chats:', error);
@@ -56,7 +65,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Connect to WebSocket for this chat
-      const newSocket = new WebSocket(`ws://localhost:8000/ws/chat/${chatId}/`);
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.hostname;
+      const wsPort = window.location.port ? `:${window.location.port}` : '';
+      const wsUrl = `${wsProtocol}//${wsHost}${wsPort}/ws/chat/${chatId}/`;
+      
+      const newSocket = new WebSocket(wsUrl);
       setSocket(newSocket);
       
       // Clear debug output for new chat
@@ -94,6 +108,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             refreshCurrentChat();
           }
         }
+      };
+      
+      newSocket.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+      
+      newSocket.onerror = (error) => {
+        console.error('WebSocket error:', error);
       };
       
       newSocket.onclose = () => {
