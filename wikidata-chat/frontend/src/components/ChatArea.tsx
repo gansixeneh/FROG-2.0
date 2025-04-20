@@ -1,33 +1,33 @@
 // frontend/src/components/ChatArea.tsx
-import React, { useEffect, useRef } from 'react';
-import { useChat } from '../context/ChatContext';
-import ChatMessage from './ChatMessage';
-import { Message } from '../types';
+import React, { useEffect, useRef } from "react";
+import { useChat } from "../context/ChatContext";
+import ChatMessage from "./ChatMessage";
+import { Message } from "../types";
 
 const ChatArea: React.FC = () => {
   const { currentChat, isLoading } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('Current chat:', currentChat);
+    console.log("Current chat:", currentChat);
   }, [currentChat]);
-  
+
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChat?.messages]);
-  
+
   // Process messages to group debug messages following a user or assistant message
   const processMessages = () => {
     if (!currentChat?.messages.length) return [];
-    
+
     const processedMessages: {
       message: Message;
     }[] = [];
-    
+
     let currentDebugGroup: any[] = [];
     let lastNonDebugMessage = null as Message | null;
-    
+
     currentChat.messages.forEach((message, index) => {
       if (message.role === "system") {
         // This is a debug message, add it to the current debug group
@@ -37,50 +37,50 @@ const ChatArea: React.FC = () => {
         if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
           // Push all the messages in currentDebugGroup one by one
           currentDebugGroup.forEach((debugMessage, debugIndex) => {
-            console.log('Debug message:', debugMessage);
+            console.log("Debug message:", debugMessage);
             const debugPlaceholder: Message = {
               ...debugMessage,
               id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
             };
-            
+
             processedMessages.push({
               message: debugPlaceholder,
             });
           });
-          
+
           // Reset the debug group
           currentDebugGroup = [];
         }
-        
+
         // Add the regular message
         processedMessages.push({
           message,
         });
-        
+
         // Update the last non-debug message
         lastNonDebugMessage = message;
       }
     });
-    
+
     // Handle any remaining debug messages at the end
     if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
       currentDebugGroup.forEach((debugMessage, debugIndex) => {
-        console.log('Debug message:', debugMessage);
+        console.log("Debug message:", debugMessage);
         const debugPlaceholder: Message = {
           ...debugMessage,
           id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
         };
-        
+
         processedMessages.push({
           message: debugPlaceholder,
         });
       });
       currentDebugGroup = [];
     }
-    
+
     return processedMessages;
   };
-  
+
   const renderWelcomeScreen = () => (
     <div className="flex flex-col items-center justify-center h-full text-center px-4">
       <div className="mb-6">
@@ -99,10 +99,13 @@ const ChatArea: React.FC = () => {
           />
         </svg>
       </div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to Wikidata Agent</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        Welcome to Wikidata Agent
+      </h2>
       <p className="text-gray-600 max-w-md">
-        Ask questions and get answers from Wikidata. I can search for entities, construct SPARQL queries, and provide
-        detailed explanations of my reasoning process.
+        Ask questions and get answers from Wikidata. I can search for entities,
+        construct SPARQL queries, and provide detailed explanations of my
+        reasoning process.
       </p>
       <div className="mt-8 bg-blue-50 p-4 rounded-md max-w-md">
         <h3 className="font-semibold text-blue-800 mb-2">Try asking:</h3>
@@ -110,13 +113,15 @@ const ChatArea: React.FC = () => {
           <li>"Who is the current president of France?"</li>
           <li>"What is the capital of Japan and what is its population?"</li>
           <li>"List the spouses of Albert Einstein"</li>
-          <li>"Which mountains in the Himalayas are higher than 8000 meters?"</li>
+          <li>
+            "Which mountains in the Himalayas are higher than 8000 meters?"
+          </li>
           <li>"What books did Isaac Asimov write?"</li>
         </ul>
       </div>
     </div>
   );
-  
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -124,32 +129,29 @@ const ChatArea: React.FC = () => {
       </div>
     );
   }
-  
+
   // Show welcome screen if there's no current chat OR if current chat has no messages
   if (!currentChat || (currentChat && currentChat.messages.length === 0)) {
     return renderWelcomeScreen();
   }
-  
+
   // Process messages to group debug messages
   const processedMessages = processMessages();
 
-  console.log('Processed messages:', processedMessages);
-  
+  console.log("Processed messages:", processedMessages);
+
   return (
     <div className="p-4 pb-20 h-full overflow-y-auto">
       {/* Messages */}
       <div className="flex flex-col space-y-4">
         {processedMessages.map(({ message }) => (
-          <ChatMessage 
-            key={message.id} 
-            message={message}
-          />
+          <ChatMessage key={message.id} message={message} />
         ))}
-        
+
         <div ref={messagesEndRef} />
       </div>
     </div>
   );
-}
+};
 
 export default ChatArea;
