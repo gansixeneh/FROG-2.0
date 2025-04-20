@@ -1,29 +1,16 @@
 // frontend/src/components/ChatArea.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useChat } from '../context/ChatContext';
 import ChatMessage from './ChatMessage';
 
 const ChatArea: React.FC = () => {
-  const { currentChat, debugOutput, isLoading } = useChat();
+  const { currentChat, isLoading } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [showDebug, setShowDebug] = useState(false);
   
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentChat?.messages, debugOutput]);
-  
-  const renderDebugOutput = () => (
-    <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm max-h-[50vh] overflow-y-auto">
-      <pre className="whitespace-pre-wrap">
-        {debugOutput.map((debug, index) => (
-          <div key={index} className="mb-2">
-            {debug.content}
-          </div>
-        ))}
-      </pre>
-    </div>
-  );
+  }, [currentChat?.messages]);
   
   const renderWelcomeScreen = () => (
     <div className="flex flex-col items-center justify-center h-full text-center px-4">
@@ -81,22 +68,6 @@ const ChatArea: React.FC = () => {
         {currentChat.messages.map(message => (
           <ChatMessage key={message.id} message={message} />
         ))}
-        
-        {/* Debug toggle */}
-        {debugOutput.length > 0 && (
-          <div className="mx-auto">
-            <button
-              onClick={() => setShowDebug(prev => !prev)}
-              className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300"
-            >
-              {showDebug ? 'Hide Agent Tracing' : 'Show Agent Tracing'}
-            </button>
-          </div>
-        )}
-        
-        {/* Debug output */}
-        {showDebug && debugOutput.length > 0 && renderDebugOutput()}
-        
         <div ref={messagesEndRef} />
       </div>
     </div>

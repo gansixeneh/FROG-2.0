@@ -1,10 +1,11 @@
 // frontend/src/components/ChatMessage.tsx
 import React, { useState, useEffect } from 'react';
-import { Message } from '../types';
+import { Message, DebugOutput } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatSparqlQuery } from '../utils/sparqlFormatter';
+import { useChat } from '../context/ChatContext';
 
 interface ChatMessageProps {
   message: Message;
@@ -13,6 +14,9 @@ interface ChatMessageProps {
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [processedContent, setProcessedContent] = useState(message.content);
+  const [showTracing, setShowTracing] = useState(false);
+  const { getMessageTracing } = useChat();
+  const messageTracing = getMessageTracing(message.id);
   
   // Process message content on mount or when it changes
   useEffect(() => {
@@ -52,6 +56,26 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     processedContent = processedContent.replace(urlRegex, (url) => `[${url}](${url})`);
     
     return processedContent;
+  };
+
+
+  
+  const renderTracingOutput = () => {
+    if (!showTracing || !messageTracing || messageTracing.length === 0) {
+      return null;
+    }
+    
+    return (
+      <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm max-h-[50vh] overflow-y-auto mt-2">
+        <pre className="whitespace-pre-wrap">
+          {messageTracing.map((debug, index) => (
+            <div key={index} className="mb-2">
+              {debug.content}
+            </div>
+          ))}
+        </pre>
+      </div>
+    );
   };
   
   const renderUserMessage = () => (
@@ -169,6 +193,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     </div>
   );
 
+  // Only show tracing button for assistant messages that were dynamically added (have tracing data)
+  const shouldShowTracingButton = message.role === 'assistant' && 
+                                 messageTracing && 
+                                 messageTracing.length > 0;
+                                 
   return (
     <div className={`mb-4 ${
       message.role === 'user' 
@@ -177,6 +206,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           ? 'text-left' 
           : 'mx-auto text-center'
     }`}>
+      {shouldShowTracingButton && (
+        <div className={`mb-1 ${message.role === 'assistant' ? 'text-left' : 'text-right'}`}>
+          <button
+            onClick={() => setShowTracing(prev => !prev)}
+            className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300"
+          >
+            {showTracing ? 'Hide Agent Tracing' : 'Show Agent Tracing'}
+          </button>
+          {showTracing && renderTracingOutput()}
+        </div>
+      )}
       <div className={`inline-block ${
         message.role === 'user' 
           ? 'ml-auto max-w-[80%]' 

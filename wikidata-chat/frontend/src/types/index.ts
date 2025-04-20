@@ -21,5 +21,10 @@ export interface ChatWithMessages extends Chat {
 export interface DebugOutput {
   content: string;
   timestamp: string;
-  id?: string; // Added ID to track debug outputs
+  id?: string; // Optional ID to track debug outputs
+}
+
+// Map of message IDs to their associated tracing data
+export interface MessageTracing {
+  [messageId: string]: DebugOutput[];
 }

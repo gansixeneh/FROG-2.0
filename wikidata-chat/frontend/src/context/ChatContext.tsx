@@ -1,20 +1,20 @@
 // frontend/src/context/ChatContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Chat, ChatWithMessages, Message, DebugOutput } from '../types';
+import { Chat, ChatWithMessages, Message, DebugOutput, MessageTracing } from '../types';
 import { fetchChats, fetchChat, createChat } from '../utils/api';
 
 interface ChatContextType {
   chats: Chat[];
   currentChat: ChatWithMessages | null;
-  debugOutput: DebugOutput[];
   isNavOpen: boolean;
   isLoading: boolean;
+  isProcessing: boolean;
   socket: WebSocket | null;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
   toggleNav: () => void;
-  clearDebugOutput: () => void;
+  getMessageTracing: (messageId: string) => DebugOutput[];
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -25,11 +25,13 @@ const processedMessageIds = new Set<string>();
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
-  const [debugOutput, setDebugOutput] = useState<DebugOutput[]>([]);
+  const [messageTracing, setMessageTracing] = useState<MessageTracing>({});
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [currentMessageId, setCurrentMessageId] = useState<string | null>(null);
 
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
@@ -108,12 +110,23 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       processedMessageIds.add(messageId);
       
       if (data.debug) {
-        // Handle debug output
-        setDebugOutput(prev => [...prev, {
+        // Handle debug output - store it with the current message
+        const debugOutput = {
           content: data.debug,
           timestamp: new Date().toISOString(),
-          id: messageId
-        }]);
+        };
+        
+        // Always associate debug output with the current assistant message being generated
+        setMessageTracing(prev => {
+          // If we have a currentMessageId, store under that, otherwise use a temporary ID
+          const targetMessageId = currentMessageId || 'pending';
+          const existingTracing = prev[targetMessageId] || [];
+          
+          return {
+            ...prev,
+            [targetMessageId]: [...existingTracing, debugOutput]
+          };
+        });
       } else if (data.role && data.message) {
         // Handle new message
         const newMessage: Message = {
@@ -122,6 +135,27 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           content: data.message,
           created_at: new Date().toISOString()
         };
+        
+        if (data.role === 'assistant') {
+          // Mark processing as complete when receiving assistant message
+          setIsProcessing(false);
+          
+          // For assistant messages, update the currentMessageId
+          // AND migrate any debug messages from the 'pending' bucket
+          setCurrentMessageId(messageId);
+          
+          // Transfer any pending tracing data to this message ID
+          setMessageTracing(prev => {
+            const pendingTracing = prev['pending'] || [];
+            
+            return {
+              ...prev,
+              [messageId]: pendingTracing,
+              // Clear the pending bucket after transferring
+              'pending': []
+            };
+          });
+        }
         
         setCurrentChat(prev => {
           if (!prev) return null;
@@ -154,11 +188,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     newSocket.onerror = (error) => {
       console.error('WebSocket error:', error);
       setSocketConnected(false);
+      setIsProcessing(false); // Ensure processing state is reset on error
     };
     
     newSocket.onclose = (event) => {
       console.log('WebSocket connection closed', event.code, event.reason);
       setSocketConnected(false);
+      setIsProcessing(false); // Ensure processing state is reset on close
       
       // If the socket closed unexpectedly (not by our code), attempt to reconnect
       if (event.code !== 1000 && currentChat?.id === chatId) {
@@ -174,6 +210,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const loadChat = async (chatId: string) => {
     try {
       setIsLoading(true);
+      
+      // Reset current message ID
+      setCurrentMessageId(null);
+      
       const chatData = await fetchChat(chatId);
       setCurrentChat(chatData);
       
@@ -188,8 +228,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Connect to WebSocket for this chat
       setupWebSocket(chatId);
       
-      // Clear debug output for new chat
-      setDebugOutput([]);
+      // Clear message tracing for new chat - we don't want to show tracing for loaded messages
+      setMessageTracing({});
       
       // Close sidebar on mobile after selecting a chat
       setIsNavOpen(false);
@@ -232,6 +272,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Send a message
   const sendMessage = (content: string) => {
+    if (isProcessing) {
+      console.log('Already processing a message, ignoring new message');
+      return;
+    }
+    
     if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
       console.error('WebSocket is not connected, attempting to reconnect...');
       // Try to reconnect if socket is not open
@@ -250,6 +295,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               } else {
                 console.error('Failed to reconnect WebSocket');
                 alert('Connection error. Please refresh the page and try again.');
+                setIsProcessing(false);
               }
             }, 1000);
           }
@@ -268,6 +314,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     content: string, 
     chat: ChatWithMessages
   ) => {
+    // Set processing state to true
+    setIsProcessing(true);
+    
+    // Reset the current message ID when sending a new message
+    setCurrentMessageId(null);
+    
     // Create a temporary message ID
     const tempId = `temp-${Date.now()}`;
     
@@ -290,6 +342,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
     });
     
+    // Reset the pending tracing data
+    setMessageTracing(prev => ({
+      ...prev,
+      pending: []
+    }));
+    
     // Send message to WebSocket
     socketToUse.send(JSON.stringify({
       message: content
@@ -301,24 +359,24 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsNavOpen(prev => !prev);
   };
 
-  // Clear debug output
-  const clearDebugOutput = () => {
-    setDebugOutput([]);
+  // Get tracing data for a specific message
+  const getMessageTracing = (messageId: string): DebugOutput[] => {
+    return messageTracing[messageId] || messageTracing['latest'] || [];
   };
 
   return (
     <ChatContext.Provider value={{
       chats,
       currentChat,
-      debugOutput,
       isNavOpen,
       isLoading,
+      isProcessing,
       socket,
       loadChat,
       startNewChat,
       sendMessage,
       toggleNav,
-      clearDebugOutput
+      getMessageTracing
     }}>
       {children}
     </ChatContext.Provider>
