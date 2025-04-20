@@ -1,5 +1,5 @@
 // frontend/src/components/ChatMessage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Message } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -11,11 +11,28 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const [showCopied, setShowCopied] = useState(false);
+  const [processedContent, setProcessedContent] = useState(message.content);
+  
+  // Process message content on mount or when it changes
+  useEffect(() => {
+    setProcessedContent(processMessageContent(message.content));
+  }, [message.content]);
   
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 2000);
+  };
+  
+  const processMessageContent = (content: string) => {
+    // First, ensure there's a newline around the ```sparql tag
+    let processedContent = content.replace(/(```sparql)/g, '\n$1').replace(/```(?!sparql)/g, '```\n');
+    
+    // Look for URLs that aren't already in markdown link format: [text](url)
+    const urlRegex = /(?<!\]\()https?:\/\/[^\s)>]+/g;
+    processedContent = processedContent.replace(urlRegex, (url) => `[${url}](${url})`);
+    
+    return processedContent;
   };
   
   const renderUserMessage = () => (
@@ -30,6 +47,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                 language={match[1]}
                 style={tomorrow as any}
                 PreTag="div"
+                wrapLines={true}
+                showLineNumbers={match[1] === 'sparql'}
                 {...props}
               >
                 {String(children).replace(/\n$/, '')}
@@ -39,10 +58,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                 {children}
               </code>
             )
-          }
+          },
+          a: ({node, children, href, ...props}) => (
+            <a 
+              href={href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline break-all"
+              {...props}
+            >
+              {children}
+            </a>
+          )
         }}
       >
-        {message.content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
@@ -76,6 +106,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                     language={match[1]}
                     style={tomorrow as any}
                     PreTag="div"
+                    wrapLines={true}
+                    showLineNumbers={match[1] === 'sparql'}
                     {...props}
                   >
                     {String(children).replace(/\n$/, '')}
@@ -92,10 +124,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   {children}
                 </code>
               )
-            }
+            },
+            a: ({node, children, href, ...props}) => (
+              <a 
+                href={href} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline break-all"
+                {...props}
+              >
+                {children}
+              </a>
+            )
           }}
         >
-          {message.content}
+          {processedContent}
         </ReactMarkdown>
       </div>
     </div>
