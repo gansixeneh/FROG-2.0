@@ -75,70 +75,23 @@ class DebugHandler(BaseCallbackHandler):
         if self.is_running and self.callback_func:
             self.message_queue.put(str(message))
     
-    # ---- Callback methods overridden from BaseCallbackHandler ----
-    
-    def on_llm_start(self, serialized, prompts, **kwargs):
-        self._add_to_queue("🧠 Starting to think about the question...")
-    
-    def on_llm_new_token(self, token, **kwargs):
-        # Only log token if needed for streaming (disabled for cleaner output)
-        pass
-    
-    def on_llm_end(self, response, **kwargs):
-        self._add_to_queue("✅ Finished thinking")
-    
-    def on_llm_error(self, error, **kwargs):
-        self._add_to_queue(f"❌ Error during thinking: {error}")
-    
     def on_chain_start(self, serialized, inputs, **kwargs):
-        chain_name = serialized.get('name', 'unknown')
-        self._add_to_queue(f"📎 Starting reasoning chain: {chain_name}")
+        self._add_to_queue(f"📎 Starting reasoning chain")
     
     def on_chain_end(self, outputs, **kwargs):
         self._add_to_queue("📎 Reasoning chain completed")
     
-    def on_chain_error(self, error, **kwargs):
-        self._add_to_queue(f"❌ Error in reasoning chain: {error}")
-    
-    def on_tool_start(self, serialized, input_str, **kwargs):
-        """Important: This captures the start of a tool call."""
-        tool_name = serialized.get('name', 'unknown tool')
-        formatted_input = input_str.replace('\n', ' ')
-        if len(formatted_input) > 100:
-            formatted_input = formatted_input[:100] + "..."
-        
-        # Format message based on tool type
-        if tool_name == "search_entity_property":
-            self._add_to_queue(f"🔍 Searching Wikidata for: {formatted_input}")
-        elif tool_name == "execute_sparql":
-            self._add_to_queue(f"🔧 Executing SPARQL query against Wikidata")
-        elif tool_name == "google_search":
-            self._add_to_queue(f"🌐 Searching the web for: {formatted_input}")
-        else:
-            self._add_to_queue(f"🔧 Using tool: {tool_name} with input: {formatted_input}")
-    
-    def on_tool_end(self, output, **kwargs):
-        """Important: This captures the result of a tool call."""
-        # Convert output to string and truncate if too long
-        output_str = str(output)
-        if len(output_str) > 200:
-            output_str = output_str[:200] + "... [output truncated]"
-        
-        self._add_to_queue(f"✓ Tool returned result: {output_str}")
-    
-    def on_tool_error(self, error, **kwargs):
-        self._add_to_queue(f"❌ Tool error: {error}")
-    
-    def on_text(self, text, **kwargs):
-        """Captures text output from the agent."""
-        self._add_to_queue(text)
-    
     def on_agent_action(self, action, **kwargs):
-        """Captures when the agent decides to take an action."""
+        """Captures when the agent decides to take an action, including the tool and input."""
         tool = getattr(action, 'tool', 'unknown')
         tool_input = getattr(action, 'tool_input', '')
-        print(action)
-        self._add_to_queue(f"🤖 Agent decided to use: {tool}")
+        
+        # Format the tool input for readability
+        input_str = str(tool_input)
+        if len(input_str) > 100:
+            input_str = input_str[:100] + "..."
+            
+        self._add_to_queue(f"🤖 Agent decided to use: {tool} with input: {input_str}")
     
     def on_agent_finish(self, finish, **kwargs):
         """Captures when the agent finishes its reasoning."""
