@@ -17,9 +17,3 @@ export interface Message {
 export interface ChatWithMessages extends Chat {
   messages: Message[];
 }
-
-export interface DebugOutput {
-  content: string;
-  timestamp: string;
-  id?: string; // Added ID to track debug outputs
-}

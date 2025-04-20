@@ -10,12 +10,16 @@ interface ChatMessageProps {
   message: Message;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ 
+  message,
+}) => {
   const [showCopied, setShowCopied] = useState(false);
   const [processedContent, setProcessedContent] = useState(message.content);
   
   // Process message content on mount or when it changes
   useEffect(() => {
+    console.log(message)
+    console.log(message.content)
     setProcessedContent(processMessageContent(message.content));
   }, [message.content]);
   
@@ -163,11 +167,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     </div>
   );
   
-  const renderSystemMessage = () => (
-    <div className="px-4 py-2 bg-gray-100 rounded text-gray-700 text-sm">
-      <div className="italic">{message.content}</div>
-    </div>
-  );
+  const renderSystemMessage = () => {
+    return (
+      <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm overflow-y-auto">
+        <pre className="whitespace-pre-wrap">
+          {message.content}
+        </pre>
+      </div>
+    );
+  };
 
   return (
     <div className={`mb-4 ${

@@ -1,20 +1,19 @@
 // frontend/src/context/ChatContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Chat, ChatWithMessages, Message, DebugOutput } from '../types';
+import { Chat, ChatWithMessages, Message } from '../types';
 import { fetchChats, fetchChat, createChat } from '../utils/api';
 
 interface ChatContextType {
   chats: Chat[];
   currentChat: ChatWithMessages | null;
-  debugOutput: DebugOutput[];
   isNavOpen: boolean;
   isLoading: boolean;
+  isProcessing: boolean; // New state to track if a message is being processed
   socket: WebSocket | null;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
   toggleNav: () => void;
-  clearDebugOutput: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -25,9 +24,9 @@ const processedMessageIds = new Set<string>();
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
-  const [debugOutput, setDebugOutput] = useState<DebugOutput[]>([]);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false); // New state for message processing
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
 
@@ -107,30 +106,17 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Add to processed message set
       processedMessageIds.add(messageId);
       
-      if (data.debug) {
-        // Handle debug output
-        setDebugOutput(prev => [...prev, {
-          content: data.debug,
-          timestamp: new Date().toISOString(),
-          id: messageId
-        }]);
-      } else if (data.role && data.message) {
+      if (data.role && (data.message || data.debug)) {
         // Handle new message
         const newMessage: Message = {
           id: messageId,
           role: data.role,
-          content: data.message,
+          content: data.message || data.debug,
           created_at: new Date().toISOString()
         };
         
         setCurrentChat(prev => {
           if (!prev) return null;
-          
-          // Check if we already have this message
-          const messageExists = prev.messages.some(msg => msg.id === newMessage.id);
-          if (messageExists) {
-            return prev;
-          }
           
           return {
             ...prev,
@@ -138,9 +124,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
         });
         
-        // If it's an assistant message, update the chat list without refreshing the whole chat
         if (data.role === 'assistant') {
-          // Only refresh the chat list, not the entire chat with messages
+          setIsProcessing(false);
           refreshChatsList();
         }
       }
@@ -154,11 +139,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     newSocket.onerror = (error) => {
       console.error('WebSocket error:', error);
       setSocketConnected(false);
+      setIsProcessing(false); // Reset processing state on error
     };
     
     newSocket.onclose = (event) => {
       console.log('WebSocket connection closed', event.code, event.reason);
       setSocketConnected(false);
+      setIsProcessing(false); // Reset processing state on close
       
       // If the socket closed unexpectedly (not by our code), attempt to reconnect
       if (event.code !== 1000 && currentChat?.id === chatId) {
@@ -187,9 +174,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Connect to WebSocket for this chat
       setupWebSocket(chatId);
-      
-      // Clear debug output for new chat
-      setDebugOutput([]);
       
       // Close sidebar on mobile after selecting a chat
       setIsNavOpen(false);
@@ -232,6 +216,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Send a message
   const sendMessage = (content: string) => {
+    // Don't allow sending if already processing a message
+    if (isProcessing) {
+      console.log('Message already being processed, ignoring new message');
+      return;
+    }
+
     if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
       console.error('WebSocket is not connected, attempting to reconnect...');
       // Try to reconnect if socket is not open
@@ -250,6 +240,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               } else {
                 console.error('Failed to reconnect WebSocket');
                 alert('Connection error. Please refresh the page and try again.');
+                setIsProcessing(false); // Reset processing state on error
               }
             }, 1000);
           }
@@ -268,6 +259,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     content: string, 
     chat: ChatWithMessages
   ) => {
+    // Set processing state to true
+    setIsProcessing(true);
+    
     // Create a temporary message ID
     const tempId = `temp-${Date.now()}`;
     
@@ -301,24 +295,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsNavOpen(prev => !prev);
   };
 
-  // Clear debug output
-  const clearDebugOutput = () => {
-    setDebugOutput([]);
-  };
-
   return (
     <ChatContext.Provider value={{
       chats,
       currentChat,
-      debugOutput,
       isNavOpen,
       isLoading,
+      isProcessing,
       socket,
       loadChat,
       startNewChat,
       sendMessage,
-      toggleNav,
-      clearDebugOutput
+      toggleNav
     }}>
       {children}
     </ChatContext.Provider>

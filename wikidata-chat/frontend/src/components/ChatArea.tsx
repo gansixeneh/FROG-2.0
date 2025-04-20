@@ -1,29 +1,85 @@
 // frontend/src/components/ChatArea.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useChat } from '../context/ChatContext';
 import ChatMessage from './ChatMessage';
+import { Message } from '../types';
 
 const ChatArea: React.FC = () => {
-  const { currentChat, debugOutput, isLoading } = useChat();
+  const { currentChat, isLoading } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [showDebug, setShowDebug] = useState(false);
+
+  useEffect(() => {
+    console.log('Current chat:', currentChat);
+  }, [currentChat]);
   
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentChat?.messages, debugOutput]);
+  }, [currentChat?.messages]);
   
-  const renderDebugOutput = () => (
-    <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm max-h-[50vh] overflow-y-auto">
-      <pre className="whitespace-pre-wrap">
-        {debugOutput.map((debug, index) => (
-          <div key={index} className="mb-2">
-            {debug.content}
-          </div>
-        ))}
-      </pre>
-    </div>
-  );
+  // Process messages to group debug messages following a user or assistant message
+  const processMessages = () => {
+    if (!currentChat?.messages.length) return [];
+    
+    const processedMessages: {
+      message: Message;
+    }[] = [];
+    
+    let currentDebugGroup: any[] = [];
+    let lastNonDebugMessage = null as Message | null;
+    
+    currentChat.messages.forEach((message, index) => {
+      if (message.role === "system") {
+        // This is a debug message, add it to the current debug group
+        currentDebugGroup.push(message);
+      } else {
+        // If we have debug messages from a previous group, add a placeholder message
+        if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
+          // Push all the messages in currentDebugGroup one by one
+          currentDebugGroup.forEach((debugMessage, debugIndex) => {
+            console.log('Debug message:', debugMessage);
+            const debugPlaceholder: Message = {
+              ...debugMessage,
+              id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
+            };
+            
+            processedMessages.push({
+              message: debugPlaceholder,
+            });
+          });
+          
+          // Reset the debug group
+          currentDebugGroup = [];
+        }
+        
+        // Add the regular message
+        processedMessages.push({
+          message,
+        });
+        
+        // Update the last non-debug message
+        lastNonDebugMessage = message;
+      }
+    });
+    
+    // Handle any remaining debug messages at the end
+    if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
+      currentDebugGroup.forEach((debugMessage, debugIndex) => {
+        console.log('Debug message:', debugMessage);
+        const debugPlaceholder: Message = {
+          ...debugMessage,
+          id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
+        };
+        
+        processedMessages.push({
+          message: debugPlaceholder,
+        });
+      });
+      currentDebugGroup = [];
+    }
+    
+    return processedMessages;
+  };
   
   const renderWelcomeScreen = () => (
     <div className="flex flex-col items-center justify-center h-full text-center px-4">
@@ -74,33 +130,26 @@ const ChatArea: React.FC = () => {
     return renderWelcomeScreen();
   }
   
+  // Process messages to group debug messages
+  const processedMessages = processMessages();
+
+  console.log('Processed messages:', processedMessages);
+  
   return (
     <div className="p-4 pb-20 h-full overflow-y-auto">
       {/* Messages */}
       <div className="flex flex-col space-y-4">
-        {currentChat.messages.map(message => (
-          <ChatMessage key={message.id} message={message} />
+        {processedMessages.map(({ message }) => (
+          <ChatMessage 
+            key={message.id} 
+            message={message}
+          />
         ))}
-        
-        {/* Debug toggle */}
-        {debugOutput.length > 0 && (
-          <div className="mx-auto">
-            <button
-              onClick={() => setShowDebug(prev => !prev)}
-              className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300"
-            >
-              {showDebug ? 'Hide Agent Tracing' : 'Show Agent Tracing'}
-            </button>
-          </div>
-        )}
-        
-        {/* Debug output */}
-        {showDebug && debugOutput.length > 0 && renderDebugOutput()}
         
         <div ref={messagesEndRef} />
       </div>
     </div>
   );
-};
+}
 
 export default ChatArea;
