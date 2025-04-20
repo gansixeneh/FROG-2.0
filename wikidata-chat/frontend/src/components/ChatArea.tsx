@@ -2,7 +2,13 @@
 import React, { useEffect, useRef } from "react";
 import { useChat } from "../context/ChatContext";
 import ChatMessage from "./ChatMessage";
+import SystemMessageGroup from "./SystemMessageGroup";
 import { Message } from "../types";
+
+// Define a type for our processed messages
+type ProcessedMessageItem = 
+  | { type: "regular"; message: Message }
+  | { type: "systemGroup"; messages: Message[] };
 
 const ChatArea: React.FC = () => {
   const { currentChat, isLoading } = useChat();
@@ -17,65 +23,41 @@ const ChatArea: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChat?.messages]);
 
-  // Process messages to group debug messages following a user or assistant message
-  const processMessages = () => {
+  // Process messages to group consecutive system messages
+  const processMessages = (): ProcessedMessageItem[] => {
     if (!currentChat?.messages.length) return [];
 
-    const processedMessages: {
-      message: Message;
-    }[] = [];
+    const processedMessages: ProcessedMessageItem[] = [];
+    let currentSystemMessages: Message[] = [];
 
-    let currentDebugGroup: any[] = [];
-    let lastNonDebugMessage = null as Message | null;
-
-    currentChat.messages.forEach((message, index) => {
+    currentChat.messages.forEach((message) => {
       if (message.role === "system") {
-        // This is a debug message, add it to the current debug group
-        currentDebugGroup.push(message);
+        // Add to the current group of system messages
+        currentSystemMessages.push(message);
       } else {
-        // If we have debug messages from a previous group, add a placeholder message
-        if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
-          // Push all the messages in currentDebugGroup one by one
-          currentDebugGroup.forEach((debugMessage, debugIndex) => {
-            console.log("Debug message:", debugMessage);
-            const debugPlaceholder: Message = {
-              ...debugMessage,
-              id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
-            };
-
-            processedMessages.push({
-              message: debugPlaceholder,
-            });
+        // If we have accumulated system messages, add them as a group
+        if (currentSystemMessages.length > 0) {
+          processedMessages.push({
+            type: "systemGroup",
+            messages: [...currentSystemMessages],
           });
-
-          // Reset the debug group
-          currentDebugGroup = [];
+          currentSystemMessages = [];
         }
 
         // Add the regular message
         processedMessages.push({
+          type: "regular",
           message,
         });
-
-        // Update the last non-debug message
-        lastNonDebugMessage = message;
       }
     });
 
-    // Handle any remaining debug messages at the end
-    if (currentDebugGroup.length > 0 && lastNonDebugMessage) {
-      currentDebugGroup.forEach((debugMessage, debugIndex) => {
-        console.log("Debug message:", debugMessage);
-        const debugPlaceholder: Message = {
-          ...debugMessage,
-          id: `debug-placeholder-${lastNonDebugMessage?.id}-${debugIndex}`,
-        };
-
-        processedMessages.push({
-          message: debugPlaceholder,
-        });
+    // Don't forget any remaining system messages
+    if (currentSystemMessages.length > 0) {
+      processedMessages.push({
+        type: "systemGroup",
+        messages: [...currentSystemMessages],
       });
-      currentDebugGroup = [];
     }
 
     return processedMessages;
@@ -135,18 +117,30 @@ const ChatArea: React.FC = () => {
     return renderWelcomeScreen();
   }
 
-  // Process messages to group debug messages
+  // Process messages to group system messages
   const processedMessages = processMessages();
-
-  console.log("Processed messages:", processedMessages);
 
   return (
     <div className="p-4 pb-20 h-full overflow-y-auto">
       {/* Messages */}
       <div className="flex flex-col space-y-4">
-        {processedMessages.map(({ message }) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
+        {processedMessages.map((item, index) => {
+          if (item.type === "systemGroup") {
+            return (
+              <SystemMessageGroup 
+                key={`system-group-${index}`} 
+                messages={item.messages} 
+              />
+            );
+          } else {
+            return (
+              <ChatMessage 
+                key={item.message.id} 
+                message={item.message} 
+              />
+            );
+          }
+        })}
 
         <div ref={messagesEndRef} />
       </div>

@@ -14,6 +14,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [processedContent, setProcessedContent] = useState(message.content);
 
+  useEffect(() => {
+    // Process the message content when the message changes
+    setProcessedContent(processMessageContent(message.content));
+  }, [message.content]);
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setShowCopied(true);
@@ -185,36 +190,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     </div>
   );
 
-  const renderSystemMessage = () => {
-    return (
-      <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm overflow-y-auto">
-        <pre className="whitespace-pre-wrap">{message.content}</pre>
-      </div>
-    );
-  };
-
   return (
     <div
       className={`mb-4 ${
         message.role === "user"
           ? "text-right"
-          : message.role === "assistant"
-          ? "text-left"
-          : "mx-auto text-center"
+          : "text-left" 
       }`}
     >
       <div
         className={`inline-block ${
           message.role === "user"
             ? "ml-auto max-w-[80%]"
-            : message.role === "assistant"
-            ? "mr-auto max-w-[80%]"
-            : "mx-auto max-w-[90%]"
+            : "mr-auto max-w-[80%]"
         }`}
       >
         {message.role === "user" && renderUserMessage()}
         {message.role === "assistant" && renderAssistantMessage()}
-        {message.role === "system" && renderSystemMessage()}
       </div>
     </div>
   );
