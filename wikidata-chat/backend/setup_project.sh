@@ -27,6 +27,5 @@ python manage.py migrate
 # Create a superuser for the admin panel
 python manage.py createsuperuser --noinput --username admin --email admin@example.com
 
-# Run server
-echo "Starting Django server..."
-python manage.py runserver
+# Run the server with the Daphne ASGI server to properly handle WebSockets
+daphne -p 8000 wikidata_web.asgi:application

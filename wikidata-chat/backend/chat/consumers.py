@@ -6,6 +6,7 @@ from channels.db import database_sync_to_async
 from .models import Chat, Message
 import asyncio
 import os
+import uuid
 
 # Import the Wikidata Agent
 from agent.agent import WikidataAgent
@@ -18,9 +19,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Check if chat exists before proceeding
         chat_exists = await self.chat_exists(self.chat_id)
         if not chat_exists:
-            # Chat doesn't exist, close connection
-            await self.close(code=4004)
-            return
+            # If chat doesn't exist, create it automatically
+            await self.create_chat(self.chat_id)
         
         # Join room group
         await self.channel_layer.group_add(
@@ -50,6 +50,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return Chat.objects.filter(id=chat_id).exists()
         except Exception:
             return False
+    
+    @database_sync_to_async
+    def create_chat(self, chat_id):
+        """Create a new chat with the specified ID"""
+        try:
+            # Try to convert the chat_id string to a UUID object
+            chat_uuid = uuid.UUID(chat_id)
+            return Chat.objects.create(id=chat_uuid, title="New Chat")
+        except Exception as e:
+            print(f"Error creating chat: {e}")
+            return None
     
     async def debug_callback(self, output):
         """Callback function for agent debugging output"""

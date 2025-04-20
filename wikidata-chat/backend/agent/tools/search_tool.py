@@ -26,6 +26,7 @@ class SearchWikidataTool(BaseTool):
         Returns:
             A list of matching entities or properties with their details
         """
+        limit = int(limit)
         if type == "entity":
             return self._search_entity(term, limit)
         elif type == "property":
