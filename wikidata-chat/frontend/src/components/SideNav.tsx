@@ -10,12 +10,12 @@ const SideNav: React.FC = () => {
     <div 
       className={`fixed inset-y-0 left-0 transform ${
         isNavOpen ? 'translate-x-0' : '-translate-x-full'
-      } w-64 bg-gray-800 text-white transition-transform duration-300 ease-in-out z-20 pt-16`}
+      } w-64 bg-gradient-to-b from-frog-dark to-frog-dark/90 text-white transition-transform duration-300 ease-in-out z-20 pt-16`}
     >
       {/* Add close button */}
       <button
         onClick={toggleNav}
-        className="absolute top-4 left-4 p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none"
+        className="absolute top-4 left-4 p-2 rounded-md text-white hover:text-frog-accent hover:bg-frog-dark/50 focus:outline-none"
         aria-label="Close sidebar"
       >
         <svg 
@@ -37,7 +37,7 @@ const SideNav: React.FC = () => {
       <div className="p-4">
         <button
           onClick={startNewChat}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md mb-4 flex items-center justify-center"
+          className="w-full py-2 px-4 bg-frog-accent text-frog-dark rounded-md mb-6 flex items-center justify-center font-semibold hover:bg-white transition-colors"
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -56,13 +56,33 @@ const SideNav: React.FC = () => {
           New Chat
         </button>
         
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        {/* Frog decoration */}
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <svg width="80" height="40" viewBox="0 0 180 100">
+              <path 
+                d="M10,90 Q90,110 170,90" 
+                fill="none" 
+                stroke="#4ade80" 
+                strokeWidth="5" 
+                strokeLinecap="round"
+              />
+              <circle cx="90" cy="90" r="5" fill="#a6e9a6" />
+              <circle cx="70" cy="85" r="5" fill="#a6e9a6" />
+              <circle cx="110" cy="85" r="5" fill="#a6e9a6" />
+              <circle cx="50" cy="88" r="3" fill="#a6e9a6" />
+              <circle cx="130" cy="88" r="3" fill="#a6e9a6" />
+            </svg>
+          </div>
+        </div>
+        
+        <h2 className="text-sm font-semibold text-frog-accent uppercase tracking-wider mb-3">
           Chat History
         </h2>
         
-        <div className="space-y-1">
+        <div className="space-y-2">
           {chats.length === 0 ? (
-            <div className="text-gray-400 text-sm p-2">No chat history</div>
+            <div className="text-frog-light text-sm p-2">No chat history</div>
           ) : (
             chats.map(chat => (
               <button
@@ -70,18 +90,24 @@ const SideNav: React.FC = () => {
                 onClick={() => loadChat(chat.id)}
                 className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
                   currentChat?.id === chat.id 
-                    ? 'bg-gray-700 text-white' 
-                    : 'text-gray-300 hover:bg-gray-700'
-                }`}
+                    ? 'bg-frog-DEFAULT/30 border-l-4 border-frog-accent' 
+                    : 'text-frog-light hover:bg-frog-DEFAULT/10 border-l-4 border-transparent'
+                } lily-pad`}
               >
                 <div className="text-sm font-medium truncate">{chat.title}</div>
-                <div className="text-xs text-gray-400 mt-1">
+                <div className="text-xs text-frog-light/70 mt-1">
                   {formatDistanceToNow(new Date(chat.updated_at), { addSuffix: true })}
                 </div>
               </button>
             ))
           )}
         </div>
+      </div>
+      
+      {/* Footer with FrOG brand */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-center text-frog-light/70 text-xs">
+        <p>FrOG: Framework of Open GraphRAG</p>
+        <p className="mt-1">© 2025 FROG-2.0</p>
       </div>
     </div>
   );

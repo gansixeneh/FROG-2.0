@@ -14,22 +14,32 @@ const MessageInput: React.FC = () => {
     setMessage('');
   };
   
+  // Frog lily pad
+  const LilyPad = () => (
+    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
+      <svg width="60" height="10" viewBox="0 0 60 10">
+        <ellipse cx="30" cy="5" rx="30" ry="5" fill="#4ade80" opacity="0.3" />
+      </svg>
+    </div>
+  );
+  
   return (
-    <div className="border-t border-gray-200 bg-white p-4 fixed bottom-0 left-0 right-0">
-      <form onSubmit={handleSubmit} className="flex items-center mx-auto max-w-4xl">
+    <div className="border-t border-frog-dark/10 bg-white p-4 fixed bottom-0 left-0 right-0 bg-opacity-90 backdrop-blur-sm">
+      <form onSubmit={handleSubmit} className="flex items-center mx-auto max-w-4xl relative">
+        <LilyPad />
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isProcessing ? "Waiting for response..." : "Ask a question..."}
-          className="flex-grow h-12 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={isProcessing ? "FrOG is thinking..." : "Ask FrOG a question..."}
+          className="flex-grow h-12 px-4 border-2 border-frog-DEFAULT rounded-full focus:outline-none focus:ring-2 focus:ring-frog-dark focus:border-transparent shadow-md"
           disabled={!currentChat || isProcessing}
         />
         <button
           type="submit"
           className={`${
-            isProcessing ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-          } text-white h-12 w-12 rounded-full ml-3 transition-colors disabled:bg-gray-400 flex items-center justify-center shadow-md`}
+            isProcessing ? 'bg-frog-light cursor-not-allowed' : 'bg-frog-dark hover:bg-frog-dark/90'
+          } text-white h-12 w-12 rounded-full ml-3 transition-colors disabled:bg-frog-light flex items-center justify-center shadow-lg`}
           disabled={!message.trim() || !currentChat || isProcessing}
         >
           {isProcessing ? (
@@ -51,7 +61,16 @@ const MessageInput: React.FC = () => {
             </svg>
           )}
         </button>
+        
+        {/* Decorative lily pads */}
+        <div className="absolute -bottom-3 left-1/4 w-8 h-2 bg-frog-DEFAULT/20 rounded-full"></div>
+        <div className="absolute -bottom-4 right-1/3 w-12 h-3 bg-frog-DEFAULT/20 rounded-full"></div>
       </form>
+      
+      {/* Footer with FrOG credit */}
+      <div className="text-center text-frog-dark/50 text-xs mt-2">
+        FrOG: Framework of Open GraphRAG | Powered by Gemini & Wikidata
+      </div>
     </div>
   );
 };

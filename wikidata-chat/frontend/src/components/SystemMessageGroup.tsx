@@ -39,12 +39,29 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
   }, [messages, isVisible]);
 
   return (
-    <div className="mx-auto max-w-[680px] w-full mb-4">
+    <div className="mx-auto max-w-[680px] w-full mb-6">
       <button
         onClick={() => setIsVisible(!isVisible)}
-        className="w-full text-sm font-medium py-2 px-3 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-t-md flex items-center justify-center transition-colors duration-200"
+        className="w-full text-sm font-medium py-2 px-3 bg-frog-dark text-white hover:bg-frog-dark/80 rounded-t-md flex items-center justify-center transition-colors duration-200"
       >
-        {isVisible ? "Hide Agent Tracing" : "Show Agent Tracing"}
+        <div className="flex items-center">
+          <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            className="mr-2"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+            />
+          </svg>
+          {isVisible ? "Hide FrOG Reasoning" : "Show FrOG Reasoning"}
+        </div>
         <svg
           className={`ml-2 h-4 w-4 transition-transform duration-300 ${isVisible ? "rotate-180" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
@@ -63,19 +80,28 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
       
       <div 
         ref={contentRef}
-        className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 
-                  text-green-400 p-4 rounded-b-md font-mono text-sm 
+        className={`bg-gradient-to-r from-frog-dark via-frog-dark/90 to-frog-dark 
+                  text-frog-accent p-4 rounded-b-md font-mono text-sm 
                   overflow-hidden transition-all duration-300 ease-in-out
-                  border-t-0 border-2 border-gray-700 shadow-lg`}
+                  border-t-0 border-2 border-frog-dark shadow-lg`}
         style={{ 
           maxHeight: height !== undefined ? `${height}px` : undefined,
           opacity: isVisible ? 1 : 0
         }}
       >
+        {/* Decorative elements for frog theme */}
+        <div className="absolute top-2 right-2 flex space-x-1">
+          <div className="w-2 h-2 bg-frog-light rounded-full opacity-70"></div>
+          <div className="w-2 h-2 bg-frog-accent rounded-full opacity-70"></div>
+        </div>
+        
         {/* Use overflow-y-auto to ensure we get scrollbars when needed */}
         <div className="max-h-[400px] overflow-y-auto pr-2 agent-trace-content">
           <pre className="whitespace-pre-wrap">{combinedContent}</pre>
         </div>
+        
+        {/* Lily pad decoration */}
+        <div className="absolute bottom-1 left-6 w-20 h-2 bg-frog-accent/30 rounded-full"></div>
       </div>
     </div>
   );

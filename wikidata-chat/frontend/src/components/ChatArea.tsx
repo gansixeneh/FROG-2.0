@@ -14,10 +14,6 @@ const ChatArea: React.FC = () => {
   const { currentChat, isLoading } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    console.log("Current chat:", currentChat);
-  }, [currentChat]);
-
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,42 +59,95 @@ const ChatArea: React.FC = () => {
     return processedMessages;
   };
 
+  const FrogLogo = () => (
+    <div className="flex justify-center mb-8">
+      <svg 
+        width="160" 
+        height="160" 
+        viewBox="0 0 300 300" 
+        className="frog-logo"
+      >
+        {/* Main frog body - light green */}
+        <circle cx="150" cy="150" r="100" fill="#4ade80" stroke="#166534" strokeWidth="6" />
+        
+        {/* Eyes */}
+        <circle cx="110" cy="120" r="25" fill="white" stroke="#166534" strokeWidth="3" />
+        <circle cx="110" cy="120" r="12" fill="#166534" />
+        <circle cx="190" cy="120" r="25" fill="white" stroke="#166534" strokeWidth="3" />
+        <circle cx="190" cy="120" r="12" fill="#166534" />
+        
+        {/* Cheeks with knowledge graph icons */}
+        <circle cx="90" cy="160" r="18" fill="#166534" opacity="0.7" />
+        <circle cx="210" cy="160" r="18" fill="#166534" opacity="0.7" />
+        
+        {/* Network nodes in cheeks (simplified) */}
+        <circle cx="90" cy="160" r="12" fill="#a6e9a6" />
+        <circle cx="210" cy="160" r="12" fill="#a6e9a6" />
+        
+        {/* Smile */}
+        <path d="M120,180 Q150,200 180,180" stroke="#166534" strokeWidth="6" fill="none" />
+        
+        {/* Decorative nodes on the knowledge graph in the cheeks */}
+        <circle cx="85" cy="155" r="2" fill="white" />
+        <circle cx="95" cy="155" r="2" fill="white" />
+        <circle cx="90" cy="165" r="2" fill="white" />
+        
+        <circle cx="205" cy="155" r="2" fill="white" />
+        <circle cx="215" cy="155" r="2" fill="white" />
+        <circle cx="210" cy="165" r="2" fill="white" />
+        
+        {/* "Network" lines in cheeks */}
+        <line x1="85" y1="155" x2="95" y2="155" stroke="white" strokeWidth="1" />
+        <line x1="85" y1="155" x2="90" y2="165" stroke="white" strokeWidth="1" />
+        <line x1="95" y1="155" x2="90" y2="165" stroke="white" strokeWidth="1" />
+        
+        <line x1="205" y1="155" x2="215" y2="155" stroke="white" strokeWidth="1" />
+        <line x1="205" y1="155" x2="210" y2="165" stroke="white" strokeWidth="1" />
+        <line x1="215" y1="155" x2="210" y2="165" stroke="white" strokeWidth="1" />
+      </svg>
+    </div>
+  );
+
   const renderWelcomeScreen = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center px-4">
-      <div className="mb-6">
-        <svg
-          className="mx-auto h-16 w-16 text-blue-600"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-      </div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">
-        Welcome to Wikidata Agent
+    <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8 bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-2xl mx-auto mt-6">
+      <FrogLogo />
+      
+      <h2 className="text-3xl font-bold text-frog-dark mb-4">
+        Welcome to FrOG
       </h2>
-      <p className="text-gray-600 max-w-md">
-        Ask questions and get answers from Wikidata. I can search for entities,
-        construct SPARQL queries, and provide detailed explanations of my
-        reasoning process.
+      
+      <div className="text-xl text-frog-dark/80 font-semibold mb-4">
+        Framework of Open GraphRAG
+      </div>
+      
+      <p className="text-gray-700 max-w-md mb-6">
+        Ask questions and get answers based on our knowledge graph. FrOG searches for entities,
+        constructs SPARQL queries, and provides detailed explanations of its reasoning process.
       </p>
-      <div className="mt-8 bg-blue-50 p-4 rounded-md max-w-md">
-        <h3 className="font-semibold text-blue-800 mb-2">Try asking:</h3>
-        <ul className="text-left text-blue-700 space-y-2">
-          <li>"Who is the current president of France?"</li>
-          <li>"What is the capital of Japan and what is its population?"</li>
-          <li>"List the spouses of Albert Einstein"</li>
-          <li>
+      
+      <div className="mt-6 bg-frog-light/50 p-6 rounded-lg max-w-md w-full border-2 border-frog-DEFAULT lily-pad">
+        <h3 className="font-semibold text-frog-dark mb-3 text-lg">Try asking:</h3>
+        <ul className="text-left text-frog-dark space-y-3">
+          <li className="flex items-center">
+            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
+            "Who is the current president of France?"
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
+            "What is the capital of Japan and what is its population?"
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
+            "List the spouses of Albert Einstein"
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
             "Which mountains in the Himalayas are higher than 8000 meters?"
           </li>
-          <li>"What books did Isaac Asimov write?"</li>
+          <li className="flex items-center">
+            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
+            "What books did Isaac Asimov write?"
+          </li>
         </ul>
       </div>
     </div>
@@ -107,7 +156,7 @@ const ChatArea: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-t-4 border-frog-dark"></div>
       </div>
     );
   }
@@ -122,8 +171,11 @@ const ChatArea: React.FC = () => {
 
   return (
     <div className="p-4 pb-20 h-full overflow-y-auto mx-auto max-w-4xl">
+      {/* Background lily pad */}
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full bg-frog-light/30 -z-10"></div>
+      
       {/* Messages */}
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-4 relative">
         {processedMessages.map((item, index) => {
           if (item.type === "systemGroup") {
             return (
