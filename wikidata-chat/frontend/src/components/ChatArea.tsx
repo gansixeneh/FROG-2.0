@@ -60,10 +60,10 @@ const ChatArea: React.FC = () => {
   };
 
   const FrogLogo = () => (
-    <div className="flex justify-center mb-8">
+    <div className="flex justify-center mb-4">
       <svg 
-        width="160" 
-        height="160" 
+        width="120" 
+        height="120" 
         viewBox="0 0 300 300" 
         className="frog-logo"
       >
@@ -109,46 +109,48 @@ const ChatArea: React.FC = () => {
   );
 
   const renderWelcomeScreen = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8 bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-2xl mx-auto mt-6">
-      <FrogLogo />
-      
-      <h2 className="text-3xl font-bold text-frog-dark mb-4">
-        Welcome to FrOG
-      </h2>
-      
-      <div className="text-xl text-frog-dark/80 font-semibold mb-4">
-        Framework of Open GraphRAG
-      </div>
-      
-      <p className="text-gray-700 max-w-md mb-6">
-        Ask questions and get answers based on our knowledge graph. FrOG searches for entities,
-        constructs SPARQL queries, and provides detailed explanations of its reasoning process.
-      </p>
-      
-      <div className="mt-6 bg-frog-light/50 p-6 rounded-lg max-w-md w-full border-2 border-frog-DEFAULT lily-pad">
-        <h3 className="font-semibold text-frog-dark mb-3 text-lg">Try asking:</h3>
-        <ul className="text-left text-frog-dark space-y-3">
-          <li className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
-            "Who is the current president of France?"
-          </li>
-          <li className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
-            "What is the capital of Japan and what is its population?"
-          </li>
-          <li className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
-            "List the spouses of Albert Einstein"
-          </li>
-          <li className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
-            "Which mountains in the Himalayas are higher than 8000 meters?"
-          </li>
-          <li className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2"></span>
-            "What books did Isaac Asimov write?"
-          </li>
-        </ul>
+    <div className="flex flex-col items-center justify-center h-full">
+      <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-4xl w-full mx-auto px-6 py-4 text-center">
+        <FrogLogo />
+        
+        <h2 className="text-2xl font-bold text-frog-dark mb-2">
+          Welcome to FrOG
+        </h2>
+        
+        <div className="text-lg text-frog-dark/80 font-semibold mb-2">
+          Framework of Open GraphRAG
+        </div>
+        
+        <p className="text-gray-700 mx-auto max-w-2xl mb-4">
+          Ask questions and get answers based on our knowledge graph. FrOG searches for entities,
+          constructs SPARQL queries, and provides detailed explanations of its reasoning process.
+        </p>
+        
+        <div className="bg-frog-light/50 p-4 rounded-lg max-w-3xl mx-auto border-2 border-frog-DEFAULT lily-pad">
+          <h3 className="font-semibold text-frog-dark mb-2">Try asking:</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left">
+            <div className="flex items-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
+              <span>"Who is the current president of France?"</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
+              <span>"What is the capital of Japan and what is its population?"</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
+              <span>"List the spouses of Albert Einstein"</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
+              <span>"Which mountains in the Himalayas are higher than 8000 meters?"</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
+              <span>"What books did Isaac Asimov write?"</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
