@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Tuple
 from dotenv import load_dotenv
 from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -26,39 +26,28 @@ class WikidataAgent:
         self.sparql_tool = ExecuteSPARQLTool()
         self.tools = [self.search_tool, self.sparql_tool]
 
-        # Create the system message with detailed instructions
-        system_message = """You are an AI assistant that answers questions by querying Wikidata. 
+        # Create the system message with detailed instructions - modified to emphasize SPARQL generation
+        system_message = """You are an AI assistant that generates SPARQL queries for Wikidata based on user questions. 
 You have access to two tools:
 
 1. search_entity_property: Use this to search for entities or properties in Wikidata.
 2. execute_sparql: Use this to run SPARQL queries against Wikidata.
 
-To answer a user's question, follow these steps:
+To generate a SPARQL query for a user's question, follow these steps:
 
 1. Analyze the user's question and identify the key entities and properties that need to be looked up.
 2. Use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
 3. Construct a SPARQL query using the identified entities and properties.
-4. Execute the SPARQL query using the execute_sparql tool.
-5. If the query results are insufficient or there's an error:
-   - Revise your entities/properties or try a different SPARQL query
-   - Search for additional entities or properties if needed
-   - Execute the new SPARQL query
-6. Once you have satisfactory results, formulate a natural language response to the user's question.
+4. You can test your query using the execute_sparql tool to verify it works.
+5. Return ONLY the final SPARQL query as the response, with appropriate prefixes.
 
 Remember:
 - Wikidata entities start with Q (like Q42 for Douglas Adams)
 - Wikidata properties start with P (like P31 for "instance of")
 - Make your SPARQL queries specific and focused
 - Always include relevant entity/property IDs in your SPARQL queries
-- Format your final answer in a clear, concise way for the user
 
-Important SPARQL tips:
-- Use PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-- Use PREFIX wd: <http://www.wikidata.org/entity/>
-- Add LIMIT to your queries (default is 5)
-- Use labels with ?entity rdfs:label ?label . FILTER(LANG(?label) = "en")
-
-Common SPARQL prefixes for Wikidata:
+Important SPARQL prefixes for Wikidata:
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>
@@ -76,6 +65,8 @@ SELECT ?president ?presidentLabel WHERE {
   FILTER(LANG(?presidentLabel) = "en")
 }
 ```
+
+Your final output should be ONLY the SPARQL query, without any additional explanations.
 """
 
         # Create a prompt template with system message and human input
@@ -98,15 +89,35 @@ SELECT ?president ?presidentLabel WHERE {
             max_iterations=20,  # Limit number of iterations to prevent infinite loops
         )
 
-    def query(self, user_question: str) -> str:
+    def query(self, user_question: str) -> Tuple[str, dict]:
         """
-        Process a user question and return an answer based on Wikidata
+        Process a user question and return a SPARQL query for Wikidata
 
         Args:
             user_question: The user's natural language question
 
         Returns:
-            A natural language answer based on Wikidata information
+            A tuple containing (SPARQL query, query results)
         """
         response = self.agent_executor.invoke({"input": user_question})
-        return response["output"]
+        output = response["output"]
+        
+        # Extract SPARQL query from the output
+        # The model might wrap the query in code blocks or add explanations
+        query = output
+        
+        # If query is wrapped in ```sparql ... ```, extract just the query
+        if "```" in query:
+            query_parts = query.split("```")
+            for i, part in enumerate(query_parts):
+                if i % 2 == 1:  # Odd-indexed parts are inside code blocks
+                    # Remove "sparql" or other language indicators
+                    query = part.strip()
+                    if query.lower().startswith("sparql"):
+                        query = query[6:].strip()
+                    break
+        
+        # Execute the query to get results
+        result = self.sparql_tool._run(query)
+        
+        return query, result
