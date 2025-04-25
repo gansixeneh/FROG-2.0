@@ -1,0 +1,23 @@
+graph TD
+    Start([User Question]) --> A[Entity Extraction Node]
+    A --> B[Query Generator Node]
+    B --> C[Query Checker Node]
+    C -->|Satisfied| D[Final Query & Results]
+    C -->|Regenerate| B
+
+    subgraph "Entity Extraction"
+        A1[Analyze Question] --> A2[Identify Entities/Properties]
+        A2 --> A3[Search Wikidata API]
+        A3 --> A4[Retrieve Entity/Property IDs]
+    end
+
+    subgraph "Query Generation"
+        B1[Construct SPARQL] --> B2[Add Necessary Prefixes]
+        B2 --> B3[Format Query]
+    end
+
+    subgraph "Query Checking"
+        C1[Execute Query] --> C2[Analyze Results]
+        C2 --> C3[Verify Relevance]
+        C3 --> C4[Decision: Satisfied or Regenerate]
+    end
