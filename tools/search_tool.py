@@ -1,4 +1,3 @@
-# tools/search_tool.py
 import logging
 import requests
 from typing import List, Dict, Any, Literal

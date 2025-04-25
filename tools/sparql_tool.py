@@ -1,4 +1,3 @@
-# tools/sparql_tool.py
 import logging
 from typing import Dict, Any, List
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -118,9 +117,6 @@ class WikidataSPARQLTool:
         
         # Construct SPARQL query to get labels
         query = f"""
-        PREFIX wd: <http://www.wikidata.org/entity/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        
         SELECT ?entity ?label WHERE {{
           VALUES ?entity {{ {values_str} }}
           ?entity rdfs:label ?label .

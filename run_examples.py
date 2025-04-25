@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Run example queries to demonstrate the Wikidata Query Agent.
 This script runs a set of predefined questions through the agent

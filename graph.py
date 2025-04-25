@@ -1,6 +1,3 @@
-# First, let's update graph.py to set up the base logging configuration
-
-# graph.py changes - Add at the top of the file after imports
 import os
 import logging
 from typing import Dict, Any, TypedDict, Annotated, Literal

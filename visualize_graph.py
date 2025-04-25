@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Utility script to visualize the LangGraph structure of the Wikidata Query Agent.
 Generates a visual representation of the graph and saves it as an HTML file.

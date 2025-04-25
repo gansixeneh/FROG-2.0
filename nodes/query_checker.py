@@ -1,4 +1,3 @@
-# nodes/query_checker.py
 import logging
 from typing import Dict, Any, Literal
 import google.generativeai as genai

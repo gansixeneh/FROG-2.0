@@ -1,4 +1,3 @@
-# nodes/entity_extraction.py
 import re
 import json
 import logging
