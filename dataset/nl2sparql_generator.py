@@ -93,11 +93,7 @@ class NL2SPARQLGenerator:
                 "id": "simple-property",
                 "category": "simple",
                 "questionTemplate": "What is the {property} of {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?value WHERE {
-                      {entity} {property} ?value .
-                    }
-                """,
+                "sparqlTemplate": "SELECT ?value WHERE { {entity} {property} ?value . }",
                 "complexity": "basic",
                 "applicableProperties": ["name", "label", "title", "description"]
             },
@@ -418,8 +414,8 @@ class NL2SPARQLGenerator:
             return None
         
         # Apply replacements to the question template
-        question = template["questionTemplate"]
-        sparql = template["sparqlTemplate"]
+        question = template["questionTemplate"].strip()
+        sparql = template["sparqlTemplate"].strip()
         
         # Add prefixes to SPARQL query
         prefix_string = ""
@@ -430,16 +426,22 @@ class NL2SPARQLGenerator:
         
         # Replace placeholders in question and query
         for placeholder, replacement in replacements.items():
-            pattern = "{" + placeholder + "}"
-            question = question.replace(pattern, replacement.get("label", replacement.get("value", "")))
+            # Create a pattern that can handle whitespace around the placeholder
+            pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
             
-            # For SPARQL, use the URI or full representation
+            # Replace in question
+            replacement_text = replacement.get("label", replacement.get("value", ""))
+            question = re.sub(pattern, replacement_text, question)
+            
+            # Replace in SPARQL
             if "uri" in replacement:
-                sparql = sparql.replace(pattern, f"<{replacement['uri']}>")
+                sparql_value = f"<{replacement['uri']}>"
             elif "sparqlValue" in replacement:
-                sparql = sparql.replace(pattern, replacement["sparqlValue"])
+                sparql_value = replacement["sparqlValue"]
             else:
-                sparql = sparql.replace(pattern, replacement["value"])
+                sparql_value = replacement["value"]
+                
+            sparql = re.sub(pattern, sparql_value, sparql)
         
         # Format the SPARQL query for readability
         sparql = self.format_sparql(sparql)
@@ -457,15 +459,22 @@ class NL2SPARQLGenerator:
             set: Set of placeholder names
         """
         placeholders = set()
-        pattern = r"{([^}]+)}"
+        
+        # For Python triple-quoted strings, we need to handle whitespace
+        # First, normalize the templates by removing extra whitespace
+        question_template = template["questionTemplate"].strip()
+        sparql_template = template["sparqlTemplate"].strip()
+        
+        # Use a pattern that can handle potential whitespace around the placeholders
+        pattern = r"{[\s]*([^{}]+)[\s]*}"
         
         # Search in question template
-        for match in re.finditer(pattern, template["questionTemplate"]):
-            placeholders.add(match.group(1))
+        for match in re.finditer(pattern, question_template):
+            placeholders.add(match.group(1).strip())
         
         # Search in SPARQL template
-        for match in re.finditer(pattern, template["sparqlTemplate"]):
-            placeholders.add(match.group(1))
+        for match in re.finditer(pattern, sparql_template):
+            placeholders.add(match.group(1).strip())
         
         return placeholders
 
