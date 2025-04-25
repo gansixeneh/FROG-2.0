@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "question": "What is the time zone of Salt Lake City?",
+      "ground_truth_query": "SELECT DISTINCT ?o1 WHERE { <http://www.wikidata.org/entity/Q23337>  <http://www.wikidata.org/prop/direct/P421>  ?o1 .  }",
+      "generated_query": "PREFIX wd: <http://www.wikidata.org/entity/>\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\n\nSELECT ?timezone WHERE {\n  wd:Q23337 wdt:P421 ?timezone.\n}",
+      "metrics": {
+        "jaccard": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    },
+    {
+      "question": "Who killed Caesar?",
+      "ground_truth_query": "SELECT DISTINCT ?o1 WHERE { <http://www.wikidata.org/entity/Q1048>  <http://www.wikidata.org/prop/direct/P157>  ?o1 .  }",
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {\n}\n, links {\n  description: \"Learn more about Gemini API quotas\"\n  url: \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n}\n, retry_delay {\n  seconds: 28\n}\n]",
+      "success": false
+    },
+    {
+      "question": "What is the highest mountain in Germany?",
+      "ground_truth_query": "SELECT ?uri WHERE { ?uri wdt:P31 wd:Q8502 ; wdt:P2044 ?elevation ; wdt:P17 wd:Q183 . } ORDER BY DESC(?elevation) LIMIT 1",
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {\n}\n, links {\n  description: \"Learn more about Gemini API quotas\"\n  url: \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n}\n, retry_delay {\n  seconds: 27\n}\n]",
+      "success": false
+    }
+  ],
+  "average_metrics": {
+    "jaccard": 0.3333333333333333,
+    "recall": 0.3333333333333333,
+    "precision": 0.3333333333333333,
+    "f1": 0.3333333333333333,
+    "tp": 0.6666666666666666,
+    "fp": 0.0,
+    "fn": 0.0,
+    "tn": 0.0
+  }
+}
