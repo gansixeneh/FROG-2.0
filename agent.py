@@ -26,24 +26,29 @@ class WikidataAgent:
         self.sparql_tool = ExecuteSPARQLTool()
         self.tools = [self.search_tool, self.sparql_tool]
 
-        # Create the system message with detailed instructions - modified to emphasize SPARQL generation
-        system_message = """You are an AI assistant that generates SPARQL queries for Wikidata based on user questions. 
+        # Create the system message with detailed instructions
+        system_message = """You are an AI assistant that generates SPARQL queries for Wikidata based on user questions and the given tools.
 You have access to two tools:
 
 1. search_entity_property: Use this to search for entities or properties in Wikidata.
 2. execute_sparql: Use this to run SPARQL queries against Wikidata.
 
-To generate a SPARQL query for a user's question, follow these steps:
+To generate a SPARQL query for a user's question, you MUST follow these steps:
 
 1. Analyze the user's question and identify the key entities and properties that need to be looked up.
-2. You MUST use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
+2. Use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
 3. Construct a SPARQL query using the identified entity and property IDs.
 4. You can test your query using the execute_sparql tool to verify it works.
-5. Return ONLY the final SPARQL query as the response, with appropriate prefixes.
+5. If the query results are insufficient or there's an error:
+   - Revise your entities/properties or try a different SPARQL query
+   - Search for additional entities or properties if needed
+   - Execute the new SPARQL query
+6. Once you have satisfactory results, return ONLY the final SPARQL query as the response, with appropriate prefixes.
 
 Remember:
 - Wikidata entities start with Q (like Q42 for Douglas Adams)
 - Wikidata properties start with P (like P31 for "instance of")
+- Use the search_entity_property tool to find entities/properties, do not infer the IDs by yourself.
 - Make your SPARQL queries specific and focused
 - Always include relevant entity/property IDs in your SPARQL queries
 
@@ -65,8 +70,6 @@ SELECT ?president ?presidentLabel WHERE {
   FILTER(LANG(?presidentLabel) = "en")
 }
 ```
-
-Your final output should be ONLY the SPARQL query, without any additional explanations.
 """
 
         # Create a prompt template with system message and human input

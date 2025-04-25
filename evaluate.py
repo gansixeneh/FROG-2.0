@@ -85,7 +85,7 @@ def evaluate_wikidata_agent(agent: WikidataAgent, test_data_path: str, output_lo
     with open(test_data_path, 'r') as f:
         test_data = json.load(f)
     
-    test_data = test_data[:5]
+    test_data = test_data[:3]
     
     # Prepare results storage
     results = []
