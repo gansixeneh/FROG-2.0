@@ -1,4 +1,8 @@
+# First, let's update graph.py to set up the base logging configuration
+
+# graph.py changes - Add at the top of the file after imports
 import os
+import logging
 from typing import Dict, Any, TypedDict, Annotated, Literal
 from dotenv import load_dotenv
 
@@ -8,6 +12,14 @@ from langgraph.graph import StateGraph, END
 from nodes.entity_extraction import EntityExtractor
 from nodes.query_generator import QueryGenerator
 from nodes.query_checker import QueryChecker
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 # State definition
 class WikidataQueryState(TypedDict):
@@ -35,13 +47,17 @@ def create_wikidata_graph(api_key: str = None):
     # Load environment variables
     load_dotenv()
     
+    logger.info("Creating Wikidata query graph")
+    
     # Get API key
     if not api_key:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
+            logger.error("No Gemini API key provided or found in environment")
             raise ValueError("Gemini API key must be provided or set as GEMINI_API_KEY environment variable")
     
     # Initialize nodes
+    logger.info("Initializing graph nodes")
     entity_extractor = EntityExtractor(api_key)
     query_generator = QueryGenerator(api_key)
     query_checker = QueryChecker(api_key)
@@ -71,6 +87,8 @@ def create_wikidata_graph(api_key: str = None):
     # Define the entry point
     graph.set_entry_point("extract_entities")
     
+    logger.info("Graph creation complete")
+    
     # Compile the graph
     return graph.compile()
 
@@ -78,6 +96,7 @@ class WikidataQueryAgent:
     """Agent for answering questions by querying Wikidata using SPARQL."""
     
     def __init__(self, api_key: str = None):
+        logger.info("Initializing WikidataQueryAgent")
         self.graph = create_wikidata_graph(api_key)
     
     def query(self, question: str) -> Dict[str, Any]:
@@ -90,6 +109,8 @@ class WikidataQueryAgent:
         Returns:
             Dictionary with the query, results, and other information
         """
+        logger.info(f"Processing question: {question}")
+        
         # Initialize state
         state = {
             "question": question,
@@ -104,7 +125,10 @@ class WikidataQueryAgent:
         }
         
         # Run the graph
+        logger.info("Invoking LangGraph execution")
         result = self.graph.invoke(state)
+        
+        logger.info(f"Graph execution complete. Query success: {result.get('query_success', False)}")
         
         # Prepare the final result
         final_result = {

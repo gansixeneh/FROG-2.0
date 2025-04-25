@@ -1,14 +1,19 @@
+# nodes/entity_extraction.py
 import re
 import json
+import logging
 from typing import Dict, Any, List
 import google.generativeai as genai
 from tools.search_tool import WikidataSearchTool
 
+# Setup logger
+logger = logging.getLogger(__name__)
 
 class EntityExtractor:
     """Node for extracting entities and properties from a user query."""
 
     def __init__(self, api_key: str):
+        logger.info("Initializing EntityExtractor")
         self.api_key = api_key
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel("gemini-2.0-flash")
@@ -25,6 +30,7 @@ class EntityExtractor:
             Updated state with entities and properties
         """
         question = state.get("question", "")
+        logger.info(f"EntityExtractor: Starting extraction for question: '{question}'")
 
         # Use Gemini to identify potential entities and properties
         prompt = f"""
@@ -46,15 +52,19 @@ class EntityExtractor:
         Only respond with the JSON list, nothing else.
         """
 
+        logger.info("EntityExtractor: Calling Gemini model to identify entities and properties")
         response = self.model.generate_content(prompt)
         response_text = response.text
+        logger.debug(f"EntityExtractor: Gemini response: {response_text[:500]}...")
 
         # Extract JSON from response
         try:
             # Try to parse the entire response as JSON first
             terms = json.loads(response_text)
+            logger.info(f"EntityExtractor: Successfully parsed {len(terms)} terms from JSON response")
         except json.JSONDecodeError:
             # If that fails, try to extract JSON using regex
+            logger.warning("EntityExtractor: Failed to parse JSON directly, attempting regex extraction")
             json_pattern = r"\[\s*\{.*\}\s*\]"
             json_match = re.search(json_pattern, response_text, re.DOTALL)
 
@@ -62,16 +72,20 @@ class EntityExtractor:
                 json_text = json_match.group(0)
                 try:
                     terms = json.loads(json_text)
+                    logger.info(f"EntityExtractor: Successfully extracted {len(terms)} terms using regex")
                 except:
                     # Fallback if JSON parsing fails
+                    logger.warning("EntityExtractor: JSON parsing failed even with regex, using fallback parser")
                     terms = self._parse_terms_fallback(response_text)
             else:
+                logger.warning("EntityExtractor: No JSON-like pattern found, using fallback parser")
                 terms = self._parse_terms_fallback(response_text)
 
         # Search Wikidata for each term
         entities = []
         properties = []
 
+        logger.info(f"EntityExtractor: Searching Wikidata for {len(terms)} terms")
         for term in terms:
             term_name = term.get("term", "")
             term_type = term.get("type", "entity")
@@ -80,6 +94,7 @@ class EntityExtractor:
             if not term_name:
                 continue
 
+            logger.info(f"EntityExtractor: Searching for {term_type} '{term_name}'")
             search_results = self.search_tool.search(term_name, term_type)
 
             if search_results:
@@ -88,10 +103,16 @@ class EntityExtractor:
                 result["importance"] = importance
 
                 if term_type == "entity":
+                    logger.info(f"EntityExtractor: Found entity: {result['label']} ({result['id']})")
                     entities.append(result)
                 else:
+                    logger.info(f"EntityExtractor: Found property: {result['label']} ({result['id']})")
                     properties.append(result)
+            else:
+                logger.warning(f"EntityExtractor: No results found for {term_type} '{term_name}'")
 
+        logger.info(f"EntityExtractor: Extraction complete. Found {len(entities)} entities and {len(properties)} properties")
+        
         return {
             **state,
             "entities": entities,
@@ -101,6 +122,7 @@ class EntityExtractor:
 
     def _parse_terms_fallback(self, text: str) -> List[Dict[str, Any]]:
         """Fallback method to parse terms if JSON parsing fails."""
+        logger.info("EntityExtractor: Using fallback parser for terms")
         terms = []
         lines = text.split("\n")
 
@@ -139,8 +161,12 @@ class EntityExtractor:
         if current_term and "term" in current_term:
             terms.append(current_term)
 
+        logger.info(f"EntityExtractor: Fallback parser extracted {len(terms)} terms")
         return terms
 
     def __call__(self, state):
         """Make the class callable for langgraph."""
-        return self.extract_entities_properties(state)
+        logger.info("EntityExtractor node called")
+        result = self.extract_entities_properties(state)
+        logger.info("EntityExtractor node completed")
+        return result

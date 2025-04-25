@@ -1,11 +1,16 @@
+# nodes/query_generator.py
+import logging
 from typing import Dict, Any
 import google.generativeai as genai
 
+# Setup logger
+logger = logging.getLogger(__name__)
 
 class QueryGenerator:
     """Node for generating SPARQL queries from entities and properties."""
 
     def __init__(self, api_key: str):
+        logger.info("Initializing QueryGenerator")
         self.api_key = api_key
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel("gemini-2.0-flash")
@@ -25,18 +30,24 @@ class QueryGenerator:
         properties = state.get("properties", [])
         feedback = state.get("feedback", "")
 
+        logger.info(f"QueryGenerator: Generating SPARQL query for question: '{question}'")
+        logger.info(f"QueryGenerator: Using {len(entities)} entities and {len(properties)} properties")
+        
+        if feedback:
+            logger.info(f"QueryGenerator: Incorporating feedback: '{feedback}'")
+
         # Prepare entity and property information for the prompt
         entity_info = []
         for entity in entities:
-            entity_info.append(
-                f"Entity: {entity.get('label')} (ID: {entity.get('id')}), Description: {entity.get('description')}"
-            )
+            entity_str = f"Entity: {entity.get('label')} (ID: {entity.get('id')}), Description: {entity.get('description')}"
+            logger.debug(f"QueryGenerator: Entity info: {entity_str}")
+            entity_info.append(entity_str)
 
         property_info = []
         for prop in properties:
-            property_info.append(
-                f"Property: {prop.get('label')} (ID: {prop.get('id')}), Description: {prop.get('description')}"
-            )
+            prop_str = f"Property: {prop.get('label')} (ID: {prop.get('id')}), Description: {prop.get('description')}"
+            logger.debug(f"QueryGenerator: Property info: {prop_str}")
+            property_info.append(prop_str)
 
         entity_info_str = "\n".join(entity_info)
         property_info_str = "\n".join(property_info)
@@ -69,27 +80,36 @@ class QueryGenerator:
         Only return the SPARQL query, with prefixes but without explanation or additional text.
         """
 
+        logger.info("QueryGenerator: Calling Gemini model to generate SPARQL query")
         response = self.model.generate_content(prompt)
         query = response.text.strip()
+        logger.debug(f"QueryGenerator: Raw model response: {query[:500]}...")
 
         # Extract just the SPARQL query if there are any additional explanations
         if "PREFIX" in query:
+            logger.info("QueryGenerator: Extracting SPARQL query from response")
             query_start = query.find("PREFIX")
             query = query[query_start:]
 
         # Add necessary prefixes if they're missing
-        prefixes = """PREFIX wd: <http://www.wikidata.org/entity/>
+        if not query.strip().startswith("PREFIX"):
+            logger.info("QueryGenerator: Adding missing prefixes to query")
+            prefixes = """PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
 PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
 """
-
-        if not query.strip().startswith("PREFIX"):
             query = prefixes + query
+
+        logger.info("QueryGenerator: SPARQL query generated successfully")
+        logger.info(f"QueryGenerator: Generated query:\n{query}")
 
         return {**state, "generated_query": query, "generation_complete": True}
 
     def __call__(self, state):
         """Make the class callable for langgraph."""
-        return self.generate_query(state)
+        logger.info("QueryGenerator node called")
+        result = self.generate_query(state)
+        logger.info("QueryGenerator node completed")
+        return result
