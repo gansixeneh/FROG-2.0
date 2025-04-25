@@ -10,6 +10,8 @@
  * 3. JSON-LD data
  */
 
+const N3 = require('n3');
+
 class KGSchemaExtractor {
     /**
      * Create a new schema extractor
@@ -98,14 +100,10 @@ class KGSchemaExtractor {
       console.log(`Extracting schema from RDF string (${format})`);
       
       try {
-        // This would parse the RDF content and extract schema
-        // Implementation would depend on the RDF parsing library used
-        
-        // Extract schema elements using format-appropriate methods
-        await this.parseRdfContent(content, format);
+        const schema = await this.parseRdfContent(content, format);
         
         return {
-          schemaInfo: this.schemaInfo,
+          schemaInfo: schema,
           entityExamples: this.entityExamples,
           prefixes: this.options.prefixes
         };
@@ -554,15 +552,146 @@ class KGSchemaExtractor {
      * @param {String} content - RDF content
      * @param {String} format - Format of the content
      */
-    async parseRdfContent(content, format) {
-      // This is a placeholder - implementation would depend on the RDF parsing library
-      console.log(`Parsing RDF content in ${format} format...`);
+    parseRdfContent(content, format) {
+      return new Promise((resolve, reject) => {
+        try {
+          const parser = new N3.Parser({ format: format || 'Turtle' });
+          const store = new N3.Store();
+          
+          parser.parse(content, (error, quad, prefixes) => {
+            if (error) return reject(error);
+            if (quad) store.addQuad(quad);
+            else {
+              // Parsing complete - extract schema
+              const schema = {
+                classes: this.extractClasses(store),
+                properties: this.extractProperties(store),
+                ontologies: this.extractOntologies(store)
+              };
+              resolve(schema);
+            }
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+
+    /**
+     * Extract classes from the RDF store
+     * @param {Object} store - RDF store
+     * @returns {Array} - Extracted classes
+     */
+    extractClasses(store) {
+      const classes = [];
+      const classQuads = store.getQuads(
+        null, 
+        this.createNamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        this.createNamedNode('http://www.w3.org/2000/01/rdf-schema#Class'),
+        null
+      );
       
-      // Placeholder implementation - in a real application, you would use:
-      // - For Node.js: rdflib.js, n3.js, jsonld.js
-      // - For browser: rdflib.js, N3.js
+      classQuads.forEach(quad => {
+        classes.push({
+          uri: quad.subject.value,
+          label: this.getLabel(store, quad.subject)
+        });
+      });
       
-      throw new Error('RDF parsing requires actual implementation with an RDF library');
+      return classes;
+    }
+
+    /**
+     * Extract properties from the RDF store
+     * @param {Object} store - RDF store
+     * @returns {Array} - Extracted properties
+     */
+    extractProperties(store) {
+      const properties = [];
+      const propertyQuads = store.getQuads(
+        null,
+        this.createNamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        this.createNamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#Property'),
+        null
+      );
+      
+      propertyQuads.forEach(quad => {
+        properties.push({
+          uri: quad.subject.value,
+          label: this.getLabel(store, quad.subject),
+          domain: this.getPropertyDomain(store, quad.subject),
+          range: this.getPropertyRange(store, quad.subject)
+        });
+      });
+      
+      return properties;
+    }
+
+    /**
+     * Create a named node for RDF
+     * @param {String} uri - URI for the named node
+     * @returns {Object} - Named node
+     */
+    createNamedNode(uri) {
+      return N3.DataFactory.namedNode(uri);
+    }
+
+    /**
+     * Get label for a subject from the RDF store
+     * @param {Object} store - RDF store
+     * @param {Object} subject - RDF subject
+     * @returns {String|null} - Label or null
+     */
+    getLabel(store, subject) {
+      const labelQuads = store.getQuads(
+        subject,
+        this.createNamedNode('http://www.w3.org/2000/01/rdf-schema#label'),
+        null,
+        null
+      );
+      return labelQuads.length > 0 ? labelQuads[0].object.value : null;
+    }
+
+    /**
+     * Get domain for a property from the RDF store
+     * @param {Object} store - RDF store
+     * @param {Object} property - RDF property
+     * @returns {String|null} - Domain or null
+     */
+    getPropertyDomain(store, property) {
+      const domainQuads = store.getQuads(
+        property,
+        this.createNamedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+        null,
+        null
+      );
+      return domainQuads.length > 0 ? domainQuads[0].object.value : null;
+    }
+
+    /**
+     * Get range for a property from the RDF store
+     * @param {Object} store - RDF store
+     * @param {Object} property - RDF property
+     * @returns {String|null} - Range or null
+     */
+    getPropertyRange(store, property) {
+      const rangeQuads = store.getQuads(
+        property,
+        this.createNamedNode('http://www.w3.org/2000/01/rdf-schema#range'),
+        null,
+        null
+      );
+      return rangeQuads.length > 0 ? rangeQuads[0].object.value : null;
+    }
+
+    /**
+     * Extract ontologies from the RDF store
+     * @param {Object} store - RDF store
+     * @returns {Array} - Extracted ontologies
+     */
+    extractOntologies(store) {
+      // Extract ontology information if needed
+      return [];
     }
   }
   

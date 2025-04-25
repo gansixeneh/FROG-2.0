@@ -9,7 +9,7 @@
 
 // Import the required modules
 const { NL2SPARQLGenerator } = require('./nl2sparql_generator');
-const { KGSchemaExtractor } = require('./kg_schema_extractor');
+const { KGSchemaExtractor } = require('../kg_schema_extractor');
 
 // Example 1: Using the generator with DBpedia
 function generateDBpediaDataset() {
