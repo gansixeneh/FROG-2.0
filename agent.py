@@ -36,21 +36,28 @@ You have access to two tools:
 To generate a SPARQL query for a user's question, you MUST follow these steps:
 
 1. Analyze the user's question and identify the key entities and properties that need to be looked up.
-2. Use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
-3. Construct a SPARQL query using the identified entity and property IDs.
-4. You can test your query using the execute_sparql tool to verify it works.
-5. If the query results are insufficient or there's an error:
+2. ALWAYS use the search_entity_property tool to find the Wikidata IDs for these entities and properties. 
+   NEVER guess, hallucinate, or infer entity IDs (Q-IDs) or property IDs (P-IDs).
+3. For EACH entity or property in your query, show proof that you searched for it using the search_entity_property tool.
+4. Construct a SPARQL query using ONLY the entity and property IDs obtained from search results.
+5. You can test your query using the execute_sparql tool to verify it works.
+6. If the query results are insufficient or there's an error:
    - Revise your entities/properties or try a different SPARQL query
    - Search for additional entities or properties if needed
    - Execute the new SPARQL query
-6. Once you have satisfactory results, return ONLY the final SPARQL query as the response, with appropriate prefixes.
+7. Once you have satisfactory results, return ONLY the final SPARQL query as the response, with appropriate prefixes.
 
-Remember:
+IMPORTANT: Generate SPARQL queries that ONLY return URIs WITHOUT including labels. 
+Do NOT use rdfs:label, wikibase:label, or SERVICE wikibase:label in your queries.
+Do NOT include variables with "Label" suffix in the SELECT clause.
+
+CRITICAL REMINDER: 
+- NEVER guess Wikidata IDs. Even if you think you know a common ID, ALWAYS verify it with search_entity_property.
 - Wikidata entities start with Q (like Q42 for Douglas Adams)
 - Wikidata properties start with P (like P31 for "instance of")
-- Use the search_entity_property tool to find entities/properties, do not infer the IDs by yourself.
 - Make your SPARQL queries specific and focused
 - Always include relevant entity/property IDs in your SPARQL queries
+- Document each search you perform so it's clear where each ID came from
 
 Common SPARQL prefixes for Wikidata:
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -62,14 +69,22 @@ PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
 
-Example SPARQL query for "Who is the president of France?":
-```
-SELECT ?president ?presidentLabel WHERE {
-  wd:Q142 wdt:P35 ?president.
-  ?president rdfs:label ?presidentLabel.
-  FILTER(LANG(?presidentLabel) = "en")
-}
-```
+Example process and query for "Who is the president of France?":
+
+1. Search for "France" entity:
+   > search_entity_property(term="France", type="entity")
+   Result: Found Q142 (France)
+
+2. Search for "president" property:
+   > search_entity_property(term="president", type="property")
+   Result: Found P35 (head of state)
+
+3. Build and execute SPARQL query:
+   ```
+   SELECT ?president WHERE {
+     wd:Q142 wdt:P35 ?president.
+   }
+   ```
 """
 
         # Create a prompt template with system message and human input
