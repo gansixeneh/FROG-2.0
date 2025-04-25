@@ -36,8 +36,8 @@ You have access to two tools:
 To generate a SPARQL query for a user's question, follow these steps:
 
 1. Analyze the user's question and identify the key entities and properties that need to be looked up.
-2. Use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
-3. Construct a SPARQL query using the identified entities and properties.
+2. You MUST use the search_entity_property tool to find the Wikidata IDs for these entities and properties.
+3. Construct a SPARQL query using the identified entity and property IDs.
 4. You can test your query using the execute_sparql tool to verify it works.
 5. Return ONLY the final SPARQL query as the response, with appropriate prefixes.
 
@@ -47,7 +47,7 @@ Remember:
 - Make your SPARQL queries specific and focused
 - Always include relevant entity/property IDs in your SPARQL queries
 
-Important SPARQL prefixes for Wikidata:
+Common SPARQL prefixes for Wikidata:
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>

@@ -1,0 +1,94 @@
+{
+  "results": [
+    {
+      "question": "What is the time zone of Salt Lake City?",
+      "ground_truth_query": "SELECT DISTINCT ?o1 WHERE { <http://www.wikidata.org/entity/Q23337>  <http://www.wikidata.org/prop/direct/P421>  ?o1 .  }",
+      "generated_query": "SELECT ?timezoneLabel WHERE {\n  wd:Q4931 wdt:P421 ?timezone.\n  ?timezone rdfs:label ?timezoneLabel.\n  FILTER(LANG(?timezoneLabel) = \"en\")\n}",
+      "metrics": {
+        "jaccard": 0,
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    },
+    {
+      "question": "Who killed Caesar?",
+      "ground_truth_query": "SELECT DISTINCT ?o1 WHERE { <http://www.wikidata.org/entity/Q1048>  <http://www.wikidata.org/prop/direct/P157>  ?o1 .  }",
+      "generated_query": "SELECT ?killer ?killerLabel WHERE {\n  wd:Q1156 wdt:P157 ?killer.\n  ?killer rdfs:label ?killerLabel.\n  FILTER(LANG(?killerLabel) = \"en\")\n}",
+      "metrics": {
+        "jaccard": 0,
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    },
+    {
+      "question": "What is the highest mountain in Germany?",
+      "ground_truth_query": "SELECT ?uri WHERE { ?uri wdt:P31 wd:Q8502 ; wdt:P2044 ?elevation ; wdt:P17 wd:Q183 . } ORDER BY DESC(?elevation) LIMIT 1",
+      "generated_query": "SELECT ?mountain ?mountainLabel ?height WHERE {\n  ?mountain wdt:P31 wd:Q8502;\n           wdt:P17 wd:Q183;\n           wdt:P2044 ?height.\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n  FILTER (?height = (SELECT MAX(?maxHeight) WHERE {\n    ?mountain2 wdt:P31 wd:Q8502;\n              wdt:P17 wd:Q183;\n              wdt:P2044 ?maxHeight.\n  }))\n}",
+      "metrics": {
+        "jaccard": 0,
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    },
+    {
+      "question": "Which American presidents were in office during the Vietnam War?",
+      "ground_truth_query": "SELECT DISTINCT ?o WHERE { <http://www.wikidata.org/entity/Q8740>  <http://www.wikidata.org/prop/direct/P580>  ?startWar . <http://www.wikidata.org/entity/Q8740>  <http://www.wikidata.org/prop/direct/P582>  ?endWar . <http://www.wikidata.org/entity/Q30>  <http://www.wikidata.org/prop/P6> ?blank . ?blank <http://www.wikidata.org/prop/statement/P6> ?o . ?blank <http://www.wikidata.org/prop/qualifier/P580> ?start . ?blank <http://www.wikidata.org/prop/qualifier/P582> ?end . FILTER (?startWar < ?start && ?endWar > ?end)}",
+      "generated_query": "PREFIX wd: <http://www.wikidata.org/entity/>\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?president ?presidentLabel WHERE {\n  ?president wdt:P31 wd:Q5 .\n  ?president wdt:P39 wd:Q11696 .\n  ?president rdfs:label ?presidentLabel.\n  FILTER (LANG(?presidentLabel) = \"en\")\n}",
+      "metrics": {
+        "jaccard": 0,
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    },
+    {
+      "question": "Butch Otter is the governor of which U.S. state?",
+      "ground_truth_query": "SELECT ?res WHERE { ?res wdt:P6 wd:Q39593 . }",
+      "generated_query": "SELECT ?state ?stateLabel WHERE {\n  wd:Q728653 wdt:P39 ?position.\n  ?position wdt:P279 wd:Q132050.\n  ?position wdt:P131 ?state.\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n}",
+      "metrics": {
+        "jaccard": 0,
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "success": true
+    }
+  ],
+  "average_metrics": {
+    "jaccard": 0.0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "f1": 0.0,
+    "tp": 0.0,
+    "fp": 0.0,
+    "fn": 0.0,
+    "tn": 0.0
+  }
+}
