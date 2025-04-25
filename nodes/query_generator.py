@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict, Any
 import google.generativeai as genai
 
@@ -67,39 +68,30 @@ class QueryGenerator:
         4. Use the appropriate Wikidata prefixes (wd, wdt, p, ps, etc.)
         5. Only use the entities and properties provided above.
         
-        Common SPARQL prefixes for Wikidata:
-        PREFIX wd: <http://www.wikidata.org/entity/>
-        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-        PREFIX p: <http://www.wikidata.org/prop/>
-        PREFIX ps: <http://www.wikidata.org/prop/statement/>
-        PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
-        
         {"Previous feedback to address: " + feedback if feedback else ""}
         
-        Only return the SPARQL query, with prefixes but without explanation or additional text.
+        Format your response as:
+        ```sparql
+        [YOUR SPARQL QUERY HERE]
+        ```
         """
 
         logger.info("QueryGenerator: Calling Gemini model to generate SPARQL query")
         response = self.model.generate_content(prompt)
-        query = response.text.strip()
-        logger.debug(f"QueryGenerator: Raw model response: {query[:500]}...")
+        raw_response = response.text.strip()
+        logger.debug(f"QueryGenerator: Raw model response: {raw_response[:500]}...")
 
-        # Extract just the SPARQL query if there are any additional explanations
-        if "PREFIX" in query:
-            logger.info("QueryGenerator: Extracting SPARQL query from response")
-            query_start = query.find("PREFIX")
-            query = query[query_start:]
-
-        # Add necessary prefixes if they're missing
-        if not query.strip().startswith("PREFIX"):
-            logger.info("QueryGenerator: Adding missing prefixes to query")
-            prefixes = """PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX p: <http://www.wikidata.org/prop/>
-PREFIX ps: <http://www.wikidata.org/prop/statement/>
-PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
-"""
-            query = prefixes + query
+        # Try to extract query from code block
+        sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
+        match = re.search(sparql_pattern, raw_response)
+        
+        if match:
+            logger.info("QueryGenerator: Extracted SPARQL query from code block")
+            query = match.group(1).strip()
+        else:
+            # If no code block found, use the entire response
+            logger.info("QueryGenerator: No code block found, using entire response as query")
+            query = raw_response
 
         logger.info("QueryGenerator: SPARQL query generated successfully")
         logger.info(f"QueryGenerator: Generated query:\n{query}")
