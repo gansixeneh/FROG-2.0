@@ -275,7 +275,9 @@ class NL2SPARQLGenerator:
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
-            
+            # print(complexity, count, eligible_templates)
+            # print()
+            # print("==============================")
             if not eligible_templates:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
@@ -286,6 +288,8 @@ class NL2SPARQLGenerator:
                 
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
+                if complexity == "advance":
+                    print(template, "*******************\n")
                 
                 try:
                     # Instantiate the template

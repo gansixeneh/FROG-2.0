@@ -56,13 +56,16 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         if len(schema['entityExamples']) > 10:
             print(f"  ... and {len(schema['entityExamples']) - 10} more")
         
+        print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
+        print("Date properties:", schema["schemaInfo"]["dateProperties"])
+
         # Generate dataset using extracted schema
         generator = NL2SPARQLGenerator(schema)
         
         print("\nGenerating question-SPARQL pairs for university course data...")
         dataset = generator.generate_dataset(
             size=50,  # Smaller size for debugging
-            complexity_distribution={"basic": 0.7, "intermediate": 0.2, "advanced": 0.1},
+            complexity_distribution={"basic": 0.3, "intermediate": 0.2, "advanced": 0.5},
             include_variations=True,
             variations_per_question=2
         )
