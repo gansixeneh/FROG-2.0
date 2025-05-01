@@ -29,6 +29,11 @@ class NL2SPARQLGenerator:
         self.schema_info = config.get("schemaInfo", {})
         self.templates = self.initialize_templates()
         self.variation_generator = VariationGenerator()
+        
+        print("======================================")
+        print(self.entity_examples)
+        print("======================================")
+        
 
     def initialize_templates(self):
         """
