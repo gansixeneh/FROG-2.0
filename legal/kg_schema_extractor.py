@@ -33,7 +33,7 @@ class KGSchemaExtractor:
                 'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
                 'owl': 'http://www.w3.org/2002/07/owl#',
                 'xsd': 'http://www.w3.org/2001/XMLSchema#',
-                'lex': 'https://example.org/lex2kg/ontology/'  # Added legal ontology prefix
+                'lex2kg-o': 'https://example.org/lex2kg/ontology/'  # Added legal ontology prefix
             }
         }
         

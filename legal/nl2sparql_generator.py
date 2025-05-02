@@ -440,7 +440,8 @@ class NL2SPARQLGenerator:
         # Add prefixes to SPARQL query
         prefix_string = ""
         for prefix, uri in self.prefixes.items():
-            prefix_string += f"PREFIX {prefix}: <{uri}>\n"
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
         
         sparql = prefix_string + sparql
         
