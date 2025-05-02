@@ -1,441 +1,423 @@
 [
   {
     "id": "q1",
-    "question": "Apa judul dari DUKUNGAN RISET DAN INOVASI?",
-    "englishQuestion": "What is the title of DUKUNGAN RISET DAN INOVASI?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0007> lex2kg-o:judul ?title.}",
+    "question": "Apa jenis peraturan dari Pasal b?",
+    "englishQuestion": "What type of regulation is Pasal b?",
+    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/9/pasal/0041/versi/20201026/ayat/0002/huruf/b> lex:jenisPeraturan ?type.}",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "chapter-title"
+    "templateId": "law-type"
   },
   {
     "id": "q2",
-    "question": "Apa judul dari Bagian Keenam Undang-Undang Gangguan?",
-    "englishQuestion": "What is the title of Bagian Keenam Undang-Undang Gangguan?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0006/bagian/0006> lex2kg-o:judul ?title.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "chapter-title"
-  },
-  {
-    "id": "q3",
-    "question": "Kapan Dalam hal dilakukan penyesuaian APBN Tahun Anggaran 2021 sebagaimana dimaksud pada ayat (1), Pemerin... disahkan?",
-    "englishQuestion": "When was Dalam hal dilakukan penyesuaian APBN Tahun Anggaran 2021 sebagaimana dimaksud pada ayat (1), Pemerin... enacted?",
-    "sparql": "select ?date where { <https://example.org/lex2kg/uu/2020/9/pasal/0041/versi/20201026/ayat/0004> lex2kg-o:disahkanPada ?date.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-date"
-  },
-  {
-    "id": "q4",
-    "question": "Apa versi terbaru dari Pasal ayat?",
-    "englishQuestion": "What is the latest version of Pasal ayat?",
-    "sparql": "select ?version where { <https://example.org/lex2kg/uu/2020/9/pasal/0038/versi/20201026/ayat> lex2kg-o:versi ?version.}",
+    "question": "Apa versi terbaru dari Pasal huruf?",
+    "englishQuestion": "What is the latest version of Pasal huruf?",
+    "sparql": "select ?version where { <https://example.org/lex2kg/uu/2020/9/pasal/0037/versi/20201026/ayat/0002/huruf> lex:versi ?version.}",
     "category": "legal",
     "complexity": "basic",
     "templateId": "article-version"
   },
   {
-    "id": "q5",
-    "question": "Apa jabatan pengesah PENGAWASAN DAN PEMBINAAN?",
-    "englishQuestion": "What is the position of the person who enacted PENGAWASAN DAN PEMBINAAN?",
-    "sparql": "select ?position where { <https://example.org/lex2kg/uu/2020/11/bab/0012> lex2kg-o:jabatanPengesah ?position.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-position"
-  },
-  {
-    "id": "q6",
-    "question": "Kapan mengingat disahkan?",
-    "englishQuestion": "When was mengingat enacted?",
-    "sparql": "select ?date where { <https://example.org/lex2kg/uu/2020/5/mengingat> lex2kg-o:disahkanPada ?date.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-date"
-  },
-  {
-    "id": "q7",
-    "question": "Apa jenis peraturan dari Bab paragraf?",
-    "englishQuestion": "What type of regulation is Bab paragraf?",
-    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0003/paragraf> lex2kg-o:jenisPeraturan ?type.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-type"
-  },
-  {
-    "id": "q8",
-    "question": "Apa jenis peraturan dari ASAS, TUJUAN, DAN RUANG LINGKUP?",
-    "englishQuestion": "What type of regulation is ASAS, TUJUAN, DAN RUANG LINGKUP?",
-    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/11/bab/0002> lex2kg-o:jenisPeraturan ?type.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-type"
-  },
-  {
-    "id": "q9",
-    "question": "Siapa yang mengesahkan menimbang?",
-    "englishQuestion": "Who enacted menimbang?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2019/2/menimbang> lex2kg-o:disahkanOleh ?person.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q10",
-    "question": "Siapa yang mengesahkan tingkat pengangguran terbuka menjadi 7,746 - 9,1\u201d (tujuh koma tujuh persen sampai dengan sembilan ko...?",
-    "englishQuestion": "Who enacted tingkat pengangguran terbuka menjadi 7,746 - 9,1\u201d (tujuh koma tujuh persen sampai dengan sembilan ko...?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2020/9/pasal/0047/versi/20201026/huruf/b/text> lex2kg-o:disahkanOleh ?person.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q11",
-    "question": "Apa isi dari hasil klaim asuransi BMN, dan/atau?",
-    "englishQuestion": "What is the content of hasil klaim asuransi BMN, dan/atau?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0002/huruf/d/text> lex2kg-o:teks ?text.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "article-text"
-  },
-  {
-    "id": "q12",
-    "question": "Siapa yang mengesahkan Paragraf 13 Kepariwisataan?",
-    "englishQuestion": "Who enacted Paragraf 13 Kepariwisataan?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0004/paragraf/0013> lex2kg-o:disahkanOleh ?person.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q13",
-    "question": "Apa judul dari Paragraf 4 Pemberian Hak atas Tanah/Hak Pengelolaan pada Ruang atas Tanah dan Ruang Bawah Tanah?",
-    "englishQuestion": "What is the title of Paragraf 4 Pemberian Hak atas Tanah/Hak Pengelolaan pada Ruang atas Tanah dan Ruang Bawah Tanah?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0008/bagian/0004/paragraf/0004> lex2kg-o:judul ?title.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "chapter-title"
-  },
-  {
-    "id": "q14",
-    "question": "Apa judul dari Bab paragraf?",
-    "englishQuestion": "What is the title of Bab paragraf?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2018/6/bab/0006/bagian/0003/paragraf> lex2kg-o:judul ?title.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "chapter-title"
-  },
-  {
-    "id": "q15",
-    "question": "Siapa yang mengesahkan APBD,?",
-    "englishQuestion": "Who enacted APBD,?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0002/huruf/c/text> lex2kg-o:disahkanOleh ?person.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q16",
-    "question": "Siapa yang mengesahkan Paragraf 12 Pendidikan dan Kebudayaan?",
-    "englishQuestion": "Who enacted Paragraf 12 Pendidikan dan Kebudayaan?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0004/paragraf/0012> lex2kg-o:disahkanOleh ?person.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q17",
-    "question": "Apa isi dari Undang-Undang ini mulai berlaku pada tanggal 1 Januari 2021. . 55 - Agar setiap orang mengetahuinya,...?",
-    "englishQuestion": "What is the title of Undang-Undang ini mulai berlaku pada tanggal 1 Januari 2021. . 55 - Agar setiap orang mengetahuinya,...?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0049/versi/20201026/text> lex2kg-o:tentang ?title.}",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-title"
-  },
-  {
-    "id": "q18",
-    "question": "Di mana Dalam hal anggaran belanja dalam rangka penanggulangan bencana tidak terserap pada tahun anggaran 20... disahkan?",
-    "englishQuestion": "Where was Dalam hal anggaran belanja dalam rangka penanggulangan bencana tidak terserap pada tahun anggaran 20... enacted?",
-    "sparql": "select ?location where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0004> lex2kg-o:disahkanDi ?location.}",
+    "id": "q3",
+    "question": "Di mana Pasal huruf disahkan?",
+    "englishQuestion": "Where was Pasal huruf enacted?",
+    "sparql": "select ?location where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0002/huruf> lex:disahkanDi ?location.}",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-enactment-location"
   },
   {
-    "id": "q19",
-    "question": "Apa judul dari Paragraf 1 Umum?",
-    "englishQuestion": "What is the title of Paragraf 1 Umum?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0009/bagian/0003/paragraf/0001> lex2kg-o:judul ?title.}",
+    "id": "q4",
+    "question": "Apa isi dari KETENTUAN PERALIHAN?",
+    "englishQuestion": "What is the title of KETENTUAN PERALIHAN?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0014> lex:tentang ?title.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-title"
+  },
+  {
+    "id": "q5",
+    "question": "Kapan Bagian Kedua Administrasi Pemerintahan disahkan?",
+    "englishQuestion": "When was Bagian Kedua Administrasi Pemerintahan enacted?",
+    "sparql": "select ?date where { <https://example.org/lex2kg/uu/2020/11/bab/0011/bagian/0002> lex:disahkanPada ?date.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-date"
+  },
+  {
+    "id": "q6",
+    "question": "Di mana Paragraf 12 Pendidikan dan Kebudayaan disahkan?",
+    "englishQuestion": "Where was Paragraf 12 Pendidikan dan Kebudayaan enacted?",
+    "sparql": "select ?location where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0004/paragraf/0012> lex:disahkanDi ?location.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-location"
+  },
+  {
+    "id": "q7",
+    "question": "Apa isi dari Paragraf 3 Satuan Rumah Susun untuk Orang Asing?",
+    "englishQuestion": "What is the title of Paragraf 3 Satuan Rumah Susun untuk Orang Asing?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0008/bagian/0004/paragraf/0003> lex:tentang ?title.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-title"
+  },
+  {
+    "id": "q8",
+    "question": "Kapan Paragraf 4 Perbankan Syariah disahkan?",
+    "englishQuestion": "When was Paragraf 4 Perbankan Syariah enacted?",
+    "sparql": "select ?date where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0005/paragraf/0004> lex:disahkanPada ?date.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-date"
+  },
+  {
+    "id": "q9",
+    "question": "Apa isi dari Tahun 0040?",
+    "englishQuestion": "What is the content of Tahun 0040?",
+    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0040> lex:teks ?text.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "article-text"
+  },
+  {
+    "id": "q10",
+    "question": "Di mana menimbang disahkan?",
+    "englishQuestion": "Where was menimbang enacted?",
+    "sparql": "select ?location where { <https://example.org/lex2kg/uu/2020/12/menimbang> lex:disahkanDi ?location.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-location"
+  },
+  {
+    "id": "q11",
+    "question": "Apa judul dari Bab bagian?",
+    "englishQuestion": "What is the title of Bab bagian?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0009/bagian> lex:judul ?title.}",
     "category": "legal",
     "complexity": "basic",
     "templateId": "chapter-title"
   },
   {
+    "id": "q12",
+    "question": "Apa isi dari Pasal huruf?",
+    "englishQuestion": "What is the content of Pasal huruf?",
+    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0028/versi/20201026/ayat/0001/huruf> lex:teks ?text.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "article-text"
+  },
+  {
+    "id": "q13",
+    "question": "Apa jenis peraturan dari KETENAGAKERJAAN?",
+    "englishQuestion": "What type of regulation is KETENAGAKERJAAN?",
+    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/11/bab/0004> lex:jenisPeraturan ?type.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-type"
+  },
+  {
+    "id": "q14",
+    "question": "Apa isi dari Paragraf 4 Perbankan Syariah?",
+    "englishQuestion": "What is the title of Paragraf 4 Perbankan Syariah?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0005/paragraf/0004> lex:tentang ?title.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-title"
+  },
+  {
+    "id": "q15",
+    "question": "Apa jenis peraturan dari mengingat?",
+    "englishQuestion": "What type of regulation is mengingat?",
+    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/2/mengingat> lex:jenisPeraturan ?type.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-type"
+  },
+  {
+    "id": "q16",
+    "question": "Apa jenis peraturan dari Tahun 0036?",
+    "englishQuestion": "What type of regulation is Tahun 0036?",
+    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/9/pasal/0036> lex:jenisPeraturan ?type.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-type"
+  },
+  {
+    "id": "q17",
+    "question": "Apa jenis peraturan dari mengingat?",
+    "englishQuestion": "What type of regulation is mengingat?",
+    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2020/2/mengingat> lex:jenisPeraturan ?type.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-type"
+  },
+  {
+    "id": "q18",
+    "question": "Apa judul dari Paragraf 2 Kawasan Perdagangan Bebas dan Pelabuhan Bebas?",
+    "englishQuestion": "What is the title of Paragraf 2 Kawasan Perdagangan Bebas dan Pelabuhan Bebas?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0009/bagian/0003/paragraf/0002> lex:judul ?title.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "chapter-title"
+  },
+  {
+    "id": "q19",
+    "question": "Apa isi dari Pasal ayat?",
+    "englishQuestion": "What is the content of Pasal ayat?",
+    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0031/versi/20201026/ayat> lex:teks ?text.}",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "article-text"
+  },
+  {
     "id": "q20",
-    "question": "Apa isi dari Pasal c?",
-    "englishQuestion": "What is the content of Pasal c?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0047/versi/20201026/huruf/c> lex2kg-o:teks ?text.}",
+    "question": "Apa isi dari Pasal huruf?",
+    "englishQuestion": "What is the content of Pasal huruf?",
+    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2020/9/pasal/0047/versi/20201026/huruf> lex:teks ?text.}",
     "category": "legal",
     "complexity": "basic",
     "templateId": "article-text"
   },
   {
     "id": "q21",
-    "question": "Berapa jumlah bab dalam  PENGESAHAN PERJANJIAN TENTANG BANTUAN HUKUM TIMBAL BALIK DALAM MASALAH PIDANA ANTARA REPUBLIK INDONESIA DAN KONFEDERASI SWISS (TREATY ON MUTUAL LEGAL ASSISTANCE IN CRIMINAL MATTERS BETWEEN THE REPUBLIC OF INDONESIA AND THE SWISS CONFEDERATION)?",
-    "englishQuestion": "How many chapters are in  PENGESAHAN PERJANJIAN TENTANG BANTUAN HUKUM TIMBAL BALIK DALAM MASALAH PIDANA ANTARA REPUBLIK INDONESIA DAN KONFEDERASI SWISS (TREATY ON MUTUAL LEGAL ASSISTANCE IN CRIMINAL MATTERS BETWEEN THE REPUBLIC OF INDONESIA AND THE SWISS CONFEDERATION)?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/5> lex2kg-o:daftarBab ?chapters.?chapters lex2kg-o:bab ?chapter.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-chapters"
-  },
-  {
-    "id": "q22",
-    "question": "Berapa jumlah ayat dalam Pasal huruf?",
-    "englishQuestion": "How many sections are in Pasal huruf?",
-    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0002/huruf> lex2kg-o:versi ?version.?version lex2kg-o:daftarAyat ?sections.?sections lex2kg-o:ayat ?section.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "article-sections"
-  },
-  {
-    "id": "q23",
-    "question": "Peraturan mana yang mengubah Dalam hal anggaran belanja dalam rangka penanggulangan bencana tidak terserap pada tahun anggaran 20...?",
-    "englishQuestion": "Which regulations amended Dalam hal anggaran belanja dalam rangka penanggulangan bencana tidak terserap pada tahun anggaran 20...?",
-    "sparql": "select ?amendment where { ?article lex2kg-o:mengubah <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0004>.?article lex2kg-o:bagianDari ?amendment.}",
+    "question": "Peraturan mana yang mengubah Bagian Ketujuh Perpajakan R \u201c PRESIDEN?",
+    "englishQuestion": "Which regulations amended Bagian Ketujuh Perpajakan R \u201c PRESIDEN?",
+    "sparql": "select ?amendment where { ?article lex:mengubah <https://example.org/lex2kg/uu/2020/11/bab/0006/bagian/0007>.?article lex:bagianDari ?amendment.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-amended-by"
   },
   {
-    "id": "q24",
-    "question": "Berapa jumlah ayat dalam (1). Pemerintah dalam mengurus kekayaan negara yang dipisahkan dan dikelola oleh Badan Usaha Milik N...?",
-    "englishQuestion": "How many sections are in (1). Pemerintah dalam mengurus kekayaan negara yang dipisahkan dan dikelola oleh Badan Usaha Milik N...?",
-    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0036/versi/20201026> lex2kg-o:versi ?version.?version lex2kg-o:daftarAyat ?sections.?sections lex2kg-o:ayat ?section.}",
+    "id": "q22",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2019?",
+    "englishQuestion": "What laws were enacted in the year 2019?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2019.?law lex:tentang ?title.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "article-sections"
+    "templateId": "laws-enacted-in-year"
+  },
+  {
+    "id": "q23",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2018?",
+    "englishQuestion": "What laws were enacted in the year 2018?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2018.?law lex:tentang ?title.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "laws-enacted-in-year"
+  },
+  {
+    "id": "q24",
+    "question": "Berapa jumlah pasal dalam Bab paragraf?",
+    "englishQuestion": "How many articles are in Bab paragraf?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2018/9/bab/0005/bagian/0003/paragraf> lex:pasal ?article.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-articles"
   },
   {
     "id": "q25",
-    "question": "Berapa jumlah bab dalam Pasal a?",
-    "englishQuestion": "How many chapters are in Pasal a?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0047/versi/20201026/huruf/a> lex2kg-o:daftarBab ?chapters.?chapters lex2kg-o:bab ?chapter.}",
+    "question": "Berapa jumlah bab dalam Pasal daftarPasal?",
+    "englishQuestion": "How many chapters are in Pasal daftarPasal?",
+    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/13/daftarPasal> lex:daftarBab ?chapters.?chapters lex:bab ?chapter.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-chapters"
   },
   {
     "id": "q26",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 2015?",
-    "englishQuestion": "What laws were enacted in the year 2015?",
-    "sparql": "select ?law ?title where { ?law lex2kg-o:tahun 2015.?law lex2kg-o:tentang ?title.}",
+    "question": "Peraturan mana yang mengubah Pasal b?",
+    "englishQuestion": "Which regulations amended Pasal b?",
+    "sparql": "select ?amendment where { ?article lex:mengubah <https://example.org/lex2kg/uu/2020/9/pasal/0041/versi/20201026/ayat/0002/huruf/b>.?article lex:bagianDari ?amendment.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "laws-enacted-in-year"
+    "templateId": "law-amended-by"
   },
   {
     "id": "q27",
-    "question": "Berapa jumlah pasal dalam Bab bab?",
-    "englishQuestion": "How many articles are in Bab bab?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2017/5/bab> lex2kg-o:pasal ?article.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-articles"
-  },
-  {
-    "id": "q28",
-    "question": "Berapa jumlah bab dalam Bagian Kesatu Umum @?",
-    "englishQuestion": "How many chapters are in Bagian Kesatu Umum @?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/11/bab/0008/bagian/0001> lex2kg-o:daftarBab ?chapters.?chapters lex2kg-o:bab ?chapter.}",
+    "question": "Berapa jumlah bab dalam Undang-Undang ini mulai berlaku pada tanggal 1 Januari 2021. . 55 - Agar setiap orang mengetahuinya,...?",
+    "englishQuestion": "How many chapters are in Undang-Undang ini mulai berlaku pada tanggal 1 Januari 2021. . 55 - Agar setiap orang mengetahuinya,...?",
+    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0049/versi/20201026> lex:daftarBab ?chapters.?chapters lex:bab ?chapter.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-chapters"
   },
   {
-    "id": "q29",
-    "question": "Berapa jumlah pasal dalam (1). Dalam rangka pelaksanaan Undang-Undang Nomor 2 Tahun 2020 tentang Penetapan Peraturan Pemerinta...?",
-    "englishQuestion": "How many articles are in (1). Dalam rangka pelaksanaan Undang-Undang Nomor 2 Tahun 2020 tentang Penetapan Peraturan Pemerinta...?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0043/versi/20201026> lex2kg-o:pasal ?article.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-articles"
-  },
-  {
-    "id": "q30",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 2015?",
-    "englishQuestion": "What laws were enacted in the year 2015?",
-    "sparql": "select ?law ?title where { ?law lex2kg-o:tahun 2015.?law lex2kg-o:tentang ?title.}",
+    "id": "q28",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2018?",
+    "englishQuestion": "What laws were enacted in the year 2018?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2018.?law lex:tentang ?title.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "laws-enacted-in-year"
   },
   {
+    "id": "q29",
+    "question": "Berapa jumlah ayat dalam Tahun 0046?",
+    "englishQuestion": "How many sections are in Tahun 0046?",
+    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0046> lex:versi ?version.?version lex:daftarAyat ?sections.?sections lex:ayat ?section.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "article-sections"
+  },
+  {
+    "id": "q30",
+    "question": "Berapa jumlah ayat dalam Dana penanggulangan bencana sebagaimana dimaksud pada ayat (1) dikelola secara khusus.?",
+    "englishQuestion": "How many sections are in Dana penanggulangan bencana sebagaimana dimaksud pada ayat (1) dikelola secara khusus.?",
+    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0003> lex:versi ?version.?version lex:daftarAyat ?sections.?sections lex:ayat ?section.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "article-sections"
+  },
+  {
     "id": "q31",
-    "question": "Berapa jumlah pasal dalam Paragraf 1 Umum?",
-    "englishQuestion": "How many articles are in Paragraf 1 Umum?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/11/bab/0009/bagian/0003/paragraf/0001> lex2kg-o:pasal ?article.}",
+    "question": "Berapa jumlah pasal dalam Bab paragraf?",
+    "englishQuestion": "How many articles are in Bab paragraf?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2018/9/bab/0005/bagian/0003/paragraf> lex:pasal ?article.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-articles"
   },
   {
     "id": "q32",
-    "question": "Berapa jumlah pasal dalam Tahun 0036?",
-    "englishQuestion": "How many articles are in Tahun 0036?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0036> lex2kg-o:pasal ?article.}",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2019?",
+    "englishQuestion": "What laws were enacted in the year 2019?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2019.?law lex:tentang ?title.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-articles"
+    "templateId": "laws-enacted-in-year"
   },
   {
     "id": "q33",
-    "question": "Berapa jumlah pasal dalam Bab bab?",
-    "englishQuestion": "How many articles are in Bab bab?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2019/4/bab> lex2kg-o:pasal ?article.}",
+    "question": "Berapa jumlah pasal dalam Pasal daftarPasal?",
+    "englishQuestion": "How many articles are in Pasal daftarPasal?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/11/bab/0010/bagian/0001/paragraf/0001/daftarPasal> lex:pasal ?article.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-articles"
   },
   {
     "id": "q34",
-    "question": "Berapa jumlah pasal dalam Pasal c?",
-    "englishQuestion": "How many articles are in Pasal c?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0041/versi/20201026/ayat/0001/huruf/c> lex2kg-o:pasal ?article.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-articles"
-  },
-  {
-    "id": "q35",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 2017?",
-    "englishQuestion": "What laws were enacted in the year 2017?",
-    "sparql": "select ?law ?title where { ?law lex2kg-o:tahun 2017.?law lex2kg-o:tentang ?title.}",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "laws-enacted-in-year"
-  },
-  {
-    "id": "q36",
-    "question": "Berapa jumlah bab dalam Pasal daftarPasal?",
-    "englishQuestion": "How many chapters are in Pasal daftarPasal?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/11/bab/0014/daftarPasal> lex2kg-o:daftarBab ?chapters.?chapters lex2kg-o:bab ?chapter.}",
+    "question": "Berapa jumlah bab dalam Bab bab?",
+    "englishQuestion": "How many chapters are in Bab bab?",
+    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2019/21/bab> lex:daftarBab ?chapters.?chapters lex:bab ?chapter.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-chapters"
   },
   {
+    "id": "q35",
+    "question": "Peraturan mana yang mengubah mengingat?",
+    "englishQuestion": "Which regulations amended mengingat?",
+    "sparql": "select ?amendment where { ?article lex:mengubah <https://example.org/lex2kg/uu/2019/6/mengingat>.?article lex:bagianDari ?amendment.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-amended-by"
+  },
+  {
+    "id": "q36",
+    "question": "Berapa jumlah pasal dalam Paragraf 11 Kesehatan, Obat, dan Makanan?",
+    "englishQuestion": "How many articles are in Paragraf 11 Kesehatan, Obat, dan Makanan?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0004/paragraf/0011> lex:pasal ?article.}",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-articles"
+  },
+  {
     "id": "q37",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 2015?",
-    "englishQuestion": "What laws were enacted in the year 2015?",
-    "sparql": "select ?law ?title where { ?law lex2kg-o:tahun 2015.?law lex2kg-o:tentang ?title.}",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2017?",
+    "englishQuestion": "What laws were enacted in the year 2017?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2017.?law lex:tentang ?title.}",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "laws-enacted-in-year"
   },
   {
     "id": "q38",
-    "question": "Berapa jumlah bab dalam APBD,?",
-    "englishQuestion": "How many chapters are in APBD,?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0002/huruf/c/text> lex2kg-o:daftarBab ?chapters.?chapters lex2kg-o:bab ?chapter.}",
+    "question": "Berapa jumlah pasal dalam Pasal c?",
+    "englishQuestion": "How many articles are in Pasal c?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0041/versi/20201026/ayat/0002/huruf/c> lex:pasal ?article.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-chapters"
+    "templateId": "law-articles"
   },
   {
     "id": "q39",
-    "question": "Berapa jumlah ayat dalam Peraturan Presiden mengenai Rincian APBN Tahun Anggaran 2021 yang merupakan pelaksanaan dari Undang-...?",
-    "englishQuestion": "How many sections are in Peraturan Presiden mengenai Rincian APBN Tahun Anggaran 2021 yang merupakan pelaksanaan dari Undang-...?",
-    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2020/9/pasal/0045/versi/20201026/ayat/0001> lex2kg-o:versi ?version.?version lex2kg-o:daftarAyat ?sections.?sections lex2kg-o:ayat ?section.}",
+    "question": "Berapa jumlah pasal dalam mengingat?",
+    "englishQuestion": "How many articles are in mengingat?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2019/3/mengingat> lex:pasal ?article.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "article-sections"
+    "templateId": "law-articles"
   },
   {
     "id": "q40",
-    "question": "Peraturan mana yang mengubah Bab bagian?",
-    "englishQuestion": "Which regulations amended Bab bagian?",
-    "sparql": "select ?amendment where { ?article lex2kg-o:mengubah <https://example.org/lex2kg/uu/2019/24/bab/0003/bagian>.?article lex2kg-o:bagianDari ?amendment.}",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2020?",
+    "englishQuestion": "What laws were enacted in the year 2020?",
+    "sparql": "select ?law ?title where { ?law lex:tahun 2020.?law lex:tentang ?title.}",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-amended-by"
+    "templateId": "laws-enacted-in-year"
   },
   {
     "id": "q41",
-    "question": "Undang-undang apa saja yang diubah oleh tingkat pengangguran terbuka menjadi 7,746 - 9,1\u201d (tujuh koma tujuh persen sampai dengan sembilan ko...?",
-    "englishQuestion": "Which laws were amended by tingkat pengangguran terbuka menjadi 7,746 - 9,1\u201d (tujuh koma tujuh persen sampai dengan sembilan ko...?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0047/versi/20201026/huruf/b/text> lex2kg-o:pasal ?article.?article lex2kg-o:versi ?articleVersion.?articleVersion lex2kg-o:huruf ?letter.?letter lex2kg-o:mengubah ?amendedArticle.?amendedArticle lex2kg-o:bagianDari ?amendedLaw.?amendedLaw lex2kg-o:tentang ?title.} limit 10",
+    "question": "Undang-undang apa saja yang diubah oleh Bab bab?",
+    "englishQuestion": "Which laws were amended by Bab bab?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2019/17/bab> lex:pasal ?article.?article lex:versi ?articleVersion.?articleVersion lex:huruf ?letter.?letter lex:mengubah ?amendedArticle.?amendedArticle lex:bagianDari ?amendedLaw.?amendedLaw lex:tentang ?title.} limit 10",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-amendments"
   },
   {
     "id": "q42",
-    "question": "Undang-undang apa saja yang diubah oleh Dalam keadaan darurat, Pemerintah dapat melakukan langkah-langkah antisipasi dengan persetujuan Dewa...?",
-    "englishQuestion": "Which laws were amended by Dalam keadaan darurat, Pemerintah dapat melakukan langkah-langkah antisipasi dengan persetujuan Dewa...?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0042/versi/20201026/ayat/0001> lex2kg-o:pasal ?article.?article lex2kg-o:versi ?articleVersion.?articleVersion lex2kg-o:huruf ?letter.?letter lex2kg-o:mengubah ?amendedArticle.?amendedArticle lex2kg-o:bagianDari ?amendedLaw.?amendedLaw lex2kg-o:tentang ?title.} limit 10",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-amendments"
-  },
-  {
-    "id": "q43",
-    "question": "Undang-undang apa saja yang diubah oleh Dalam hal terjadi pemberian pinjaman kepada Lembaga Penjamin Simpanan dan jaminan Pemerintah atas pi...?",
-    "englishQuestion": "Which laws were amended by Dalam hal terjadi pemberian pinjaman kepada Lembaga Penjamin Simpanan dan jaminan Pemerintah atas pi...?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0043/versi/20201026/ayat/0004> lex2kg-o:pasal ?article.?article lex2kg-o:versi ?articleVersion.?articleVersion lex2kg-o:huruf ?letter.?letter lex2kg-o:mengubah ?amendedArticle.?amendedArticle lex2kg-o:bagianDari ?amendedLaw.?amendedLaw lex2kg-o:tentang ?title.} limit 10",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-amendments"
-  },
-  {
-    "id": "q44",
-    "question": "Undang-undang apa saja yang disahkan oleh SUSILO BAMBANG YUDHOYONO?",
-    "englishQuestion": "What laws were enacted by SUSILO BAMBANG YUDHOYONO?",
-    "sparql": "select ?law ?title ?date where { ?law lex2kg-o:disahkanOleh \"SUSILO BAMBANG YUDHOYONO\".?law lex2kg-o:tentang ?title.?law lex2kg-o:disahkanPada ?date.} order by DESC(?date) limit 10",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-by-enactor"
-  },
-  {
-    "id": "q45",
-    "question": "Pasal mana saja yang merujuk ke Tahun 0035?",
-    "englishQuestion": "Which articles reference Tahun 0035?",
-    "sparql": "select ?referringArticle ?text where { ?textSegment lex2kg-o:merujuk <https://example.org/lex2kg/uu/2020/9/pasal/0035>.?textSegment lex2kg-o:bagianDari ?referringArticle.?referringArticle lex2kg-o:teks ?text.} limit 10",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "article-references"
-  },
-  {
-    "id": "q46",
-    "question": "Undang-undang apa saja yang berhubungan dengan 'LINGKUNGAN'?",
-    "englishQuestion": "Which laws are related to 'LINGKUNGAN'?",
-    "sparql": "select distinct ?law ?title where { ?law lex2kg-o:tentang ?title.filter (CONTAINS(LCASE(?title), LCASE(\"LINGKUNGAN\"))) } limit 10",
+    "question": "Undang-undang apa saja yang berhubungan dengan 'KESEHATAN'?",
+    "englishQuestion": "Which laws are related to 'KESEHATAN'?",
+    "sparql": "select distinct ?law ?title where { ?law lex:tentang ?title.filter (CONTAINS(LCASE(?title), LCASE(\"KESEHATAN\"))) } limit 10",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-by-keyword"
   },
   {
-    "id": "q47",
-    "question": "Undang-undang apa saja yang diubah oleh Bagian Kesembilan Wajib Daftar Perusahaan?",
-    "englishQuestion": "Which laws were amended by Bagian Kesembilan Wajib Daftar Perusahaan?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/bab/0006/bagian/0009> lex2kg-o:pasal ?article.?article lex2kg-o:versi ?articleVersion.?articleVersion lex2kg-o:huruf ?letter.?letter lex2kg-o:mengubah ?amendedArticle.?amendedArticle lex2kg-o:bagianDari ?amendedLaw.?amendedLaw lex2kg-o:tentang ?title.} limit 10",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-amendments"
-  },
-  {
-    "id": "q48",
-    "question": "Undang-undang apa saja yang disahkan oleh MEGAWATI SOEKARNOPUTRI?",
-    "englishQuestion": "What laws were enacted by MEGAWATI SOEKARNOPUTRI?",
-    "sparql": "select ?law ?title ?date where { ?law lex2kg-o:disahkanOleh \"MEGAWATI SOEKARNOPUTRI\".?law lex2kg-o:tentang ?title.?law lex2kg-o:disahkanPada ?date.} order by DESC(?date) limit 10",
+    "id": "q43",
+    "question": "Undang-undang apa saja yang disahkan oleh SUSILO BAMBANG YUDHOYONO?",
+    "englishQuestion": "What laws were enacted by SUSILO BAMBANG YUDHOYONO?",
+    "sparql": "select ?law ?title ?date where { ?law lex:disahkanOleh \"SUSILO BAMBANG YUDHOYONO\".?law lex:tentang ?title.?law lex:disahkanPada ?date.} order by DESC(?date) limit 10",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-by-enactor"
   },
   {
-    "id": "q49",
-    "question": "Undang-undang apa saja yang berhubungan dengan 'PENDIDIKAN'?",
-    "englishQuestion": "Which laws are related to 'PENDIDIKAN'?",
-    "sparql": "select distinct ?law ?title where { ?law lex2kg-o:tentang ?title.filter (CONTAINS(LCASE(?title), LCASE(\"PENDIDIKAN\"))) } limit 10",
+    "id": "q44",
+    "question": "Undang-undang apa saja yang diubah oleh Dalam hal persetujuan Dewan Perwakilan Rakyat sebagaimana dimaksud pada ayat (1) karena suatu dan la...?",
+    "englishQuestion": "Which laws were amended by Dalam hal persetujuan Dewan Perwakilan Rakyat sebagaimana dimaksud pada ayat (1) karena suatu dan la...?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0042/versi/20201026/ayat/0003> lex:pasal ?article.?article lex:versi ?articleVersion.?articleVersion lex:huruf ?letter.?letter lex:mengubah ?amendedArticle.?amendedArticle lex:bagianDari ?amendedLaw.?amendedLaw lex:tentang ?title.} limit 10",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-amendments"
+  },
+  {
+    "id": "q45",
+    "question": "Undang-undang apa saja yang diubah oleh Tahun 0032?",
+    "englishQuestion": "Which laws were amended by Tahun 0032?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/9/pasal/0032> lex:pasal ?article.?article lex:versi ?articleVersion.?articleVersion lex:huruf ?letter.?letter lex:mengubah ?amendedArticle.?amendedArticle lex:bagianDari ?amendedLaw.?amendedLaw lex:tentang ?title.} limit 10",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-amendments"
+  },
+  {
+    "id": "q46",
+    "question": "Pasal mana saja yang merujuk ke Pasal ayat?",
+    "englishQuestion": "Which articles reference Pasal ayat?",
+    "sparql": "select ?referringArticle ?text where { ?textSegment lex:merujuk <https://example.org/lex2kg/uu/2020/9/pasal/0043/versi/20201026/ayat>.?textSegment lex:bagianDari ?referringArticle.?referringArticle lex:teks ?text.} limit 10",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "article-references"
+  },
+  {
+    "id": "q47",
+    "question": "Undang-undang apa saja yang berhubungan dengan 'KETENAGAKERJAAN'?",
+    "englishQuestion": "Which laws are related to 'KETENAGAKERJAAN'?",
+    "sparql": "select distinct ?law ?title where { ?law lex:tentang ?title.filter (CONTAINS(LCASE(?title), LCASE(\"KETENAGAKERJAAN\"))) } limit 10",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-by-keyword"

@@ -53,7 +53,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the title of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
-                      {entity} lex2kg-o:tentang ?title .
+                      {entity} lex:tentang ?title .
                     }
                 """,
                 "complexity": "basic"
@@ -65,7 +65,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "When was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
-                      {entity} lex2kg-o:disahkanPada ?date .
+                      {entity} lex:disahkanPada ?date .
                     }
                 """,
                 "complexity": "basic"
@@ -77,7 +77,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Where was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?location WHERE {
-                      {entity} lex2kg-o:disahkanDi ?location .
+                      {entity} lex:disahkanDi ?location .
                     }
                 """,
                 "complexity": "basic"
@@ -89,7 +89,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?person WHERE {
-                      {entity} lex2kg-o:disahkanOleh ?person .
+                      {entity} lex:disahkanOleh ?person .
                     }
                 """,
                 "complexity": "basic"
@@ -101,7 +101,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the position of the person who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?position WHERE {
-                      {entity} lex2kg-o:jabatanPengesah ?position .
+                      {entity} lex:jabatanPengesah ?position .
                     }
                 """,
                 "complexity": "basic"
@@ -113,7 +113,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What type of regulation is {entity}?",
                 "sparqlTemplate": """
                     SELECT ?type WHERE {
-                      {entity} lex2kg-o:jenisPeraturan ?type .
+                      {entity} lex:jenisPeraturan ?type .
                     }
                 """,
                 "complexity": "basic"
@@ -125,7 +125,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the content of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?text WHERE {
-                      {entity} lex2kg-o:teks ?text .
+                      {entity} lex:teks ?text .
                     }
                 """,
                 "complexity": "basic"
@@ -137,7 +137,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the latest version of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?version WHERE {
-                      {entity} lex2kg-o:versi ?version .
+                      {entity} lex:versi ?version .
                     }
                 """,
                 "complexity": "basic"
@@ -149,7 +149,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the title of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
-                      {entity} lex2kg-o:judul ?title .
+                      {entity} lex:judul ?title .
                     }
                 """,
                 "complexity": "basic"
@@ -163,7 +163,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many articles are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?article) AS ?count) WHERE {
-                      {entity} lex2kg-o:pasal ?article .
+                      {entity} lex:pasal ?article .
                     }
                 """,
                 "complexity": "intermediate"
@@ -175,8 +175,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many chapters are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?chapter) AS ?count) WHERE {
-                      {entity} lex2kg-o:daftarBab ?chapters .
-                      ?chapters lex2kg-o:bab ?chapter .
+                      {entity} lex:daftarBab ?chapters .
+                      ?chapters lex:bab ?chapter .
                     }
                 """,
                 "complexity": "intermediate"
@@ -188,9 +188,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many sections are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?section) AS ?count) WHERE {
-                      {entity} lex2kg-o:versi ?version .
-                      ?version lex2kg-o:daftarAyat ?sections .
-                      ?sections lex2kg-o:ayat ?section .
+                      {entity} lex:versi ?version .
+                      ?version lex:daftarAyat ?sections .
+                      ?sections lex:ayat ?section .
                     }
                 """,
                 "complexity": "intermediate"
@@ -202,8 +202,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which regulations amended {entity}?",
                 "sparqlTemplate": """
                     SELECT ?amendment WHERE {
-                      ?article lex2kg-o:mengubah {entity} .
-                      ?article lex2kg-o:bagianDari ?amendment .
+                      ?article lex:mengubah {entity} .
+                      ?article lex:bagianDari ?amendment .
                     }
                 """,
                 "complexity": "intermediate"
@@ -215,8 +215,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What laws were enacted in the year {value}?",
                 "sparqlTemplate": """
                     SELECT ?law ?title WHERE {
-                      ?law lex2kg-o:tahun {value} .
-                      ?law lex2kg-o:tentang ?title .
+                      ?law lex:tahun {value} .
+                      ?law lex:tentang ?title .
                     }
                 """,
                 "complexity": "intermediate"
@@ -230,9 +230,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which articles reference {entity}?",
                 "sparqlTemplate": """
                     SELECT ?referringArticle ?text WHERE {
-                      ?textSegment lex2kg-o:merujuk {entity} .
-                      ?textSegment lex2kg-o:bagianDari ?referringArticle .
-                      ?referringArticle lex2kg-o:teks ?text .
+                      ?textSegment lex:merujuk {entity} .
+                      ?textSegment lex:bagianDari ?referringArticle .
+                      ?referringArticle lex:teks ?text .
                     }
                     LIMIT 10
                 """,
@@ -245,12 +245,12 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?amendedLaw ?title WHERE {
-                      {entity} lex2kg-o:pasal ?article .
-                      ?article lex2kg-o:versi ?articleVersion .
-                      ?articleVersion lex2kg-o:huruf ?letter .
-                      ?letter lex2kg-o:mengubah ?amendedArticle .
-                      ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
-                      ?amendedLaw lex2kg-o:tentang ?title .
+                      {entity} lex:pasal ?article .
+                      ?article lex:versi ?articleVersion .
+                      ?articleVersion lex:huruf ?letter .
+                      ?letter lex:mengubah ?amendedArticle .
+                      ?amendedArticle lex:bagianDari ?amendedLaw .
+                      ?amendedLaw lex:tentang ?title .
                     }
                     LIMIT 10
                 """,
@@ -263,7 +263,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which laws are related to '{value}'?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?law ?title WHERE {
-                      ?law lex2kg-o:tentang ?title .
+                      ?law lex:tentang ?title .
                       FILTER(CONTAINS(LCASE(?title), LCASE("{value}")))
                     }
                     LIMIT 10
@@ -277,8 +277,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which law has the most articles?",
                 "sparqlTemplate": """
                     SELECT ?law ?title (COUNT(?article) AS ?articleCount) WHERE {
-                      ?law lex2kg-o:tentang ?title .
-                      ?law lex2kg-o:pasal ?article .
+                      ?law lex:tentang ?title .
+                      ?law lex:pasal ?article .
                     }
                     GROUP BY ?law ?title
                     ORDER BY DESC(?articleCount)
@@ -293,9 +293,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What laws were enacted by {value}?",
                 "sparqlTemplate": """
                     SELECT ?law ?title ?date WHERE {
-                      ?law lex2kg-o:disahkanOleh "{value}" .
-                      ?law lex2kg-o:tentang ?title .
-                      ?law lex2kg-o:disahkanPada ?date .
+                      ?law lex:disahkanOleh "{value}" .
+                      ?law lex:tentang ?title .
+                      ?law lex:disahkanPada ?date .
                     }
                     ORDER BY DESC(?date)
                     LIMIT 10
@@ -601,16 +601,16 @@ class NL2SPARQLGenerator:
         # Fallback to predefined legal entities
         # This ensures we always have something workable for the legal data
         legal_entities = [
-            {"value": "lex2kg-o:UU-2020-9", "label": "UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9", "type": "lex2kg-o:UndangUndang"},
-            {"value": "lex2kg-o:UU-2020-11", "label": "UU No. 11 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/11", "type": "lex2kg-o:UndangUndang"},
-            {"value": "lex2kg-o:UU-2020-9-pasal-47", "label": "Pasal 47 UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0047", "type": "lex2kg-o:Pasal"},
-            {"value": "lex2kg-o:UU-2020-11-bab-10", "label": "Bab 10 UU No. 11 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/11/bab/0010", "type": "lex2kg-o:Bab"},
-            {"value": "lex2kg-o:UU-2020-9-pasal-46-ayat-1", "label": "Pasal 46 Ayat 1 UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0001", "type": "lex2kg-o:Ayat"}
+            {"value": "lex:UU-2020-9", "label": "UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9", "type": "lex:UndangUndang"},
+            {"value": "lex:UU-2020-11", "label": "UU No. 11 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/11", "type": "lex:UndangUndang"},
+            {"value": "lex:UU-2020-9-pasal-47", "label": "Pasal 47 UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0047", "type": "lex:Pasal"},
+            {"value": "lex:UU-2020-11-bab-10", "label": "Bab 10 UU No. 11 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/11/bab/0010", "type": "lex:Bab"},
+            {"value": "lex:UU-2020-9-pasal-46-ayat-1", "label": "Pasal 46 Ayat 1 UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0001", "type": "lex:Ayat"}
         ]
         
         print("Warning: Using fallback legal entities")
@@ -629,21 +629,21 @@ class NL2SPARQLGenerator:
         """
         # Define common legal properties
         legal_properties = {
-            "title": {"value": "lex2kg-o:tentang", "label": "tentang", 
+            "title": {"value": "lex:tentang", "label": "tentang", 
                      "uri": "https://example.org/lex2kg/ontology/tentang"},
-            "enactment_date": {"value": "lex2kg-o:disahkanPada", "label": "disahkan pada", 
+            "enactment_date": {"value": "lex:disahkanPada", "label": "disahkan pada", 
                               "uri": "https://example.org/lex2kg/ontology/disahkanPada"},
-            "enactment_location": {"value": "lex2kg-o:disahkanDi", "label": "disahkan di", 
+            "enactment_location": {"value": "lex:disahkanDi", "label": "disahkan di", 
                                   "uri": "https://example.org/lex2kg/ontology/disahkanDi"},
-            "enactor": {"value": "lex2kg-o:disahkanOleh", "label": "disahkan oleh", 
+            "enactor": {"value": "lex:disahkanOleh", "label": "disahkan oleh", 
                        "uri": "https://example.org/lex2kg/ontology/disahkanOleh"},
-            "enactor_position": {"value": "lex2kg-o:jabatanPengesah", "label": "jabatan pengesah", 
+            "enactor_position": {"value": "lex:jabatanPengesah", "label": "jabatan pengesah", 
                                 "uri": "https://example.org/lex2kg/ontology/jabatanPengesah"},
-            "regulation_type": {"value": "lex2kg-o:jenisPeraturan", "label": "jenis peraturan", 
+            "regulation_type": {"value": "lex:jenisPeraturan", "label": "jenis peraturan", 
                                "uri": "https://example.org/lex2kg/ontology/jenisPeraturan"},
-            "content": {"value": "lex2kg-o:teks", "label": "teks", 
+            "content": {"value": "lex:teks", "label": "teks", 
                        "uri": "https://example.org/lex2kg/ontology/teks"},
-            "chapter_title": {"value": "lex2kg-o:judul", "label": "judul", 
+            "chapter_title": {"value": "lex:judul", "label": "judul", 
                              "uri": "https://example.org/lex2kg/ontology/judul"}
         }
         
