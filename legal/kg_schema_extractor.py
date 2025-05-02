@@ -11,6 +11,80 @@ import re
 from urllib.parse import urlencode
 from rdflib import Graph, Namespace, URIRef, Literal
 import os
+from datetime import datetime
+
+def separate_camel_case(text):
+    """
+    Separate camelCase text into words
+    
+    Args:
+        text (str): Text in camelCase
+        
+    Returns:
+        str: Text with spaces between words
+    """
+    return re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+
+def legal_entity_label(url):
+    """
+    Generate a human-readable label from a legal entity URL
+    
+    Args:
+        url (str): The entity URL
+        
+    Returns:
+        str: A formatted label
+    """
+    parts = url.strip('/').split('/')
+    transformed_parts = []
+    
+    month_mapping = {
+        "January": "Januari", "February": "Februari", "March": "Maret", "April": "April", "May": "Mei", "June": "Juni",
+        "July": "Juli", "August": "Agustus", "September": "September", "October": "Oktober", "November": "November", "December": "Desember"
+    }
+    
+    for i, part in enumerate(parts):
+        if part == "lex2kg":
+            transformed_parts = []
+            continue
+        if part == "uu":
+            transformed_parts.append("UU")
+        elif part.isdigit() and len(part) <= 2:
+            transformed_parts.append(f"no {part}")
+        elif part.isdigit() and len(part) == 4 and int(part) >= 1945:
+            transformed_parts.append(f"tahun {part}")
+        elif part.isdigit() and len(part) == 8:
+            try:
+                date_obj = datetime.strptime(part, "%Y%m%d")
+                formatted_date = date_obj.strftime("%-d %B %Y")
+                for eng, indo in month_mapping.items():
+                    formatted_date = formatted_date.replace(eng, indo)
+                transformed_parts.append(formatted_date)
+            except ValueError:
+                transformed_parts.append(part)
+        elif part.isdigit():
+            num = str(int(part))
+            transformed_parts.append(num)
+        else:
+            transformed_parts.append(separate_camel_case(part).lower())
+    
+    return ' '.join(transformed_parts)
+
+def legal_property_label(x):
+    """
+    Generate a human-readable label from a legal property
+    
+    Args:
+        x (str): The property URI or prefixed name
+        
+    Returns:
+        str: A formatted label
+    """
+    if "http" in x:
+        x = x.split("/")[-1]
+    else:
+        x = x.split(":")[-1]
+    return separate_camel_case(x).lower()
 
 class KGSchemaExtractor:
     """
@@ -230,7 +304,7 @@ class KGSchemaExtractor:
                 break
                 
             if not label:
-                label = self.extract_label_from_uri(str(class_uri))
+                label = legal_property_label(str(class_uri))
                 
             self.schema_info["types"].append({
                 "value": self.shorten_uri(str(class_uri)),
@@ -309,7 +383,7 @@ class KGSchemaExtractor:
                 break
                 
             if not label:
-                label = self.extract_label_from_uri(str(property_uri))
+                label = legal_property_label(str(property_uri))
                 
             property_info = {
                 "value": self.shorten_uri(str(property_uri)),
@@ -443,36 +517,9 @@ class KGSchemaExtractor:
                 break
                 
             entity_uri = str(s)
-            label = None
             
-            # Look for a label
-            for s2, p2, o2 in self.graph.triples((s, URIRef('http://www.w3.org/2000/01/rdf-schema#label'), None)):
-                label = str(o2)
-                break
-                
-            # For legal entities, try additional properties for label
-            if not label:
-                # Try judul (title) for Bab, Bagian, etc.
-                for s2, p2, o2 in self.graph.triples((s, URIRef('https://example.org/lex2kg/ontology/judul'), None)):
-                    label = str(o2)
-                    break
-                    
-                # Try tentang (about) for UU
-                if not label:
-                    for s2, p2, o2 in self.graph.triples((s, URIRef('https://example.org/lex2kg/ontology/tentang'), None)):
-                        label = str(o2)
-                        break
-                        
-                # Try teks (text) for Pasal, Ayat, etc.
-                if not label:
-                    for s2, p2, o2 in self.graph.triples((s, URIRef('https://example.org/lex2kg/ontology/teks'), None)):
-                        # Limit text length for readability
-                        text = str(o2)
-                        label = text[:100] + "..." if len(text) > 100 else text
-                        break
-            
-            if not label:
-                label = self.extract_label_from_uri(entity_uri)
+            # MODIFIED: Use the legal_entity_label function to generate a label from the URI
+            label = legal_entity_label(entity_uri)
                 
             # Add this entity to our examples
             entity_info = {
@@ -558,106 +605,6 @@ class KGSchemaExtractor:
         ]
         
         return any(re.match(pattern, string) for pattern in date_patterns)
-    
-    def extract_label_from_uri(self, uri):
-        """
-        Extract a label from a URI, with special handling for legal document data
-        
-        Args:
-            uri (str): URI to extract label from
-            
-        Returns:
-            str: Extracted label
-        """
-        # Extract the last part of the URI
-        last_part = uri.split('/')[-1].split('#')[-1]
-        
-        # Handle legal document URIs
-        if "uu" in uri.lower():
-            if re.match(r'\d{4}$', last_part):  # Year
-                return f"Tahun {last_part}"
-            elif re.match(r'\d+$', last_part):  # Number
-                return f"Nomor {last_part}"
-            elif "pasal" in uri.lower():
-                if re.match(r'\d+$', last_part):
-                    return f"Pasal {last_part}"
-                else:
-                    return f"Pasal {last_part}"
-            elif "ayat" in uri.lower():
-                if re.match(r'\d+$', last_part):
-                    return f"Ayat {last_part}"
-                else:
-                    return f"Ayat {last_part}"
-            elif "huruf" in uri.lower():
-                return f"Huruf {last_part}"
-            elif "bab" in uri.lower():
-                if re.match(r'\d+$', last_part):
-                    return f"Bab {last_part}"
-                else:
-                    return f"Bab {last_part}"
-            elif "bagian" in uri.lower():
-                if re.match(r'\d+$', last_part):
-                    return f"Bagian {last_part}"
-                else:
-                    return f"Bagian {last_part}"
-            elif "paragraf" in uri.lower():
-                if re.match(r'\d+$', last_part):
-                    return f"Paragraf {last_part}"
-                else:
-                    return f"Paragraf {last_part}"
-        
-        # Special handling for legal ontology terms
-        if "ontology" in uri:
-            legal_terms = {
-                "jenisPeraturan": "Jenis Peraturan",
-                "nomor": "Nomor",
-                "tanggal": "Tanggal",
-                "disahkanPada": "Disahkan Pada",
-                "segmen": "Segmen",
-                "bab": "Bab",
-                "daftarBagian": "Daftar Bagian",
-                "judul": "Judul",
-                "bahasa": "Bahasa",
-                "daftarAyat": "Daftar Ayat",
-                "tentang": "Tentang",
-                "paragraf": "Paragraf",
-                "jabatanPengesah": "Jabatan Pengesah",
-                "daftarParagraf": "Daftar Paragraf",
-                "daftarHuruf": "Daftar Huruf",
-                "disahkanDi": "Disahkan Di",
-                "disahkanOleh": "Disahkan Oleh",
-                "daftarBab": "Daftar Bab",
-                "teks": "Teks",
-                "yurisdiksi": "Yurisdiksi",
-                "pasal": "Pasal",
-                "mengubah": "Mengubah",
-                "daftarPasal": "Daftar Pasal",
-                "ayat": "Ayat",
-                "tahun": "Tahun",
-                "bagianDari": "Bagian Dari",
-                "versi": "Versi",
-                "jenisVersi": "Jenis Versi",
-                "menyisipkan": "Menyisipkan",
-                "mengingat": "Mengingat",
-                "menimbang": "Menimbang",
-                "bagian": "Bagian",
-                "huruf": "Huruf",
-                "menghapus": "Menghapus",
-                "merujuk": "Merujuk"
-            }
-            
-            if last_part in legal_terms:
-                return legal_terms[last_part]
-        
-        # Default handling for other URIs
-        if '_' in last_part:
-            # Remove underscores and replace with spaces
-            with_spaces = last_part.replace('_', ' ')
-            # Capitalize each word
-            return ' '.join(word.capitalize() for word in with_spaces.split())
-        else:
-            # Convert camelCase to spaces with standard approach
-            return re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
     
     def shorten_uri(self, uri):
         """
