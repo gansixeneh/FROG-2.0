@@ -1,8 +1,8 @@
 """
-Example usage of the NL2SPARQL Generator with University Course Data
+Example usage of the Enhanced NL2SPARQL Generator with University Course Data
 
-This example focuses exclusively on generating NL2SPARQL pairs from the final_result.ttl file.
-All other functionality has been temporarily disabled for testing/debugging purposes.
+This example generates NL2SPARQL pairs with more complex query patterns from the final_result.ttl file,
+including multi-condition and multi-hop queries.
 """
 
 import json
@@ -10,13 +10,13 @@ import os
 import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
-from schema_manager import SchemaManager
-from kg_schema_extractor import KGSchemaExtractor
+from rdflib import Graph
 
 
 def generate_university_course_dataset(file_path='final_result.ttl'):
     """
     Extract schema from the university course TTL file and generate question-SPARQL dataset
+    with enhanced complexity
     
     Args:
         file_path (str): Path to the TTL file
@@ -62,15 +62,15 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
-        # Generate dataset using extracted schema
-        generator = NL2SPARQLGenerator(schema)
+        # Generate dataset using extracted schema and the graph from the extractor
+        generator = NL2SPARQLGenerator(schema, graph=extractor.graph)
         
         print("\nGenerating question-SPARQL pairs for university course data...")
         dataset = generator.generate_dataset(
-            size=50,  # Smaller size for debugging
-            complexity_distribution={"basic": 0.3, "intermediate": 0.2, "advanced": 0.5},
+            size=100,  # Increased size for more diversity
+            complexity_distribution={"basic": 0.3, "intermediate": 0.3, "advanced": 0.4},  # More advanced queries
             include_variations=False,
-            variations_per_question=2
+            variations_per_question=0
         )
         
         print(f"Generated {len(dataset)} question-SPARQL pairs about university courses")
@@ -86,8 +86,8 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
                 print(f"    SPARQL: {q['sparql'].replace('{', '{{').replace('}', '}}')[:80]}...")
         
         # Write to files
-        output_json_path = 'university_course_dataset.json'
-        output_csv_path = 'university_course_dataset.csv'
+        output_json_path = 'enhanced_university_course_dataset.json'
+        output_csv_path = 'enhanced_university_course_dataset.csv'
         
         with open(output_json_path, 'w', encoding='utf-8') as f:
             f.write(generator.export_json(dataset))
@@ -95,7 +95,7 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         with open(output_csv_path, 'w', encoding='utf-8') as f:
             f.write(generator.export_csv(dataset))
             
-        print(f"\nUniversity course dataset exported to:")
+        print(f"\nEnhanced university course dataset exported to:")
         print(f"  - JSON: {output_json_path}")
         print(f"  - CSV: {output_csv_path}")
         
@@ -107,7 +107,7 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         raise e
 
 def main():
-    """Main function to run the university course example"""
+    """Main function to run the enhanced university course example"""
     try:
         # Check if the TTL file exists
         if not os.path.exists('final_result.ttl'):
@@ -117,7 +117,7 @@ def main():
             
         # Generate dataset from university course TTL
         dataset = generate_university_course_dataset('final_result.ttl')
-        print("\nUniversity course example completed successfully!")
+        print("\nEnhanced university course example completed successfully!")
     except Exception as e:
         print(f"Error in university course example: {e}")
 

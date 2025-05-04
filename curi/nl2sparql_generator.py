@@ -1,8 +1,8 @@
 """
-NL2SPARQL - Natural Language to SPARQL Dataset Generator - Modified for University Course Data
+NL2SPARQL - Natural Language to SPARQL Dataset Generator - Enhanced for University Course Data
 
-This version has been temporarily modified to focus exclusively on generating question-SPARQL pairs
-for the university course TTL file (final_result.ttl).
+This version supports complex query patterns with multi-condition filters, multi-hop relationships,
+and advanced aggregation, while maintaining context-aware entity selection for meaningful queries.
 """
 
 import json
@@ -12,16 +12,18 @@ import datetime
 import csv
 import io
 import os
+from rdflib import Graph, Namespace, URIRef, Literal
 
 class NL2SPARQLGenerator:
     """Generator for natural language to SPARQL query pairs for university courses."""
     
-    def __init__(self, config):
+    def __init__(self, config, graph=None):
         """
         Initialize the generator with knowledge graph schema information
         
         Args:
             config (dict): Configuration with prefixes, entity examples, and schema info
+            graph (rdflib.Graph, optional): RDF graph for context-aware entity selection
         """
         self.config = config
         self.prefixes = config.get("prefixes", {})
@@ -30,21 +32,25 @@ class NL2SPARQLGenerator:
         self.templates = self.initialize_templates()
         self.variation_generator = VariationGenerator()
         
-        print("======================================")
-        print(self.entity_examples)
-        print("======================================")
+        # Store the RDF graph for context-aware entity selection
+        self.graph = graph
         
+        # Create namespace bindings if we have a graph
+        if self.graph:
+            # Add standard namespaces
+            for prefix, uri in self.prefixes.items():
+                ns = Namespace(uri)
+                self.graph.bind(prefix, ns)
 
     def initialize_templates(self):
         """
-        Initialize question-query template pairs for university course data
+        Initialize question-query template pairs for university course data with enhanced complexity
         
         Returns:
             list: Templates for different question types and complexity levels
         """
-        # University course specific templates
-        university_templates = [
-            # Basic course information templates
+        # Basic course information templates - retained from original
+        basic_templates = [
             {
                 "id": "course-credits",
                 "category": "university",
@@ -122,8 +128,10 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic"
             },
-            
-            # Intermediate templates
+        ]
+        
+        # Intermediate templates - retained and expanded
+        intermediate_templates = [
             {
                 "id": "count-prerequisites",
                 "category": "university",
@@ -131,6 +139,17 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT (COUNT(?prereq) AS ?count) WHERE {
                       {entity} ns1:has_prerequisite_course ?prereq .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "count-evaluation-methods",
+                "category": "university",
+                "questionTemplate": "How many evaluation methods are associated with {entity}?",
+                "sparqlTemplate": """
+                    SELECT (COUNT(?method) AS ?count) WHERE {
+                      {entity} ns1:has_evaluation_method ?method .
                     }
                 """,
                 "complexity": "intermediate"
@@ -183,8 +202,32 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "intermediate"
             },
-            
-            # Advanced templates
+            {
+                "id": "courses-by-prerequisite",
+                "category": "university",
+                "questionTemplate": "What courses have {entity} as a prerequisite course?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course {entity} .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "count-courses-by-prerequisite",
+                "category": "university",
+                "questionTemplate": "How many courses have {entity} as a prerequisite course?",
+                "sparqlTemplate": """
+                    SELECT (COUNT(?course) AS ?count) WHERE {
+                      ?course ns1:has_prerequisite_course {entity} .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+        ]
+        
+        # Advanced templates - original ones
+        original_advanced_templates = [
             {
                 "id": "courses-with-same-prerequisites",
                 "category": "university",
@@ -240,12 +283,133 @@ class NL2SPARQLGenerator:
                     LIMIT 5
                 """,
                 "complexity": "advanced"
-            }
+            },
         ]
         
-        # Only use university templates for now, ignoring any custom templates 
-        # to focus specifically on university course data
-        return university_templates
+        # NEW TEMPLATES - Enhanced advanced templates matching the test dataset patterns
+        enhanced_advanced_templates = [
+            # Multi-condition queries (3+ properties)
+            {
+                "id": "courses-with-triple-condition",
+                "category": "university",
+                "questionTemplate": "What courses have {entity1} as their research group, are categorized as {entity2}, and use {entity3} as their evaluation method?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_research_group {entity1} .
+                      ?course ns1:has_course_category {entity2} .
+                      ?course ns1:has_evaluation_method {entity3} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-triple-condition-code",
+                "category": "university",
+                "questionTemplate": "What course has the evaluation method of {entity1} and is a {entity2} with the course code '{value}'?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_evaluation_method {entity1} .
+                      ?course ns1:has_course_category {entity2} .
+                      ?course ns1:has_course_code {value} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-double-evaluation-code",
+                "category": "university",
+                "questionTemplate": "What courses have '{entity1}' and '{entity2}' as evaluation methods and have the course code '{value}'?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_evaluation_method {entity1} .
+                      ?course ns1:has_evaluation_method {entity2} .
+                      ?course ns1:has_course_code {value} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-research-eval-code",
+                "category": "university",
+                "questionTemplate": "What courses have the evaluation method '{entity1}' and are associated with the research group '{entity2}' and have the course code '{value}'?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_evaluation_method {entity1} .
+                      ?course ns1:has_research_group {entity2} .
+                      ?course ns1:has_course_code {value} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-prereq-eval-category",
+                "category": "university",
+                "questionTemplate": "What courses have {entity1} as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course {entity1} .
+                      ?course ns1:has_evaluation_method {entity2} .
+                      ?course ns1:has_course_category {entity3} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            
+            # Multi-hop relationship queries
+            {
+                "id": "courses-with-prerequisite-eval",
+                "category": "university",
+                "questionTemplate": "What courses have prerequisites that have {entity} as their evaluation method?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course ?prereq .
+                      ?prereq ns1:has_evaluation_method {entity} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-prerequisite-category",
+                "category": "university",
+                "questionTemplate": "What courses have prerequisites with {entity} as their category?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course ?prereq .
+                      ?prereq ns1:has_course_category {entity} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-prerequisite-credits",
+                "category": "university",
+                "questionTemplate": "What courses have prerequisites with {value} credits?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course ?prereq .
+                      ?prereq ns1:has_credits {value} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "courses-with-prereq-of-prereq",
+                "category": "university", 
+                "questionTemplate": "What courses have prerequisites with {entity} as their prerequisites?",
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                      ?course ns1:has_prerequisite_course ?prereq .
+                      ?prereq ns1:has_prerequisite_course {entity} .
+                    }
+                """,
+                "complexity": "advanced"
+            },
+        ]
+        
+        # Combine all templates
+        all_templates = basic_templates + intermediate_templates + original_advanced_templates + enhanced_advanced_templates
+        
+        return all_templates
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
                         variations_per_question=3, validate_queries=False):
@@ -264,9 +428,9 @@ class NL2SPARQLGenerator:
         """
         if complexity_distribution is None:
             complexity_distribution = {
-                "basic": 0.6,
+                "basic": 0.4,
                 "intermediate": 0.3,
-                "advanced": 0.1
+                "advanced": 0.3  # Increased proportion of advanced queries
             }
         
         dataset = []
@@ -280,23 +444,17 @@ class NL2SPARQLGenerator:
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
-            # print(complexity, count, eligible_templates)
-            # print()
-            # print("==============================")
+            
             if not eligible_templates:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
             
             for i in range(count):
-                
                 if len(dataset) >= size:
                     break
                 
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
-                print(template, "*******************\n")
-                if complexity == "advance":
-                    print(template, "*******************\n")
                 
                 try:
                     # Instantiate the template
@@ -456,30 +614,52 @@ class NL2SPARQLGenerator:
         for placeholder in placeholders:
             replacement = None
             
-            # Handle entity placeholders - UNIVERSITY SPECIFIC
+            # Handle entity placeholders
             if placeholder.startswith('entity'):
-                # For university data, select appropriate entity type based on template
-                if "research-group" in template["id"] or "courses-by-research-group" in template["id"]:
-                    replacement = self.select_entity_by_type("ns1:research_lab")
-                elif "courses-by-evaluation" in template["id"]:
-                    replacement = self.select_entity_by_type("ns1:evaluation")
-                elif "courses-by-category" in template["id"] or "course-category" in template["id"]:
-                    replacement = self.select_entity_by_type("ns1:course_category")
-                else:
-                    # Default to course entities
-                    replacement = self.select_entity_by_type("ns1:course")
+                # If we have a graph, try to find entities that fit the template
+                if self.graph:
+                    # For placeholder that are numbered (entity1, entity2), we need to
+                    # extract the pattern based on the placeholder name
+                    placeholder_number = None
+                    if placeholder != "entity":
+                        match = re.match(r'entity(\d+)', placeholder)
+                        if match:
+                            placeholder_number = int(match.group(1))
+                    
+                    replacement = self.select_entity_from_graph(template, placeholder_number)
+                
+                # If we didn't get a replacement from the graph, try pattern-based selection
+                if not replacement:
+                    if "research-group" in template["id"] or placeholder == "entity1" and "research" in template["questionTemplate"].lower():
+                        replacement = self.select_entity_by_type("ns1:research_lab")
+                    elif "evaluation" in template["id"] or placeholder in ["entity1", "entity2", "entity3"] and "evaluation" in template["questionTemplate"].lower():
+                        replacement = self.select_entity_by_type("ns1:evaluation")
+                    elif "category" in template["id"] or placeholder in ["entity2", "entity3"] and "categor" in template["questionTemplate"].lower():
+                        replacement = self.select_entity_by_type("ns1:course_category")
+                    else:
+                        # Default to course entities
+                        replacement = self.select_entity_by_type("ns1:course")
                 
                 # Fallback to any entity if specific type not found
                 if not replacement:
                     replacement = self.select_random_entity()
             
-            # Handle value placeholders - UNIVERSITY SPECIFIC
+            # Handle value placeholders
             elif placeholder == "value" or placeholder.endswith("Value"):
-                if "credits" in template["id"]:
-                    # For credit-related templates, use realistic credit values
-                    replacement = self.select_credit_value()
-                else:
-                    replacement = self.select_random_value(template)
+                # If we have a graph, try to find values that fit the template
+                if self.graph:
+                    replacement = self.select_value_from_graph(template, placeholder)
+                
+                # If we didn't get a replacement from the graph, use predefined values
+                if not replacement:
+                    if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+                        # For credit-related templates, use realistic credit values
+                        replacement = self.select_credit_value()
+                    elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+                        # For course code, use realistic course code format
+                        replacement = self.select_course_code_value()
+                    else:
+                        replacement = self.select_random_value(template)
             
             # Handle property placeholders
             elif placeholder.startswith('property'):
@@ -493,6 +673,227 @@ class NL2SPARQLGenerator:
             replacements[placeholder] = replacement
         
         return replacements
+
+    def select_entity_from_graph(self, template, placeholder_number=None):
+        """
+        Select an entity from the RDF graph that fits the template
+        
+        Args:
+            template (dict): The template containing the sparqlTemplate
+            placeholder_number (int, optional): If provided, specifically look for entityN pattern
+            
+        Returns:
+            dict: Selected entity info or None if not found
+        """
+        if not self.graph:
+            return None
+        
+        sparql_template = template["sparqlTemplate"]
+        entity_placeholder = "entity" if placeholder_number is None else f"entity{placeholder_number}"
+        
+        # Extract the predicate pattern for the entity
+        # Look for patterns like: {entity} predicate ?object or {entityN} predicate ?object
+        pattern_str = r'{' + entity_placeholder + r'}\s+([^\s.{}<>]+)\s+'
+        predicate_match = re.search(pattern_str, sparql_template)
+        
+        if not predicate_match:
+            # Try the alternative pattern: ?subject predicate {entity} or ?subject predicate {entityN}
+            pattern_str = r'([^\s.{}<>]+)\s+{' + entity_placeholder + r'}'
+            predicate_match = re.search(pattern_str, sparql_template)
+            if predicate_match:
+                # This is a reverse relationship
+                return self.select_entity_for_reverse_pattern(predicate_match.group(1), template, placeholder_number)
+        
+        if not predicate_match:
+            return None
+            
+        predicate = predicate_match.group(1)
+        
+        # Handle prefixed predicates
+        if ':' in predicate:
+            prefix, local_name = predicate.split(':', 1)
+            if prefix in self.prefixes:
+                predicate_uri = f"{self.prefixes[prefix]}{local_name}"
+            else:
+                # Unknown prefix, can't construct URI
+                return None
+        else:
+            # Not a prefixed name, use as is
+            predicate_uri = predicate
+            
+        # Construct a query to find valid subjects for this predicate
+        query = f"""
+            SELECT DISTINCT ?entity ?label
+            WHERE {{
+                ?entity <{predicate_uri}> ?obj .
+                OPTIONAL {{ ?entity rdfs:label ?label }}
+            }}
+            LIMIT 50
+        """
+        
+        try:
+            # Execute query against the graph
+            results = list(self.graph.query(query))
+            
+            if not results:
+                return None
+                
+            # Randomly select one entity from the results
+            selected = random.choice(results)
+            entity_uri = str(selected[0])
+            
+            # Get the label if available, otherwise use URI
+            if len(selected) > 1 and selected[1]:
+                entity_label = str(selected[1])
+            else:
+                # Try to get label through a separate query
+                label_query = f"""
+                    SELECT ?label 
+                    WHERE {{ <{entity_uri}> rdfs:label ?label }}
+                    LIMIT 1
+                """
+                label_results = list(self.graph.query(label_query))
+                if label_results and label_results[0][0]:
+                    entity_label = str(label_results[0][0])
+                else:
+                    entity_label = self.extract_label_from_uri(entity_uri)
+                
+            return {
+                "value": self.shorten_uri(entity_uri),
+                "label": entity_label,
+                "uri": entity_uri
+            }
+            
+        except Exception as e:
+            print(f"Error selecting entity from graph: {e}")
+            return None
+
+    def select_entity_for_reverse_pattern(self, predicate, template, placeholder_number=None):
+        """
+        Select an entity for patterns like ?subject predicate {entity}
+        
+        Args:
+            predicate (str): The predicate in the pattern
+            template (dict): The template with the pattern
+            placeholder_number (int, optional): If provided, specifically look for entityN pattern
+            
+        Returns:
+            dict: Selected entity info or None
+        """
+        # Similar to select_entity_from_graph but for reverse patterns
+        if not self.graph:
+            return None
+            
+        # Handle prefixed predicates
+        if ':' in predicate:
+            prefix, local_name = predicate.split(':', 1)
+            if prefix in self.prefixes:
+                predicate_uri = f"{self.prefixes[prefix]}{local_name}"
+            else:
+                return None
+        else:
+            predicate_uri = predicate
+        
+        # Find objects that appear in triples with this predicate
+        query = f"""
+            SELECT DISTINCT ?entity ?label
+            WHERE {{
+                ?subject <{predicate_uri}> ?entity .
+                OPTIONAL {{ ?entity rdfs:label ?label }}
+            }}
+            LIMIT 50
+        """
+        
+        try:
+            results = list(self.graph.query(query))
+            if not results:
+                return None
+                
+            selected = random.choice(results)
+            entity_uri = str(selected[0])
+            
+            # Get label as before
+            if len(selected) > 1 and selected[1]:
+                entity_label = str(selected[1])
+            else:
+                entity_label = self.extract_label_from_uri(entity_uri)
+                
+            return {
+                "value": self.shorten_uri(entity_uri),
+                "label": entity_label,
+                "uri": entity_uri
+            }
+        except Exception as e:
+            print(f"Error selecting entity for reverse pattern: {e}")
+            return None
+
+    def select_value_from_graph(self, template, placeholder):
+        """
+        Select a value from the RDF graph that fits the template
+        
+        Args:
+            template (dict): The template containing the sparqlTemplate
+            placeholder (str): The name of the placeholder
+            
+        Returns:
+            dict: Selected value info or None if not found
+        """
+        if not self.graph:
+            return None
+            
+        sparql_template = template["sparqlTemplate"]
+        
+        # Match the pattern where value is used in the SPARQL
+        value_pattern = r'{' + placeholder + r'}'
+        
+        # University-specific value handling
+        if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+            # For credit values, find actual credit values in the data
+            query = """
+                SELECT DISTINCT ?credits
+                WHERE {
+                    ?course <http://example.org/has_credits> ?credits .
+                }
+                ORDER BY ?credits
+            """
+            
+            try:
+                results = list(self.graph.query(query))
+                if results:
+                    # Pick a random credit value
+                    credit_value = str(random.choice(results)[0])
+                    return {
+                        "value": credit_value,
+                        "label": credit_value
+                    }
+            except Exception as e:
+                print(f"Error querying for credit values: {e}")
+                
+        elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+            # For course codes, find actual course codes in the data
+            query = """
+                SELECT DISTINCT ?code
+                WHERE {
+                    ?course <http://example.org/has_course_code> ?code .
+                }
+                LIMIT 50
+            """
+            
+            try:
+                results = list(self.graph.query(query))
+                if results:
+                    # Pick a random course code
+                    code_value = str(random.choice(results)[0])
+                    return {
+                        "value": f'"{code_value}"',  # Include quotes for string literal
+                        "label": code_value,
+                        "sparqlValue": f'"{code_value}"'
+                    }
+            except Exception as e:
+                print(f"Error querying for course codes: {e}")
+        
+        # For other value types, fall back to default handling
+        return None
 
     def select_entity_by_type(self, type_value):
         """
@@ -514,7 +915,7 @@ class NL2SPARQLGenerator:
 
     def select_random_entity(self):
         """
-        Select a random entity from available examples - MODIFIED FOR UNIVERSITY COURSE DATA
+        Select a random entity from available examples
         
         Returns:
             dict: Selected entity
@@ -524,7 +925,6 @@ class NL2SPARQLGenerator:
             return random.choice(self.entity_examples)
         
         # Fallback to predefined university course entities
-        # This ensures we always have something workable for the university data
         university_entities = [
             {"value": "ns1:advanced_database", "label": "Advanced Database", 
              "uri": "http://example.org/advanced_database", "type": "ns1:course"},
@@ -648,9 +1048,25 @@ class NL2SPARQLGenerator:
         value = random.choice(credit_values)
         return {"value": str(value), "label": str(value)}
 
+    def select_course_code_value(self):
+        """
+        Select a realistic course code value
+        
+        Returns:
+            dict: Course code object
+        """
+        prefixes = ["CSCE", "CSGE", "CSCM", "UIGE"]
+        number = random.randint(600000, 699999)
+        code = f"{random.choice(prefixes)}{number}"
+        return {
+            "value": f'"{code}"',  # Include quotes for string literal
+            "label": code,
+            "sparqlValue": f'"{code}"'
+        }
+
     def select_random_value(self, template):
         """
-        Select a random appropriate value - MODIFIED FOR UNIVERSITY DATA
+        Select a random appropriate value
         
         Args:
             template (dict): The template being instantiated
@@ -660,8 +1076,10 @@ class NL2SPARQLGenerator:
         """
         # Special handling for university course data
         if template.get("category") == "university":
-            if "credit" in template["id"]:
+            if "credit" in template["id"] or "credit" in template["questionTemplate"].lower():
                 return self.select_credit_value()
+            elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+                return self.select_course_code_value()
             
         # Default to a generic value
         dummy_value = random.randint(1, 10)
@@ -688,20 +1106,44 @@ class NL2SPARQLGenerator:
         
         return None
 
-    def select_random_from_array(self, array):
+    def extract_label_from_uri(self, uri):
         """
-        Select a random item from an array
+        Extract a human-readable label from a URI
         
         Args:
-            array (list): Array to select from
+            uri (str): URI to extract label from
             
         Returns:
-            Any: Random item or None if array is empty
+            str: Human-readable label
         """
-        if not array:
-            return None
+        # Extract the last part of the URI
+        last_part = uri.split('/')[-1].split('#')[-1]
         
-        return random.choice(array)
+        # University course specific handling
+        if '_' in last_part:
+            # Replace underscores with spaces
+            with_spaces = last_part.replace('_', ' ')
+            # Capitalize each word
+            return ' '.join(word.capitalize() for word in with_spaces.split())
+        else:
+            # Convert camelCase to spaces
+            return re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
+
+    def shorten_uri(self, uri):
+        """
+        Shorten a URI using known prefixes
+        
+        Args:
+            uri (str): URI to shorten
+            
+        Returns:
+            str: Shortened URI
+        """
+        for prefix, namespace in self.prefixes.items():
+            if uri.startswith(namespace):
+                return f"{prefix}:{uri[len(namespace):]}"
+        
+        return uri
 
     def format_sparql(self, sparql):
         """
@@ -714,11 +1156,9 @@ class NL2SPARQLGenerator:
             str: Formatted SPARQL query
         """
         # First, clean URIs by removing spaces within angle brackets
-        # This needs to happen BEFORE other formatting
         def clean_uri(match):
             uri = match.group(0)
             # Aggressively remove all spaces from URIs
-            # print(uri, "ini uriiii")
             return uri.replace(" ", "")
         
         # Fix all URIs first by removing spaces
@@ -750,7 +1190,6 @@ class NL2SPARQLGenerator:
         # Final cleanup of any double spaces
         sparql = re.sub(r'\s+', ' ', sparql).strip()
         
-        # print(sparql, "ini sparql nya bosssss")
         return sparql
 
     def export_json(self, dataset):
@@ -889,6 +1328,19 @@ class VariationGenerator:
             variations.append(question.replace("Which courses", "What courses"))
             variations.append("Can you list " + question.lower())
             variations.append("I'd like to know " + question.lower().replace("?", "."))
+            
+        # "How many" variations
+        elif question.startswith("How many"):
+            variations.append(question.replace("How many", "What is the number of"))
+            variations.append(question.replace("How many", "Count the"))
+            variations.append("Could you count " + question[8:].lower())
+            
+        # Complex question variations
+        elif "have" in question and "as" in question and len(question.split()) > 10:
+            # For complex questions with multiple conditions
+            variations.append("Find " + question.lower())
+            variations.append("I need to know " + question.lower())
+            variations.append("Please list " + question.lower())
         
         return variations
 
@@ -914,5 +1366,11 @@ class VariationGenerator:
         # Can you find/tell...
         if question.startswith('What') or question.startswith('Which'):
             variations.append(f"Can you tell me {question.lower()}")
+            
+        # I want to know
+        variations.append(f"I want to know {question.lower().rstrip('?')}.")
+        
+        # I'm interested in
+        variations.append(f"I'm interested in knowing {question.lower().rstrip('?')}.")
         
         return variations
