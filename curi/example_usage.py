@@ -13,9 +13,6 @@ from nl2sparql_generator import NL2SPARQLGenerator
 from schema_manager import SchemaManager
 from kg_schema_extractor import KGSchemaExtractor
 
-# In your generate_university_course_dataset function:
-manager = SchemaManager()
-schema = manager.get_schema('final_result.ttl', KGSchemaExtractor, {"debug": True})
 
 def generate_university_course_dataset(file_path='final_result.ttl'):
     """

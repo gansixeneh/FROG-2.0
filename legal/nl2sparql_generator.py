@@ -1,8 +1,8 @@
 """
 NL2SPARQL - Natural Language to SPARQL Dataset Generator - Modified for Indonesian Legal Documents
 
-This version has been modified to focus on generating question-SPARQL pairs
-for Indonesian legal documents from the data-lex2kg knowledge graph.
+This version supports context-aware entity selection, generating queries with real entities from
+the knowledge graph that match the template structure.
 """
 
 import json
@@ -12,16 +12,19 @@ import datetime
 import csv
 import io
 import os
+from rdflib import Graph, URIRef, Literal
+from rdflib.namespace import Namespace
 
 class NL2SPARQLGenerator:
     """Generator for natural language to SPARQL query pairs for legal documents."""
     
-    def __init__(self, config):
+    def __init__(self, config, graph=None):
         """
         Initialize the generator with knowledge graph schema information
         
         Args:
             config (dict): Configuration with prefixes, entity examples, and schema info
+            graph (rdflib.Graph, optional): RDF graph for context-aware entity selection
         """
         self.config = config
         self.prefixes = config.get("prefixes", {})
@@ -30,12 +33,15 @@ class NL2SPARQLGenerator:
         self.templates = self.initialize_templates()
         self.variation_generator = VariationGenerator()
         
-        # print("===============================================")
-        # for i in self.entity_examples:
-        #     print(i)
-        # print("===============================================")
+        # Store the RDF graph for context-aware entity selection
+        self.graph = graph
         
-
+        # Create namespace bindings if we have a graph
+        if self.graph:
+            # Add standard namespaces
+            for prefix, uri in self.prefixes.items():
+                self.graph.bind(prefix, Namespace(uri))
+    
     def initialize_templates(self):
         """
         Initialize question-query template pairs for legal document data
@@ -524,19 +530,25 @@ class NL2SPARQLGenerator:
             
             # Handle entity placeholders
             if placeholder.startswith('entity'):
-                # Select entity based on template type
-                if "law-" in template["id"]:
-                    # For law templates, select a UU entity
-                    replacement = self.select_entity_by_pattern("uu/")
-                elif "article" in template["id"]:
-                    # For article templates, select a pasal entity
-                    replacement = self.select_entity_by_pattern("pasal/")
-                elif "chapter" in template["id"]:
-                    # For chapter templates, select a bab entity
-                    replacement = self.select_entity_by_pattern("bab/")
-                else:
-                    # Default to any entity
-                    replacement = self.select_random_entity()
+                # If we have a graph, try to find entities that fit the template
+                if self.graph:
+                    replacement = self.select_entity_from_graph(template)
+                
+                # If we didn't get a replacement from the graph, try pattern-based selection
+                if not replacement:
+                    # Select entity based on template type
+                    if "law-" in template["id"]:
+                        # For law templates, select a UU entity
+                        replacement = self.select_entity_by_pattern("uu/")
+                    elif "article" in template["id"]:
+                        # For article templates, select a pasal entity
+                        replacement = self.select_entity_by_pattern("pasal/")
+                    elif "chapter" in template["id"]:
+                        # For chapter templates, select a bab entity
+                        replacement = self.select_entity_by_pattern("bab/")
+                    else:
+                        # Default to any entity
+                        replacement = self.select_random_entity()
                 
                 # Fallback to any entity if specific type not found
                 if not replacement:
@@ -544,17 +556,23 @@ class NL2SPARQLGenerator:
             
             # Handle value placeholders
             elif placeholder == "value" or placeholder.endswith("Value"):
-                if "law-by-enactor" in template["id"]:
-                    # For law by enactor, use a person name
-                    replacement = self.select_enactor_value()
-                elif "laws-enacted-in-year" in template["id"]:
-                    # For laws by year, use a year
-                    replacement = self.select_year_value()
-                elif "law-by-keyword" in template["id"]:
-                    # For laws by keyword, use a keyword
-                    replacement = self.select_keyword_value()
-                else:
-                    replacement = self.select_random_value(template)
+                # If we have a graph, try to find values that fit the template
+                if self.graph:
+                    replacement = self.select_value_from_graph(template, placeholder)
+                
+                # If we didn't get a replacement from the graph, use predefined values
+                if not replacement:
+                    if "law-by-enactor" in template["id"]:
+                        # For law by enactor, use a person name
+                        replacement = self.select_enactor_value()
+                    elif "laws-enacted-in-year" in template["id"]:
+                        # For laws by year, use a year
+                        replacement = self.select_year_value()
+                    elif "law-by-keyword" in template["id"]:
+                        # For laws by keyword, use a keyword
+                        replacement = self.select_keyword_value()
+                    else:
+                        replacement = self.select_random_value(template)
             
             # Handle property placeholders
             elif placeholder.startswith('property'):
@@ -568,6 +586,258 @@ class NL2SPARQLGenerator:
             replacements[placeholder] = replacement
         
         return replacements
+
+    def select_entity_from_graph(self, template):
+        """
+        Select an entity from the RDF graph that fits the template
+        
+        Args:
+            template (dict): The template containing the sparqlTemplate
+            
+        Returns:
+            dict: Selected entity info or None if not found
+        """
+        if not self.graph:
+            return None
+        
+        sparql_template = template["sparqlTemplate"]
+        
+        # Extract the predicate pattern for the entity
+        # Look for patterns like: {entity} predicate ?object
+        predicate_match = re.search(r'{entity}\s+([^\s.{}<>]+)\s+', sparql_template)
+        
+        if not predicate_match:
+            # Try the inverse pattern: ?subject predicate {entity}
+            predicate_match = re.search(r'([^\s.{}<>]+)\s+{entity}', sparql_template)
+            if predicate_match:
+                # This is an inverse relationship - not implemented yet
+                return None
+        
+        if not predicate_match:
+            return None
+            
+        predicate = predicate_match.group(1)
+        
+        # Handle RDF/SPARQL prefixes
+        if ':' in predicate:
+            prefix, local_name = predicate.split(':', 1)
+            if prefix in self.prefixes:
+                predicate_uri = f"{self.prefixes[prefix]}{local_name}"
+            else:
+                # Unknown prefix, can't construct URI
+                return None
+        else:
+            # Not a prefixed name, use as is
+            predicate_uri = predicate
+            
+        # Create the query to find valid subjects for this predicate
+        query = f"""
+            SELECT DISTINCT ?entity ?label
+            WHERE {{
+                ?entity <{predicate_uri}> ?obj .
+                OPTIONAL {{ ?entity rdfs:label ?label }}
+            }}
+            LIMIT 100
+        """
+        
+        try:
+            # Execute query against the graph
+            results = list(self.graph.query(query))
+            
+            if not results:
+                return None
+                
+            # Randomly select one entity from the results
+            selected = random.choice(results)
+            entity_uri = str(selected[0])
+            
+            # Use label if available, otherwise extract from URI
+            if len(selected) > 1 and selected[1]:
+                entity_label = str(selected[1])
+            else:
+                entity_label = self.extract_label_from_uri(entity_uri)
+                
+            return {
+                "value": self.shorten_uri(entity_uri),
+                "label": entity_label,
+                "uri": entity_uri
+            }
+            
+        except Exception as e:
+            print(f"Error selecting entity from graph: {e}")
+            return None
+
+    def select_value_from_graph(self, template, placeholder):
+        """
+        Select a value from the RDF graph that fits the template
+        
+        Args:
+            template (dict): The template containing the sparqlTemplate
+            placeholder (str): The name of the placeholder
+            
+        Returns:
+            dict: Selected value info or None if not found
+        """
+        if not self.graph:
+            return None
+            
+        sparql_template = template["sparqlTemplate"]
+        
+        # Extract the predicate pattern for the value
+        # Look for patterns like: ?subject predicate {value}
+        predicate_match = re.search(r'([^\s.{}<>]+)\s+' + re.escape('{' + placeholder + '}'), sparql_template)
+        
+        if not predicate_match:
+            # Try alternative pattern: FILTER(something({value}))
+            # This is more complex and would need special handling for each case
+            
+            # For year values in the laws-enacted-in-year template
+            if "laws-enacted-in-year" in template["id"]:
+                # Extract a list of years from the graph
+                query = """
+                    SELECT DISTINCT ?year
+                    WHERE {
+                        ?law <https://example.org/lex2kg/ontology/tahun> ?year .
+                    }
+                    ORDER BY ?year
+                """
+                
+                try:
+                    results = list(self.graph.query(query))
+                    if results:
+                        # Pick a random year from results
+                        year_value = str(random.choice(results)[0])
+                        return {
+                            "value": year_value,
+                            "label": year_value
+                        }
+                except Exception as e:
+                    print(f"Error querying for years: {e}")
+            
+            # For enactor names in law-by-enactor template
+            elif "law-by-enactor" in template["id"]:
+                query = """
+                    SELECT DISTINCT ?enactor
+                    WHERE {
+                        ?law <https://example.org/lex2kg/ontology/disahkanOleh> ?enactor .
+                    }
+                """
+                
+                try:
+                    results = list(self.graph.query(query))
+                    if results:
+                        # Pick a random enactor
+                        enactor = str(random.choice(results)[0])
+                        return {
+                            "value": enactor,
+                            "label": enactor
+                        }
+                except Exception as e:
+                    print(f"Error querying for enactors: {e}")
+            
+            # For keywords in law-by-keyword template
+            elif "law-by-keyword" in template["id"]:
+                # Extract words from titles
+                query = """
+                    SELECT ?title
+                    WHERE {
+                        ?law <https://example.org/lex2kg/ontology/tentang> ?title .
+                    }
+                    LIMIT 50
+                """
+                
+                try:
+                    results = list(self.graph.query(query))
+                    if results:
+                        # Extract common words from titles
+                        words = []
+                        for result in results:
+                            title = str(result[0])
+                            # Split by spaces and take words with 5+ characters
+                            title_words = [w.upper() for w in title.split() if len(w) >= 5]
+                            words.extend(title_words)
+                        
+                        if words:
+                            keyword = random.choice(words)
+                            return {
+                                "value": keyword,
+                                "label": keyword
+                            }
+                except Exception as e:
+                    print(f"Error extracting keywords: {e}")
+            
+            return None
+        
+        predicate = predicate_match.group(1)
+        
+        # Handle RDF/SPARQL prefixes
+        if ':' in predicate:
+            prefix, local_name = predicate.split(':', 1)
+            if prefix in self.prefixes:
+                predicate_uri = f"{self.prefixes[prefix]}{local_name}"
+            else:
+                # Unknown prefix, can't construct URI
+                return None
+        else:
+            # Not a prefixed name, use as is
+            predicate_uri = predicate
+            
+        # Create the query to find valid values for this predicate
+        query = f"""
+            SELECT DISTINCT ?value
+            WHERE {{
+                ?subject <{predicate_uri}> ?value .
+            }}
+            LIMIT 100
+        """
+        
+        try:
+            # Execute query against the graph
+            results = list(self.graph.query(query))
+            
+            if not results:
+                return None
+                
+            # Randomly select one value from the results
+            selected_value = random.choice(results)[0]
+            
+            # Handle different types of values
+            if isinstance(selected_value, Literal):
+                value_str = str(selected_value)
+                
+                # For numbers, remove quotes in SPARQL
+                if selected_value.datatype and "integer" in str(selected_value.datatype):
+                    return {
+                        "value": value_str,
+                        "label": value_str,
+                        "sparqlValue": value_str  # No quotes for numbers
+                    }
+                else:
+                    # For strings, keep quotes in SPARQL
+                    return {
+                        "value": value_str,
+                        "label": value_str,
+                        "sparqlValue": f'"{value_str}"'  # Add quotes for strings
+                    }
+            elif isinstance(selected_value, URIRef):
+                # For URIs, use angle brackets
+                uri_str = str(selected_value)
+                return {
+                    "value": self.shorten_uri(uri_str),
+                    "label": self.extract_label_from_uri(uri_str),
+                    "uri": uri_str
+                }
+            else:
+                # Generic handling
+                value_str = str(selected_value)
+                return {
+                    "value": value_str,
+                    "label": value_str
+                }
+                
+        except Exception as e:
+            print(f"Error selecting value from graph: {e}")
+            return None
 
     def select_entity_by_pattern(self, pattern):
         """
@@ -726,7 +996,7 @@ class NL2SPARQLGenerator:
         """
         enactors = ["JOKO WIDODO", "SUSILO BAMBANG YUDHOYONO", "MEGAWATI SOEKARNOPUTRI"]
         value = random.choice(enactors)
-        return {"value": value, "label": value}
+        return {"value": value, "label": value, "sparqlValue": f'"{value}"'}
 
     def select_year_value(self):
         """
@@ -748,7 +1018,7 @@ class NL2SPARQLGenerator:
         """
         keywords = ["KESEHATAN", "PENDIDIKAN", "LINGKUNGAN", "KETENAGAKERJAAN", "PAJAK", "INVESTASI"]
         value = random.choice(keywords)
-        return {"value": value, "label": value}
+        return {"value": value, "label": value, "sparqlValue": f'"{value}"'}
 
     def select_random_value(self, template):
         """
@@ -794,20 +1064,71 @@ class NL2SPARQLGenerator:
         
         return None
 
-    def select_random_from_array(self, array):
+    def extract_label_from_uri(self, uri):
         """
-        Select a random item from an array
+        Extract a human-readable label from a URI
         
         Args:
-            array (list): Array to select from
+            uri (str): URI to extract label from
             
         Returns:
-            Any: Random item or None if array is empty
+            str: Human-readable label
         """
-        if not array:
-            return None
+        # Handle legal document URIs
+        if "uu" in uri.lower():
+            parts = uri.split('/')
+            
+            # Extract information from the URI segments
+            uu_parts = []
+            for i, part in enumerate(parts):
+                if part.isdigit():
+                    # Year or number
+                    if len(part) == 4 and 1945 <= int(part) <= 2030:
+                        uu_parts.append(f"Tahun {part}")
+                    else:
+                        uu_parts.append(f"No. {part}")
+                elif part == "pasal" and i+1 < len(parts):
+                    uu_parts.append(f"Pasal {parts[i+1]}")
+                elif part == "bab" and i+1 < len(parts):
+                    uu_parts.append(f"Bab {parts[i+1]}")
+                elif part == "ayat" and i+1 < len(parts):
+                    uu_parts.append(f"Ayat {parts[i+1]}")
+                elif part == "huruf" and i+1 < len(parts):
+                    uu_parts.append(f"Huruf {parts[i+1]}")
+            
+            if uu_parts:
+                return " ".join(uu_parts)
         
-        return random.choice(array)
+        # Extract the last part of the URI
+        last_part = uri.split('/')[-1].split('#')[-1]
+        
+        # Remove common prefixes and suffixes
+        last_part = re.sub(r'^[0-9]+_*', '', last_part)  # Remove leading numbers
+        
+        # Convert camelCase to spaces
+        last_part = re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
+        
+        # Replace underscores with spaces
+        last_part = last_part.replace('_', ' ')
+        
+        # Capitalize the first letter of each word
+        return ' '.join(word.capitalize() for word in last_part.split())
+
+    def shorten_uri(self, uri):
+        """
+        Shorten a URI using known prefixes
+        
+        Args:
+            uri (str): URI to shorten
+            
+        Returns:
+            str: Shortened URI
+        """
+        for prefix, namespace in self.prefixes.items():
+            if uri.startswith(namespace):
+                return f"{prefix}:{uri[len(namespace):]}"
+        
+        return uri
 
     def format_sparql(self, sparql):
         """
@@ -820,11 +1141,9 @@ class NL2SPARQLGenerator:
             str: Formatted SPARQL query
         """
         # First, clean URIs by removing spaces within angle brackets
-        # This needs to happen BEFORE other formatting
         def clean_uri(match):
             uri = match.group(0)
-            # Aggressively remove all spaces from URIs
-            # print(uri, "ini uriiii")
+            # Remove all spaces from URIs
             return uri.replace(" ", "")
         
         # Fix all URIs first by removing spaces
@@ -856,7 +1175,6 @@ class NL2SPARQLGenerator:
         # Final cleanup of any double spaces
         sparql = re.sub(r'\s+', ' ', sparql).strip()
         
-        # print(sparql, "ini sparql nya bosssss")
         return sparql
 
     def export_json(self, dataset):
