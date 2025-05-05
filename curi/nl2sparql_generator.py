@@ -697,6 +697,7 @@ class NL2SPARQLGenerator:
             str: The discovery query
         """
         sparql_template = template["sparqlTemplate"].strip()
+        print("Creating discovery query for template:", sparql_template)
         
         # Extract the WHERE clause from the template
         where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
@@ -706,7 +707,25 @@ class NL2SPARQLGenerator:
             
         where_clause = where_match.group(1).strip()
         
-        # Replace placeholders with variables in the WHERE clause
+        # Handle the special case of FILTER(CONTAINS(...)) with quoted placeholders
+        contains_filter_pattern = r'FILTER\s*\(\s*CONTAINS\s*\([^,]+,\s*LCASE\s*\(\s*"([^"]*){\s*([^{}]+)\s*}([^"]*)"\s*\)\s*\)\s*\)'
+        
+        def contains_filter_replacement(match):
+            before = match.group(1)
+            placeholder = match.group(2)
+            after = match.group(3)
+            
+            # If this is one of our placeholders, replace the entire expression
+            if placeholder in placeholders:
+                return f'FILTER(CONTAINS({match.group(1)}, LCASE(?{placeholder})))'
+            
+            # Otherwise, leave as is
+            return match.group(0)
+        
+        # Replace the FILTER expressions
+        where_clause = re.sub(contains_filter_pattern, contains_filter_replacement, where_clause)
+        
+        # Now handle standard placeholders (outside quotes)
         for placeholder in placeholders:
             pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
             where_clause = re.sub(pattern, f"?{placeholder}", where_clause)
@@ -739,14 +758,15 @@ class NL2SPARQLGenerator:
             if placeholder.startswith('entity'):
                 discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
-        # Close the query
-        discovery_query += " } LIMIT 100"
+        # Close the query with increased LIMIT to ensure finding valid combinations
+        discovery_query += " } LIMIT 1000"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
             pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
             discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
         
+        print("Discovery query created:", discovery_query)
         return discovery_query
 
     def create_discovery_query(self, template, placeholders):

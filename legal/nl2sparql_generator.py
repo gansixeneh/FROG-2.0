@@ -705,6 +705,7 @@ class NL2SPARQLGenerator:
             
             if not results:
                 print(f"No valid combinations found for template: {template['id']}")
+                print("Query: ", discovery_query)
                 return self.instantiate_template(template)
                 
             print(f"Found {len(results)} valid combinations for template: {template['id']}")
