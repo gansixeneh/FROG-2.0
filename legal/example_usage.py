@@ -59,7 +59,7 @@ def generate_legal_document_dataset(file_path='data-lex2kg.ttl'):
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
         # Generate dataset using extracted schema
-        generator = NL2SPARQLGenerator(schema)
+        generator = NL2SPARQLGenerator(schema, extractor.graph)
         
         print("\nGenerating question-SPARQL pairs for legal documents data...")
         dataset = generator.generate_dataset(
