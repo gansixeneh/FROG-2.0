@@ -1,22 +1,22 @@
 [
   {
-    "question": "What type of thing is cloud computing, and what course code and category does it have?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ns1:cloud_computing ns1:has_course_code ?x2 .\n  ns1:cloud_computing ns1:has_course_category ?x3 .\n  ns1:cloud_computing <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x1 .\n}"
+    "question": "What kind of entities can have a minimum credit requirement, what is the data type of that requirement, and what broader property does \"has minimum credits\" fall under?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ns1:has_minimum_credits rdfs:subPropertyOf ?x1 .\n  ns1:has_minimum_credits rdfs:range ?x3 .\n  ns1:has_minimum_credits rdfs:domain ?x2 .\n}"
   },
   {
-    "question": "What types of evaluation methods are used for advanced programming, and what courses require advanced programming as a prerequisite?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_prerequisite_course ns1:advanced_programming .\n  ns1:advanced_programming ns1:has_evaluation_method ?x3 .\n  ?x3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x2 .\n}"
+    "question": "For a property that connects a domain to a range, what are the domain and range?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 rdfs:domain ?x3 .\n  ?x1 rdfs:range ?x2 .\n}"
   },
   {
-    "question": "For a property ?x2, if its domain is ?x1, what is its range ?x3?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 rdfs:range ?x3 .\n  ?x2 rdfs:domain ?x1 .\n}"
+    "question": "What courses have programming projects as an evaluation method and are prerequisites for other courses, and what are those other courses?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_prerequisite_course ?x2 .\n  ?x2 ns1:has_evaluation_method ?x3 .\n  ?x2 ns1:has_evaluation_method ns1:programming_projects .\n}"
   },
   {
-    "question": "What kind of thing uses capture the flag as an evaluation method, has some credits associated with it, and what are those credits?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x3 .\n  ?x1 ns1:has_evaluation_method ns1:capture_the_flag .\n  ?x1 ns1:has_credits ?x2 .\n}"
+    "question": "What course has CSGE603091 as a prerequisite, and how many credits does that course have?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_credits ?x2 .\n  ?x1 ns1:has_prerequisite_course ?x3 .\n  ?x3 ns1:has_course_code \"CSGE603091\" .\n}"
   },
   {
-    "question": "What are the domain and range of ?x3?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 rdfs:domain ?x2 .\n  ?x3 rdfs:range ?x1 .\n}"
+    "question": "What are the credit values, other evaluation methods, and courses that have group presentations as an evaluation method?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 ns1:has_credits ?x1 .\n  ?x2 ns1:has_evaluation_method ns1:group_presentation .\n  ?x2 ns1:has_evaluation_method ?x3 .\n}"
   }
 ]

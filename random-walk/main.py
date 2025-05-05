@@ -5,7 +5,7 @@ import random
 import json
 import requests
 import time
-from rdflib import Graph, Namespace, URIRef, Literal
+from rdflib import Graph, Namespace, URIRef, Literal, RDF
 
 def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variables, gemini_api_key):
     """
@@ -37,6 +37,7 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
     ns1 = Namespace("http://example.org/")
     rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
     xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
+    RDF = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     
     # Get all entities (subjects of triples)
     entities = set()
@@ -52,9 +53,13 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         raise ValueError("No entities found in the TTL file after filtering.")
     
     dataset = []
+    samples_generated = 0
+    attempt_count = 0
+    max_attempts = num_samples * 10  # Set a reasonable limit to prevent infinite loops
     
-    for sample_idx in range(num_samples):
-        print(f"Generating sample {sample_idx + 1}/{num_samples}")
+    while samples_generated < num_samples and attempt_count < max_attempts:
+        attempt_count += 1
+        print(f"Attempting sample {samples_generated + 1}/{num_samples} (attempt {attempt_count})")
         
         # Step 1: Pick a random entity from KG and add to ContextPattern
         random_entity = random.choice(filtered_entities)
@@ -63,11 +68,11 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         
         # Step 2 & 3: Add properties until we reach the desired count
         counter_p = 0
-        max_attempts = 100  # Prevent infinite loops
-        attempts = 0
+        property_attempts = 100  # Prevent infinite loops within a single sample
+        attempt = 0
         
-        while counter_p < num_properties and attempts < max_attempts:
-            attempts += 1
+        while counter_p < num_properties and attempt < property_attempts:
+            attempt += 1
             
             # Step 3a: Pick a random entity e from ContextPattern
             entity = random.choice(entities_in_context)
@@ -76,8 +81,8 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
             # Get all properties for this entity
             properties = []
             for s, p, o in g.triples((entity, None, None)):
-                # Skip metadata properties
-                if p not in [rdfs.label, ns1.also_known_as]:
+                # Skip metadata properties and rdf:type
+                if p not in [rdfs.label, ns1.also_known_as, RDF.type]:
                     properties.append((p, o))
             
             if not properties:
@@ -100,13 +105,13 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
             # Increment Counter_P
             counter_p += 1
         
-        if counter_p < num_properties:
-            print(f"Warning: Could only generate {counter_p} properties for sample {sample_idx + 1}")
-        
-        # If we couldn't generate any properties, skip this sample
+        # If we couldn't generate any properties, skip this sample and try again
         if not context_pattern:
-            print(f"Skipping sample {sample_idx + 1} - no valid properties found")
+            print(f"Skipping sample attempt - no valid properties found")
             continue
+        
+        if counter_p < num_properties:
+            print(f"Warning: Could only generate {counter_p} properties for sample {samples_generated + 1}")
         
         # Step 4: Set V random entities/literals in ContextPattern to distinct variables
         all_elements = []
@@ -122,13 +127,13 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         
         # Ensure we have enough elements to create variables
         if len(all_elements) < 1:
-            print(f"Skipping sample {sample_idx + 1} - not enough elements to create variables")
+            print(f"Skipping sample attempt - not enough elements to create variables")
             continue
         
         # Randomly select elements to replace with variables
         num_vars_to_use = min(num_variables, len(all_elements))
         if num_vars_to_use < num_variables:
-            print(f"Warning: Could only use {num_vars_to_use} variables for sample {sample_idx + 1}")
+            print(f"Warning: Could only use {num_vars_to_use} variables for sample {samples_generated + 1}")
         
         elements_to_replace = random.sample(all_elements, num_vars_to_use)
         
@@ -175,6 +180,13 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
             "question": question,
             "sparql": sparql_query
         })
+        
+        # Increment the counter for successful samples
+        samples_generated += 1
+        print(f"Successfully generated sample {samples_generated}/{num_samples}")
+    
+    if samples_generated < num_samples:
+        print(f"Warning: Could only generate {samples_generated} samples after {max_attempts} attempts")
     
     return dataset
 
@@ -219,7 +231,7 @@ def generate_question_with_gemini(pattern_text, api_key):
             {
                 "parts": [
                     {
-                        "text": f"""Generate a natural language question in English based on the following RDF triples:
+                        "text": f"""Generate a natural language question in English based on the following RDF triples on a knowledge graph containing university courses:
 {pattern_text}
 
 The question should ask for the variables (starting with ?) in the triples. Make the question sound natural and cohesive. Only return the question without any explanation or preamble."""
