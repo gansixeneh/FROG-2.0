@@ -315,7 +315,7 @@ class NL2SPARQLGenerator:
         return legal_templates
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
-                        variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
+                    variations_per_question=3, validate_queries=False, max_attempts_per_template=15):
         """
         Generate dataset based on legal document knowledge graph
         
@@ -347,6 +347,7 @@ class NL2SPARQLGenerator:
         
         # Track problematic templates for reporting
         failed_templates = {}
+        success_templates = {}
         
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
@@ -357,16 +358,23 @@ class NL2SPARQLGenerator:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
             
+            # Try to generate the required number for this complexity
             while successful_generations < count and len(dataset) < size:
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
                 
                 # Track attempts for this template
                 template_id = template["id"]
-                attempts = 0
+                if template_id not in success_templates:
+                    success_templates[template_id] = 0
+                if template_id not in failed_templates:
+                    failed_templates[template_id] = 0
                 
                 # Try to instantiate this template up to max_attempts
-                while attempts < max_attempts_per_template:
+                attempts = 0
+                success = False
+                
+                while attempts < max_attempts_per_template and not success:
                     attempts += 1
                     try:
                         # Use the discovery-based approach to instantiate the template
@@ -385,6 +393,8 @@ class NL2SPARQLGenerator:
                             })
                             id_counter += 1
                             successful_generations += 1
+                            success_templates[template_id] += 1
+                            success = True
                             
                             # Add variations if requested
                             if include_variations and instance["question"]:
@@ -410,24 +420,21 @@ class NL2SPARQLGenerator:
                                         "isVariation": True
                                     })
                                     id_counter += 1
-                            
-                            # Break out of the attempts loop
-                            break
                     except Exception as e:
-                        print(f"Error instantiating template {template['id']}: {e}")
+                        print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
                 
                 # If we've tried max_attempts and still failed, record this template as problematic
-                if attempts >= max_attempts_per_template and template_id not in failed_templates:
-                    failed_templates[template_id] = 0
-                
-                if template_id in failed_templates:
+                if not success:
                     failed_templates[template_id] += 1
         
-        # Report problematic templates
-        if failed_templates:
-            print("\nWarning: Some templates consistently failed to instantiate:")
-            for template_id, count in failed_templates.items():
-                print(f"  - {template_id}: failed {count} times")
+        # Report template success and failure rates
+        print("\nTemplate success/failure statistics:")
+        for template_id in set(success_templates.keys()) | set(failed_templates.keys()):
+            success_count = success_templates.get(template_id, 0)
+            failure_count = failed_templates.get(template_id, 0)
+            total = success_count + failure_count
+            success_rate = (success_count / total * 100) if total > 0 else 0
+            print(f"  - {template_id}: {success_count} successes, {failure_count} failures ({success_rate:.1f}% success rate)")
         
         # Report complexity distribution achieved
         complexity_counts = {}
@@ -460,7 +467,6 @@ class NL2SPARQLGenerator:
             return filtered_dataset
         
         return dataset
-
     def instantiate_template_with_discovery(self, template):
         """
         Instantiate a template using a discovery-based approach that guarantees valid placeholder values
@@ -481,13 +487,20 @@ class NL2SPARQLGenerator:
         # Create a discovery query that includes all placeholders in the SELECT clause
         discovery_query = self.create_all_placeholders_discovery_query(template, placeholders)
         
+        if not discovery_query:
+            print(f"Could not create discovery query for template: {template['id']}")
+            return self.instantiate_template(template)
+        
         # Execute the discovery query
         try:
+            print(f"Executing discovery query for template {template['id']}...")
             results = list(self.graph.query(discovery_query))
             
             if not results:
                 print(f"No valid combinations found for template: {template['id']}")
-                return None
+                return self.instantiate_template(template)
+                
+            print(f"Found {len(results)} valid combinations for template: {template['id']}")
                 
             # Randomly select one complete valid combination of values
             selected = random.choice(results)
@@ -498,22 +511,30 @@ class NL2SPARQLGenerator:
             # Map variable names from the query results to their indices
             var_indices = {str(var): i for i, var in enumerate(self.graph.query(discovery_query).vars)}
             
+            # Validate that all required placeholders exist in the results
             for placeholder in placeholders:
-                # Get the index for this placeholder variable
                 if placeholder not in var_indices:
                     print(f"Error: Placeholder {placeholder} not found in query results")
-                    return None
-                    
+                    continue
+            
+            # Extract values for each placeholder
+            for placeholder in placeholders:
+                # Get the index for this placeholder variable
                 value_index = var_indices[placeholder]
                 value = selected[value_index]
                 
+                # Skip if value is None
+                if value is None:
+                    print(f"Warning: Placeholder {placeholder} has None value")
+                    continue
+                    
                 # Try to get the label for entity placeholders
                 if placeholder.startswith('entity'):
                     entity_uri = str(value)
                     
                     # Look for a label variable for this entity
                     label_var = f"{placeholder}Label"
-                    if label_var in var_indices:
+                    if label_var in var_indices and selected[var_indices[label_var]] is not None:
                         entity_label = str(selected[var_indices[label_var]])
                     else:
                         # Extract label from URI if not found in result
@@ -560,6 +581,12 @@ class NL2SPARQLGenerator:
                     
                 replacements[placeholder] = replacement
             
+            # Check if all placeholders have valid replacements
+            if set(replacements.keys()) != set(placeholders):
+                missing = set(placeholders) - set(replacements.keys())
+                print(f"Missing valid values for placeholders: {missing}")
+                return self.instantiate_template(template)
+                
             # Apply replacements to the question template
             question = template["questionTemplate"].strip()
             english_question = template["englishQuestion"].strip()
@@ -594,10 +621,11 @@ class NL2SPARQLGenerator:
             sparql = self.format_sparql(sparql)
             
             return {"question": question, "englishQuestion": english_question, "sparql": sparql}
-            
+                
         except Exception as e:
             print(f"Error executing discovery query for template {template['id']}: {e}")
-            return None
+            # Fall back to the old method
+            return self.instantiate_template(template)
 
     def create_all_placeholders_discovery_query(self, template, placeholders):
         """
@@ -653,8 +681,8 @@ class NL2SPARQLGenerator:
             if placeholder.startswith('entity'):
                 discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
-        # Close the query
-        discovery_query += " } LIMIT 100"
+        # Close the query with increased LIMIT to ensure finding valid combinations
+        discovery_query += " } LIMIT 1000"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
