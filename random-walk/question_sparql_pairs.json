@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What type of thing is cloud computing, and what course code and category does it have?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ns1:cloud_computing ns1:has_course_code ?x2 .\n  ns1:cloud_computing ns1:has_course_category ?x3 .\n  ns1:cloud_computing <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x1 .\n}"
+  },
+  {
+    "question": "What types of evaluation methods are used for advanced programming, and what courses require advanced programming as a prerequisite?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_prerequisite_course ns1:advanced_programming .\n  ns1:advanced_programming ns1:has_evaluation_method ?x3 .\n  ?x3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x2 .\n}"
+  },
+  {
+    "question": "For a property ?x2, if its domain is ?x1, what is its range ?x3?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 rdfs:range ?x3 .\n  ?x2 rdfs:domain ?x1 .\n}"
+  },
+  {
+    "question": "What kind of thing uses capture the flag as an evaluation method, has some credits associated with it, and what are those credits?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?x3 .\n  ?x1 ns1:has_evaluation_method ns1:capture_the_flag .\n  ?x1 ns1:has_credits ?x2 .\n}"
+  },
+  {
+    "question": "What are the domain and range of ?x3?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 rdfs:domain ?x2 .\n  ?x3 rdfs:range ?x1 .\n}"
+  }
+]
