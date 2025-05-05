@@ -683,6 +683,7 @@ class NL2SPARQLGenerator:
             
         except Exception as e:
             print(f"Error executing discovery query for template {template['id']}: {e}")
+            print("Discovery query:", discovery_query)
             return None
 
     def create_all_placeholders_discovery_query(self, template, placeholders):
@@ -697,7 +698,6 @@ class NL2SPARQLGenerator:
             str: The discovery query
         """
         sparql_template = template["sparqlTemplate"].strip()
-        print("Creating discovery query for template:", sparql_template)
         
         # Extract the WHERE clause from the template
         where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
@@ -748,7 +748,6 @@ class NL2SPARQLGenerator:
             pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
             discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
         
-        print("Discovery query created:", discovery_query)
         return discovery_query
 
     def create_discovery_query(self, template, placeholders):
