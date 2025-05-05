@@ -281,7 +281,6 @@ class NL2SPARQLGenerator:
             WHERE {
                 ?law <https://example.org/lex2kg/ontology/tentang> ?title .
             }
-            LIMIT 500
             """
             
             results = self.sparql_exec.execute_query(query)
@@ -513,7 +512,6 @@ class NL2SPARQLGenerator:
                       ?textSegment lex2kg-o:bagianDari ?referringArticle .
                       ?referringArticle lex2kg-o:teks ?text .
                     }
-                    LIMIT 10
                 """,
                 "complexity": "advanced"
             },
@@ -533,7 +531,6 @@ class NL2SPARQLGenerator:
                         ?amendedArticleVersion <https://example.org/lex2kg/ontology/bagianDari> ?amendedArticle .
                         ?amendedArticle <https://example.org/lex2kg/ontology/bagianDari> ?amendedLaw .
                     }
-                    LIMIT 1000
                 """,
                 "complexity": "advanced"
             },
@@ -547,7 +544,6 @@ class NL2SPARQLGenerator:
                       ?law lex2kg-o:tentang ?title .
                       FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
-                    LIMIT 10
                 """,
                 "complexity": "advanced"
             },
@@ -563,7 +559,7 @@ class NL2SPARQLGenerator:
                     }
                     GROUP BY ?law ?title
                     ORDER BY DESC(?articleCount)
-                    LIMIT 5
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -579,7 +575,6 @@ class NL2SPARQLGenerator:
                       ?law lex2kg-o:disahkanPada ?date .
                     }
                     ORDER BY DESC(?date)
-                    LIMIT 10
                 """,
                 "complexity": "advanced"
             }
@@ -1008,7 +1003,7 @@ class NL2SPARQLGenerator:
                 discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
         # Close the query with increased LIMIT to ensure finding valid combinations
-        discovery_query += " } LIMIT 1000"
+        discovery_query += " }"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
@@ -1227,7 +1222,6 @@ class NL2SPARQLGenerator:
                 ?entity <{predicate_uri}> ?obj .
                 OPTIONAL {{ ?entity rdfs:label ?label }}
             }}
-            LIMIT 100
         """
         
         try:
@@ -1351,7 +1345,6 @@ class NL2SPARQLGenerator:
             WHERE {{
                 ?subject <{predicate_uri}> ?value .
             }}
-            LIMIT 100
         """
         
         try:
