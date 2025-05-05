@@ -1,7 +1,8 @@
 """
 Example usage of the NL2SPARQL Generator with Indonesian Legal Documents Data
 
-This example focuses on generating NL2SPARQL pairs from the data-lex2kg knowledge graph.
+This example focuses on generating NL2SPARQL pairs from the data-lex2kg knowledge graph
+using a Fuseki server endpoint.
 """
 
 import json
@@ -10,24 +11,24 @@ import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
 
-def generate_legal_document_dataset(file_path='data-lex2kg.ttl'):
+def generate_legal_document_dataset(endpoint_url='http://localhost:3030/lex2kg/query'):
     """
-    Extract schema from the legal document TTL file and generate question-SPARQL dataset
+    Extract schema from the Fuseki server and generate question-SPARQL dataset
     
     Args:
-        file_path (str): Path to the TTL file
+        endpoint_url (str): URL of the Fuseki SPARQL endpoint
         
     Returns:
         list: Generated dataset
     """
     try:
-        print(f"Extracting schema from legal document TTL file: {file_path}")
+        print(f"Connecting to Fuseki server at: {endpoint_url}")
         
-        # Create a schema extractor with debugging enabled
-        extractor = KGSchemaExtractor({"debug": True})
+        # Create a schema extractor that connects to Fuseki
+        extractor = KGSchemaExtractor({"debug": True, "sparql_endpoint": endpoint_url})
         
-        # Extract schema from the TTL file
-        schema = extractor.extract_from_file(file_path, format='turtle')
+        # Extract schema from the Fuseki server
+        schema = extractor.extract_schema()
         
         print(f"Extracted schema with {len(schema['schemaInfo']['types'])} types and {len(schema['schemaInfo']['properties'])} properties")
         print(f"Found {len(schema['entityExamples'])} entity examples")
@@ -59,7 +60,7 @@ def generate_legal_document_dataset(file_path='data-lex2kg.ttl'):
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
         # Generate dataset using extracted schema
-        generator = NL2SPARQLGenerator(schema, extractor.graph)
+        generator = NL2SPARQLGenerator(schema)
         
         print("\nGenerating question-SPARQL pairs for legal documents data...")
         dataset = generator.generate_dataset(
@@ -105,24 +106,28 @@ def generate_legal_document_dataset(file_path='data-lex2kg.ttl'):
 def main():
     """Main function to run the legal documents example"""
     try:
-        # Check if the TTL file exists
-        if not os.path.exists('data-lex2kg.ttl'):
-            print("Warning: data-lex2kg.ttl file not found!")
-            print("This script expects the legal knowledge graph TTL file to be in the current directory.")
-            print("You can continue but will need to provide the correct path to the TTL file.")
-            
-            # Ask for the path to the TTL file
-            file_path = input("Please enter the path to your legal knowledge graph TTL file (or press Enter to exit): ")
-            if not file_path:
+        # Define the Fuseki endpoint URL
+        endpoint_url = 'http://localhost:3030/lex2kg/query'
+        
+        # Check if Fuseki server is accessible
+        import requests
+        try:
+            response = requests.get(endpoint_url)
+            if response.status_code != 200:
+                print(f"Warning: Fuseki endpoint at {endpoint_url} returned status code {response.status_code}")
+                print("Make sure the Fuseki server is running.")
+                proceed = input("Do you want to proceed anyway? (y/n): ")
+                if proceed.lower() != 'y':
+                    sys.exit(1)
+        except requests.exceptions.RequestException:
+            print(f"Warning: Could not connect to Fuseki endpoint at {endpoint_url}")
+            print("Make sure the Fuseki server is running.")
+            proceed = input("Do you want to proceed anyway? (y/n): ")
+            if proceed.lower() != 'y':
                 sys.exit(1)
-            if not os.path.exists(file_path):
-                print(f"Error: File {file_path} not found!")
-                sys.exit(1)
-        else:
-            file_path = 'data-lex2kg.ttl'
             
-        # Generate dataset from legal documents TTL
-        dataset = generate_legal_document_dataset(file_path)
+        # Generate dataset from Fuseki endpoint
+        dataset = generate_legal_document_dataset(endpoint_url)
         print("\nLegal documents example completed successfully!")
     except Exception as e:
         print(f"Error in legal documents example: {e}")

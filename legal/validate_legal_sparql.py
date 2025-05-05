@@ -1,24 +1,22 @@
 """
 SPARQL Query Validator and Executor for Legal Dataset
 
-This script loads SPARQL queries from a JSON file, executes them against an RDF graph,
-and saves the results to a new JSON file. It's specifically configured for the legal dataset.
+This script loads SPARQL queries from a JSON file, executes them against the Fuseki server,
+and saves the results to a new JSON file.
 """
 
 import json
 import os
 import sys
-from rdflib import Graph, Namespace
-import pandas as pd
 from datetime import datetime
+from sparql import SparqlExecutor
 
-def validate_and_execute_sparql_queries(input_json_path, ttl_file_path, output_json_path=None):
+def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
     """
-    Validates and executes SPARQL queries from a JSON file against an RDF graph.
+    Validates and executes SPARQL queries from a JSON file against the Fuseki server.
     
     Args:
         input_json_path (str): Path to the input JSON file with SPARQL queries
-        ttl_file_path (str): Path to the TTL file containing the RDF graph
         output_json_path (str, optional): Path to save the output JSON file. 
                                          If None, a default name will be used.
     
@@ -30,16 +28,9 @@ def validate_and_execute_sparql_queries(input_json_path, ttl_file_path, output_j
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_json_path = f"legal_sparql_results_{timestamp}.json"
     
-    print(f"Loading RDF graph from {ttl_file_path}...")
-    # Load the RDF graph
-    graph = Graph()
-    graph.parse(ttl_file_path, format="turtle")
-    print(f"Loaded graph with {len(graph)} triples")
-    
-    # Add namespace bindings specific to the legal dataset
-    graph.bind('lex', Namespace("https://example.org/lex2kg/ontology/"))
-    graph.bind('rdfs', Namespace("http://www.w3.org/2000/01/rdf-schema#"))
-    graph.bind('xsd', Namespace("http://www.w3.org/2001/XMLSchema#"))
+    print(f"Connecting to Fuseki server at http://localhost:3030/lex2kg/query...")
+    # Initialize the SPARQL executor
+    sparql_exec = SparqlExecutor()
     
     # Read the input JSON file
     print(f"Reading queries from {input_json_path}...")
@@ -75,30 +66,14 @@ def validate_and_execute_sparql_queries(input_json_path, ttl_file_path, output_j
         
         try:
             # Execute the SPARQL query
-            query_results = graph.query(sparql)
-            
-            # Convert the results to a list of dictionaries
-            result_list = []
-            for row in query_results:
-                row_dict = {}
-                for i, var in enumerate(query_results.vars):
-                    value = row[i]
-                    if value is not None:
-                        # Handle different types of RDF values
-                        if hasattr(value, 'toPython'):
-                            row_dict[str(var)] = value.toPython()
-                        else:
-                            row_dict[str(var)] = str(value)
-                    else:
-                        row_dict[str(var)] = None
-                result_list.append(row_dict)
+            query_results = sparql_exec.execute_query(sparql, return_format="dict")
             
             # Add the results to the result item
             result_item['success'] = True
-            result_item['results'] = result_list
-            result_item['result_count'] = len(result_list)
+            result_item['results'] = query_results
+            result_item['result_count'] = len(query_results)
             
-            if len(result_list) > 0:
+            if len(query_results) > 0:
                 success_count += 1
             else:
                 empty_results_count += 1
@@ -133,24 +108,18 @@ def validate_and_execute_sparql_queries(input_json_path, ttl_file_path, output_j
 
 def main():
     """Main function to run the validator and executor for legal dataset"""
-    # Check if input files exist
+    # Check if input file exists
     if len(sys.argv) > 1:
         input_json_path = sys.argv[1]
     else:
         input_json_path = 'legal_documents_dataset.json'
     
-    ttl_file_path = 'data-lex2kg.ttl'
-    
     if not os.path.exists(input_json_path):
         print(f"Error: Input JSON file '{input_json_path}' not found!")
         sys.exit(1)
-        
-    if not os.path.exists(ttl_file_path):
-        print(f"Error: TTL file '{ttl_file_path}' not found!")
-        sys.exit(1)
     
     # Run the validator and executor
-    validate_and_execute_sparql_queries(input_json_path, ttl_file_path)
+    validate_and_execute_sparql_queries(input_json_path)
 
 if __name__ == "__main__":
     main()
