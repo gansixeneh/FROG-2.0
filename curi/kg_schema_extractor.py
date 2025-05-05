@@ -303,10 +303,7 @@ class KGSchemaExtractor:
         
         # Get some sample values for this property
         for s, p, o in graph.triples((None, prop_uri, None)):
-            if len(values) < 10:  # Limit to 10 samples
-                values.append(o)
-            else:
-                break
+            values.append(o)
                 
         # No values found
         if not values:

@@ -244,14 +244,14 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-most-credits",
                 "category": "university",
-                "questionTemplate": "Which courses have the highest number of credits?",
+                "questionTemplate": "Which course have the highest number of credits?",
                 "sparqlTemplate": """
                     SELECT ?course ?credits WHERE {
                       ?course a ns1:course .
                       ?course ns1:has_credits ?credits .
                     }
                     ORDER BY DESC(?credits)
-                    LIMIT 5
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -273,7 +273,7 @@ class NL2SPARQLGenerator:
             {
                 "id": "common-prerequisites",
                 "category": "university",
-                "questionTemplate": "What are the most common prerequisite courses?",
+                "questionTemplate": "What are the 5 most common prerequisite courses?",
                 "sparqlTemplate": """
                     SELECT ?prereq (COUNT(?course) as ?count) WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -759,8 +759,8 @@ class NL2SPARQLGenerator:
             if placeholder.startswith('entity'):
                 discovery_query += f"\n  OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
-        # Close the query with appropriate LIMIT
-        discovery_query += "\n} LIMIT 1000"
+        # Close the query
+        discovery_query += "\n}"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
@@ -826,7 +826,7 @@ class NL2SPARQLGenerator:
                 discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
         # Close the query
-        discovery_query += " } LIMIT 100"
+        discovery_query += " }"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
@@ -1049,7 +1049,6 @@ class NL2SPARQLGenerator:
                 ?entity <{predicate_uri}> ?obj .
                 OPTIONAL {{ ?entity rdfs:label ?label }}
             }}
-            LIMIT 50
         """
         
         try:
@@ -1122,7 +1121,6 @@ class NL2SPARQLGenerator:
                 ?subject <{predicate_uri}> ?entity .
                 OPTIONAL {{ ?entity rdfs:label ?label }}
             }}
-            LIMIT 50
         """
         
         try:
@@ -1197,7 +1195,6 @@ class NL2SPARQLGenerator:
                 WHERE {
                     ?course <http://example.org/has_course_code> ?code .
                 }
-                LIMIT 50
             """
             
             try:
