@@ -574,7 +574,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What laws were enacted by {value}?",
                 "sparqlTemplate": """
                     SELECT ?law ?title ?date WHERE {
-                      ?law lex2kg-o:disahkanOleh "{value}" .
+                      ?law lex2kg-o:disahkanOleh {value} .
                       ?law lex2kg-o:tentang ?title .
                       ?law lex2kg-o:disahkanPada ?date .
                     }
@@ -1730,7 +1730,7 @@ class NL2SPARQLGenerator:
         sparql = re.sub(r'\s*}\s*', ' } ', sparql)
         
         # Fix the dot spacing - NO SPACES around dots
-        sparql = re.sub(r'\s*\.\s*', '.', sparql)
+        # sparql = re.sub(r'\s*\.\s*', '.', sparql)
         
         # Final cleanup of any double spaces
         sparql = re.sub(r'\s+', ' ', sparql).strip()
