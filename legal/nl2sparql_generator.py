@@ -32,6 +32,8 @@ class SparqlExecutor:
         Returns:
             Results in the specified format
         """
+        # add rdfs prefix before query
+        query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + query
         self.endpoint.setQuery(query)
         results = self.endpoint.query().convert()
         
@@ -965,7 +967,7 @@ class NL2SPARQLGenerator:
         sparql_template = template["sparqlTemplate"].strip()
         
         # Use a pattern that can handle potential whitespace around the placeholders
-        pattern = r"{[\s]*([^{}]+)[\s]*}"
+        pattern = r"{([^{}\n\r]+)}"
         
         # Search in question template
         for match in re.finditer(pattern, question_template):
@@ -1128,6 +1130,7 @@ class NL2SPARQLGenerator:
             
         except Exception as e:
             print(f"Error selecting entity from endpoint: {e}")
+            print(query)
             return None
 
     def select_value_from_endpoint(self, template, placeholder):
