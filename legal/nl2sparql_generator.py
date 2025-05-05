@@ -852,10 +852,15 @@ class NL2SPARQLGenerator:
             
         where_clause = where_match.group(1).strip()
         
-        # Replace placeholders with variables in the WHERE clause
+        # Replace placeholders with variables in the WHERE clause, handling quoted placeholders
         for placeholder in placeholders:
-            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
-            where_clause = re.sub(pattern, f"?{placeholder}", where_clause)
+            # First, handle quoted placeholders - replace "{placeholder}" with the variable without quotes
+            quoted_pattern = r'"{\s*' + re.escape(placeholder) + r'\s*}"'
+            where_clause = re.sub(quoted_pattern, f"?{placeholder}", where_clause)
+            
+            # Then handle regular placeholders
+            regular_pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+            where_clause = re.sub(regular_pattern, f"?{placeholder}", where_clause)
         
         # Build SELECT clause with all placeholders
         select_vars = []
