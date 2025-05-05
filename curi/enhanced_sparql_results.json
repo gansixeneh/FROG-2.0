@@ -1,56 +1,29 @@
 [
   {
     "id": "q1",
-    "question": "What are the prerequisites for Software engineering?",
-    "sparql": "select ?prereq where { <http://example.org/software_engineering> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "Which research group is associated with Deep Learning?",
+    "sparql": "select ?group where { <http://example.org/deep_learning> <http://example.org/has_research_group> ?group.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-prerequisites",
+    "templateId": "course-research-group",
     "success": true,
     "results": [
       {
-        "prereq": "http://example.org/programming_basics_2"
+        "group": "http://example.org/information_retrieval_and_natural_language_processing"
+      },
+      {
+        "group": "http://example.org/intelligent_systems_and_robotics"
+      },
+      {
+        "group": "http://example.org/machine_learning_and_computer_vision"
       }
     ],
-    "result_count": 1
+    "result_count": 3
   },
   {
     "id": "q2",
-    "question": "What evaluation methods are used for Human-Computer Interaction?",
-    "sparql": "select ?method where { <http://example.org/human-computer_interaction> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/group_project"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q3",
-    "question": "What are the prerequisites for Data Mining?",
-    "sparql": "select ?prereq where { <http://example.org/data_mining> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/database"
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q4",
-    "question": "What category does Compiler Techniques belong to?",
-    "sparql": "select ?category where { <http://example.org/compiler_techniques> <http://example.org/has_course_category> ?category.}",
+    "question": "What category does Competitive Programming belong to?",
+    "sparql": "select ?category where { <http://example.org/competitive_programming> <http://example.org/has_course_category> ?category.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-category",
@@ -63,102 +36,153 @@
     "result_count": 1
   },
   {
-    "id": "q5",
-    "question": "What are the prerequisites for Computer network?",
-    "sparql": "select ?prereq where { <http://example.org/computer_network> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/operating_system"
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q6",
-    "question": "What is the course code for Language Theory & Automata?",
-    "sparql": "select ?code where { <http://example.org/language_theory_and_automata> <http://example.org/has_course_code> ?code.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-code",
-    "success": true,
-    "results": [
-      {
-        "code": "CSCM602241"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q7",
-    "question": "What are the alternative names or abbreviations for Bioinformatics?",
-    "sparql": "select ?nickname where { <http://example.org/bioinformatics> <http://example.org/also_known_as> ?nickname.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-nickname",
-    "success": true,
-    "results": [
-      {
-        "nickname": "Bioinformatics"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q8",
-    "question": "What evaluation methods are used for Programming Basics 2?",
-    "sparql": "select ?method where { <http://example.org/programming_basics_2> <http://example.org/has_evaluation_method> ?method.}",
+    "id": "q3",
+    "question": "What evaluation methods are used for Ethical Hacking?",
+    "sparql": "select ?method where { <http://example.org/ethical_hacking> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-evaluation",
     "success": true,
     "results": [
       {
-        "method": "http://example.org/demo"
+        "method": "http://example.org/capture_the_flag"
       },
       {
-        "method": "http://example.org/programming_assignment"
-      },
-      {
-        "method": "http://example.org/test"
+        "method": "http://example.org/group_task"
       }
     ],
-    "result_count": 3
+    "result_count": 2
   },
   {
-    "id": "q9",
-    "question": "What are the alternative names or abbreviations for Simulation and Modeling?",
-    "sparql": "select ?nickname where { <http://example.org/simulation_and_modeling> <http://example.org/also_known_as> ?nickname.}",
+    "id": "q4",
+    "question": "What are the alternative names or abbreviations for Statistics and Probability?",
+    "sparql": "select ?nickname where { <http://example.org/statistics_and_probability> <http://example.org/also_known_as> ?nickname.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-nickname",
     "success": true,
     "results": [
       {
-        "nickname": "Pemodelan dan Simulasi"
+        "nickname": "Statistics and Probability"
       },
       {
-        "nickname": "simmod"
-      },
-      {
-        "nickname": "simod"
-      },
-      {
-        "nickname": "simpem"
+        "nickname": "statprob"
       }
     ],
-    "result_count": 4
+    "result_count": 2
+  },
+  {
+    "id": "q5",
+    "question": "What is the course code for Computer Assisted Teaching?",
+    "sparql": "select ?code where { <http://example.org/computer_assisted_teaching> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604183"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q6",
+    "question": "What is the course code for Bioinformatics?",
+    "sparql": "select ?code where { <http://example.org/bioinformatics> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604230"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q7",
+    "question": "What is the course code for Cryptography and Information Security?",
+    "sparql": "select ?code where { <http://example.org/cryptography_and_information_security> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604243"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q8",
+    "question": "What is the course code for Simulation and Modeling?",
+    "sparql": "select ?code where { <http://example.org/simulation_and_modeling> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604111"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q9",
+    "question": "What evaluation methods are used for Competitive Programming?",
+    "sparql": "select ?method where { <http://example.org/competitive_programming> <http://example.org/has_evaluation_method> ?method.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation",
+    "success": true,
+    "results": [
+      {
+        "method": "http://example.org/programming_assignment"
+      }
+    ],
+    "result_count": 1
   },
   {
     "id": "q10",
-    "question": "How many credits does the Data Structures and Algorithms course have?",
-    "sparql": "select ?value where { <http://example.org/data_structures_and_algorithms> <http://example.org/has_credits> ?value.}",
+    "question": "What evaluation methods are used for Computer Science Special Topics?",
+    "sparql": "select ?method where { <http://example.org/computer_science_special_topics> <http://example.org/has_evaluation_method> ?method.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation",
+    "success": true,
+    "results": [
+      {
+        "method": "http://example.org/task"
+      },
+      {
+        "method": "http://example.org/test"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q11",
+    "question": "Which research group is associated with Computational Geometry?",
+    "sparql": "select ?group where { <http://example.org/computational_geometry> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/reliable_software_engineering"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q12",
+    "question": "How many credits does the Cryptography and Information Security course have?",
+    "sparql": "select ?value where { <http://example.org/cryptography_and_information_security> <http://example.org/has_credits> ?value.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-credits",
@@ -171,250 +195,241 @@
     "result_count": 1
   },
   {
-    "id": "q11",
-    "question": "What are the prerequisites for Software Project?",
-    "sparql": "select ?prereq where { <http://example.org/software_project> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/advanced_programming"
-      },
-      {
-        "prereq": "http://example.org/database"
-      },
-      {
-        "prereq": "http://example.org/software_engineering"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q12",
-    "question": "What are the prerequisites for Language Theory & Automata?",
-    "sparql": "select ?prereq where { <http://example.org/language_theory_and_automata> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/discrete_mathematics_1"
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_2"
-      }
-    ],
-    "result_count": 2
-  },
-  {
     "id": "q13",
-    "question": "What evaluation methods are used for Logic Programming?",
-    "sparql": "select ?method where { <http://example.org/logic_programming> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/programming_assignment"
-      },
-      {
-        "method": "http://example.org/project"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q14",
-    "question": "What are the prerequisites for Statistics and Probability?",
-    "sparql": "select ?prereq where { <http://example.org/statistics_and_probability> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/calculus_1"
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q15",
-    "question": "What category does Calculus 2 belong to?",
-    "sparql": "select ?category where { <http://example.org/calculus_2> <http://example.org/has_course_category> ?category.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-category",
-    "success": true,
-    "results": [
-      {
-        "category": "http://example.org/study_program_mandatory_course"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q16",
-    "question": "How many credits does the Individual Final Assignment course have?",
-    "sparql": "select ?value where { <http://example.org/individual_final_assignment> <http://example.org/has_credits> ?value.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-credits",
-    "success": true,
-    "results": [
-      {
-        "value": 6
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q17",
-    "question": "What evaluation methods are used for Computers & Society?",
-    "sparql": "select ?method where { <http://example.org/computers_and_society> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/group_discussiontask"
-      },
-      {
-        "method": "http://example.org/task"
-      },
-      {
-        "method": "http://example.org/test"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q18",
-    "question": "What evaluation methods are used for Database?",
-    "sparql": "select ?method where { <http://example.org/database> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/group_project"
-      },
-      {
-        "method": "http://example.org/test"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q19",
-    "question": "What is the course code for Parallel Programming?",
-    "sparql": "select ?code where { <http://example.org/parallel_programming> <http://example.org/has_course_code> ?code.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-code",
-    "success": true,
-    "results": [
-      {
-        "code": "CSCE604229"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q20",
-    "question": "What are the prerequisites for Software Product Line Engineering?",
-    "sparql": "select ?prereq where { <http://example.org/software_product_line_engineering> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/software_engineering"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q21",
-    "question": "What evaluation methods are used for Software Product Line Engineering?",
-    "sparql": "select ?method where { <http://example.org/software_product_line_engineering> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/case_study"
-      },
-      {
-        "method": "http://example.org/practicum"
-      },
-      {
-        "method": "http://example.org/project"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q22",
-    "question": "What evaluation methods are used for Mobile Technology?",
-    "sparql": "select ?method where { <http://example.org/mobile_technology> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/task"
-      },
-      {
-        "method": "http://example.org/test"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q23",
-    "question": "Which research group is associated with Cryptography and Information Security?",
-    "sparql": "select ?group where { <http://example.org/cryptography_and_information_security> <http://example.org/has_research_group> ?group.}",
+    "question": "Which research group is associated with Game Development?",
+    "sparql": "select ?group where { <http://example.org/game_development> <http://example.org/has_research_group> ?group.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-research-group",
     "success": true,
     "results": [
       {
-        "group": "http://example.org/center_for_cyber_security_and_cryptography"
+        "group": "http://example.org/machine_learning_and_computer_vision"
+      },
+      {
+        "group": "http://example.org/reliable_software_engineering"
       }
     ],
-    "result_count": 1
+    "result_count": 2
   },
   {
-    "id": "q24",
-    "question": "What category does Calculus 2 belong to?",
-    "sparql": "select ?category where { <http://example.org/calculus_2> <http://example.org/has_course_category> ?category.}",
+    "id": "q14",
+    "question": "What category does Advanced Database belong to?",
+    "sparql": "select ?category where { <http://example.org/advanced_database> <http://example.org/has_course_category> ?category.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-category",
     "success": true,
     "results": [
       {
-        "category": "http://example.org/study_program_mandatory_course"
+        "category": "http://example.org/study_program_elective_course"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q15",
+    "question": "What is the course code for Mobile Technology?",
+    "sparql": "select ?code where { <http://example.org/mobile_technology> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604179"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q16",
+    "question": "What category does Linear Algebra belong to?",
+    "sparql": "select ?category where { <http://example.org/linear_algebra> <http://example.org/has_course_category> ?category.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-category",
+    "success": true,
+    "results": [
+      {
+        "category": "http://example.org/faculty_mandatory_course"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q17",
+    "question": "Which research group is associated with Competitive Programming Practicum?",
+    "sparql": "select ?group where { <http://example.org/competitive_programming_practicum> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/reliable_software_engineering"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q18",
+    "question": "Which research group is associated with Deep Learning?",
+    "sparql": "select ?group where { <http://example.org/deep_learning> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/information_retrieval_and_natural_language_processing"
+      },
+      {
+        "group": "http://example.org/intelligent_systems_and_robotics"
+      },
+      {
+        "group": "http://example.org/machine_learning_and_computer_vision"
+      }
+    ],
+    "result_count": 3
+  },
+  {
+    "id": "q19",
+    "question": "What is the course code for Knowledge Graph?",
+    "sparql": "select ?code where { <http://example.org/knowledge_graph> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604131"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q20",
+    "question": "What are the prerequisites for Information Retrieval?",
+    "sparql": "select ?prereq where { <http://example.org/information_retrieval> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q21",
+    "question": "What category does Deep Learning belong to?",
+    "sparql": "select ?category where { <http://example.org/deep_learning> <http://example.org/has_course_category> ?category.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-category",
+    "success": true,
+    "results": [
+      {
+        "category": "http://example.org/study_program_elective_course"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q22",
+    "question": "Which research group is associated with System Programming?",
+    "sparql": "select ?group where { <http://example.org/system_programming> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/computer_system_laboratory"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q23",
+    "question": "How many credits does the Web Application Architecture course have?",
+    "sparql": "select ?value where { <http://example.org/web_application_architecture> <http://example.org/has_credits> ?value.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-credits",
+    "success": true,
+    "results": [
+      {
+        "value": 3
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q24",
+    "question": "What is the course code for Ethical Hacking?",
+    "sparql": "select ?code where { <http://example.org/ethical_hacking> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code",
+    "success": true,
+    "results": [
+      {
+        "code": "CSCE604258"
       }
     ],
     "result_count": 1
   },
   {
     "id": "q25",
+    "question": "What are the alternative names or abbreviations for Knowledge Graph?",
+    "sparql": "select ?nickname where { <http://example.org/knowledge_graph> <http://example.org/also_known_as> ?nickname.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-nickname",
+    "success": true,
+    "results": [
+      {
+        "nickname": "GK"
+      },
+      {
+        "nickname": "KG"
+      },
+      {
+        "nickname": "Knowledge Graph"
+      },
+      {
+        "nickname": "SW"
+      },
+      {
+        "nickname": "Semantik Web"
+      },
+      {
+        "nickname": "Web Semantics"
+      }
+    ],
+    "result_count": 6
+  },
+  {
+    "id": "q26",
+    "question": "What are the prerequisites for Computer Vision?",
+    "sparql": "select ?prereq where { <http://example.org/computer_vision> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q27",
     "question": "Which research group is associated with Technopreneurship?",
     "sparql": "select ?group where { <http://example.org/technopreneurship> <http://example.org/has_research_group> ?group.}",
     "category": "university",
@@ -447,60 +462,57 @@
     "result_count": 7
   },
   {
-    "id": "q26",
-    "question": "What evaluation methods are used for Individual Final Assignment?",
-    "sparql": "select ?method where { <http://example.org/individual_final_assignment> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
-    "success": true,
-    "results": [
-      {
-        "method": "http://example.org/presentation"
-      },
-      {
-        "method": "http://example.org/report_document"
-      },
-      {
-        "method": "http://example.org/supervisor_evaluation"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q27",
-    "question": "What are the prerequisites for Computer Assisted Teaching?",
-    "sparql": "select ?prereq where { <http://example.org/computer_assisted_teaching> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/platform_based_programming"
-      }
-    ],
-    "result_count": 1
-  },
-  {
     "id": "q28",
-    "question": "What is the course code for Research Methodology and Scientific Writing?",
-    "sparql": "select ?code where { <http://example.org/research_methodology_and_scientific_writing> <http://example.org/has_course_code> ?code.}",
+    "question": "What are the alternative names or abbreviations for Simulation and Modeling?",
+    "sparql": "select ?nickname where { <http://example.org/simulation_and_modeling> <http://example.org/also_known_as> ?nickname.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-code",
+    "templateId": "course-nickname",
     "success": true,
     "results": [
       {
-        "code": "CSGE603091"
+        "nickname": "Pemodelan dan Simulasi"
+      },
+      {
+        "nickname": "simmod"
+      },
+      {
+        "nickname": "simod"
+      },
+      {
+        "nickname": "simpem"
       }
     ],
-    "result_count": 1
+    "result_count": 4
   },
   {
     "id": "q29",
-    "question": "Which research group is associated with Knowledge Representation and Reasoning?",
-    "sparql": "select ?group where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/has_research_group> ?group.}",
+    "question": "What are the alternative names or abbreviations for Database?",
+    "sparql": "select ?nickname where { <http://example.org/database> <http://example.org/also_known_as> ?nickname.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-nickname",
+    "success": true,
+    "results": [
+      {
+        "nickname": "BD"
+      },
+      {
+        "nickname": "DB"
+      },
+      {
+        "nickname": "Database"
+      },
+      {
+        "nickname": "basdat"
+      }
+    ],
+    "result_count": 4
+  },
+  {
+    "id": "q30",
+    "question": "Which research group is associated with Natural Language Processing?",
+    "sparql": "select ?group where { <http://example.org/natural_language_processing> <http://example.org/has_research_group> ?group.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-research-group",
@@ -508,167 +520,62 @@
     "results": [
       {
         "group": "http://example.org/information_retrieval_and_natural_language_processing"
-      },
-      {
-        "group": "http://example.org/reliable_software_engineering"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q30",
-    "question": "What category does Digital Forensics belong to?",
-    "sparql": "select ?category where { <http://example.org/digital_forensics> <http://example.org/has_course_category> ?category.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-category",
-    "success": true,
-    "results": [
-      {
-        "category": "http://example.org/study_program_elective_course"
       }
     ],
     "result_count": 1
   },
   {
     "id": "q31",
-    "question": "Which courses have 3 credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+    "question": "How many evaluation methods are associated with Introduction to Artificial Intelligence and Data Science?",
+    "sparql": "select (count(?method) as ?count) where { <http://example.org/introduction_to_artificial_intelligence_and_data_science> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "courses-with-credits",
+    "templateId": "count-evaluation-methods",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/computer_science_special_topics"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/computers_and_society"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/human-computer_interaction"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/technopreneurship"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/calculus_1"
-      },
-      {
-        "course": "http://example.org/research_methodology_and_scientific_writing"
-      },
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/discrete_mathematics_2"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/linear_algebra"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/discrete_mathematics_1"
-      },
-      {
-        "course": "http://example.org/computer_network"
+        "count": 2
       }
     ],
-    "result_count": 40
+    "result_count": 1
   },
   {
     "id": "q32",
-    "question": "How many courses have Introduction to Digital Systems as a prerequisite course?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_digital_systems>.}",
+    "question": "How many courses have Programming Basics 1 as a prerequisite course?",
+    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-courses-by-prerequisite",
+    "success": true,
+    "results": [
+      {
+        "count": 6
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q33",
+    "question": "How many courses are in the Study Program Elective Course category?",
+    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-courses-by-category",
+    "success": true,
+    "results": [
+      {
+        "count": 38
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q34",
+    "question": "How many prerequisites does System Administration have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/system_administration> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
     "success": true,
     "results": [
       {
@@ -678,190 +585,61 @@
     "result_count": 1
   },
   {
-    "id": "q33",
-    "question": "Which courses have 3 credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+    "id": "q35",
+    "question": "How many prerequisites does Cryptography and Information Security have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/cryptography_and_information_security> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "courses-with-credits",
+    "templateId": "count-prerequisites",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/advanced_database"
-      },
+        "count": 3
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q36",
+    "question": "How many courses are in the Study Program Elective Course category?",
+    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-courses-by-category",
+    "success": true,
+    "results": [
       {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
+        "count": 38
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q37",
+    "question": "What courses have Platform Based Programming as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/platform_based_programming>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite",
+    "success": true,
+    "results": [
       {
         "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/computer_science_special_topics"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/computers_and_society"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/game_development"
       },
       {
         "course": "http://example.org/human-computer_interaction"
       },
       {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/technopreneurship"
-      },
-      {
         "course": "http://example.org/web_application_architecture"
       },
       {
-        "course": "http://example.org/calculus_1"
-      },
-      {
-        "course": "http://example.org/research_methodology_and_scientific_writing"
-      },
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/discrete_mathematics_2"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/linear_algebra"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/discrete_mathematics_1"
-      },
-      {
-        "course": "http://example.org/computer_network"
+        "course": "http://example.org/advanced_programming"
       }
     ],
-    "result_count": 40
+    "result_count": 4
   },
   {
-    "id": "q34",
-    "question": "Which courses are evaluated using Final Project?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/final_project>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q35",
-    "question": "Which courses are associated with the Intelligent Systems & Robotics research group?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-research-group",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/computer_science_special_topics"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/technopreneurship"
-      }
-    ],
-    "result_count": 7
-  },
-  {
-    "id": "q36",
+    "id": "q38",
     "question": "How many courses are in the Faculty Mandatory Course category?",
     "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
     "category": "university",
@@ -876,7 +654,172 @@
     "result_count": 1
   },
   {
-    "id": "q37",
+    "id": "q39",
+    "question": "How many prerequisites does Software Quality Assurance have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/software_quality_assurance> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "count": 1
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q40",
+    "question": "How many courses have Programming Basics 1 as a prerequisite course?",
+    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-courses-by-prerequisite",
+    "success": true,
+    "results": [
+      {
+        "count": 6
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q41",
+    "question": "Which courses are associated with the Machine Learning and Computer Vision research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/technopreneurship"
+      }
+    ],
+    "result_count": 8
+  },
+  {
+    "id": "q42",
+    "question": "Which courses are evaluated using Task?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-evaluation",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/computers_and_society"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/religion"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/calculus_1"
+      },
+      {
+        "course": "http://example.org/research_methodology_and_scientific_writing"
+      },
+      {
+        "course": "http://example.org/calculus_2"
+      },
+      {
+        "course": "http://example.org/operating_system"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      }
+    ],
+    "result_count": 20
+  },
+  {
+    "id": "q43",
+    "question": "Which courses are associated with the Center for Cyber Security and Cryptography research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/technopreneurship"
+      }
+    ],
+    "result_count": 5
+  },
+  {
+    "id": "q44",
     "question": "Which courses are associated with the Computer System Laboratory research group?",
     "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.}",
     "category": "university",
@@ -918,64 +861,7 @@
     "result_count": 10
   },
   {
-    "id": "q38",
-    "question": "What courses have Data Structures and Algorithms as a prerequisite course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-prerequisite",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      }
-    ],
-    "result_count": 10
-  },
-  {
-    "id": "q39",
-    "question": "How many evaluation methods are associated with Language Theory & Automata?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/language_theory_and_automata> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-evaluation-methods",
-    "success": true,
-    "results": [
-      {
-        "count": 1
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q40",
+    "id": "q45",
     "question": "Which courses have 4 credits?",
     "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
     "category": "university",
@@ -1056,49 +942,94 @@
     "result_count": 23
   },
   {
-    "id": "q41",
-    "question": "Which courses are associated with the Computer System Laboratory research group?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.}",
+    "id": "q46",
+    "question": "How many evaluation methods are associated with Internship?",
+    "sparql": "select (count(?method) as ?count) where { <http://example.org/internship> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "courses-by-research-group",
+    "templateId": "count-evaluation-methods",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/cloud_computing"
+        "count": 2
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q47",
+    "question": "How many courses are in the Study Program Mandatory Course category?",
+    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-courses-by-category",
+    "success": true,
+    "results": [
+      {
+        "count": 12
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q48",
+    "question": "How many prerequisites does Simulation and Modeling have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/simulation_and_modeling> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "count": 1
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q49",
+    "question": "What courses have Data Structures and Algorithms as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/algorithm_design_and_analysis"
       },
       {
-        "course": "http://example.org/computer_science_special_topics"
+        "course": "http://example.org/bioinformatics"
       },
       {
-        "course": "http://example.org/distributed_systems"
+        "course": "http://example.org/competitive_programming"
       },
       {
-        "course": "http://example.org/internet_of_things"
+        "course": "http://example.org/competitive_programming_practicum"
       },
       {
-        "course": "http://example.org/mobile_technology"
+        "course": "http://example.org/compiler_techniques"
       },
       {
-        "course": "http://example.org/parallel_programming"
+        "course": "http://example.org/computational_geometry"
       },
       {
-        "course": "http://example.org/system_administration"
+        "course": "http://example.org/functional_programming"
+      },
+      {
+        "course": "http://example.org/game_development"
       },
       {
         "course": "http://example.org/system_programming"
       },
       {
-        "course": "http://example.org/technopreneurship"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
       }
     ],
     "result_count": 10
   },
   {
-    "id": "q42",
+    "id": "q50",
     "question": "Which courses are evaluated using Group Project?",
     "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
     "category": "university",
@@ -1155,77 +1086,14 @@
     "result_count": 15
   },
   {
-    "id": "q43",
-    "question": "Which courses are evaluated using Lab Assignment?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
+    "id": "q51",
+    "question": "Which courses are evaluated using Task?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "courses-by-evaluation",
     "success": true,
     "results": [
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      }
-    ],
-    "result_count": 8
-  },
-  {
-    "id": "q44",
-    "question": "How many courses are in the Study Program Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-category",
-    "success": true,
-    "results": [
-      {
-        "count": 12
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q45",
-    "question": "Which courses are evaluated using Test?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
       {
         "course": "http://example.org/computer_science_special_topics"
       },
@@ -1233,118 +1101,7 @@
         "course": "http://example.org/computers_and_society"
       },
       {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
         "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/information_retrieval"
-      },
-      {
-        "course": "http://example.org/integrated_personality_development_skills"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/introduction_to_digital_systems"
-      },
-      {
-        "course": "http://example.org/calculus_1"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/discrete_mathematics_2"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/linear_algebra"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/programming_basics_1"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      }
-    ],
-    "result_count": 39
-  },
-  {
-    "id": "q46",
-    "question": "What courses have Computer network as a prerequisite course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-prerequisite",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/cloud_computing"
       },
       {
         "course": "http://example.org/digital_forensics"
@@ -1356,19 +1113,52 @@
         "course": "http://example.org/internet_of_things"
       },
       {
+        "course": "http://example.org/machine_learning"
+      },
+      {
         "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/religion"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
       },
       {
         "course": "http://example.org/system_administration"
       },
       {
-        "course": "http://example.org/web_application_architecture"
+        "course": "http://example.org/calculus_1"
+      },
+      {
+        "course": "http://example.org/research_methodology_and_scientific_writing"
+      },
+      {
+        "course": "http://example.org/calculus_2"
+      },
+      {
+        "course": "http://example.org/operating_system"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/computer_network"
       }
     ],
-    "result_count": 7
+    "result_count": 20
   },
   {
-    "id": "q47",
+    "id": "q52",
     "question": "Which courses are evaluated using Test?",
     "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
     "category": "university",
@@ -1497,340 +1287,22 @@
     "result_count": 39
   },
   {
-    "id": "q48",
-    "question": "How many prerequisites does Individual Final Assignment have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/individual_final_assignment> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "count": 1
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q49",
-    "question": "Which courses are evaluated using Report Document?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/report_document>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/final_project_group_assignment"
-      },
-      {
-        "course": "http://example.org/individual_final_assignment"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q50",
-    "question": "How many prerequisites does Functional Programming have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/functional_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "count": 1
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q51",
-    "question": "What courses have Software engineering as a prerequisite course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/software_engineering>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-prerequisite",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q52",
-    "question": "What courses have Calculus 1 as a prerequisite course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/calculus_1>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-prerequisite",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      }
-    ],
-    "result_count": 2
-  },
-  {
     "id": "q53",
-    "question": "How many evaluation methods are associated with Cloud Computing?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/cloud_computing> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "How many prerequisites does Operating system have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/operating_system> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-evaluation-methods",
+    "templateId": "count-prerequisites",
     "success": true,
     "results": [
       {
-        "count": 2
+        "count": 1
       }
     ],
     "result_count": 1
   },
   {
     "id": "q54",
-    "question": "Which courses have 4 credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/final_project_group_assignment"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/information_retrieval"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_digital_systems"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/programming_basics_1"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      }
-    ],
-    "result_count": 23
-  },
-  {
-    "id": "q55",
-    "question": "How many courses have Linear Algebra as a prerequisite course?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-prerequisite",
-    "success": true,
-    "results": [
-      {
-        "count": 4
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q56",
-    "question": "Which courses are associated with the Reliable Software Engineering research group?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-research-group",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/computer_science_special_topics"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/technopreneurship"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 15
-  },
-  {
-    "id": "q57",
-    "question": "Which courses are associated with the Computer System Laboratory research group?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-research-group",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/computer_science_special_topics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/technopreneurship"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 10
-  },
-  {
-    "id": "q58",
-    "question": "Which courses are evaluated using Lab assignment?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      }
-    ],
-    "result_count": 8
-  },
-  {
-    "id": "q59",
     "question": "Which courses have 3 credits?",
     "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
     "category": "university",
@@ -1962,823 +1434,233 @@
     "result_count": 40
   },
   {
-    "id": "q60",
-    "question": "How many prerequisites does Logic Programming have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/logic_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "id": "q55",
+    "question": "Which courses are associated with the Information Retrieval and Natural Language Processing research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-prerequisites",
+    "templateId": "courses-by-research-group",
     "success": true,
     "results": [
       {
-        "count": 2
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q61",
-    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Task as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
-    "success": true,
-    "results": [
+        "course": "http://example.org/bioinformatics"
+      },
       {
         "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/knowledge_representation_and_reasoning"
+      },
+      {
+        "course": "http://example.org/logic_programming"
       },
       {
         "course": "http://example.org/machine_learning"
       },
       {
         "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/technopreneurship"
       }
     ],
-    "result_count": 3
+    "result_count": 11
   },
   {
-    "id": "q62",
-    "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "id": "q56",
+    "question": "Which courses have 3 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
     "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 28
-  },
-  {
-    "id": "q63",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q64",
-    "question": "What courses have prerequisites with Operating system as their prerequisites?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/operating_system>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-of-prereq",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 7
-  },
-  {
-    "id": "q65",
-    "question": "What courses have 'Group DiscussionTask' and 'Test' as evaluation methods and have the course code 'CSGE614093'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/group_discussiontask>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"CSGE614093\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/computers_and_society"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q66",
-    "question": "Which research group is associated with the most courses?",
-    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "research-group-most-courses",
-    "success": true,
-    "results": [
-      {
-        "group": "http://example.org/reliable_software_engineering",
-        "count": 15
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q67",
-    "question": "What course has the evaluation method of Task and is a Study Program Elective Course with the course code 'CSCE604254'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604254\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition-code",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/distributed_systems"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q68",
-    "question": "What courses have Reliable Software Engineering as their research group, are categorized as Study Program Elective Course, and use Lab Assignment as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
+    "complexity": "intermediate",
+    "templateId": "courses-with-credits",
     "success": true,
     "results": [
       {
         "course": "http://example.org/advanced_database"
       },
       {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 4
-  },
-  {
-    "id": "q69",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q70",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q71",
-    "question": "Which research group is associated with the most courses?",
-    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "research-group-most-courses",
-    "success": true,
-    "results": [
-      {
-        "group": "http://example.org/reliable_software_engineering",
-        "count": 15
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q72",
-    "question": "What courses have Reliable Software Engineering as their research group, are categorized as Study Program Elective Course, and use Project as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/project>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      }
-    ],
-    "result_count": 2
-  },
-  {
-    "id": "q73",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q74",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q75",
-    "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
         "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
       },
       {
         "course": "http://example.org/cloud_computing"
       },
       {
-        "course": "http://example.org/digital_forensics"
+        "course": "http://example.org/competitive_programming"
       },
       {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 28
-  },
-  {
-    "id": "q76",
-    "question": "What courses have Computer network as a prerequisite and Task as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-eval-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q77",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q78",
-    "question": "Which courses have the same prerequisites as Operating system?",
-    "sparql": "select distinct ?course where { <http://example.org/operating_system> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/operating_system>) }",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/robotics"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q79",
-    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Final Project as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/final_project>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/deep_learning"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q80",
-    "question": "What course has the evaluation method of Test and is a Study Program Elective Course with the course code 'CSCE604156'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604156\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition-code",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/digital_forensics"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q81",
-    "question": "What courses have Introduction to Artificial Intelligence and Data Science as a prerequisite and Laboratory Assignment as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_artificial_intelligence_and_data_science>.?course <http://example.org/has_evaluation_method> <http://example.org/laboratory_assignment>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-eval-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/robotics"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q82",
-    "question": "What courses have prerequisites that have Test as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/test>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-eval",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+        "course": "http://example.org/computational_geometry"
       },
       {
         "course": "http://example.org/computer_assisted_teaching"
       },
       {
-        "course": "http://example.org/human-computer_interaction"
+        "course": "http://example.org/computer_science_special_topics"
       },
       {
-        "course": "http://example.org/web_application_architecture"
+        "course": "http://example.org/computer_vision"
       },
       {
-        "course": "http://example.org/advanced_programming"
+        "course": "http://example.org/computers_and_society"
       },
       {
-        "course": "http://example.org/bioinformatics"
+        "course": "http://example.org/data_mining"
       },
       {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
+        "course": "http://example.org/differential_equations"
       },
       {
         "course": "http://example.org/distributed_systems"
       },
       {
+        "course": "http://example.org/embedded_systems"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
         "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/introduction_to_software_security"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/knowledge_representation_and_reasoning"
       },
       {
         "course": "http://example.org/mobile_technology"
       },
       {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/software_product_line_engineering"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      },
+      {
         "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/technopreneurship"
       },
       {
         "course": "http://example.org/web_application_architecture"
       },
+      {
+        "course": "http://example.org/calculus_1"
+      },
+      {
+        "course": "http://example.org/research_methodology_and_scientific_writing"
+      },
+      {
+        "course": "http://example.org/calculus_2"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/discrete_mathematics_2"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/linear_algebra"
+      },
+      {
+        "course": "http://example.org/statistics_and_probability"
+      },
+      {
+        "course": "http://example.org/discrete_mathematics_1"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      }
+    ],
+    "result_count": 40
+  },
+  {
+    "id": "q57",
+    "question": "What courses have Calculus 1 as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/calculus_1>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/calculus_2"
+      },
+      {
+        "course": "http://example.org/statistics_and_probability"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q58",
+    "question": "What courses have Linear Algebra as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 4
+  },
+  {
+    "id": "q59",
+    "question": "What courses have Introduction to Artificial Intelligence and Data Science as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_artificial_intelligence_and_data_science>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite",
+    "success": true,
+    "results": [
       {
         "course": "http://example.org/computer_vision"
       },
@@ -2799,74 +1681,175 @@
       },
       {
         "course": "http://example.org/spoken_language_processing"
-      },
+      }
+    ],
+    "result_count": 7
+  },
+  {
+    "id": "q60",
+    "question": "Which courses have 4 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-with-credits",
+    "success": true,
+    "results": [
       {
         "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
       },
       {
         "course": "http://example.org/compiler_techniques"
       },
       {
-        "course": "http://example.org/computational_geometry"
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/final_project_group_assignment"
       },
       {
         "course": "http://example.org/functional_programming"
       },
       {
-        "course": "http://example.org/game_development"
+        "course": "http://example.org/information_retrieval"
       },
       {
-        "course": "http://example.org/system_programming"
+        "course": "http://example.org/logic_programming"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/software_quality_assurance"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_digital_systems"
+      },
+      {
+        "course": "http://example.org/language_theory_and_automata"
+      },
+      {
+        "course": "http://example.org/operating_system"
+      },
+      {
+        "course": "http://example.org/database"
+      },
+      {
+        "course": "http://example.org/platform_based_programming"
+      },
+      {
+        "course": "http://example.org/programming_basics_2"
+      },
+      {
+        "course": "http://example.org/programming_basics_1"
       },
       {
         "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      },
+      {
+        "course": "http://example.org/data_structures_and_algorithms"
       }
     ],
-    "result_count": 70
+    "result_count": 23
   },
   {
-    "id": "q83",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "id": "q61",
+    "question": "What courses have the evaluation method 'Project Assignment' and are associated with the research group 'Computer System Laboratory' and have the course code 'CSCE604227'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/project_assignment>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_code> \"CSCE604227\".}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "common-prerequisites",
+    "templateId": "courses-with-research-eval-code",
     "success": true,
     "results": [
       {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
+        "course": "http://example.org/system_programming"
       }
     ],
-    "result_count": 5
+    "result_count": 1
   },
   {
-    "id": "q84",
+    "id": "q62",
+    "question": "What courses have Computer System Laboratory as their research group, are categorized as Study Program Elective Course, and use Final Project as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/final_project>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/cloud_computing"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q63",
+    "question": "Which research group is associated with the most courses?",
+    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "research-group-most-courses",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/reliable_software_engineering",
+        "count": 15
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q64",
+    "question": "What courses have prerequisites with Programming Basics 2 as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_2>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/software_product_line_engineering"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/software_quality_assurance"
+      },
+      {
+        "course": "http://example.org/advanced_database"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/software_project"
+      }
+    ],
+    "result_count": 8
+  },
+  {
+    "id": "q65",
     "question": "Which course have the highest number of credits?",
     "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
     "category": "university",
@@ -2882,699 +1865,7 @@
     "result_count": 1
   },
   {
-    "id": "q85",
-    "question": "What courses have Database as a prerequisite and Group Project as an evaluation method, and are Study Program Mandatory Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/database>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-eval-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/software_project"
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q86",
-    "question": "What courses have prerequisites that have Test as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/test>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-eval",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/human-computer_interaction"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      },
-      {
-        "course": "http://example.org/information_retrieval"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      }
-    ],
-    "result_count": 70
-  },
-  {
-    "id": "q87",
-    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/final_project_group_assignment"
-      },
-      {
-        "course": "http://example.org/individual_final_assignment"
-      },
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/human-computer_interaction"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      },
-      {
-        "course": "http://example.org/information_retrieval"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      }
-    ],
-    "result_count": 53
-  },
-  {
-    "id": "q88",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q89",
-    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/calculus_2"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/final_project_group_assignment"
-      },
-      {
-        "course": "http://example.org/individual_final_assignment"
-      },
-      {
-        "course": "http://example.org/advanced_database"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/human-computer_interaction"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/language_theory_and_automata"
-      },
-      {
-        "course": "http://example.org/statistics_and_probability"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/advanced_programming"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/database"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
-      },
-      {
-        "course": "http://example.org/logic_programming"
-      },
-      {
-        "course": "http://example.org/platform_based_programming"
-      },
-      {
-        "course": "http://example.org/programming_basics_2"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/data_structures_and_algorithms"
-      },
-      {
-        "course": "http://example.org/computer_vision"
-      },
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/deep_learning"
-      },
-      {
-        "course": "http://example.org/information_retrieval"
-      },
-      {
-        "course": "http://example.org/machine_learning"
-      },
-      {
-        "course": "http://example.org/robotics"
-      },
-      {
-        "course": "http://example.org/spoken_language_processing"
-      },
-      {
-        "course": "http://example.org/algorithm_design_and_analysis"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/competitive_programming"
-      },
-      {
-        "course": "http://example.org/competitive_programming_practicum"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      }
-    ],
-    "result_count": 53
-  },
-  {
-    "id": "q90",
-    "question": "Which courses have the same prerequisites as Advanced Programming?",
-    "sparql": "select distinct ?course where { <http://example.org/advanced_programming> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/advanced_programming>) }",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/computer_assisted_teaching"
-      },
-      {
-        "course": "http://example.org/human-computer_interaction"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      },
-      {
-        "course": "http://example.org/introduction_to_software_security"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/software_engineering"
-      },
-      {
-        "course": "http://example.org/database"
-      }
-    ],
-    "result_count": 7
-  },
-  {
-    "id": "q91",
-    "question": "Which research group is associated with the most courses?",
-    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "research-group-most-courses",
-    "success": true,
-    "results": [
-      {
-        "group": "http://example.org/reliable_software_engineering",
-        "count": 15
-      }
-    ],
-    "result_count": 1
-  },
-  {
-    "id": "q92",
-    "question": "What are the 5 most common prerequisite courses?",
-    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "common-prerequisites",
-    "success": true,
-    "results": [
-      {
-        "prereq": "http://example.org/data_structures_and_algorithms",
-        "count": 10
-      },
-      {
-        "prereq": "http://example.org/computer_network",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
-        "count": 7
-      },
-      {
-        "prereq": "http://example.org/programming_basics_1",
-        "count": 6
-      },
-      {
-        "prereq": "http://example.org/discrete_mathematics_1",
-        "count": 5
-      }
-    ],
-    "result_count": 5
-  },
-  {
-    "id": "q93",
+    "id": "q66",
     "question": "Which courses have the same prerequisites as Spoken Language Processing?",
     "sparql": "select distinct ?course where { <http://example.org/spoken_language_processing> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/spoken_language_processing>) }",
     "category": "university",
@@ -3604,220 +1895,71 @@
     "result_count": 6
   },
   {
-    "id": "q94",
-    "question": "Which courses have the same prerequisites as Bioinformatics?",
-    "sparql": "select distinct ?course where { <http://example.org/bioinformatics> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/bioinformatics>) }",
+    "id": "q67",
+    "question": "What courses have prerequisites with Linear Algebra as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites",
+    "templateId": "courses-with-prereq-of-prereq",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/algorithm_design_and_analysis"
+        "course": "http://example.org/computer_vision"
       },
       {
-        "course": "http://example.org/competitive_programming"
+        "course": "http://example.org/data_mining"
       },
       {
-        "course": "http://example.org/competitive_programming_practicum"
+        "course": "http://example.org/deep_learning"
       },
       {
-        "course": "http://example.org/compiler_techniques"
+        "course": "http://example.org/information_retrieval"
       },
       {
-        "course": "http://example.org/computational_geometry"
-      },
-      {
-        "course": "http://example.org/functional_programming"
-      },
-      {
-        "course": "http://example.org/game_development"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      }
-    ],
-    "result_count": 11
-  },
-  {
-    "id": "q95",
-    "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/introduction_to_computer_organization"
-      },
-      {
-        "course": "http://example.org/compiler_techniques"
-      },
-      {
-        "course": "http://example.org/natural_language_processing"
-      },
-      {
-        "course": "http://example.org/differential_equations"
-      },
-      {
-        "course": "http://example.org/numerical_analysis"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/parallel_programming"
-      },
-      {
-        "course": "http://example.org/system_programming"
-      },
-      {
-        "course": "http://example.org/computer_network"
-      },
-      {
-        "course": "http://example.org/software_product_line_engineering"
-      },
-      {
-        "course": "http://example.org/software_project"
-      },
-      {
-        "course": "http://example.org/software_quality_assurance"
-      },
-      {
-        "course": "http://example.org/embedded_systems"
-      },
-      {
-        "course": "http://example.org/ethical_hacking"
+        "course": "http://example.org/machine_learning"
       },
       {
         "course": "http://example.org/robotics"
       },
       {
-        "course": "http://example.org/operating_system"
-      },
-      {
-        "course": "http://example.org/bioinformatics"
-      },
-      {
-        "course": "http://example.org/cryptography_and_information_security"
-      },
-      {
-        "course": "http://example.org/simulation_and_modeling"
-      },
-      {
-        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
-      },
-      {
-        "course": "http://example.org/cloud_computing"
-      },
-      {
-        "course": "http://example.org/digital_forensics"
-      },
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/mobile_technology"
-      },
-      {
-        "course": "http://example.org/system_administration"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
+        "course": "http://example.org/spoken_language_processing"
       }
     ],
-    "result_count": 28
+    "result_count": 7
   },
   {
-    "id": "q96",
-    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Machine Learning and Computer Vision' and have the course code 'CSCE604212'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.?course <http://example.org/has_course_code> \"CSCE604212\".}",
+    "id": "q68",
+    "question": "Which research group is associated with the most courses?",
+    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-research-eval-code",
+    "templateId": "research-group-most-courses",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/differential_equations"
+        "group": "http://example.org/reliable_software_engineering",
+        "count": 15
       }
     ],
     "result_count": 1
   },
   {
-    "id": "q97",
-    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Group Project as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/data_mining"
-      },
-      {
-        "course": "http://example.org/knowledge_graph"
-      },
-      {
-        "course": "http://example.org/knowledge_representation_and_reasoning"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q98",
-    "question": "What courses have Computer System Laboratory as their research group, are categorized as Study Program Elective Course, and use Group Project as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition",
-    "success": true,
-    "results": [
-      {
-        "course": "http://example.org/distributed_systems"
-      },
-      {
-        "course": "http://example.org/internet_of_things"
-      },
-      {
-        "course": "http://example.org/web_application_architecture"
-      }
-    ],
-    "result_count": 3
-  },
-  {
-    "id": "q99",
-    "question": "What course has the evaluation method of Lab Assignment and is a Faculty Mandatory Course with the course code 'CSGE602023'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.?course <http://example.org/has_course_code> \"CSGE602023\".}",
+    "id": "q69",
+    "question": "What course has the evaluation method of Group Project and is a Faculty Mandatory Course with the course code 'CSGE603130'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.?course <http://example.org/has_course_code> \"CSGE603130\".}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-triple-condition-code",
     "success": true,
     "results": [
       {
-        "course": "http://example.org/introduction_to_software_security"
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
       }
     ],
     "result_count": 1
   },
   {
-    "id": "q100",
+    "id": "q70",
     "question": "What courses have prerequisites that have Task as their evaluation method?",
     "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/task>.}",
     "category": "university",
@@ -3899,5 +2041,1236 @@
       }
     ],
     "result_count": 24
+  },
+  {
+    "id": "q71",
+    "question": "Which research group is associated with the most courses?",
+    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "research-group-most-courses",
+    "success": true,
+    "results": [
+      {
+        "group": "http://example.org/reliable_software_engineering",
+        "count": 15
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q72",
+    "question": "What courses have prerequisites with 4 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/advanced_database"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_software_security"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/database"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/logic_programming"
+      },
+      {
+        "course": "http://example.org/platform_based_programming"
+      },
+      {
+        "course": "http://example.org/programming_basics_2"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/data_structures_and_algorithms"
+      },
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      },
+      {
+        "course": "http://example.org/algorithm_design_and_analysis"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/competitive_programming"
+      },
+      {
+        "course": "http://example.org/competitive_programming_practicum"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/computational_geometry"
+      },
+      {
+        "course": "http://example.org/functional_programming"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 43
+  },
+  {
+    "id": "q73",
+    "question": "What course has the evaluation method of Supervisor Evaluation and is a Faculty Mandatory Course with the course code 'CSGE604097'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/supervisor_evaluation>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.?course <http://example.org/has_course_code> \"CSGE604097\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/internship"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q74",
+    "question": "What courses have Introduction to Computer Organization as a prerequisite and Test as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/embedded_systems"
+      },
+      {
+        "course": "http://example.org/robotics"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q75",
+    "question": "What courses have Platform Based Programming as a prerequisite and Group task as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/platform_based_programming>.?course <http://example.org/has_evaluation_method> <http://example.org/group_task>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q76",
+    "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/software_product_line_engineering"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/software_quality_assurance"
+      },
+      {
+        "course": "http://example.org/embedded_systems"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/operating_system"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      },
+      {
+        "course": "http://example.org/cloud_computing"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      }
+    ],
+    "result_count": 28
+  },
+  {
+    "id": "q77",
+    "question": "Which courses have the same prerequisites as Knowledge Representation and Reasoning?",
+    "sparql": "select distinct ?course where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/knowledge_representation_and_reasoning>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/logic_programming"
+      },
+      {
+        "course": "http://example.org/language_theory_and_automata"
+      },
+      {
+        "course": "http://example.org/statistics_and_probability"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      }
+    ],
+    "result_count": 5
+  },
+  {
+    "id": "q78",
+    "question": "What courses have prerequisites with Calculus 1 as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/calculus_1>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 7
+  },
+  {
+    "id": "q79",
+    "question": "What courses have the evaluation method 'Case study' and are associated with the research group 'Reliable Software Engineering' and have the course code 'CSCE604028'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/case_study>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_code> \"CSCE604028\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-research-eval-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/software_product_line_engineering"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q80",
+    "question": "What course has the evaluation method of Task and is a Study Program Elective Course with the course code 'CSCE604179'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604179\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/mobile_technology"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q81",
+    "question": "What courses have Introduction to Computer Organization as a prerequisite and Group task as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.?course <http://example.org/has_evaluation_method> <http://example.org/group_task>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/ethical_hacking"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q82",
+    "question": "What are the 5 most common prerequisite courses?",
+    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "common-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/data_structures_and_algorithms",
+        "count": 10
+      },
+      {
+        "prereq": "http://example.org/computer_network",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/programming_basics_1",
+        "count": 6
+      },
+      {
+        "prereq": "http://example.org/discrete_mathematics_1",
+        "count": 5
+      }
+    ],
+    "result_count": 5
+  },
+  {
+    "id": "q83",
+    "question": "What courses have 'Demo' and 'Test' as evaluation methods and have the course code 'CSGE601021'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/demo>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"CSGE601021\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-double-evaluation-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/programming_basics_2"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q84",
+    "question": "What courses have Research Methodology and Scientific Writing as a prerequisite and Presentation as an evaluation method, and are Faculty Mandatory Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/research_methodology_and_scientific_writing>.?course <http://example.org/has_evaluation_method> <http://example.org/presentation>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/individual_final_assignment"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q85",
+    "question": "What courses have 'Task' and 'Task' as evaluation methods and have the course code 'CSCE604235'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_code> \"CSCE604235\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-double-evaluation-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/machine_learning"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q86",
+    "question": "What courses have prerequisites that have Group Project as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-eval",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/final_project_group_assignment"
+      },
+      {
+        "course": "http://example.org/individual_final_assignment"
+      },
+      {
+        "course": "http://example.org/software_product_line_engineering"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/software_quality_assurance"
+      },
+      {
+        "course": "http://example.org/advanced_database"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/cloud_computing"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      }
+    ],
+    "result_count": 27
+  },
+  {
+    "id": "q87",
+    "question": "Which courses have the same prerequisites as Cloud Computing?",
+    "sparql": "select distinct ?course where { <http://example.org/cloud_computing> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/cloud_computing>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      }
+    ],
+    "result_count": 6
+  },
+  {
+    "id": "q88",
+    "question": "What courses have prerequisites with Linear Algebra as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      }
+    ],
+    "result_count": 7
+  },
+  {
+    "id": "q89",
+    "question": "What courses have prerequisites with 4 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/advanced_database"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_software_security"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/database"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/logic_programming"
+      },
+      {
+        "course": "http://example.org/platform_based_programming"
+      },
+      {
+        "course": "http://example.org/programming_basics_2"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/data_structures_and_algorithms"
+      },
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      },
+      {
+        "course": "http://example.org/algorithm_design_and_analysis"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/competitive_programming"
+      },
+      {
+        "course": "http://example.org/competitive_programming_practicum"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/computational_geometry"
+      },
+      {
+        "course": "http://example.org/functional_programming"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 43
+  },
+  {
+    "id": "q90",
+    "question": "What courses have Programming Basics 1 as a prerequisite and Demo as an evaluation method, and are Faculty Mandatory Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.?course <http://example.org/has_evaluation_method> <http://example.org/demo>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/programming_basics_2"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q91",
+    "question": "What courses have Introduction to Computer Organization as a prerequisite and Task as an evaluation method, and are Study Program Mandatory Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/operating_system"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q92",
+    "question": "What course has the evaluation method of Capture The Flag and is a Study Program Elective Course with the course code 'CSCE604258'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/capture_the_flag>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604258\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/ethical_hacking"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q93",
+    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Test as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      }
+    ],
+    "result_count": 6
+  },
+  {
+    "id": "q94",
+    "question": "What are the 5 most common prerequisite courses?",
+    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "common-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/data_structures_and_algorithms",
+        "count": 10
+      },
+      {
+        "prereq": "http://example.org/computer_network",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/programming_basics_1",
+        "count": 6
+      },
+      {
+        "prereq": "http://example.org/discrete_mathematics_1",
+        "count": 5
+      }
+    ],
+    "result_count": 5
+  },
+  {
+    "id": "q95",
+    "question": "What course has the evaluation method of Test and is a Study Program Mandatory Course with the course code 'CSCM601213'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.?course <http://example.org/has_course_code> \"CSCM601213\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition-code",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/calculus_2"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q96",
+    "question": "What are the 5 most common prerequisite courses?",
+    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "common-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/data_structures_and_algorithms",
+        "count": 10
+      },
+      {
+        "prereq": "http://example.org/computer_network",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/introduction_to_artificial_intelligence_and_data_science",
+        "count": 7
+      },
+      {
+        "prereq": "http://example.org/programming_basics_1",
+        "count": 6
+      },
+      {
+        "prereq": "http://example.org/discrete_mathematics_1",
+        "count": 5
+      }
+    ],
+    "result_count": 5
+  },
+  {
+    "id": "q97",
+    "question": "What courses have Machine Learning and Computer Vision as their research group, are categorized as Study Program Elective Course, and use Task as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_science_special_topics"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      }
+    ],
+    "result_count": 4
+  },
+  {
+    "id": "q98",
+    "question": "What courses have prerequisites with Calculus 1 as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/calculus_1>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 7
+  },
+  {
+    "id": "q99",
+    "question": "What courses have Discrete Mathematics 2 as a prerequisite and Group Project as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_2>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/knowledge_representation_and_reasoning"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q100",
+    "question": "What courses have prerequisites that have Test as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-eval",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/introduction_to_computer_organization"
+      },
+      {
+        "course": "http://example.org/calculus_2"
+      },
+      {
+        "course": "http://example.org/statistics_and_probability"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/natural_language_processing"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/advanced_database"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/software_project"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/knowledge_representation_and_reasoning"
+      },
+      {
+        "course": "http://example.org/language_theory_and_automata"
+      },
+      {
+        "course": "http://example.org/embedded_systems"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/operating_system"
+      },
+      {
+        "course": "http://example.org/differential_equations"
+      },
+      {
+        "course": "http://example.org/numerical_analysis"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      },
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/cryptography_and_information_security"
+      },
+      {
+        "course": "http://example.org/simulation_and_modeling"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      },
+      {
+        "course": "http://example.org/introduction_to_software_security"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/database"
+      },
+      {
+        "course": "http://example.org/ethical_hacking"
+      },
+      {
+        "course": "http://example.org/logic_programming"
+      },
+      {
+        "course": "http://example.org/platform_based_programming"
+      },
+      {
+        "course": "http://example.org/programming_basics_2"
+      },
+      {
+        "course": "http://example.org/computer_network"
+      },
+      {
+        "course": "http://example.org/data_structures_and_algorithms"
+      },
+      {
+        "course": "http://example.org/cloud_computing"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/computer_vision"
+      },
+      {
+        "course": "http://example.org/data_mining"
+      },
+      {
+        "course": "http://example.org/deep_learning"
+      },
+      {
+        "course": "http://example.org/information_retrieval"
+      },
+      {
+        "course": "http://example.org/machine_learning"
+      },
+      {
+        "course": "http://example.org/robotics"
+      },
+      {
+        "course": "http://example.org/spoken_language_processing"
+      },
+      {
+        "course": "http://example.org/algorithm_design_and_analysis"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/competitive_programming"
+      },
+      {
+        "course": "http://example.org/competitive_programming_practicum"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/computational_geometry"
+      },
+      {
+        "course": "http://example.org/functional_programming"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 70
   }
 ]
