@@ -589,13 +589,22 @@ class NL2SPARQLGenerator:
             # Create a mapping of placeholders to their values from the selected combination
             replacements = {}
             
+            # Get the variable names from the query
+            query_vars = [str(var) for var in self.graph.query(discovery_query).vars]
+            
             # Map variable names from the query results to their indices
-            var_indices = {str(var): i for i, var in enumerate(self.graph.query(discovery_query).vars)}
+            var_indices = {}
+            for i, var_name in enumerate(query_vars):
+                # Remove the ? prefix from variable names
+                if var_name.startswith('?'):
+                    var_name = var_name[1:]
+                var_indices[var_name] = i
             
             for placeholder in placeholders:
                 # Get the index for this placeholder variable
                 if placeholder not in var_indices:
                     print(f"Error: Placeholder {placeholder} not found in query results")
+                    print(f"Available variables: {list(var_indices.keys())}")
                     return None
                     
                 value_index = var_indices[placeholder]
@@ -655,7 +664,7 @@ class NL2SPARQLGenerator:
             # Replace placeholders in question and query
             for placeholder, replacement in replacements.items():
                 # Create a pattern that can handle whitespace around the placeholder
-                pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
+                pattern = r"{\s*" + re.escape(placeholder) + r"\s*}"
                 
                 # Replace in question
                 replacement_text = replacement.get("label", replacement.get("value", ""))
@@ -697,6 +706,9 @@ class NL2SPARQLGenerator:
         Returns:
             str: The discovery query
         """
+        # Start with basic query components
+        select_vars = set()
+        where_patterns = []
         sparql_template = template["sparqlTemplate"].strip()
         
         # Extract the WHERE clause from the template
@@ -705,47 +717,54 @@ class NL2SPARQLGenerator:
             print(f"Error: Could not extract WHERE clause from template: {template['id']}")
             return None
             
+        # Process each line in the WHERE clause
         where_clause = where_match.group(1).strip()
+        for line in where_clause.split('.'):
+            line = line.strip()
+            if not line:
+                continue
+                
+            # Replace placeholders with variables
+            processed_line = line
+            for placeholder in placeholders:
+                pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+                if re.search(pattern, processed_line):
+                    var_name = f"?{placeholder}"
+                    processed_line = re.sub(pattern, var_name, processed_line)
+                    select_vars.add(var_name)
+                    
+                    # For entity placeholders, also select label
+                    if placeholder.startswith('entity'):
+                        select_vars.add(f"?{placeholder}Label")
+            
+            # Find any other variables in the line
+            var_pattern = r'\?(\w+)'
+            for var_match in re.finditer(var_pattern, processed_line):
+                var_name = f"?{var_match.group(1)}"
+                select_vars.add(var_name)
+            
+            where_patterns.append(processed_line + '.')
         
-        # Now handle standard placeholders (outside quotes)
-        for placeholder in placeholders:
-            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
-            where_clause = re.sub(pattern, f"?{placeholder}", where_clause)
+        # Construct the SELECT clause with all unique variables
+        select_clause = "SELECT DISTINCT " + " ".join(sorted(select_vars))
         
-        # Build SELECT clause with all placeholders
-        select_vars = []
-        
-        # Add the result variable from the original query
-        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
-        if result_var_match:
-            result_var = result_var_match.group(1)
-            if "COUNT" not in result_var and "count" not in result_var:
-                select_vars.append(result_var)
-        
-        # Add all placeholder variables to SELECT clause
-        for placeholder in placeholders:
-            select_vars.append(f"?{placeholder}")
-            # For entity placeholders, also select label if available
-            if placeholder.startswith('entity'):
-                select_vars.append(f"?{placeholder}Label")
-        
-        # Construct the SELECT clause with all variables
-        select_clause = "SELECT DISTINCT " + " ".join(select_vars)
+        # Construct the complete where clause
+        where_clause = "\n  ".join(where_patterns)
         
         # Construct the complete discovery query
-        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
+        discovery_query = f"{select_clause} WHERE {{\n  {where_clause}"
         
         # Add OPTIONAL label patterns for entity placeholders
         for placeholder in placeholders:
             if placeholder.startswith('entity'):
-                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
+                discovery_query += f"\n  OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
         
-        # Close the query with increased LIMIT to ensure finding valid combinations
-        discovery_query += " } LIMIT 1000"
+        # Close the query with appropriate LIMIT
+        discovery_query += "\n} LIMIT 1000"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
-            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            pattern = r'\b' + re.escape(prefix) + r':(\w+)\b'
             discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
         
         return discovery_query
@@ -871,7 +890,7 @@ class NL2SPARQLGenerator:
 
     def extract_placeholders(self, template):
         """
-        Extract all placeholders from template
+        Extract all placeholders from template (text in curly braces)
         
         Args:
             template (dict): Template with question and SPARQL
@@ -886,8 +905,8 @@ class NL2SPARQLGenerator:
         question_template = template["questionTemplate"].strip()
         sparql_template = template["sparqlTemplate"].strip()
         
-        # Use a pattern that can handle potential whitespace around the placeholders
-        pattern = r"{[\s]*([^{}]+)[\s]*}"
+        # Use a pattern that matches only text inside curly braces
+        pattern = r"{\s*([a-zA-Z0-9_]+)\s*}"
         
         # Search in question template
         for match in re.finditer(pattern, question_template):

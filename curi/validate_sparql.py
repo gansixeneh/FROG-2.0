@@ -29,8 +29,7 @@ def validate_and_analyze_sparql_queries(input_json_path, ttl_file_path, output_j
     """
     # Default output path if not specified
     if output_json_path is None:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_json_path = f"enhanced_sparql_results_{timestamp}.json"
+        output_json_path = f"enhanced_sparql_results.json"
     
     print(f"Loading RDF graph from {ttl_file_path}...")
     # Load the RDF graph
@@ -162,29 +161,6 @@ def validate_and_analyze_sparql_queries(input_json_path, ttl_file_path, output_j
         print(f"  - {template_id}: {count} queries")
     
     print(f"\nResults saved to {output_json_path}")
-    
-    # Generate a simple visualization
-    try:
-        plt.figure(figsize=(12, 6))
-        plt.subplot(1, 2, 1)
-        plt.bar(stats['complexity'].keys(), stats['complexity'].values())
-        plt.title('Queries by Complexity')
-        plt.xlabel('Complexity')
-        plt.ylabel('Count')
-        
-        plt.subplot(1, 2, 2)
-        top_templates = dict(stats['template_stats'].most_common(5))
-        plt.bar(top_templates.keys(), top_templates.values())
-        plt.title('Top 5 Templates')
-        plt.xlabel('Template ID')
-        plt.ylabel('Count')
-        plt.xticks(rotation=45, ha='right')
-        
-        plt.tight_layout()
-        plt.savefig(f"query_analysis_{timestamp}.png")
-        print(f"Visualization saved to query_analysis_{timestamp}.png")
-    except Exception as e:
-        print(f"Could not generate visualization: {e}")
     
     return stats
 
