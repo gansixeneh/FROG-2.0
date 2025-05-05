@@ -1,246 +1,318 @@
 [
   {
     "id": "q1",
-    "question": "What are the prerequisites for Software Project?",
-    "sparql": "select ?prereq where { <http://example.org/software_engineering> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "What are the prerequisites for Compiler Techniques?",
+    "sparql": "select ?prereq where { <http://example.org/compiler_techniques> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-prerequisites"
   },
   {
     "id": "q2",
-    "question": "Which research group is associated with Computer Science Special Topics?",
-    "sparql": "select ?group where { <http://example.org/digital_library_and_distance_learning_laboratory> <http://example.org/has_research_group> ?group.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-research-group"
-  },
-  {
-    "id": "q3",
-    "question": "What evaluation methods are used for Logic Programming?",
-    "sparql": "select ?method where { <http://example.org/project> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation"
-  },
-  {
-    "id": "q4",
-    "question": "What evaluation methods are used for Digital Forensics?",
-    "sparql": "select ?method where { <http://example.org/test> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation"
-  },
-  {
-    "id": "q5",
-    "question": "What are the prerequisites for Data Mining?",
-    "sparql": "select ?prereq where { <http://example.org/introduction_to_artificial_intelligence_and_data_science> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "What are the prerequisites for Parallel Programming?",
+    "sparql": "select ?prereq where { <http://example.org/parallel_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-prerequisites"
   },
   {
-    "id": "q6",
-    "question": "How many credits does the System Administration course have?",
-    "sparql": "select ?value where { <3> <http://example.org/has_credits> ?value.}",
+    "id": "q3",
+    "question": "Which research group is associated with Technopreneurship?",
+    "sparql": "select ?group where { <http://example.org/technopreneurship> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group"
+  },
+  {
+    "id": "q4",
+    "question": "How many credits does the Computers & Society course have?",
+    "sparql": "select ?value where { <http://example.org/computers_and_society> <http://example.org/has_credits> ?value.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-credits"
   },
   {
+    "id": "q5",
+    "question": "How many credits does the robotics course have?",
+    "sparql": "select ?value where { <http://example.org/robotics> <http://example.org/has_credits> ?value.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-credits"
+  },
+  {
+    "id": "q6",
+    "question": "What category does Database belong to?",
+    "sparql": "select ?category where { <http://example.org/database> <http://example.org/has_course_category> ?category.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-category"
+  },
+  {
     "id": "q7",
-    "question": "What evaluation methods are used for Computer Science Special Topics?",
-    "sparql": "select ?method where { <http://example.org/test> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "What evaluation methods are used for Computational Geometry?",
+    "sparql": "select ?method where { <http://example.org/computational_geometry> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-evaluation"
   },
   {
     "id": "q8",
-    "question": "What evaluation methods are used for Computers & Society?",
-    "sparql": "select ?method where { <http://example.org/task> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "What is the course code for Technopreneurship?",
+    "sparql": "select ?code where { <http://example.org/technopreneurship> <http://example.org/has_course_code> ?code.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-evaluation"
+    "templateId": "course-code"
   },
   {
     "id": "q9",
-    "question": "What are the alternative names or abbreviations for Simulation and Modeling?",
-    "sparql": "select ?nickname where { <simmod> <http://example.org/also_known_as> ?nickname.}",
+    "question": "How many credits does the Individual Final Assignment course have?",
+    "sparql": "select ?value where { <http://example.org/individual_final_assignment> <http://example.org/has_credits> ?value.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-credits"
+  },
+  {
+    "id": "q10",
+    "question": "What are the alternative names or abbreviations for Compiler Techniques?",
+    "sparql": "select ?nickname where { <http://example.org/compiler_techniques> <http://example.org/also_known_as> ?nickname.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-nickname"
   },
   {
-    "id": "q10",
-    "question": "How many credits does the Digital Forensics course have?",
-    "sparql": "select ?value where { <4> <http://example.org/has_credits> ?value.}",
+    "id": "q11",
+    "question": "What is the course code for Competitive Programming?",
+    "sparql": "select ?code where { <http://example.org/competitive_programming> <http://example.org/has_course_code> ?code.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-credits"
+    "templateId": "course-code"
   },
   {
-    "id": "q11",
-    "question": "What evaluation methods are used for Computational Geometry?",
-    "sparql": "select ?method where { <http://example.org/programming_assignment> <http://example.org/has_evaluation_method> ?method.}",
+    "id": "q12",
+    "question": "What evaluation methods are used for Linear Algebra?",
+    "sparql": "select ?method where { <http://example.org/linear_algebra> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-evaluation"
   },
   {
-    "id": "q12",
-    "question": "What are the prerequisites for System Programming?",
-    "sparql": "select ?prereq where { <http://example.org/operating_system> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
     "id": "q13",
-    "question": "What are the prerequisites for Software engineering?",
-    "sparql": "select ?prereq where { <http://example.org/programming_basics_2> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
-    "id": "q14",
-    "question": "Which research group is associated with Computer Assisted Teaching?",
-    "sparql": "select ?group where { <http://example.org/digital_library_and_distance_learning_laboratory> <http://example.org/has_research_group> ?group.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-research-group"
-  },
-  {
-    "id": "q15",
-    "question": "What category does Final Project Group Assignment belong to?",
-    "sparql": "select ?category where { <http://example.org/faculty_mandatory_course> <http://example.org/has_course_category> ?category.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-category"
-  },
-  {
-    "id": "q16",
-    "question": "What are the prerequisites for Mobile Technology?",
-    "sparql": "select ?prereq where { <http://example.org/computer_network> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
-    "id": "q17",
-    "question": "How many credits does the Computational Geometry course have?",
-    "sparql": "select ?value where { <3> <http://example.org/has_credits> ?value.}",
+    "question": "How many credits does the Software Project course have?",
+    "sparql": "select ?value where { <http://example.org/software_project> <http://example.org/has_credits> ?value.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-credits"
   },
   {
+    "id": "q14",
+    "question": "What evaluation methods are used for Information Retrieval?",
+    "sparql": "select ?method where { <http://example.org/information_retrieval> <http://example.org/has_evaluation_method> ?method.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation"
+  },
+  {
+    "id": "q15",
+    "question": "Which research group is associated with Machine Learning?",
+    "sparql": "select ?group where { <http://example.org/machine_learning> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group"
+  },
+  {
+    "id": "q16",
+    "question": "What is the course code for Cryptography and Information Security?",
+    "sparql": "select ?code where { <http://example.org/cryptography_and_information_security> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code"
+  },
+  {
+    "id": "q17",
+    "question": "What are the alternative names or abbreviations for Compiler Techniques?",
+    "sparql": "select ?nickname where { <http://example.org/compiler_techniques> <http://example.org/also_known_as> ?nickname.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-nickname"
+  },
+  {
     "id": "q18",
-    "question": "What are the prerequisites for Human-Computer Interaction?",
-    "sparql": "select ?prereq where { <http://example.org/platform_based_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "What are the prerequisites for Ethical Hacking?",
+    "sparql": "select ?prereq where { <http://example.org/ethical_hacking> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-prerequisites"
   },
   {
     "id": "q19",
-    "question": "What are the alternative names or abbreviations for Information Retrieval?",
-    "sparql": "select ?nickname where { <InformationRetrieval> <http://example.org/also_known_as> ?nickname.}",
+    "question": "Which research group is associated with Functional Programming?",
+    "sparql": "select ?group where { <http://example.org/functional_programming> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group"
+  },
+  {
+    "id": "q20",
+    "question": "What is the course code for Numerical Analysis?",
+    "sparql": "select ?code where { <http://example.org/numerical_analysis> <http://example.org/has_course_code> ?code.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-code"
+  },
+  {
+    "id": "q21",
+    "question": "What are the alternative names or abbreviations for Numerical Analysis?",
+    "sparql": "select ?nickname where { <http://example.org/numerical_analysis> <http://example.org/also_known_as> ?nickname.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-nickname"
   },
   {
-    "id": "q20",
-    "question": "What are the prerequisites for Software engineering?",
-    "sparql": "select ?prereq where { <http://example.org/programming_basics_2> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
-    "id": "q21",
-    "question": "Which research group is associated with Advanced Database?",
-    "sparql": "select ?group where { <http://example.org/reliable_software_engineering> <http://example.org/has_research_group> ?group.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-research-group"
-  },
-  {
     "id": "q22",
-    "question": "Which research group is associated with Advanced Database?",
-    "sparql": "select ?group where { <http://example.org/reliable_software_engineering> <http://example.org/has_research_group> ?group.}",
+    "question": "What evaluation methods are used for Parallel Programming?",
+    "sparql": "select ?method where { <http://example.org/parallel_programming> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-research-group"
+    "templateId": "course-evaluation"
   },
   {
     "id": "q23",
-    "question": "How many credits does the Religion course have?",
-    "sparql": "select ?value where { <2> <http://example.org/has_credits> ?value.}",
+    "question": "What are the prerequisites for Distributed Systems?",
+    "sparql": "select ?prereq where { <http://example.org/distributed_systems> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-credits"
+    "templateId": "course-prerequisites"
   },
   {
     "id": "q24",
-    "question": "What are the prerequisites for Logic Programming?",
-    "sparql": "select ?prereq where { <http://example.org/discrete_mathematics_1> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "What are the alternative names or abbreviations for Knowledge Representation and Reasoning?",
+    "sparql": "select ?nickname where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/also_known_as> ?nickname.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-prerequisites"
+    "templateId": "course-nickname"
   },
   {
     "id": "q25",
-    "question": "What is the course code for Introduction to Software Security?",
-    "sparql": "select ?code where { <CSGE602023> <http://example.org/has_course_code> ?code.}",
+    "question": "What are the prerequisites for Software Quality Assurance?",
+    "sparql": "select ?prereq where { <http://example.org/software_quality_assurance> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-code"
+    "templateId": "course-prerequisites"
   },
   {
     "id": "q26",
-    "question": "What are the prerequisites for Advanced Programming?",
-    "sparql": "select ?prereq where { <http://example.org/programming_basics_2> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
-    "id": "q27",
-    "question": "What are the prerequisites for Digital Forensics?",
-    "sparql": "select ?prereq where { <http://example.org/computer_network> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites"
-  },
-  {
-    "id": "q28",
-    "question": "What is the course code for Digital Forensics?",
-    "sparql": "select ?code where { <CSCE604156> <http://example.org/has_course_code> ?code.}",
+    "question": "What is the course code for Compiler Techniques?",
+    "sparql": "select ?code where { <http://example.org/compiler_techniques> <http://example.org/has_course_code> ?code.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-code"
   },
   {
-    "id": "q29",
-    "question": "How many credits does the Distributed Systems course have?",
-    "sparql": "select ?value where { <3> <http://example.org/has_credits> ?value.}",
+    "id": "q27",
+    "question": "Which research group is associated with Competitive Programming?",
+    "sparql": "select ?group where { <http://example.org/competitive_programming> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group"
+  },
+  {
+    "id": "q28",
+    "question": "How many credits does the Machine Learning course have?",
+    "sparql": "select ?value where { <http://example.org/machine_learning> <http://example.org/has_credits> ?value.}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-credits"
   },
   {
-    "id": "q30",
-    "question": "What category does Embedded Systems belong to?",
-    "sparql": "select ?category where { <http://example.org/study_program_elective_course> <http://example.org/has_course_category> ?category.}",
+    "id": "q29",
+    "question": "What are the prerequisites for Individual Final Assignment?",
+    "sparql": "select ?prereq where { <http://example.org/individual_final_assignment> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "basic",
-    "templateId": "course-category"
+    "templateId": "course-prerequisites"
+  },
+  {
+    "id": "q30",
+    "question": "Which research group is associated with Advanced Database?",
+    "sparql": "select ?group where { <http://example.org/advanced_database> <http://example.org/has_research_group> ?group.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group"
   },
   {
     "id": "q31",
+    "question": "What courses have Advanced Programming as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/advanced_programming>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite"
+  },
+  {
+    "id": "q32",
+    "question": "What courses have Linear Algebra as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite"
+  },
+  {
+    "id": "q33",
+    "question": "Which courses are associated with the Reliable Software Engineering research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group"
+  },
+  {
+    "id": "q34",
+    "question": "Which courses are associated with the Center for Cyber Security and Cryptography research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group"
+  },
+  {
+    "id": "q35",
+    "question": "Which courses are evaluated using Final Project?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/final_project>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-evaluation"
+  },
+  {
+    "id": "q36",
+    "question": "What courses have Platform Based Programming as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/platform_based_programming>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-prerequisite"
+  },
+  {
+    "id": "q37",
+    "question": "Which courses have 3 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-with-credits"
+  },
+  {
+    "id": "q38",
+    "question": "How many prerequisites does Introduction to Computer Organization have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/introduction_to_computer_organization> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites"
+  },
+  {
+    "id": "q39",
+    "question": "Which courses are associated with the Machine Learning and Computer Vision research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group"
+  },
+  {
+    "id": "q40",
     "question": "How many courses are in the Study Program Elective Course category?",
     "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
     "category": "university",
@@ -248,391 +320,399 @@
     "templateId": "count-courses-by-category"
   },
   {
-    "id": "q32",
-    "question": "Which courses have http://example.org/knowledge_representation_and_reasoning credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/knowledge_representation_and_reasoning.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits"
-  },
-  {
-    "id": "q33",
-    "question": "Which courses have http://example.org/introduction_to_artificial_intelligence_and_data_science credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/introduction_to_artificial_intelligence_and_data_science.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits"
-  },
-  {
-    "id": "q34",
-    "question": "Which courses have http://example.org/introduction_to_computer_organization credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/introduction_to_computer_organization.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits"
-  },
-  {
-    "id": "q35",
-    "question": "How many prerequisites does Compiler Techniques have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/compiler_techniques> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites"
-  },
-  {
-    "id": "q36",
-    "question": "Which courses are evaluated using Programming Assignment?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/parallel_programming>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation"
-  },
-  {
-    "id": "q37",
-    "question": "How many evaluation methods are associated with System Programming?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/system_programming> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-evaluation-methods"
-  },
-  {
-    "id": "q38",
-    "question": "How many evaluation methods are associated with Individual Final Assignment?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/individual_final_assignment> <http://example.org/has_evaluation_method> ?method.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-evaluation-methods"
-  },
-  {
-    "id": "q39",
-    "question": "Which courses have http://example.org/cryptography_and_information_security credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/cryptography_and_information_security.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits"
-  },
-  {
-    "id": "q40",
-    "question": "How many prerequisites does System Programming have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/system_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites"
-  },
-  {
     "id": "q41",
-    "question": "How many courses are in the Study Program Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "question": "What courses have Calculus 2 as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/calculus_2>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-courses-by-category"
+    "templateId": "courses-by-prerequisite"
   },
   {
     "id": "q42",
-    "question": "How many evaluation methods are associated with Web Application Architecture?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/web_application_architecture> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "Which courses have 4 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-evaluation-methods"
+    "templateId": "courses-with-credits"
   },
   {
     "id": "q43",
-    "question": "Which courses are evaluated using Programming Assignment?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/deep_learning>.}",
+    "question": "What courses have Platform Based Programming as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/platform_based_programming>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "courses-by-evaluation"
+    "templateId": "courses-by-prerequisite"
   },
   {
     "id": "q44",
-    "question": "How many courses are in the University Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/university_mandatory_course>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-category"
-  },
-  {
-    "id": "q45",
-    "question": "Which courses are evaluated using Lab assignment?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/spoken_language_processing>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-evaluation"
-  },
-  {
-    "id": "q46",
-    "question": "How many evaluation methods are associated with Computers & Society?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/computers_and_society> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "How many evaluation methods are associated with Introduction to Computer Organization?",
+    "sparql": "select (count(?method) as ?count) where { <http://example.org/introduction_to_computer_organization> <http://example.org/has_evaluation_method> ?method.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-evaluation-methods"
   },
   {
-    "id": "q47",
-    "question": "Which courses have http://example.org/web_application_architecture credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/web_application_architecture.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-with-credits"
-  },
-  {
-    "id": "q48",
-    "question": "How many courses are in the Faculty Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+    "id": "q45",
+    "question": "How many courses are in the Study Program Elective Course category?",
+    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-courses-by-category"
   },
   {
-    "id": "q49",
-    "question": "Which courses have http://example.org/technopreneurship credits?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> http://example.org/technopreneurship.}",
+    "id": "q46",
+    "question": "How many prerequisites does Mobile Technology have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/mobile_technology> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "courses-with-credits"
+    "templateId": "count-prerequisites"
+  },
+  {
+    "id": "q47",
+    "question": "Which courses are associated with the Intelligent Systems & Robotics research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group"
+  },
+  {
+    "id": "q48",
+    "question": "How many prerequisites does Data Mining have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/data_mining> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites"
+  },
+  {
+    "id": "q49",
+    "question": "How many prerequisites does Mobile Technology have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/mobile_technology> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites"
   },
   {
     "id": "q50",
-    "question": "How many prerequisites does Software Product Line Engineering have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/software_product_line_engineering> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "How many prerequisites does Calculus 2 have?",
+    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/calculus_2> <http://example.org/has_prerequisite_course> ?prereq.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-prerequisites"
   },
   {
     "id": "q51",
-    "question": "Which courses are associated with the Intelligent Systems & Robotics research group?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/machine_learning>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-research-group"
-  },
-  {
-    "id": "q52",
-    "question": "How many courses are in the University Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/university_mandatory_course>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-category"
-  },
-  {
-    "id": "q53",
-    "question": "How many courses have Research Methodology and Scientific Writing as a prerequisite course?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/research_methodology_and_scientific_writing>.}",
+    "question": "How many courses have Data Structures and Algorithms as a prerequisite course?",
+    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-courses-by-prerequisite"
   },
   {
-    "id": "q54",
-    "question": "How many prerequisites does Competitive Programming Practicum have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/competitive_programming_practicum> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites"
-  },
-  {
-    "id": "q55",
-    "question": "How many courses are in the Study Program Mandatory Course category?",
-    "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-category"
-  },
-  {
-    "id": "q56",
-    "question": "Which courses are evaluated using Group Project?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/web_application_architecture>.}",
+    "id": "q52",
+    "question": "Which courses are evaluated using Individual Review?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/individual_review>.}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "courses-by-evaluation"
   },
   {
-    "id": "q57",
-    "question": "How many prerequisites does Algorithm Design and Analysis have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/algorithm_design_and_analysis> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "id": "q53",
+    "question": "What courses have Discrete Mathematics 2 as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_2>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-prerequisites"
+    "templateId": "courses-by-prerequisite"
+  },
+  {
+    "id": "q54",
+    "question": "Which courses have 4 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-with-credits"
+  },
+  {
+    "id": "q55",
+    "question": "Which courses are evaluated using Lab Assignment?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-evaluation"
+  },
+  {
+    "id": "q56",
+    "question": "Which courses are associated with the Information Retrieval and Natural Language Processing research group?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-by-research-group"
+  },
+  {
+    "id": "q57",
+    "question": "Which courses have 3 credits?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "courses-with-credits"
   },
   {
     "id": "q58",
-    "question": "How many prerequisites does Natural Language Processing have?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/natural_language_processing> <http://example.org/has_prerequisite_course> ?prereq.}",
+    "question": "What courses have Discrete Mathematics 1 as a prerequisite course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_1>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-prerequisites"
+    "templateId": "courses-by-prerequisite"
   },
   {
     "id": "q59",
-    "question": "How many evaluation methods are associated with Competitive Programming?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/competitive_programming> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "Which courses are evaluated using Programming Assignment?",
+    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-evaluation-methods"
+    "templateId": "courses-by-evaluation"
   },
   {
     "id": "q60",
-    "question": "How many evaluation methods are associated with Logic Programming?",
-    "sparql": "select (count(?method) as ?count) where { <http://example.org/logic_programming> <http://example.org/has_evaluation_method> ?method.}",
+    "question": "How many courses have Introduction to Computer Organization as a prerequisite course?",
+    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
     "category": "university",
     "complexity": "intermediate",
-    "templateId": "count-evaluation-methods"
+    "templateId": "count-courses-by-prerequisite"
   },
   {
     "id": "q61",
-    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/machine_learning>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category"
-  },
-  {
-    "id": "q62",
-    "question": "What courses have prerequisites with http://example.org/software_quality_assurance credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/software_quality_assurance.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-credits"
-  },
-  {
-    "id": "q63",
-    "question": "What courses have prerequisites with Programming Basics 2 as their prerequisites?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/data_mining>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-of-prereq"
-  },
-  {
-    "id": "q64",
-    "question": "What courses have 'Programming Assignment' and 'Programming Assignment' as evaluation methods and have the course code 'http://example.org/cryptography_and_information_security'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604243>.?course <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.?course <http://example.org/has_course_code> \"http://example.org/cryptography_and_information_security\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
-  },
-  {
-    "id": "q65",
-    "question": "What courses have prerequisites that have Test as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/parallel_programming>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-eval"
-  },
-  {
-    "id": "q66",
-    "question": "Which courses have the same prerequisites as Algorithm Design and Analysis?",
-    "sparql": "select distinct ?course where { <http://example.org/algorithm_design_and_analysis> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/algorithm_design_and_analysis>) }",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites"
-  },
-  {
-    "id": "q67",
-    "question": "What courses have Introduction to Artificial Intelligence and Data Science as a prerequisite and Laboratory Assignment as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/robotics>.?course <http://example.org/has_evaluation_method> <http://example.org/introduction_to_artificial_intelligence_and_data_science>.?course <http://example.org/has_course_category> <IntroductiontoArtificialIntelligenceandDataScience>.}",
+    "question": "What courses have Platform Based Programming as a prerequisite and Group Presentation as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/platform_based_programming>.?course <http://example.org/has_evaluation_method> <http://example.org/group_presentation>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prereq-eval-category"
   },
   {
+    "id": "q62",
+    "question": "What courses have Digital Library & Distance Learning Laboratory as their research group, are categorized as Study Program Elective Course, and use Task as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/digital_library_and_distance_learning_laboratory>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition"
+  },
+  {
+    "id": "q63",
+    "question": "What courses have Reliable Software Engineering as their research group, are categorized as Study Program Elective Course, and use Project as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/project>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition"
+  },
+  {
+    "id": "q64",
+    "question": "Which courses have the same prerequisites as Differential Equations?",
+    "sparql": "select distinct ?course where { <http://example.org/differential_equations> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/differential_equations>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites"
+  },
+  {
+    "id": "q65",
+    "question": "What courses have 'Test' and 'Test' as evaluation methods and have the course code 'CSCE604029'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"CSCE604029\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-double-evaluation-code"
+  },
+  {
+    "id": "q66",
+    "question": "What courses have the evaluation method 'Task' and are associated with the research group 'Information Retrieval and Natural Language Processing' and have the course code 'CSCE604235'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_code> \"CSCE604235\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-research-eval-code"
+  },
+  {
+    "id": "q67",
+    "question": "What courses have prerequisites with Introduction to Computer Organization as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq"
+  },
+  {
     "id": "q68",
-    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Machine Learning and Computer Vision' and have the course code 'http://example.org/simulation_and_modeling'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604111>.?course <http://example.org/has_research_group> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/simulation_and_modeling\".}",
+    "question": "What courses have the evaluation method 'Lab assignment' and are associated with the research group 'Intelligent Systems & Robotics' and have the course code 'CSCE604032'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.?course <http://example.org/has_course_code> \"CSCE604032\".}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-research-eval-code"
   },
   {
     "id": "q69",
-    "question": "What courses have 'Task' and 'Group Project' as evaluation methods and have the course code 'http://example.org/distributed_systems'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604254>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_code> \"http://example.org/distributed_systems\".}",
+    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
+    "templateId": "courses-with-prerequisite-category"
   },
   {
     "id": "q70",
-    "question": "Which courses have the same prerequisites as System Programming?",
-    "sparql": "select distinct ?course where { <http://example.org/system_programming> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/system_programming>) }",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites"
-  },
-  {
-    "id": "q71",
-    "question": "What courses have 'Task' and 'Task' as evaluation methods and have the course code 'http://example.org/digital_forensics'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604156>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_code> \"http://example.org/digital_forensics\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
-  },
-  {
-    "id": "q72",
-    "question": "What courses have prerequisites that have Test as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/differential_equations>.}",
+    "question": "What courses have prerequisites that have Programming Projects as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/programming_projects>.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prerequisite-eval"
   },
   {
-    "id": "q73",
-    "question": "What courses have Language Theory & Automata as a prerequisite and Test as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/compiler_techniques>.?course <http://example.org/has_evaluation_method> <http://example.org/language_theory_and_automata>.?course <http://example.org/has_course_category> <LanguageTheory&Automata>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prereq-eval-category"
-  },
-  {
-    "id": "q74",
-    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/introduction_to_software_security>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category"
-  },
-  {
-    "id": "q75",
-    "question": "What courses have prerequisites with http://example.org/spoken_language_processing credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/spoken_language_processing.}",
+    "id": "q71",
+    "question": "What courses have prerequisites with 3 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prerequisite-credits"
   },
   {
-    "id": "q76",
-    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/programming_basics_2>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-category"
-  },
-  {
-    "id": "q77",
-    "question": "What courses have Reliable Software Engineering as their research group, are categorized as Study Program Elective Course, and use Programming Activities as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/competitive_programming_practicum>.?course <http://example.org/has_course_category> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_evaluation_method> <ReliableSoftwareEngineering>.}",
+    "id": "q72",
+    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Test as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-triple-condition"
   },
   {
+    "id": "q73",
+    "question": "What courses have 'Test' and 'Task' as evaluation methods and have the course code 'CSGE614093'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_code> \"CSGE614093\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-double-evaluation-code"
+  },
+  {
+    "id": "q74",
+    "question": "Which courses have the same prerequisites as Machine Learning?",
+    "sparql": "select distinct ?course where { <http://example.org/machine_learning> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/machine_learning>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites"
+  },
+  {
+    "id": "q75",
+    "question": "What courses have prerequisites with Programming Basics 1 as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq"
+  },
+  {
+    "id": "q76",
+    "question": "What courses have 'Test' and 'Test' as evaluation methods and have the course code 'CSCE604212'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"CSCE604212\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-double-evaluation-code"
+  },
+  {
+    "id": "q77",
+    "question": "What courses have prerequisites with 4 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
     "id": "q78",
-    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Computer System Laboratory' and have the course code 'http://example.org/cloud_computing'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604172>.?course <http://example.org/has_research_group> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/cloud_computing\".}",
+    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Computer System Laboratory' and have the course code 'CSCE604029'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_code> \"CSCE604029\".}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-research-eval-code"
   },
   {
     "id": "q79",
-    "question": "What courses have prerequisites with Discrete Mathematics 1 as their prerequisites?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/compiler_techniques>.}",
+    "question": "What courses have Reliable Software Engineering as their research group, are categorized as Study Program Elective Course, and use Lab Assignment as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-prereq-of-prereq"
+    "templateId": "courses-with-triple-condition"
   },
   {
     "id": "q80",
+    "question": "Which courses have the same prerequisites as Computer network?",
+    "sparql": "select distinct ?course where { <http://example.org/computer_network> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/computer_network>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites"
+  },
+  {
+    "id": "q81",
+    "question": "What courses have prerequisites that have Task as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-eval"
+  },
+  {
+    "id": "q82",
+    "question": "What courses have the evaluation method 'Laboratory Assignment' and are associated with the research group 'Intelligent Systems & Robotics' and have the course code 'CSCE604232'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/laboratory_assignment>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.?course <http://example.org/has_course_code> \"CSCE604232\".}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-research-eval-code"
+  },
+  {
+    "id": "q83",
+    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Test as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-triple-condition"
+  },
+  {
+    "id": "q84",
+    "question": "Which courses have the same prerequisites as Internet of Things?",
+    "sparql": "select distinct ?course where { <http://example.org/internet_of_things> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/internet_of_things>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites"
+  },
+  {
+    "id": "q85",
+    "question": "What courses have prerequisites with 3 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
+    "id": "q86",
+    "question": "Which courses have the same prerequisites as Database?",
+    "sparql": "select distinct ?course where { <http://example.org/database> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/database>) }",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-same-prerequisites"
+  },
+  {
+    "id": "q87",
+    "question": "What courses have prerequisites with 3 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
+    "id": "q88",
+    "question": "What courses have prerequisites with 4 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
+    "id": "q89",
+    "question": "What courses have prerequisites with 4 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
+    "id": "q90",
     "question": "Which courses have the same prerequisites as Software Product Line Engineering?",
     "sparql": "select distinct ?course where { <http://example.org/software_product_line_engineering> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/software_product_line_engineering>) }",
     "category": "university",
@@ -640,163 +720,83 @@
     "templateId": "courses-with-same-prerequisites"
   },
   {
-    "id": "q81",
-    "question": "What course has the evaluation method of Programming Assignment and is a Study Program Elective Course with the course code 'http://example.org/information_retrieval'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604135>.?course <http://example.org/has_course_category> <http://example.org/programming_assignment>.?course <http://example.org/has_course_code> \"http://example.org/information_retrieval\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition-code"
-  },
-  {
-    "id": "q82",
-    "question": "What course has the evaluation method of Test and is a Study Program Elective Course with the course code 'http://example.org/system_administration'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSIE604274>.?course <http://example.org/has_course_category> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/system_administration\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition-code"
-  },
-  {
-    "id": "q83",
-    "question": "What courses have 'Lab Assignment' and 'Lab Assignment' as evaluation methods and have the course code 'http://example.org/advanced_database'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604174>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_code> \"http://example.org/advanced_database\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
-  },
-  {
-    "id": "q84",
-    "question": "Which courses have the same prerequisites as Data Mining?",
-    "sparql": "select distinct ?course where { <http://example.org/data_mining> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/data_mining>) }",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-same-prerequisites"
-  },
-  {
-    "id": "q85",
-    "question": "What courses have the evaluation method 'Programming Assignment' and are associated with the research group 'Information Retrieval and Natural Language Processing' and have the course code 'http://example.org/information_retrieval'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604135>.?course <http://example.org/has_research_group> <http://example.org/programming_assignment>.?course <http://example.org/has_course_code> \"http://example.org/information_retrieval\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-research-eval-code"
-  },
-  {
-    "id": "q86",
-    "question": "What courses have prerequisites with http://example.org/introduction_to_software_security credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/introduction_to_software_security.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-credits"
-  },
-  {
-    "id": "q87",
-    "question": "What courses have the evaluation method 'Lab assignment' and are associated with the research group 'Reliable Software Engineering' and have the course code 'http://example.org/functional_programming'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604123>.?course <http://example.org/has_research_group> <http://example.org/lab_assignment>.?course <http://example.org/has_course_code> \"http://example.org/functional_programming\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-research-eval-code"
-  },
-  {
-    "id": "q88",
-    "question": "What courses have 'Test' and 'Group Project' as evaluation methods and have the course code 'http://example.org/data_mining'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604037>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/data_mining\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
-  },
-  {
-    "id": "q89",
-    "question": "What course has the evaluation method of Test and is a Study Program Mandatory Course with the course code 'http://example.org/statistics_and_probability'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCM602013>.?course <http://example.org/has_course_category> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/statistics_and_probability\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-triple-condition-code"
-  },
-  {
-    "id": "q90",
-    "question": "What courses have prerequisites with http://example.org/introduction_to_artificial_intelligence_and_data_science credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/introduction_to_artificial_intelligence_and_data_science.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-credits"
-  },
-  {
     "id": "q91",
-    "question": "What courses have prerequisites that have Task as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/internet_of_things>.}",
+    "question": "What courses have Information Retrieval and Natural Language Processing as their research group, are categorized as Study Program Elective Course, and use Programming Assignment as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-eval"
+    "templateId": "courses-with-triple-condition"
   },
   {
     "id": "q92",
-    "question": "What courses have the evaluation method 'Final Project' and are associated with the research group 'Information Retrieval and Natural Language Processing' and have the course code 'http://example.org/deep_learning'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604038>.?course <http://example.org/has_research_group> <http://example.org/final_project>.?course <http://example.org/has_course_code> \"http://example.org/deep_learning\".}",
+    "question": "What course has the evaluation method of Programming Activities and is a Study Program Elective Course with the course code 'CSCE604225'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/programming_activities>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604225\".}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-research-eval-code"
+    "templateId": "courses-with-triple-condition-code"
   },
   {
     "id": "q93",
-    "question": "What courses have 'Lab Assignment' and 'Lab Assignment' as evaluation methods and have the course code 'http://example.org/functional_programming'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604123>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_code> \"http://example.org/functional_programming\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-double-evaluation-code"
-  },
-  {
-    "id": "q94",
-    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Information Retrieval and Natural Language Processing' and have the course code 'http://example.org/computer_science_special_topics'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <CSCE604029>.?course <http://example.org/has_research_group> <http://example.org/test>.?course <http://example.org/has_course_code> \"http://example.org/computer_science_special_topics\".}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-research-eval-code"
-  },
-  {
-    "id": "q95",
-    "question": "Which courses have the same prerequisites as Embedded Systems?",
-    "sparql": "select distinct ?course where { <http://example.org/embedded_systems> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/embedded_systems>) }",
+    "question": "Which courses have the same prerequisites as Computer network?",
+    "sparql": "select distinct ?course where { <http://example.org/computer_network> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/computer_network>) }",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-same-prerequisites"
   },
   {
+    "id": "q94",
+    "question": "What courses have prerequisites with 3 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-credits"
+  },
+  {
+    "id": "q95",
+    "question": "What courses have prerequisites with Introduction to Digital Systems as their prerequisites?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_digital_systems>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq"
+  },
+  {
     "id": "q96",
-    "question": "What courses have Introduction to Computer Organization as a prerequisite and Capture The Flag as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/ethical_hacking>.?course <http://example.org/has_evaluation_method> <http://example.org/introduction_to_computer_organization>.?course <http://example.org/has_course_category> <IntroductiontoComputerOrganization>.}",
+    "question": "What courses have Database as a prerequisite and Test as an evaluation method, and are Study Program Elective Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/database>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prereq-eval-category"
   },
   {
     "id": "q97",
-    "question": "What courses have Digital Library & Distance Learning Laboratory as their research group, are categorized as Study Program Elective Course, and use Test as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/computer_assisted_teaching>.?course <http://example.org/has_course_category> <http://example.org/digital_library_and_distance_learning_laboratory>.?course <http://example.org/has_evaluation_method> <DigitalLibrary&DistanceLearningLaboratory>.}",
+    "question": "What courses have Computer System Laboratory as their research group, are categorized as Study Program Elective Course, and use Final Project as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/final_project>.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-triple-condition"
   },
   {
     "id": "q98",
-    "question": "What courses have Calculus 2 as a prerequisite and Test as an evaluation method, and are Study Program Elective Course?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/parallel_programming>.?course <http://example.org/has_evaluation_method> <http://example.org/calculus_2>.?course <http://example.org/has_course_category> <Calculus2>.}",
+    "question": "What courses have prerequisites with 3 credits?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-prereq-eval-category"
+    "templateId": "courses-with-prerequisite-credits"
   },
   {
     "id": "q99",
-    "question": "What courses have prerequisites with http://example.org/individual_final_assignment credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/individual_final_assignment.}",
+    "question": "What courses have the evaluation method 'Test' and are associated with the research group 'Intelligent Systems & Robotics' and have the course code 'CSCE604029'?",
+    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.?course <http://example.org/has_course_code> \"CSCE604029\".}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-credits"
+    "templateId": "courses-with-research-eval-code"
   },
   {
     "id": "q100",
-    "question": "What courses have prerequisites with http://example.org/mobile_technology credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> http://example.org/mobile_technology.}",
+    "question": "What courses have prerequisites that have Test as their evaluation method?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/test>.}",
     "category": "university",
     "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-credits"
+    "templateId": "courses-with-prerequisite-eval"
   }
 ]

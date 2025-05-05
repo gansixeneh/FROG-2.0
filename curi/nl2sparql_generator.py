@@ -557,7 +557,7 @@ class NL2SPARQLGenerator:
 
     def instantiate_template_with_discovery(self, template):
         """
-        Instantiate a template using a discovery-based approach
+        Instantiate a template using a discovery-based approach that guarantees valid placeholder values
         
         Args:
             template (dict): The template to instantiate
@@ -572,8 +572,8 @@ class NL2SPARQLGenerator:
         # Extract placeholders from the template
         placeholders = self.extract_placeholders(template)
         
-        # Create a discovery query that will find valid values for all placeholders
-        discovery_query = self.create_discovery_query(template, placeholders)
+        # Create a discovery query that includes all placeholders in the SELECT clause
+        discovery_query = self.create_all_placeholders_discovery_query(template, placeholders)
         
         # Execute the discovery query
         try:
@@ -583,36 +583,32 @@ class NL2SPARQLGenerator:
                 print(f"No valid combinations found for template: {template['id']}")
                 return None
                 
-            # Randomly select one result
+            # Randomly select one complete valid combination of values
             selected = random.choice(results)
             
-            # Extract replacements for each placeholder
+            # Create a mapping of placeholders to their values from the selected combination
             replacements = {}
-            for i, placeholder in enumerate(placeholders):
-                # Skip the first value if it's a dummy result variable
-                offset = 1 if "dummy_result" in discovery_query else 0
-                
-                value_index = i + offset
-                if value_index >= len(selected):
-                    print(f"Error: Not enough values in result for placeholder {placeholder}")
+            
+            # Map variable names from the query results to their indices
+            var_indices = {str(var): i for i, var in enumerate(self.graph.query(discovery_query).vars)}
+            
+            for placeholder in placeholders:
+                # Get the index for this placeholder variable
+                if placeholder not in var_indices:
+                    print(f"Error: Placeholder {placeholder} not found in query results")
                     return None
                     
+                value_index = var_indices[placeholder]
                 value = selected[value_index]
                 
-                # Create replacement object based on placeholder type
+                # Try to get the label for entity placeholders
                 if placeholder.startswith('entity'):
-                    # For entity placeholders, get URI and label
                     entity_uri = str(value)
                     
-                    # Try to find a label from the result (look for <placeholder>Label)
-                    label_index = -1
-                    for j, var_name in enumerate(self.graph.query(discovery_query).vars):
-                        if str(var_name) == f"{placeholder}Label":
-                            label_index = j
-                            break
-                            
-                    if label_index >= 0 and label_index < len(selected) and selected[label_index]:
-                        entity_label = str(selected[label_index])
+                    # Look for a label variable for this entity
+                    label_var = f"{placeholder}Label"
+                    if label_var in var_indices:
+                        entity_label = str(selected[var_indices[label_var]])
                     else:
                         # Extract label from URI if not found in result
                         entity_label = self.extract_label_from_uri(entity_uri)
@@ -688,6 +684,70 @@ class NL2SPARQLGenerator:
         except Exception as e:
             print(f"Error executing discovery query for template {template['id']}: {e}")
             return None
+
+    def create_all_placeholders_discovery_query(self, template, placeholders):
+        """
+        Create a discovery query that finds valid values for all placeholders by including them in SELECT
+        
+        Args:
+            template (dict): The template to convert
+            placeholders (set): Set of placeholders in the template
+            
+        Returns:
+            str: The discovery query
+        """
+        sparql_template = template["sparqlTemplate"].strip()
+        
+        # Extract the WHERE clause from the template
+        where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
+        if not where_match:
+            print(f"Error: Could not extract WHERE clause from template: {template['id']}")
+            return None
+            
+        where_clause = where_match.group(1).strip()
+        
+        # Replace placeholders with variables in the WHERE clause
+        for placeholder in placeholders:
+            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+            where_clause = re.sub(pattern, f"?{placeholder}", where_clause)
+        
+        # Build SELECT clause with all placeholders
+        select_vars = []
+        
+        # Add the result variable from the original query
+        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
+        if result_var_match:
+            result_var = result_var_match.group(1)
+            if "COUNT" not in result_var and "count" not in result_var:
+                select_vars.append(result_var)
+        
+        # Add all placeholder variables to SELECT clause
+        for placeholder in placeholders:
+            select_vars.append(f"?{placeholder}")
+            # For entity placeholders, also select label if available
+            if placeholder.startswith('entity'):
+                select_vars.append(f"?{placeholder}Label")
+        
+        # Construct the SELECT clause with all variables
+        select_clause = "SELECT DISTINCT " + " ".join(select_vars)
+        
+        # Construct the complete discovery query
+        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
+        
+        # Add OPTIONAL label patterns for entity placeholders
+        for placeholder in placeholders:
+            if placeholder.startswith('entity'):
+                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
+        
+        # Close the query
+        discovery_query += " } LIMIT 100"
+        
+        # Replace all prefixed URIs with full URIs for consistency
+        for prefix, uri in self.prefixes.items():
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
+        
+        return discovery_query
 
     def create_discovery_query(self, template, placeholders):
         """

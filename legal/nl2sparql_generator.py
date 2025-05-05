@@ -2,7 +2,7 @@
 NL2SPARQL - Natural Language to SPARQL Dataset Generator - Modified for Indonesian Legal Documents
 
 This version supports context-aware entity selection, generating queries with real entities from
-the knowledge graph that match the template structure.
+the knowledge graph that match the template structure using a discovery-based approach.
 """
 
 import json
@@ -59,7 +59,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the title of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
-                      {entity} lex:tentang ?title .
+                      {entity} lex2kg-o:tentang ?title .
                     }
                 """,
                 "complexity": "basic"
@@ -71,7 +71,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "When was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
-                      {entity} lex:disahkanPada ?date .
+                      {entity} lex2kg-o:disahkanPada ?date .
                     }
                 """,
                 "complexity": "basic"
@@ -83,7 +83,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Where was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?location WHERE {
-                      {entity} lex:disahkanDi ?location .
+                      {entity} lex2kg-o:disahkanDi ?location .
                     }
                 """,
                 "complexity": "basic"
@@ -95,7 +95,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?person WHERE {
-                      {entity} lex:disahkanOleh ?person .
+                      {entity} lex2kg-o:disahkanOleh ?person .
                     }
                 """,
                 "complexity": "basic"
@@ -107,7 +107,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the position of the person who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?position WHERE {
-                      {entity} lex:jabatanPengesah ?position .
+                      {entity} lex2kg-o:jabatanPengesah ?position .
                     }
                 """,
                 "complexity": "basic"
@@ -119,7 +119,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What type of regulation is {entity}?",
                 "sparqlTemplate": """
                     SELECT ?type WHERE {
-                      {entity} lex:jenisPeraturan ?type .
+                      {entity} lex2kg-o:jenisPeraturan ?type .
                     }
                 """,
                 "complexity": "basic"
@@ -131,7 +131,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the content of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?text WHERE {
-                      {entity} lex:teks ?text .
+                      {entity} lex2kg-o:teks ?text .
                     }
                 """,
                 "complexity": "basic"
@@ -143,7 +143,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the latest version of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?version WHERE {
-                      {entity} lex:versi ?version .
+                      {entity} lex2kg-o:versi ?version .
                     }
                 """,
                 "complexity": "basic"
@@ -155,7 +155,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What is the title of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
-                      {entity} lex:judul ?title .
+                      {entity} lex2kg-o:judul ?title .
                     }
                 """,
                 "complexity": "basic"
@@ -169,7 +169,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many articles are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?article) AS ?count) WHERE {
-                      {entity} lex:pasal ?article .
+                      {entity} lex2kg-o:pasal ?article .
                     }
                 """,
                 "complexity": "intermediate"
@@ -181,8 +181,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many chapters are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?chapter) AS ?count) WHERE {
-                      {entity} lex:daftarBab ?chapters .
-                      ?chapters lex:bab ?chapter .
+                      {entity} lex2kg-o:daftarBab ?chapters .
+                      ?chapters lex2kg-o:bab ?chapter .
                     }
                 """,
                 "complexity": "intermediate"
@@ -194,9 +194,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "How many sections are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?section) AS ?count) WHERE {
-                      {entity} lex:versi ?version .
-                      ?version lex:daftarAyat ?sections .
-                      ?sections lex:ayat ?section .
+                      {entity} lex2kg-o:versi ?version .
+                      ?version lex2kg-o:daftarAyat ?sections .
+                      ?sections lex2kg-o:ayat ?section .
                     }
                 """,
                 "complexity": "intermediate"
@@ -208,8 +208,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which regulations amended {entity}?",
                 "sparqlTemplate": """
                     SELECT ?amendment WHERE {
-                      ?article lex:mengubah {entity} .
-                      ?article lex:bagianDari ?amendment .
+                      ?article lex2kg-o:mengubah {entity} .
+                      ?article lex2kg-o:bagianDari ?amendment .
                     }
                 """,
                 "complexity": "intermediate"
@@ -221,8 +221,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What laws were enacted in the year {value}?",
                 "sparqlTemplate": """
                     SELECT ?law ?title WHERE {
-                      ?law lex:tahun {value} .
-                      ?law lex:tentang ?title .
+                      ?law lex2kg-o:tahun {value} .
+                      ?law lex2kg-o:tentang ?title .
                     }
                 """,
                 "complexity": "intermediate"
@@ -236,9 +236,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which articles reference {entity}?",
                 "sparqlTemplate": """
                     SELECT ?referringArticle ?text WHERE {
-                      ?textSegment lex:merujuk {entity} .
-                      ?textSegment lex:bagianDari ?referringArticle .
-                      ?referringArticle lex:teks ?text .
+                      ?textSegment lex2kg-o:merujuk {entity} .
+                      ?textSegment lex2kg-o:bagianDari ?referringArticle .
+                      ?referringArticle lex2kg-o:teks ?text .
                     }
                     LIMIT 10
                 """,
@@ -251,12 +251,12 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?amendedLaw ?title WHERE {
-                      {entity} lex:pasal ?article .
-                      ?article lex:versi ?articleVersion .
-                      ?articleVersion lex:huruf ?letter .
-                      ?letter lex:mengubah ?amendedArticle .
-                      ?amendedArticle lex:bagianDari ?amendedLaw .
-                      ?amendedLaw lex:tentang ?title .
+                      {entity} lex2kg-o:pasal ?article .
+                      ?article lex2kg-o:versi ?articleVersion .
+                      ?articleVersion lex2kg-o:huruf ?letter .
+                      ?letter lex2kg-o:mengubah ?amendedArticle .
+                      ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
+                      ?amendedLaw lex2kg-o:tentang ?title .
                     }
                     LIMIT 10
                 """,
@@ -269,7 +269,7 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which laws are related to '{value}'?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?law ?title WHERE {
-                      ?law lex:tentang ?title .
+                      ?law lex2kg-o:tentang ?title .
                       FILTER(CONTAINS(LCASE(?title), LCASE("{value}")))
                     }
                     LIMIT 10
@@ -283,8 +283,8 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "Which law has the most articles?",
                 "sparqlTemplate": """
                     SELECT ?law ?title (COUNT(?article) AS ?articleCount) WHERE {
-                      ?law lex:tentang ?title .
-                      ?law lex:pasal ?article .
+                      ?law lex2kg-o:tentang ?title .
+                      ?law lex2kg-o:pasal ?article .
                     }
                     GROUP BY ?law ?title
                     ORDER BY DESC(?articleCount)
@@ -299,9 +299,9 @@ class NL2SPARQLGenerator:
                 "englishQuestion": "What laws were enacted by {value}?",
                 "sparqlTemplate": """
                     SELECT ?law ?title ?date WHERE {
-                      ?law lex:disahkanOleh "{value}" .
-                      ?law lex:tentang ?title .
-                      ?law lex:disahkanPada ?date .
+                      ?law lex2kg-o:disahkanOleh "{value}" .
+                      ?law lex2kg-o:tentang ?title .
+                      ?law lex2kg-o:disahkanPada ?date .
                     }
                     ORDER BY DESC(?date)
                     LIMIT 10
@@ -315,7 +315,7 @@ class NL2SPARQLGenerator:
         return legal_templates
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
-                        variations_per_question=3, validate_queries=False):
+                        variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
         """
         Generate dataset based on legal document knowledge graph
         
@@ -325,6 +325,7 @@ class NL2SPARQLGenerator:
             include_variations (bool): Whether to include variations of questions
             variations_per_question (int): Number of variations per question
             validate_queries (bool): Whether to validate SPARQL queries
+            max_attempts_per_template (int): Maximum number of attempts to instantiate a template
             
         Returns:
             list: Array of question-SPARQL pairs
@@ -344,64 +345,103 @@ class NL2SPARQLGenerator:
         for complexity, proportion in complexity_distribution.items():
             counts_by_complexity[complexity] = int(size * proportion)
         
+        # Track problematic templates for reporting
+        failed_templates = {}
+        
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
+            successful_generations = 0
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
             
             if not eligible_templates:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
             
-            for i in range(count):
-                if len(dataset) >= size:
-                    break
-                
+            while successful_generations < count and len(dataset) < size:
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
                 
-                try:
-                    # Instantiate the template
-                    instance = self.instantiate_template(template)
-                    
-                    if instance:
-                        # Add the base question-query pair
-                        dataset.append({
-                            "id": f"q{id_counter}",
-                            "question": instance["question"],
-                            "englishQuestion": instance["englishQuestion"],
-                            "sparql": instance["sparql"],
-                            "category": template["category"],
-                            "complexity": template["complexity"],
-                            "templateId": template["id"]
-                        })
-                        id_counter += 1
+                # Track attempts for this template
+                template_id = template["id"]
+                attempts = 0
+                
+                # Try to instantiate this template up to max_attempts
+                while attempts < max_attempts_per_template:
+                    attempts += 1
+                    try:
+                        # Use the discovery-based approach to instantiate the template
+                        instance = self.instantiate_template_with_discovery(template)
                         
-                        # Add variations if requested
-                        if include_variations and instance["question"]:
-                            variations = self.variation_generator.generate_variations(
-                                instance["question"],
-                                instance["englishQuestion"],
-                                template["category"],
-                                min(variations_per_question, 5)
-                            )
+                        if instance:
+                            # Success! Add the question-query pair
+                            dataset.append({
+                                "id": f"q{id_counter}",
+                                "question": instance["question"],
+                                "englishQuestion": instance["englishQuestion"],
+                                "sparql": instance["sparql"],
+                                "category": template["category"],
+                                "complexity": template["complexity"],
+                                "templateId": template["id"]
+                            })
+                            id_counter += 1
+                            successful_generations += 1
                             
-                            for variation in variations:
-                                if len(dataset) >= size:
-                                    break
+                            # Add variations if requested
+                            if include_variations and instance["question"]:
+                                variations = self.variation_generator.generate_variations(
+                                    instance["question"],
+                                    instance["englishQuestion"],
+                                    template["category"],
+                                    min(variations_per_question, 5)
+                                )
                                 
-                                dataset.append({
-                                    "id": f"q{id_counter}",
-                                    "question": variation["indonesian"],
-                                    "englishQuestion": variation["english"],
-                                    "sparql": instance["sparql"],
-                                    "category": template["category"],
-                                    "complexity": template["complexity"],
-                                    "templateId": template["id"],
-                                    "isVariation": True
-                                })
-                                id_counter += 1
-                except Exception as e:
-                    print(f"Error instantiating template {template['id']}: {e}")
+                                for variation in variations:
+                                    if len(dataset) >= size:
+                                        break
+                                    
+                                    dataset.append({
+                                        "id": f"q{id_counter}",
+                                        "question": variation["indonesian"],
+                                        "englishQuestion": variation["english"],
+                                        "sparql": instance["sparql"],
+                                        "category": template["category"],
+                                        "complexity": template["complexity"],
+                                        "templateId": template["id"],
+                                        "isVariation": True
+                                    })
+                                    id_counter += 1
+                            
+                            # Break out of the attempts loop
+                            break
+                    except Exception as e:
+                        print(f"Error instantiating template {template['id']}: {e}")
+                
+                # If we've tried max_attempts and still failed, record this template as problematic
+                if attempts >= max_attempts_per_template and template_id not in failed_templates:
+                    failed_templates[template_id] = 0
+                
+                if template_id in failed_templates:
+                    failed_templates[template_id] += 1
+        
+        # Report problematic templates
+        if failed_templates:
+            print("\nWarning: Some templates consistently failed to instantiate:")
+            for template_id, count in failed_templates.items():
+                print(f"  - {template_id}: failed {count} times")
+        
+        # Report complexity distribution achieved
+        complexity_counts = {}
+        for item in dataset:
+            complexity = item["complexity"]
+            if complexity not in complexity_counts:
+                complexity_counts[complexity] = 0
+            complexity_counts[complexity] += 1
+        
+        print("\nActual complexity distribution in generated dataset:")
+        for complexity, count in complexity_counts.items():
+            target = counts_by_complexity.get(complexity, 0)
+            percentage = (count / len(dataset)) * 100 if dataset else 0
+            print(f"  - {complexity}: {count}/{len(dataset)} ({percentage:.1f}%) [Target: {target}]")
         
         # Validate queries if requested
         if validate_queries and hasattr(self.config, "query_validator"):
@@ -421,9 +461,212 @@ class NL2SPARQLGenerator:
         
         return dataset
 
+    def instantiate_template_with_discovery(self, template):
+        """
+        Instantiate a template using a discovery-based approach that guarantees valid placeholder values
+        
+        Args:
+            template (dict): The template to instantiate
+            
+        Returns:
+            dict: The instantiated question and SPARQL query or None if failed
+        """
+        if not self.graph:
+            # If we don't have a graph, fall back to the old method
+            return self.instantiate_template(template)
+            
+        # Extract placeholders from the template
+        placeholders = self.extract_placeholders(template)
+        
+        # Create a discovery query that includes all placeholders in the SELECT clause
+        discovery_query = self.create_all_placeholders_discovery_query(template, placeholders)
+        
+        # Execute the discovery query
+        try:
+            results = list(self.graph.query(discovery_query))
+            
+            if not results:
+                print(f"No valid combinations found for template: {template['id']}")
+                return None
+                
+            # Randomly select one complete valid combination of values
+            selected = random.choice(results)
+            
+            # Create a mapping of placeholders to their values from the selected combination
+            replacements = {}
+            
+            # Map variable names from the query results to their indices
+            var_indices = {str(var): i for i, var in enumerate(self.graph.query(discovery_query).vars)}
+            
+            for placeholder in placeholders:
+                # Get the index for this placeholder variable
+                if placeholder not in var_indices:
+                    print(f"Error: Placeholder {placeholder} not found in query results")
+                    return None
+                    
+                value_index = var_indices[placeholder]
+                value = selected[value_index]
+                
+                # Try to get the label for entity placeholders
+                if placeholder.startswith('entity'):
+                    entity_uri = str(value)
+                    
+                    # Look for a label variable for this entity
+                    label_var = f"{placeholder}Label"
+                    if label_var in var_indices:
+                        entity_label = str(selected[var_indices[label_var]])
+                    else:
+                        # Extract label from URI if not found in result
+                        entity_label = self.extract_label_from_uri(entity_uri)
+                        
+                    replacement = {
+                        "value": self.shorten_uri(entity_uri),
+                        "label": entity_label,
+                        "uri": entity_uri
+                    }
+                elif placeholder == "value" or placeholder.endswith("Value"):
+                    # For value placeholders
+                    value_str = str(value)
+                    
+                    # Handle different value types appropriately
+                    if "year" in template["id"] or "year" in template["questionTemplate"].lower():
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str
+                        }
+                    elif "keyword" in template["id"] or "keyword" in template["questionTemplate"].lower():
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str,
+                            "sparqlValue": f'"{value_str}"'  # Include quotes for string literal
+                        }
+                    elif "enactor" in template["id"] or "enactor" in template["questionTemplate"].lower():
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str,
+                            "sparqlValue": f'"{value_str}"'  # Include quotes for string literal
+                        }
+                    else:
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str
+                        }
+                else:
+                    # For other placeholders, use as is
+                    replacement = {
+                        "value": str(value),
+                        "label": str(value)
+                    }
+                    
+                replacements[placeholder] = replacement
+            
+            # Apply replacements to the question template
+            question = template["questionTemplate"].strip()
+            english_question = template["englishQuestion"].strip()
+            sparql = template["sparqlTemplate"].strip()
+            
+            # Replace placeholders in question and query
+            for placeholder, replacement in replacements.items():
+                # Create a pattern that can handle whitespace around the placeholder
+                pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
+                
+                # Replace in question
+                replacement_text = replacement.get("label", replacement.get("value", ""))
+                question = re.sub(pattern, replacement_text, question)
+                english_question = re.sub(pattern, replacement_text, english_question)
+                
+                # Replace in SPARQL
+                if "uri" in replacement:
+                    sparql_value = f"<{replacement['uri']}>"
+                elif "sparqlValue" in replacement:
+                    sparql_value = replacement["sparqlValue"]
+                else:
+                    sparql_value = replacement["value"]
+                    
+                sparql = re.sub(pattern, sparql_value, sparql)
+            
+            # Replace all prefixed URIs with full URIs
+            for prefix, uri in self.prefixes.items():
+                pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+                sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+            
+            # Format the SPARQL query for readability
+            sparql = self.format_sparql(sparql)
+            
+            return {"question": question, "englishQuestion": english_question, "sparql": sparql}
+            
+        except Exception as e:
+            print(f"Error executing discovery query for template {template['id']}: {e}")
+            return None
+
+    def create_all_placeholders_discovery_query(self, template, placeholders):
+        """
+        Create a discovery query that finds valid values for all placeholders by including them in SELECT
+        
+        Args:
+            template (dict): The template to convert
+            placeholders (set): Set of placeholders in the template
+            
+        Returns:
+            str: The discovery query
+        """
+        sparql_template = template["sparqlTemplate"].strip()
+        
+        # Extract the WHERE clause from the template
+        where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
+        if not where_match:
+            print(f"Error: Could not extract WHERE clause from template: {template['id']}")
+            return None
+            
+        where_clause = where_match.group(1).strip()
+        
+        # Replace placeholders with variables in the WHERE clause
+        for placeholder in placeholders:
+            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+            where_clause = re.sub(pattern, f"?{placeholder}", where_clause)
+        
+        # Build SELECT clause with all placeholders
+        select_vars = []
+        
+        # Add the result variable from the original query
+        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
+        if result_var_match:
+            result_var = result_var_match.group(1)
+            if "COUNT" not in result_var and "count" not in result_var:
+                select_vars.append(result_var)
+        
+        # Add all placeholder variables to SELECT clause
+        for placeholder in placeholders:
+            select_vars.append(f"?{placeholder}")
+            # For entity placeholders, also select label if available
+            if placeholder.startswith('entity'):
+                select_vars.append(f"?{placeholder}Label")
+        
+        # Construct the SELECT clause with all variables
+        select_clause = "SELECT DISTINCT " + " ".join(select_vars)
+        
+        # Construct the complete discovery query
+        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
+        
+        # Add OPTIONAL label patterns for entity placeholders
+        for placeholder in placeholders:
+            if placeholder.startswith('entity'):
+                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
+        
+        # Close the query
+        discovery_query += " } LIMIT 100"
+        
+        # Replace all prefixed URIs with full URIs for consistency
+        for prefix, uri in self.prefixes.items():
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
+        
+        return discovery_query
+    
     def instantiate_template(self, template):
         """
-        Instantiate a template with specific entities and properties
+        Original method to instantiate a template with specific entities and properties
+        Kept as a fallback method
         
         Args:
             template (dict): The template to instantiate
@@ -871,16 +1114,16 @@ class NL2SPARQLGenerator:
         # Fallback to predefined legal entities
         # This ensures we always have something workable for the legal data
         legal_entities = [
-            {"value": "lex:UU-2020-9", "label": "UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9", "type": "lex:UndangUndang"},
-            {"value": "lex:UU-2020-11", "label": "UU No. 11 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/11", "type": "lex:UndangUndang"},
-            {"value": "lex:UU-2020-9-pasal-47", "label": "Pasal 47 UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0047", "type": "lex:Pasal"},
-            {"value": "lex:UU-2020-11-bab-10", "label": "Bab 10 UU No. 11 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/11/bab/0010", "type": "lex:Bab"},
-            {"value": "lex:UU-2020-9-pasal-46-ayat-1", "label": "Pasal 46 Ayat 1 UU No. 9 Tahun 2020", 
-             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0001", "type": "lex:Ayat"}
+            {"value": "lex2kg-o:UU-2020-9", "label": "UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9", "type": "lex2kg-o:UndangUndang"},
+            {"value": "lex2kg-o:UU-2020-11", "label": "UU No. 11 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/11", "type": "lex2kg-o:UndangUndang"},
+            {"value": "lex2kg-o:UU-2020-9-pasal-47", "label": "Pasal 47 UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0047", "type": "lex2kg-o:Pasal"},
+            {"value": "lex2kg-o:UU-2020-11-bab-10", "label": "Bab 10 UU No. 11 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/11/bab/0010", "type": "lex2kg-o:Bab"},
+            {"value": "lex2kg-o:UU-2020-9-pasal-46-ayat-1", "label": "Pasal 46 Ayat 1 UU No. 9 Tahun 2020", 
+             "uri": "https://example.org/lex2kg/uu/2020/9/pasal/0046/versi/20201026/ayat/0001", "type": "lex2kg-o:Ayat"}
         ]
         
         print("Warning: Using fallback legal entities")
@@ -899,21 +1142,21 @@ class NL2SPARQLGenerator:
         """
         # Define common legal properties
         legal_properties = {
-            "title": {"value": "lex:tentang", "label": "tentang", 
+            "title": {"value": "lex2kg-o:tentang", "label": "tentang", 
                      "uri": "https://example.org/lex2kg/ontology/tentang"},
-            "enactment_date": {"value": "lex:disahkanPada", "label": "disahkan pada", 
+            "enactment_date": {"value": "lex2kg-o:disahkanPada", "label": "disahkan pada", 
                               "uri": "https://example.org/lex2kg/ontology/disahkanPada"},
-            "enactment_location": {"value": "lex:disahkanDi", "label": "disahkan di", 
+            "enactment_location": {"value": "lex2kg-o:disahkanDi", "label": "disahkan di", 
                                   "uri": "https://example.org/lex2kg/ontology/disahkanDi"},
-            "enactor": {"value": "lex:disahkanOleh", "label": "disahkan oleh", 
+            "enactor": {"value": "lex2kg-o:disahkanOleh", "label": "disahkan oleh", 
                        "uri": "https://example.org/lex2kg/ontology/disahkanOleh"},
-            "enactor_position": {"value": "lex:jabatanPengesah", "label": "jabatan pengesah", 
+            "enactor_position": {"value": "lex2kg-o:jabatanPengesah", "label": "jabatan pengesah", 
                                 "uri": "https://example.org/lex2kg/ontology/jabatanPengesah"},
-            "regulation_type": {"value": "lex:jenisPeraturan", "label": "jenis peraturan", 
+            "regulation_type": {"value": "lex2kg-o:jenisPeraturan", "label": "jenis peraturan", 
                                "uri": "https://example.org/lex2kg/ontology/jenisPeraturan"},
-            "content": {"value": "lex:teks", "label": "teks", 
+            "content": {"value": "lex2kg-o:teks", "label": "teks", 
                        "uri": "https://example.org/lex2kg/ontology/teks"},
-            "chapter_title": {"value": "lex:judul", "label": "judul", 
+            "chapter_title": {"value": "lex2kg-o:judul", "label": "judul", 
                              "uri": "https://example.org/lex2kg/ontology/judul"}
         }
         
