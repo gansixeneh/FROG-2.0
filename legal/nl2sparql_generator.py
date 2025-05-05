@@ -12,6 +12,7 @@ import datetime
 import csv
 import io
 from SPARQLWrapper import SPARQLWrapper, JSON
+from collections import Counter
 
 class SparqlExecutor:
     """A class to execute SPARQL queries against the Fuseki server."""
@@ -253,6 +254,66 @@ class NL2SPARQLGenerator:
         
         # Create a SPARQL executor to connect to Fuseki
         self.sparql_exec = SparqlExecutor(endpoint_url)
+        
+        # Pre-extract keywords from the knowledge graph
+        self.extracted_keywords = self.extract_keywords_from_kg()
+        
+        # Fallback keywords in case extraction fails
+        self.fallback_keywords = [
+            "PEMERINTAH", "REPUBLIK", "INDONESIA", "UNDANG", "PERATURAN", 
+            "HUKUM", "NEGARA", "KESEHATAN", "PENDIDIKAN", "LINGKUNGAN", 
+            "KETENAGAKERJAAN", "PAJAK", "INVESTASI", "PENGESAHAN", "PENETAPAN"
+        ]
+        
+        print(f"Extracted {len(self.extracted_keywords)} keywords from the knowledge graph")
+    
+    def extract_keywords_from_kg(self):
+        """
+        Extract meaningful keywords from law titles in the knowledge graph
+        
+        Returns:
+            list: List of keywords that appear in law titles
+        """
+        try:
+            # Query to get all law titles
+            query = """
+            SELECT ?title
+            WHERE {
+                ?law <https://example.org/lex2kg/ontology/tentang> ?title .
+            }
+            LIMIT 500
+            """
+            
+            results = self.sparql_exec.execute_query(query)
+            if not results:
+                print("No titles found in the knowledge graph")
+                return []
+                
+            # Process titles and extract meaningful words
+            all_words = []
+            for result in results:
+                if "title" in result:
+                    title = str(result["title"])
+                    # Split by spaces and filter for meaningful words (5+ characters)
+                    title_words = [w.upper() for w in title.split() if len(w) >= 5]
+                    all_words.extend(title_words)
+            
+            # Count frequency of each word
+            word_counts = Counter(all_words)
+            
+            # Select words that appear at least twice (more meaningful)
+            common_words = [word for word, count in word_counts.items() if count >= 2]
+            
+            # If we don't have enough common words, include all words
+            if len(common_words) < 10:
+                common_words = list(set(all_words))
+            
+            print(f"Found {len(common_words)} common words in law titles")
+            return common_words
+            
+        except Exception as e:
+            print(f"Error extracting keywords from knowledge graph: {e}")
+            return []
     
     def initialize_templates(self):
         """
@@ -484,7 +545,7 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT DISTINCT ?law ?title WHERE {
                       ?law lex2kg-o:tentang ?title .
-                      FILTER(CONTAINS(LCASE(?title), LCASE("{value}")))
+                      FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
                     LIMIT 10
                 """,
@@ -693,6 +754,12 @@ class NL2SPARQLGenerator:
         # Extract placeholders from the template
         placeholders = self.extract_placeholders(template)
         
+        # Special handling for law-by-keyword template
+        if "law-by-keyword" in template["id"] and "value" in placeholders:
+            # For this template, use the pre-extracted keywords directly
+            # rather than trying to discover them via SPARQL
+            return self.instantiate_keyword_template(template)
+        
         # Create a discovery query that includes all placeholders in the SELECT clause
         discovery_query = self.create_discovery_query(template, placeholders)
         
@@ -831,6 +898,50 @@ class NL2SPARQLGenerator:
             # Fall back to the old method
             return self.instantiate_template(template)
 
+    def instantiate_keyword_template(self, template):
+        """
+        Special handler for law-by-keyword template using pre-extracted keywords
+        
+        Args:
+            template (dict): The template to instantiate
+            
+        Returns:
+            dict: The instantiated question and SPARQL query or None if failed
+        """
+        # Get a keyword from our pre-extracted list
+        keyword = self.select_keyword_value()
+        
+        # Apply the keyword to the template
+        replacements = {"value": keyword}
+        
+        # Apply replacements to the question template
+        question = template["questionTemplate"].strip()
+        english_question = template["englishQuestion"].strip()
+        sparql = template["sparqlTemplate"].strip()
+        
+        # Replace the placeholder in question and query
+        pattern = r"{[\s]*value[\s]*}"
+        
+        # Replace in question
+        replacement_text = keyword.get("label", keyword.get("value", ""))
+        question = re.sub(pattern, replacement_text, question)
+        english_question = re.sub(pattern, replacement_text, english_question)
+        
+        # Replace in SPARQL
+        sparql_value = keyword.get("sparqlValue", f'"{keyword["value"]}"')
+        
+        sparql = re.sub(pattern, sparql_value, sparql)
+        
+        # Replace all prefixed URIs with full URIs
+        for prefix, uri in self.prefixes.items():
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+        
+        # Format the SPARQL query for readability
+        sparql = self.format_sparql(sparql)
+        
+        return {"question": question, "englishQuestion": english_question, "sparql": sparql}
+
     def create_discovery_query(self, template, placeholders):
         """
         Create a discovery query that finds valid values for all placeholders
@@ -843,6 +954,12 @@ class NL2SPARQLGenerator:
             str: The discovery query
         """
         sparql_template = template["sparqlTemplate"].strip()
+        
+        # Special handling for law-by-keyword template
+        if "law-by-keyword" in template["id"] and "value" in placeholders:
+            # For this template, we'll use our pre-extracted keywords
+            # rather than trying to discover them from the SPARQL endpoint
+            return None
         
         # Extract the WHERE clause from the template
         where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
@@ -1209,35 +1326,8 @@ class NL2SPARQLGenerator:
             
             # For keywords in law-by-keyword template
             elif "law-by-keyword" in template["id"]:
-                # Extract words from titles
-                query = """
-                    SELECT ?title
-                    WHERE {
-                        ?law <https://example.org/lex2kg/ontology/tentang> ?title .
-                    }
-                    LIMIT 50
-                """
-                
-                try:
-                    results = self.sparql_exec.execute_query(query)
-                    if results:
-                        # Extract common words from titles
-                        words = []
-                        for result in results:
-                            title = str(result["title"])
-                            # Split by spaces and take words with 5+ characters
-                            title_words = [w.upper() for w in title.split() if len(w) >= 5]
-                            words.extend(title_words)
-                        
-                        if words:
-                            keyword = random.choice(words)
-                            return {
-                                "value": keyword,
-                                "label": keyword,
-                                "sparqlValue": f'"{keyword}"'  # Add quotes for the SPARQL query
-                            }
-                except Exception as e:
-                    print(f"Error extracting keywords: {e}")
+                # Use our pre-extracted keywords
+                return self.select_keyword_value()
             
             return None
         
@@ -1457,7 +1547,8 @@ class NL2SPARQLGenerator:
         Returns:
             dict: Enactor value object
         """
-        enactors = ["JOKO WIDODO", "SUSILO BAMBANG YUDHOYONO", "MEGAWATI SOEKARNOPUTRI"]
+        enactors = ["JOKO WIDODO", "SUSILO BAMBANG YUDHOYONO", "MEGAWATI SOEKARNOPUTRI",
+                   "ABDURRAHMAN WAHID", "SOEHARTO", "BACHARUDDIN JUSUF HABIBIE"]
         value = random.choice(enactors)
         return {"value": value, "label": value, "sparqlValue": f'"{value}"'}
 
@@ -1468,7 +1559,7 @@ class NL2SPARQLGenerator:
         Returns:
             dict: Year value object
         """
-        years = [2015, 2016, 2017, 2018, 2019, 2020]
+        years = list(range(1990, 2021))
         value = random.choice(years)
         return {"value": str(value), "label": str(value)}
 
@@ -1479,8 +1570,14 @@ class NL2SPARQLGenerator:
         Returns:
             dict: Keyword value object
         """
-        keywords = ["KESEHATAN", "PENDIDIKAN", "LINGKUNGAN", "KETENAGAKERJAAN", "PAJAK", "INVESTASI"]
-        value = random.choice(keywords)
+        # Use the pre-extracted keywords if available
+        if self.extracted_keywords:
+            value = random.choice(self.extracted_keywords)
+        else:
+            # Fallback to predefined keywords
+            print("Using fallback keywords")
+            value = random.choice(self.fallback_keywords)
+            
         return {"value": value, "label": value, "sparqlValue": f'"{value}"'}
 
     def select_random_value(self, template):
