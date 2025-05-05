@@ -412,7 +412,7 @@ class NL2SPARQLGenerator:
         return all_templates
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
-                        variations_per_question=3, validate_queries=False):
+                        variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
         """
         Generate dataset based on university course knowledge graph
         
@@ -422,6 +422,7 @@ class NL2SPARQLGenerator:
             include_variations (bool): Whether to include variations of questions
             variations_per_question (int): Number of variations per question
             validate_queries (bool): Whether to validate SPARQL queries
+            max_attempts_per_template (int): Maximum number of attempts to instantiate a template
             
         Returns:
             list: Array of question-SPARQL pairs
@@ -441,61 +442,100 @@ class NL2SPARQLGenerator:
         for complexity, proportion in complexity_distribution.items():
             counts_by_complexity[complexity] = int(size * proportion)
         
+        # Track problematic templates for reporting
+        failed_templates = {}
+        
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
+            successful_generations = 0
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
             
             if not eligible_templates:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
             
-            for i in range(count):
-                if len(dataset) >= size:
-                    break
-                
+            while successful_generations < count and len(dataset) < size:
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
                 
-                try:
-                    # Instantiate the template
-                    instance = self.instantiate_template(template)
-                    
-                    if instance:
-                        # Add the base question-query pair
-                        dataset.append({
-                            "id": f"q{id_counter}",
-                            "question": instance["question"],
-                            "sparql": instance["sparql"],
-                            "category": template["category"],
-                            "complexity": template["complexity"],
-                            "templateId": template["id"]
-                        })
-                        id_counter += 1
+                # Track attempts for this template
+                template_id = template["id"]
+                attempts = 0
+                
+                # Try to instantiate this template up to max_attempts
+                while attempts < max_attempts_per_template:
+                    attempts += 1
+                    try:
+                        # Use the discovery-based approach to instantiate the template
+                        instance = self.instantiate_template_with_discovery(template)
                         
-                        # Add variations if requested
-                        if include_variations and instance["question"]:
-                            variations = self.variation_generator.generate_variations(
-                                instance["question"],
-                                template["category"],
-                                min(variations_per_question, 5)
-                            )
+                        if instance:
+                            # Success! Add the question-query pair
+                            dataset.append({
+                                "id": f"q{id_counter}",
+                                "question": instance["question"],
+                                "sparql": instance["sparql"],
+                                "category": template["category"],
+                                "complexity": template["complexity"],
+                                "templateId": template["id"]
+                            })
+                            id_counter += 1
+                            successful_generations += 1
                             
-                            for variation in variations:
-                                if len(dataset) >= size:
-                                    break
+                            # Add variations if requested
+                            if include_variations and instance["question"]:
+                                variations = self.variation_generator.generate_variations(
+                                    instance["question"],
+                                    template["category"],
+                                    min(variations_per_question, 5)
+                                )
                                 
-                                dataset.append({
-                                    "id": f"q{id_counter}",
-                                    "question": variation,
-                                    "sparql": instance["sparql"],
-                                    "category": template["category"],
-                                    "complexity": template["complexity"],
-                                    "templateId": template["id"],
-                                    "isVariation": True
-                                })
-                                id_counter += 1
-                except Exception as e:
-                    print(f"Error instantiating template {template['id']}: {e}")
+                                for variation in variations:
+                                    if len(dataset) >= size:
+                                        break
+                                    
+                                    dataset.append({
+                                        "id": f"q{id_counter}",
+                                        "question": variation,
+                                        "sparql": instance["sparql"],
+                                        "category": template["category"],
+                                        "complexity": template["complexity"],
+                                        "templateId": template["id"],
+                                        "isVariation": True
+                                    })
+                                    id_counter += 1
+                            
+                            # Break out of the attempts loop
+                            break
+                    except Exception as e:
+                        print(f"Error instantiating template {template['id']}: {e}")
+                
+                # If we've tried max_attempts and still failed, record this template as problematic
+                if attempts >= max_attempts_per_template and template_id not in failed_templates:
+                    failed_templates[template_id] = 0
+                
+                if template_id in failed_templates:
+                    failed_templates[template_id] += 1
+        
+        # Report problematic templates
+        if failed_templates:
+            print("\nWarning: Some templates consistently failed to instantiate:")
+            for template_id, count in failed_templates.items():
+                print(f"  - {template_id}: failed {count} times")
+        
+        # Report complexity distribution achieved
+        complexity_counts = {}
+        for item in dataset:
+            complexity = item["complexity"]
+            if complexity not in complexity_counts:
+                complexity_counts[complexity] = 0
+            complexity_counts[complexity] += 1
+        
+        print("\nActual complexity distribution in generated dataset:")
+        for complexity, count in complexity_counts.items():
+            target = counts_by_complexity.get(complexity, 0)
+            percentage = (count / len(dataset)) * 100 if dataset else 0
+            print(f"  - {complexity}: {count}/{len(dataset)} ({percentage:.1f}%) [Target: {target}]")
         
         # Validate queries if requested
         if validate_queries and hasattr(self.config, "query_validator"):
@@ -515,9 +555,210 @@ class NL2SPARQLGenerator:
         
         return dataset
 
+    def instantiate_template_with_discovery(self, template):
+        """
+        Instantiate a template using a discovery-based approach
+        
+        Args:
+            template (dict): The template to instantiate
+            
+        Returns:
+            dict: The instantiated question and SPARQL query or None if failed
+        """
+        if not self.graph:
+            # If we don't have a graph, fall back to the old method
+            return self.instantiate_template(template)
+            
+        # Extract placeholders from the template
+        placeholders = self.extract_placeholders(template)
+        
+        # Create a discovery query that will find valid values for all placeholders
+        discovery_query = self.create_discovery_query(template, placeholders)
+        
+        # Execute the discovery query
+        try:
+            results = list(self.graph.query(discovery_query))
+            
+            if not results:
+                print(f"No valid combinations found for template: {template['id']}")
+                return None
+                
+            # Randomly select one result
+            selected = random.choice(results)
+            
+            # Extract replacements for each placeholder
+            replacements = {}
+            for i, placeholder in enumerate(placeholders):
+                # Skip the first value if it's a dummy result variable
+                offset = 1 if "dummy_result" in discovery_query else 0
+                
+                value_index = i + offset
+                if value_index >= len(selected):
+                    print(f"Error: Not enough values in result for placeholder {placeholder}")
+                    return None
+                    
+                value = selected[value_index]
+                
+                # Create replacement object based on placeholder type
+                if placeholder.startswith('entity'):
+                    # For entity placeholders, get URI and label
+                    entity_uri = str(value)
+                    
+                    # Try to find a label from the result (look for <placeholder>Label)
+                    label_index = -1
+                    for j, var_name in enumerate(self.graph.query(discovery_query).vars):
+                        if str(var_name) == f"{placeholder}Label":
+                            label_index = j
+                            break
+                            
+                    if label_index >= 0 and label_index < len(selected) and selected[label_index]:
+                        entity_label = str(selected[label_index])
+                    else:
+                        # Extract label from URI if not found in result
+                        entity_label = self.extract_label_from_uri(entity_uri)
+                        
+                    replacement = {
+                        "value": self.shorten_uri(entity_uri),
+                        "label": entity_label,
+                        "uri": entity_uri
+                    }
+                elif placeholder == "value" or placeholder.endswith("Value"):
+                    # For value placeholders
+                    value_str = str(value)
+                    
+                    # Handle different value types appropriately
+                    if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str
+                        }
+                    elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+                        replacement = {
+                            "value": f'"{value_str}"',  # Include quotes for string literal
+                            "label": value_str,
+                            "sparqlValue": f'"{value_str}"'
+                        }
+                    else:
+                        replacement = {
+                            "value": value_str,
+                            "label": value_str
+                        }
+                else:
+                    # For other placeholders, use as is
+                    replacement = {
+                        "value": str(value),
+                        "label": str(value)
+                    }
+                    
+                replacements[placeholder] = replacement
+            
+            # Apply replacements to the question template
+            question = template["questionTemplate"].strip()
+            sparql = template["sparqlTemplate"].strip()
+            
+            # Replace placeholders in question and query
+            for placeholder, replacement in replacements.items():
+                # Create a pattern that can handle whitespace around the placeholder
+                pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
+                
+                # Replace in question
+                replacement_text = replacement.get("label", replacement.get("value", ""))
+                question = re.sub(pattern, replacement_text, question)
+                
+                # Replace in SPARQL
+                if "uri" in replacement:
+                    sparql_value = f"<{replacement['uri']}>"
+                elif "sparqlValue" in replacement:
+                    sparql_value = replacement["sparqlValue"]
+                else:
+                    sparql_value = replacement["value"]
+                    
+                sparql = re.sub(pattern, sparql_value, sparql)
+            
+            # Replace all prefixed URIs with full URIs
+            for prefix, uri in self.prefixes.items():
+                pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+                sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+            
+            # Format the SPARQL query for readability
+            sparql = self.format_sparql(sparql)
+            
+            return {"question": question, "sparql": sparql}
+            
+        except Exception as e:
+            print(f"Error executing discovery query for template {template['id']}: {e}")
+            return None
+
+    def create_discovery_query(self, template, placeholders):
+        """
+        Create a discovery query that finds valid values for all placeholders
+        
+        Args:
+            template (dict): The template to convert
+            placeholders (set): Set of placeholders in the template
+            
+        Returns:
+            str: The discovery query
+        """
+        sparql_template = template["sparqlTemplate"].strip()
+        
+        # Extract the WHERE clause from the template
+        where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
+        if not where_match:
+            print(f"Error: Could not extract WHERE clause from template: {template['id']}")
+            return None
+            
+        where_clause = where_match.group(1).strip()
+        
+        # Replace placeholders with variables in the WHERE clause
+        for placeholder in placeholders:
+            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+            var_name = placeholder
+            where_clause = re.sub(pattern, f"?{var_name}", where_clause)
+        
+        # Build SELECT clause with all placeholder variables
+        select_clause = "SELECT DISTINCT"
+        
+        # Add result variable from original query if it exists
+        # This helps with aggregation queries
+        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
+        if result_var_match:
+            result_var = result_var_match.group(1)
+            if "COUNT" not in result_var and "count" not in result_var:
+                select_clause += f" {result_var}"
+            else:
+                # For COUNT queries, add a dummy result variable
+                select_clause += " ?dummy_result"
+        
+        # Add all placeholder variables to SELECT clause
+        for placeholder in placeholders:
+            select_clause += f" ?{placeholder}"
+            # For entity placeholders, also select label if available
+            if placeholder.startswith('entity'):
+                select_clause += f" ?{placeholder}Label"
+        
+        # Construct the complete discovery query
+        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
+        
+        # Add OPTIONAL label patterns for entity placeholders
+        for placeholder in placeholders:
+            if placeholder.startswith('entity'):
+                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
+        
+        # Close the query
+        discovery_query += " } LIMIT 100"
+        
+        # Replace all prefixed URIs with full URIs for consistency
+        for prefix, uri in self.prefixes.items():
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
+        
+        return discovery_query
+
     def instantiate_template(self, template):
         """
-        Instantiate a template with specific entities and properties
+        Original method to instantiate a template with specific entities and properties
+        Kept as a fallback method
         
         Args:
             template (dict): The template to instantiate
