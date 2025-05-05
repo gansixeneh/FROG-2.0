@@ -707,24 +707,6 @@ class NL2SPARQLGenerator:
             
         where_clause = where_match.group(1).strip()
         
-        # Handle the special case of FILTER(CONTAINS(...)) with quoted placeholders
-        contains_filter_pattern = r'FILTER\s*\(\s*CONTAINS\s*\([^,]+,\s*LCASE\s*\(\s*"([^"]*){\s*([^{}]+)\s*}([^"]*)"\s*\)\s*\)\s*\)'
-        
-        def contains_filter_replacement(match):
-            before = match.group(1)
-            placeholder = match.group(2)
-            after = match.group(3)
-            
-            # If this is one of our placeholders, replace the entire expression
-            if placeholder in placeholders:
-                return f'FILTER(CONTAINS({match.group(1)}, LCASE(?{placeholder})))'
-            
-            # Otherwise, leave as is
-            return match.group(0)
-        
-        # Replace the FILTER expressions
-        where_clause = re.sub(contains_filter_pattern, contains_filter_replacement, where_clause)
-        
         # Now handle standard placeholders (outside quotes)
         for placeholder in placeholders:
             pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'

@@ -462,15 +462,17 @@ class NL2SPARQLGenerator:
                 "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
                 "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
-                    SELECT DISTINCT ?amendedLaw ?title WHERE {
-                      {entity} lex2kg-o:pasal ?article .
-                      ?article lex2kg-o:versi ?articleVersion .
-                      ?articleVersion lex2kg-o:huruf ?letter .
-                      ?letter lex2kg-o:mengubah ?amendedArticle .
-                      ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
-                      ?amendedLaw lex2kg-o:tentang ?title .
+                    SELECT DISTINCT ?entity ?entityLabel 
+                    WHERE {
+                        ?entity <https://example.org/lex2kg/ontology/pasal> ?article .
+                        ?article <https://example.org/lex2kg/ontology/versi> ?articleVersion .
+                        ?articleVersion <https://example.org/lex2kg/ontology/daftarHuruf> ?letterList .
+                        ?letterList <https://example.org/lex2kg/ontology/huruf> ?letter .
+                        ?letter <https://example.org/lex2kg/ontology/mengubah> ?amendedArticleVersion .
+                        ?amendedArticleVersion <https://example.org/lex2kg/ontology/bagianDari> ?amendedArticle .
+                        ?amendedArticle <https://example.org/lex2kg/ontology/bagianDari> ?amendedLaw .
                     }
-                    LIMIT 10
+                    LIMIT 1000
                 """,
                 "complexity": "advanced"
             },
