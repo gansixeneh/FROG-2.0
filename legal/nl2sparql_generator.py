@@ -13,6 +13,7 @@ import csv
 import io
 from SPARQLWrapper import SPARQLWrapper, JSON
 from collections import Counter
+from kg_schema_extractor import legal_entity_label
 
 class SparqlExecutor:
     """A class to execute SPARQL queries against the Fuseki server."""
@@ -521,15 +522,16 @@ class NL2SPARQLGenerator:
                 "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
                 "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
-                    SELECT DISTINCT ?entity ?entityLabel 
+                    SELECT DISTINCT ?amendedLaw ?title 
                     WHERE {
-                        ?entity <https://example.org/lex2kg/ontology/pasal> ?article .
+                        {entity} <https://example.org/lex2kg/ontology/pasal> ?article .
                         ?article <https://example.org/lex2kg/ontology/versi> ?articleVersion .
                         ?articleVersion <https://example.org/lex2kg/ontology/daftarHuruf> ?letterList .
                         ?letterList <https://example.org/lex2kg/ontology/huruf> ?letter .
                         ?letter <https://example.org/lex2kg/ontology/mengubah> ?amendedArticleVersion .
                         ?amendedArticleVersion <https://example.org/lex2kg/ontology/bagianDari> ?amendedArticle .
                         ?amendedArticle <https://example.org/lex2kg/ontology/bagianDari> ?amendedLaw .
+                        ?amendedLaw lex2kg-o:tentang ?title .
                     }
                 """,
                 "complexity": "advanced"
@@ -1627,45 +1629,7 @@ class NL2SPARQLGenerator:
         Returns:
             str: Human-readable label
         """
-        # Handle legal document URIs
-        if "uu" in uri.lower():
-            parts = uri.split('/')
-            
-            # Extract information from the URI segments
-            uu_parts = []
-            for i, part in enumerate(parts):
-                if part.isdigit():
-                    # Year or number
-                    if len(part) == 4 and 1945 <= int(part) <= 2030:
-                        uu_parts.append(f"Tahun {part}")
-                    else:
-                        uu_parts.append(f"No. {part}")
-                elif part == "pasal" and i+1 < len(parts):
-                    uu_parts.append(f"Pasal {parts[i+1]}")
-                elif part == "bab" and i+1 < len(parts):
-                    uu_parts.append(f"Bab {parts[i+1]}")
-                elif part == "ayat" and i+1 < len(parts):
-                    uu_parts.append(f"Ayat {parts[i+1]}")
-                elif part == "huruf" and i+1 < len(parts):
-                    uu_parts.append(f"Huruf {parts[i+1]}")
-            
-            if uu_parts:
-                return " ".join(uu_parts)
-        
-        # Extract the last part of the URI
-        last_part = uri.split('/')[-1].split('#')[-1]
-        
-        # Remove common prefixes and suffixes
-        last_part = re.sub(r'^[0-9]+_*', '', last_part)  # Remove leading numbers
-        
-        # Convert camelCase to spaces
-        last_part = re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
-        
-        # Replace underscores with spaces
-        last_part = last_part.replace('_', ' ')
-        
-        # Capitalize the first letter of each word
-        return ' '.join(word.capitalize() for word in last_part.split())
+        return legal_entity_label(uri)
 
     def shorten_uri(self, uri):
         """
