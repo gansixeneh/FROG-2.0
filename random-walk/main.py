@@ -82,7 +82,7 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
             properties = []
             for s, p, o in g.triples((entity, None, None)):
                 # Skip metadata properties and rdf:type
-                if p not in [rdfs.label, ns1.also_known_as, RDF.type]:
+                if p not in [rdfs.label, rdfs.domain, rdfs.range, rdfs.subPropertyOf, ns1.also_known_as, RDF.type]:
                     properties.append((p, o))
             
             if not properties:
