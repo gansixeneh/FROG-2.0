@@ -403,7 +403,7 @@ if __name__ == "__main__":
     gemini_api_key = os.getenv('GEMINI_API_KEY')
     
     # Increased number of samples
-    num_samples = 25
+    num_samples = 15
     
     # Range for number of properties per pattern
     min_properties = 1
