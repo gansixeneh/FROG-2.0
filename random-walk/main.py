@@ -7,7 +7,8 @@ import requests
 import time
 from rdflib import Graph, Namespace, URIRef, Literal, RDF
 
-def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variables, gemini_api_key):
+def generate_dataset_from_ttl(ttl_file, num_samples, min_properties, max_properties, 
+                             min_variables, max_variables, gemini_api_key):
     """
     Generate a dataset of question-SPARQL pairs from a TTL file following the algorithm:
     1. Pick a random entity from KG and add to ContextPattern
@@ -22,8 +23,8 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
     Args:
         ttl_file: Path to the TTL file
         num_samples: Number of question-SPARQL pairs to generate
-        num_properties: Number of properties to include in each pattern
-        num_variables: Number of variables to include in each pattern
+        min_properties, max_properties: Range for number of properties to include
+        min_variables, max_variables: Range for number of variables to include
         gemini_api_key: API key for the Gemini API
         
     Returns:
@@ -60,6 +61,25 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
     while samples_generated < num_samples and attempt_count < max_attempts:
         attempt_count += 1
         print(f"Attempting sample {samples_generated + 1}/{num_samples} (attempt {attempt_count})")
+        
+        # For each sample, determine the number of properties and variables with weighted randomization
+        # Create weights that favor lower values (e.g., for range 1-4, weights are [4,3,2,1])
+        property_weights = [max_properties - i + 1 for i in range(min_properties, max_properties + 1)]
+        variable_weights = [max_variables - i + 1 for i in range(min_variables, max_variables + 1)]
+        
+        # Use weighted choice for properties and variables
+        num_properties = random.choices(
+            range(min_properties, max_properties + 1), 
+            weights=property_weights, 
+            k=1
+        )[0]
+        
+        num_variables = random.choices(
+            range(min_variables, max_variables + 1), 
+            weights=variable_weights, 
+            k=1
+        )[0]
+        print(f"  Using {num_properties} properties and {num_variables} variables")
         
         # Step 1: Pick a random entity from KG and add to ContextPattern
         random_entity = random.choice(filtered_entities)
@@ -107,11 +127,11 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         
         # If we couldn't generate any properties, skip this sample and try again
         if not context_pattern:
-            print(f"Skipping sample attempt - no valid properties found")
+            print(f"  Skipping sample attempt - no valid properties found")
             continue
         
         if counter_p < num_properties:
-            print(f"Warning: Could only generate {counter_p} properties for sample {samples_generated + 1}")
+            print(f"  Warning: Could only generate {counter_p} properties for sample {samples_generated + 1}")
         
         # Step 4: Set V random entities/literals in ContextPattern to distinct variables
         all_elements = []
@@ -127,13 +147,13 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         
         # Ensure we have enough elements to create variables
         if len(all_elements) < 1:
-            print(f"Skipping sample attempt - not enough elements to create variables")
+            print(f"  Skipping sample attempt - not enough elements to create variables")
             continue
         
         # Randomly select elements to replace with variables
         num_vars_to_use = min(num_variables, len(all_elements))
         if num_vars_to_use < num_variables:
-            print(f"Warning: Could only use {num_vars_to_use} variables for sample {samples_generated + 1}")
+            print(f"  Warning: Could only use {num_vars_to_use} variables for sample {samples_generated + 1}")
         
         elements_to_replace = random.sample(all_elements, num_vars_to_use)
         
@@ -178,12 +198,14 @@ def generate_dataset_from_ttl(ttl_file, num_samples, num_properties, num_variabl
         
         dataset.append({
             "question": question,
-            "sparql": sparql_query
+            "sparql": sparql_query,
+            "num_properties": counter_p,
+            "num_variables": num_vars_to_use
         })
         
         # Increment the counter for successful samples
         samples_generated += 1
-        print(f"Successfully generated sample {samples_generated}/{num_samples}")
+        print(f"  Successfully generated sample {samples_generated}/{num_samples}")
     
     if samples_generated < num_samples:
         print(f"Warning: Could only generate {samples_generated} samples after {max_attempts} attempts")
@@ -344,25 +366,81 @@ def format_term_for_sparql(term, ns1, rdfs, xsd):
     else:
         return str(term)
 
+def generate_statistics(dataset):
+    """
+    Generate statistics about the generated dataset.
+    
+    Args:
+        dataset: List of dictionaries with keys 'question', 'sparql', 'num_properties', 'num_variables'
+    
+    Returns:
+        A dictionary with various statistics
+    """
+    property_counts = [item['num_properties'] for item in dataset]
+    variable_counts = [item['num_variables'] for item in dataset]
+    
+    stats = {
+        "total_samples": len(dataset),
+        "property_distribution": {
+            "min": min(property_counts),
+            "max": max(property_counts),
+            "avg": sum(property_counts) / len(property_counts) if property_counts else 0,
+            "counts": {i: property_counts.count(i) for i in range(min(property_counts), max(property_counts) + 1)}
+        },
+        "variable_distribution": {
+            "min": min(variable_counts),
+            "max": max(variable_counts),
+            "avg": sum(variable_counts) / len(variable_counts) if variable_counts else 0,
+            "counts": {i: variable_counts.count(i) for i in range(min(variable_counts), max(variable_counts) + 1)}
+        }
+    }
+    
+    return stats
+
 if __name__ == "__main__":
     # Replace with your actual Gemini API key
     load_dotenv()
     gemini_api_key = os.getenv('GEMINI_API_KEY')
     
-    # Number of samples to generate
-    num_samples = 5
+    # Increased number of samples
+    num_samples = 25
     
-    # Number of properties/edges per pattern
-    num_properties = 3
+    # Range for number of properties per pattern
+    min_properties = 1
+    max_properties = 4
     
-    # Number of variables per pattern
-    num_variables = 3
+    # Range for number of variables per pattern
+    min_variables = 1
+    max_variables = 4
     
     # Generate the dataset
-    dataset = generate_dataset_from_ttl('final_result.ttl', num_samples, num_properties, num_variables, gemini_api_key)
+    dataset = generate_dataset_from_ttl(
+        'final_result.ttl', 
+        num_samples, 
+        min_properties, 
+        max_properties, 
+        min_variables, 
+        max_variables, 
+        gemini_api_key
+    )
+    
+    # Generate and print statistics
+    stats = generate_statistics(dataset)
+    print("\nDataset Statistics:")
+    print(f"Total samples: {stats['total_samples']}")
+    print(f"Properties per sample: {stats['property_distribution']['min']}-{stats['property_distribution']['max']} (avg: {stats['property_distribution']['avg']:.2f})")
+    print(f"Variables per sample: {stats['variable_distribution']['min']}-{stats['variable_distribution']['max']} (avg: {stats['variable_distribution']['avg']:.2f})")
+    
+    print("\nProperty distribution:")
+    for count, occurrences in stats['property_distribution']['counts'].items():
+        print(f"  {count} properties: {occurrences} samples ({occurrences/stats['total_samples']*100:.1f}%)")
+    
+    print("\nVariable distribution:")
+    for count, occurrences in stats['variable_distribution']['counts'].items():
+        print(f"  {count} variables: {occurrences} samples ({occurrences/stats['total_samples']*100:.1f}%)")
     
     # Save the dataset to a JSON file
     with open('question_sparql_pairs.json', 'w', encoding='utf-8') as f:
         json.dump(dataset, f, indent=2, ensure_ascii=False)
     
-    print(f"Generated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs.json")
+    print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs.json")

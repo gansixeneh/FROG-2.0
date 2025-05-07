@@ -1,22 +1,152 @@
 [
   {
-    "question": "What research group is associated with courses that require Introduction to Artificial Intelligence and Data Science as a prerequisite and have a specific evaluation method?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 ns1:has_evaluation_method ?x2 .\n  ?x3 ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science .\n  ?x3 ns1:has_research_group ?x1 .\n}"
+    "question": "What is the course code for the English course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ns1:english ns1:has_course_code ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 1
   },
   {
-    "question": "What are the evaluation methods for courses that are worth 6 credits?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 ns1:has_evaluation_method ?x2 .\n  ?x3 ns1:has_credits \"6\"^^xsd:integer .\n  ?x3 ns1:has_evaluation_method ?x1 .\n}"
+    "question": "What evaluation methods are used in Data Structures and Algorithms, which is a prerequisite for Computational Geometry?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ns1:computational_geometry ns1:has_prerequisite_course ns1:data_structures_and_algorithms .\n  ns1:data_structures_and_algorithms ns1:has_evaluation_method ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 1
   },
   {
-    "question": "What are the course codes for courses that are prerequisites for prerequisites of the \"Simulation and Modeling\" course, and what are the prerequisite courses for \"Simulation and Modeling\"?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ns1:simulation_and_modeling ns1:has_course_code ?x1 .\n  ns1:simulation_and_modeling ns1:has_prerequisite_course ?x3 .\n  ?x3 ns1:has_prerequisite_course ?x2 .\n}"
+    "question": "Which research group is associated with courses that require a specific prerequisite course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 ns1:has_prerequisite_course ?x2 .\n  ?x3 ns1:has_research_group ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
   },
   {
-    "question": "What course codes and categories are associated with courses that have 3 credits?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 ns1:has_course_code ?x1 .\n  ?x2 ns1:has_credits \"3\"^^xsd:integer .\n  ?x2 ns1:has_course_category ?x3 .\n}"
+    "question": "What evaluation methods, prerequisite courses, and course categories are associated with a given course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x3 ns1:has_course_category ?x4 .\n  ?x3 ns1:has_evaluation_method ?x1 .\n  ?x3 ns1:has_prerequisite_course ?x2 .\n}",
+    "num_properties": 3,
+    "num_variables": 4
   },
   {
-    "question": "What course categories and evaluation methods, besides tasks, are associated with courses that have a specific evaluation method?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 ns1:has_course_category ?x3 .\n  ?x2 ns1:has_evaluation_method ?x1 .\n  ?x2 ns1:has_evaluation_method ns1:task .\n}"
+    "question": "What evaluation methods are used in courses that require a specific prerequisite course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_prerequisite_course ?x3 .\n  ?x1 ns1:has_evaluation_method ?x2 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
+  },
+  {
+    "question": "What evaluation method is used in a course that is a prerequisite for a course that is itself a prerequisite for another course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x4 ns1:has_prerequisite_course ?x3 .\n  ?x3 ns1:has_prerequisite_course ?x1 .\n  ?x1 ns1:has_evaluation_method ?x2 .\n}",
+    "num_properties": 3,
+    "num_variables": 4
+  },
+  {
+    "question": "What courses have \"Introduction to Digital Systems\" as a prerequisite?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 ns1:has_prerequisite_course ns1:introduction_to_digital_systems .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "What evaluation methods are used for which courses?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 ns1:has_evaluation_method ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "Which course has the course code CSCE604156?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 ns1:has_course_code \"CSCE604156\" .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "What are the credit values for courses?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x1 ns1:has_credits ?x2 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "Which courses have research groups and what evaluation methods do they use?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_research_group ?x2 .\n  ?x1 ns1:has_evaluation_method ?x3 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
+  },
+  {
+    "question": "What evaluation methods are used in the course with code CSCE604128?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 ns1:has_course_code \"CSCE604128\" .\n  ?x2 ns1:has_evaluation_method ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 2
+  },
+  {
+    "question": "What are the evaluation methods, course codes, and credit amounts for mandatory courses?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x1 ns1:has_credits ?x4 .\n  ?x1 ns1:has_course_code ?x3 .\n  ?x1 ns1:has_course_category ns1:faculty_mandatory_course .\n  ?x1 ns1:has_evaluation_method ?x2 .\n}",
+    "num_properties": 4,
+    "num_variables": 4
+  },
+  {
+    "question": "What course has programming projects as an evaluation method and how many credits is it worth?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 ns1:has_evaluation_method ns1:programming_projects .\n  ?x2 ns1:has_credits ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 2
+  },
+  {
+    "question": "What courses have Programming Basics 1 as a prerequisite, and what are the credits and evaluation method for Programming Basics 1?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 ns1:has_prerequisite_course ns1:programming_basics_1 .\n  ns1:programming_basics_1 ns1:has_credits \"4\"^^xsd:integer .\n  ns1:programming_basics_1 ns1:has_evaluation_method ns1:test .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "What courses are prerequisites for Embedded Systems?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ns1:embedded_systems ns1:has_prerequisite_course ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "What courses are prerequisites of a course that is itself a prerequisite for another course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x2 ns1:has_prerequisite_course ?x1 .\n  ?x1 ns1:has_prerequisite_course ?x3 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
+  },
+  {
+    "question": "Which courses have at least two prerequisite courses, and what are those prerequisites?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 ns1:has_prerequisite_course ?x2 .\n  ?x1 ns1:has_prerequisite_course ?x3 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
+  },
+  {
+    "question": "Which course categories do the courses belong to?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 ns1:has_course_category ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "What research group is associated with the Competitive Programming Practicum, which is evaluated through programming activities and requires Data Structures and Algorithms?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ns1:competitive_programming_practicum ns1:has_research_group ?x1 .\n  ns1:competitive_programming_practicum ns1:has_evaluation_method ns1:programming_activities .\n  ns1:competitive_programming_practicum ns1:has_prerequisite_course ns1:data_structures_and_algorithms .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "What are the prerequisite course and evaluation method for the Computer Assisted Teaching course?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ns1:computer_assisted_teaching ns1:has_prerequisite_course ?x1 .\n  ns1:computer_assisted_teaching ns1:has_evaluation_method ?x2 .\n}",
+    "num_properties": 2,
+    "num_variables": 2
+  },
+  {
+    "question": "What evaluation methods are used for which courses?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 ns1:has_evaluation_method ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "What category does the Advanced Database course belong to, how many credits is it worth, and what course is required to take it?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ns1:advanced_database ns1:has_credits ?x2 .\n  ns1:advanced_database ns1:has_course_category ?x1 .\n  ns1:advanced_database ns1:has_prerequisite_course ns1:database .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "Which courses use lab assignments as an evaluation method?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 ns1:has_evaluation_method ns1:lab_assignment .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "What are the values of ?x2)?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x1 ns1:has_research_group ?x2 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
   }
 ]
