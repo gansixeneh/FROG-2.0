@@ -142,5 +142,11 @@
     "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 ns1:has_evaluation_method ns1:lab_assignment .\n}",
     "num_properties": 1,
     "num_variables": 1
+  },
+  {
+    "question": "What are the values of ?x2)?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x1 ns1:has_research_group ?x2 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
   }
 ]
