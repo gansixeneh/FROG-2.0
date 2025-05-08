@@ -52,14 +52,14 @@ def process_questions(input_file: str):
         processed_questions.append(processed_item)
     
     # Save results
-    file_name = input_file.split("\\")[-1].split(".")[0]
-    output_file = f"dataset\\possible_uris\\{file_name}_possible_uris.json"
+    file_name = input_file.split("/")[-1].split(".")[0]
+    output_file = f"dataset/possible_uris/{file_name}_possible_uris.json"
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(processed_questions, f, indent=2, ensure_ascii=False)
     
     print(f"Completed processing {len(processed_questions)} questions and saved to {output_file}")
 
 if __name__ == "__main__":
-    input_file = "dataset\labels\qald_10_converted_labels.json"
+    input_file = "dataset/labels/qald_9_plus_test_wikidata_converted_labels_noised.json"
     
     process_questions(input_file)
