@@ -88,9 +88,9 @@ def process_json_file(input_file, output_file=None):
 if __name__ == "__main__":
     # You can specify your file paths here or pass them as arguments
     files = [
-        "dataset/possible_uris/qald_10_converted_labels_possible_uris.json",
-        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_possible_uris.json", 
-        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_possible_uris.json"
+        # "dataset/possible_uris/qald_10_converted_labels_possible_uris.json",
+        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_noises_possible_uris.json", 
+        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_noises_possible_uris.json"
     ]
     
     for file_path in files:
