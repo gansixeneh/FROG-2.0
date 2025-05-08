@@ -60,6 +60,6 @@ def process_questions(input_file: str):
     print(f"Completed processing {len(processed_questions)} questions and saved to {output_file}")
 
 if __name__ == "__main__":
-    input_file = "dataset/labels/qald_9_plus_test_wikidata_converted_labels_noised.json"
+    input_file = "dataset/labels/qald_9_plus_train_wikidata_converted_labels_noises_part1.json"
     
     process_questions(input_file)

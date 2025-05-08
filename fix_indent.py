@@ -197,7 +197,7 @@ def process_json_file(data):
     return processed_data
 
 def main():
-    input_file = "dataset\labels\qald_9_plus_test_wikidata_converted_labels.json"
+    input_file = "dataset\possible_uris\qald_9_plus_test_wikidata_converted_labels_possible_uris.json"
     
     # Create output filename
     file_dir = os.path.dirname(input_file)
