@@ -16,7 +16,7 @@ class SearchWikidataTool(BaseTool):
         A list of matching entities or properties with their details (id, label, description)
     """
     
-    def _run(self, term: str, type: Literal["entity", "property"] = "entity", limit: int = 5, timeout: float = 1.5) -> List[Dict[str, Any]]:
+    def _run(self, term: str, type: Literal["entity", "property"] = "entity", limit: int = 5, timeout: float = 1) -> List[Dict[str, Any]]:
         """
         Search for entities or properties in Wikidata
         

@@ -51,7 +51,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?o1 WHERE { <http://www.wikidata.org/entity/Q23337>  <http://www.wikidata.org/prop/direct/P421> ?o1.  }"
+    "sparql": "SELECT DISTINCT?o1 WHERE { wd:Q23337  wdt:P421 ?o1.  }"
   },
   {
     "question": "Who killed Caesar?",
@@ -105,7 +105,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?o1 WHERE { <http://www.wikidata.org/entity/Q1048>  <http://www.wikidata.org/prop/direct/P157> ?o1.  }"
+    "sparql": "SELECT DISTINCT?o1 WHERE { wd:Q1048  wdt:P157 ?o1.  }"
   },
   {
     "question": "What is the highest mountain in Germany?",
@@ -369,7 +369,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?o WHERE { <http://www.wikidata.org/entity/Q8740>  <http://www.wikidata.org/prop/direct/P580> ?startWar. <http://www.wikidata.org/entity/Q8740>  <http://www.wikidata.org/prop/direct/P582> ?endWar. <http://www.wikidata.org/entity/Q30>  <http://www.wikidata.org/prop/P6>?blank.?blank <http://www.wikidata.org/prop/statement/P6>?o.?blank <http://www.wikidata.org/prop/qualifier/P580>?start.?blank <http://www.wikidata.org/prop/qualifier/P582>?end. FILTER (?startWar <?start &&?endWar >?end)}"
+    "sparql": "SELECT DISTINCT?o WHERE { wd:Q8740  wdt:P580 ?startWar. wd:Q8740  wdt:P582 ?endWar. wd:Q30  p:P6?blank.?blank ps:P6?o.?blank pq:P580?start.?blank pq:P582?end. FILTER (?startWar <?start &&?endWar >?end)}"
   },
   {
     "question": "Butch Otter is the governor of which U.S. state?",
@@ -546,7 +546,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s WHERE { <http://www.wikidata.org/entity/Q241665>  <http://www.wikidata.org/prop/direct/P569> ?date.?s <http://www.wikidata.org/prop/direct/P106> / <http://www.wikidata.org/prop/direct/P279>*   <http://www.wikidata.org/entity/Q483501>.?s  <http://www.wikidata.org/prop/direct/P569> ?date. }"
+    "sparql": "SELECT?s WHERE { wd:Q241665  wdt:P569 ?date.?s wdt:P106 / wdt:P279*   wd:Q483501.?s  wdt:P569 ?date. }"
   },
   {
     "question": "What is the profession of Frank Herbert?",
@@ -624,7 +624,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q7934>  <http://www.wikidata.org/prop/direct/P106> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q7934  wdt:P106 ?o1.  }"
   },
   {
     "question": "How many seats does the home stadium of FC Porto have?",
@@ -687,7 +687,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?num WHERE { <http://www.wikidata.org/entity/Q128446> <http://www.wikidata.org/prop/direct/P115>/<http://www.wikidata.org/prop/direct/P1083>?num }"
+    "sparql": "SELECT DISTINCT?num WHERE { wd:Q128446 wdt:P115/wdt:P1083?num }"
   },
   {
     "question": "Which frequent flyer program has the most airlines?",
@@ -834,7 +834,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q458>  <http://www.wikidata.org/prop/direct/P150> ?o1.?o1 <http://www.wikidata.org/prop/direct/P122>   <http://www.wikidata.org/entity/Q41614> }"
+    "sparql": "SELECT?o1 WHERE { wd:Q458  wdt:P150 ?o1.?o1 wdt:P122   wd:Q41614 }"
   },
   {
     "question": "Which countries have places with more than two caves?",
@@ -1044,7 +1044,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?s1 WHERE {?s1 ?p1  <http://www.wikidata.org/entity/Q1248784>.?s1  <http://www.wikidata.org/prop/direct/P276>  <http://www.wikidata.org/entity/Q99>.  }"
+    "sparql": "SELECT DISTINCT?s1 WHERE {?s1 ?p1  wd:Q1248784.?s1  wdt:P276  wd:Q99.  }"
   },
   {
     "question": "What is Angela Merkel’s birth name?",
@@ -1098,7 +1098,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q567> <http://www.wikidata.org/prop/direct/P1477> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q567 wdt:P1477 ?o1.  }"
   },
   {
     "question": "Who is the mayor of Berlin?",
@@ -1158,7 +1158,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q64>  <http://www.wikidata.org/prop/direct/P6> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q64  wdt:P6 ?o1.  }"
   },
   {
     "question": "Which countries in the European Union adopted the Euro?",
@@ -1266,7 +1266,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?s1 WHERE { <http://www.wikidata.org/entity/Q458>  <http://www.wikidata.org/prop/direct/P150> ?s1. ?s1  <http://www.wikidata.org/prop/direct/P38>  <http://www.wikidata.org/entity/Q4916>. }"
+    "sparql": "SELECT DISTINCT?s1 WHERE { wd:Q458  wdt:P150 ?s1. ?s1  wdt:P38  wd:Q4916. }"
   },
   {
     "question": "Which country was Bill Gates born in?",
@@ -1353,7 +1353,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q5284> <http://www.wikidata.org/prop/direct/P19>/<http://www.wikidata.org/prop/direct/P17>?uri }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q5284 wdt:P19/wdt:P17?uri }"
   },
   {
     "question": "How many grand-children did Jacques Cousteau have?",
@@ -1431,7 +1431,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count) WHERE { <http://www.wikidata.org/entity/Q83233> <http://www.wikidata.org/prop/direct/P40>/<http://www.wikidata.org/prop/direct/P40>?uri }"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count) WHERE { wd:Q83233 wdt:P40/wdt:P40?uri }"
   },
   {
     "question": "Give me all professional skateboarders from Sweden.",
@@ -1560,7 +1560,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1 WHERE {?s1  <http://www.wikidata.org/prop/direct/P641> <http://www.wikidata.org/entity/Q842284>.?s1  <http://www.wikidata.org/prop/direct/P19>?o1.?o1 <http://www.wikidata.org/prop/direct/P131>* <http://www.wikidata.org/entity/Q34>. }"
+    "sparql": "SELECT?s1 WHERE {?s1  wdt:P641 wd:Q842284.?s1  wdt:P19?o1.?o1 wdt:P131* wd:Q34. }"
   },
   {
     "question": "Which monarchs of the United Kingdom were married to a German?",
@@ -1986,7 +1986,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q2831> <http://www.wikidata.org/prop/direct/P509>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q2831 wdt:P509?uri. }"
   },
   {
     "question": "Which U.S. state has been admitted latest?",
@@ -2529,7 +2529,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q8539> <http://www.wikidata.org/prop/direct/P161>?uri}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q8539 wdt:P161?uri}"
   },
   {
     "question": "Which computer scientist won an oscar?",
@@ -2670,7 +2670,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {?uri <http://www.wikidata.org/prop/direct/P106> <http://www.wikidata.org/entity/Q82594>.?uri <http://www.wikidata.org/prop/direct/P166>?award.?award <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q19020>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE {?uri wdt:P106 wd:Q82594.?uri wdt:P166?award.?award wdt:P31 wd:Q19020. }"
   },
   {
     "question": "Who wrote Harry Potter?",
@@ -2748,7 +2748,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q8337> <http://www.wikidata.org/prop/direct/P50>?uri}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q8337 wdt:P50?uri}"
   },
   {
     "question": "Give me all writers that won the Nobel Prize in literature.",
@@ -3114,7 +3114,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q236> <http://www.wikidata.org/prop/direct/P35>/<http://www.wikidata.org/prop/direct/P19>?uri.?uri <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q515>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q236 wdt:P35/wdt:P19?uri.?uri wdt:P31 wd:Q515. }"
   },
   {
     "question": "Which U.S. state has the highest population density?",
@@ -3405,7 +3405,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {?uri <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q4022>.?uri <http://www.wikidata.org/prop/direct/P17> <http://www.wikidata.org/entity/Q148>.?uri <http://www.wikidata.org/prop/direct/P2043>?length } ORDER BY DESC(?length) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri WHERE {?uri wdt:P31 wd:Q4022.?uri wdt:P17 wd:Q148.?uri wdt:P2043?length } ORDER BY DESC(?length) LIMIT 1"
   },
   {
     "question": "What is the area code of Berlin?",
@@ -3459,7 +3459,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?string WHERE { <http://www.wikidata.org/entity/Q64> <http://www.wikidata.org/prop/direct/P473>?string. }"
+    "sparql": "SELECT DISTINCT?string WHERE { wd:Q64 wdt:P473?string. }"
   },
   {
     "question": "How many scientists graduated from an Ivy League university?",
@@ -3879,7 +3879,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1 WHERE {?s1  <http://www.wikidata.org/prop/direct/P17> <http://www.wikidata.org/entity/Q55>.?s1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q7278>.  }"
+    "sparql": "SELECT?s1 WHERE {?s1  wdt:P17 wd:Q55.?s1  wdt:P31  wd:Q7278.  }"
   },
   {
     "question": "How many moons does Mars have?",
@@ -3933,7 +3933,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q111> <http://www.wikidata.org/prop/direct/P398>?uri . }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q111 wdt:P398?uri . }"
   },
   {
     "question": "What is Batman's real name?",
@@ -3993,7 +3993,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q2695156> <http://www.wikidata.org/prop/direct/P460>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q2695156 wdt:P460?uri. }"
   },
   {
     "question": "What is Elon Musk famous for?",
@@ -4047,7 +4047,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q317521> <http://www.wikidata.org/prop/direct/P61>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q317521 wdt:P61?uri. }"
   },
   {
     "question": "Who is the author of WikiLeaks?",
@@ -4125,7 +4125,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q359>  <http://www.wikidata.org/prop/direct/P50> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q359  wdt:P50 ?o1.  }"
   },
   {
     "question": "When was Carlo Giuliani shot?",
@@ -4179,7 +4179,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q164791>  <http://www.wikidata.org/prop/direct/P570> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q164791  wdt:P570 ?o1.  }"
   },
   {
     "question": "Who was the wife of President Lincoln?",
@@ -4233,7 +4233,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q91>  <http://www.wikidata.org/prop/direct/P26> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q91  wdt:P26 ?o1.  }"
   },
   {
     "question": "How many awards has Bertrand Russell?",
@@ -4287,94 +4287,7 @@
         }
       ]
     },
-    "sparql": "SELECT  (COUNT(DISTINCT?o1) as?count)  WHERE { <http://www.wikidata.org/entity/Q33760>  <http://www.wikidata.org/prop/direct/P166> ?o1. }"
-  },
-  {
-    "question": "Is Pamela Anderson a vegan?",
-    "entities": [
-      "Pamela Anderson",
-      "vegetarianism"
-    ],
-    "properties": [
-      "lifestyle"
-    ],
-    "entities_matches": {
-      "Pamela Anderson": [
-        {
-          "id": "Q83325",
-          "label": "Pamela Anderson",
-          "description": "Canadian-American actress and model (born 1967)",
-          "url": "//www.wikidata.org/wiki/Q83325"
-        },
-        {
-          "id": "Q59394387",
-          "label": "Pamela G Anderson",
-          "description": "researcher ORCID ID = 0000-0002-6602-9186",
-          "url": "//www.wikidata.org/wiki/Q59394387"
-        },
-        {
-          "id": "Q83116417",
-          "label": "Pamela E. Harris",
-          "description": "Mexican-American mathematician & academic",
-          "url": "//www.wikidata.org/wiki/Q83116417"
-        },
-        {
-          "id": "Q91996252",
-          "label": "Pamela Anderson",
-          "description": "researcher (ORCID 0000-0002-0742-045X)",
-          "url": "//www.wikidata.org/wiki/Q91996252"
-        },
-        {
-          "id": "Q92074595",
-          "label": "Pamela Anderson",
-          "description": "researcher (ORCID 0000-0002-2725-1446)",
-          "url": "//www.wikidata.org/wiki/Q92074595"
-        }
-      ],
-      "vegetarianism": [
-        {
-          "id": "Q83364",
-          "label": "vegetarianism",
-          "description": "practice of abstaining from the consumption of meat",
-          "url": "//www.wikidata.org/wiki/Q83364"
-        },
-        {
-          "id": "Q7918357",
-          "label": "Vegetarianism and Romanticism",
-          "description": "",
-          "url": "//www.wikidata.org/wiki/Q7918357"
-        },
-        {
-          "id": "Q2589889",
-          "label": "history of vegetarianism",
-          "description": "aspect of history",
-          "url": "//www.wikidata.org/wiki/Q2589889"
-        },
-        {
-          "id": "Q2268371",
-          "label": "vegetarianism and religion",
-          "description": "religious practices involving not eating meat",
-          "url": "//www.wikidata.org/wiki/Q2268371"
-        },
-        {
-          "id": "Q3545437",
-          "label": "vegetarianism by country",
-          "description": "dietary practices in various countries",
-          "url": "//www.wikidata.org/wiki/Q3545437"
-        }
-      ]
-    },
-    "properties_matches": {
-      "lifestyle": [
-        {
-          "id": "P1576",
-          "label": "lifestyle",
-          "description": "typical way of life of an individual, group, or culture",
-          "url": "//www.wikidata.org/wiki/Property:P1576"
-        }
-      ]
-    },
-    "sparql": "ASK where { <http://www.wikidata.org/entity/Q83325> <http://www.wikidata.org/prop/direct/P1576> <http://www.wikidata.org/entity/Q83364>}"
+    "sparql": "SELECT  (COUNT(DISTINCT?o1) as?count)  WHERE { wd:Q33760  wdt:P166 ?o1. }"
   },
   {
     "question": "Which space probes were sent into orbit around the sun?",
@@ -4404,7 +4317,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { ?uri <http://www.wikidata.org/prop/direct/P522> <http://www.wikidata.org/entity/Q737809>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { ?uri wdt:P522 wd:Q737809. }"
   },
   {
     "question": "Which German cities have more than 250000 inhabitants?",
@@ -4569,7 +4482,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1 WHERE {?s1  <http://www.wikidata.org/prop/direct/P17>  <http://www.wikidata.org/entity/Q183>. ?s1 <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q515>. ?s1  <http://www.wikidata.org/prop/direct/P1082> ?o1. FILTER (?o1 > \"250000\"^^<http://www.w3.org/2001/XMLSchema#integer>)}"
+    "sparql": "SELECT?s1 WHERE {?s1  wdt:P17  wd:Q183. ?s1 wdt:P31  wd:Q515. ?s1  wdt:P1082 ?o1. FILTER (?o1 > \"250000\"^^xsd:integer)}"
   },
   {
     "question": "Who is the daughter of Robert Kennedy married to?",
@@ -4698,7 +4611,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q25310> <http://www.wikidata.org/prop/direct/P40>?daughter.?daughter  <http://www.wikidata.org/prop/direct/P21> <http://www.wikidata.org/entity/Q6581072>.?daughter  <http://www.wikidata.org/prop/direct/P26>?uri.}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q25310 wdt:P40?daughter.?daughter  wdt:P21 wd:Q6581072.?daughter  wdt:P26?uri.}"
   },
   {
     "question": "How many students does the Free University of Amsterdam have?",
@@ -4734,7 +4647,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q214341>  <http://www.wikidata.org/prop/direct/P2196> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q214341  wdt:P2196 ?o1.  }"
   },
   {
     "question": "What is the revenue of IBM?",
@@ -4788,7 +4701,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q37156>  <http://www.wikidata.org/prop/direct/P2139> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q37156  wdt:P2139 ?o1.  }"
   },
   {
     "question": "How many James Bond movies do exist?",
@@ -4929,7 +4842,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(?s1) as?c) WHERE {?s1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q11424>.?s1 ?p  <http://www.wikidata.org/entity/Q2009573>.  FILTER (?p = <http://www.wikidata.org/prop/direct/P144> ||?p = <http://www.wikidata.org/prop/direct/P674>) }"
+    "sparql": "SELECT (COUNT(?s1) as?c) WHERE {?s1  wdt:P31  wd:Q11424.?s1 ?p  wd:Q2009573.  FILTER (?p = wdt:P144 ||?p = wdt:P674) }"
   },
   {
     "question": "Who does the voice of Bart Simpson?",
@@ -4983,7 +4896,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {  <http://www.wikidata.org/entity/Q5480> <http://www.wikidata.org/prop/direct/P725>?uri }"
+    "sparql": "SELECT DISTINCT?uri WHERE {  wd:Q5480 wdt:P725?uri }"
   },
   {
     "question": "Who was Tom Hanks married to?",
@@ -5037,7 +4950,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q2263>  <http://www.wikidata.org/prop/direct/P26> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q2263  wdt:P26 ?o1.  }"
   },
   {
     "question": "Through which countries does the Yenisei river flow?",
@@ -5115,7 +5028,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q78707> <http://www.wikidata.org/prop/direct/P17>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q78707 wdt:P17?uri. }"
   },
   {
     "question": "Give me all cars that are produced in Germany.",
@@ -5277,7 +5190,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT * WHERE {?s1 <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q59773381>. ?s1 <http://www.wikidata.org/prop/direct/P176>?o1.?o1  <http://www.wikidata.org/prop/direct/P17>  <http://www.wikidata.org/entity/Q183>.?o1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q786820>. }"
+    "sparql": "SELECT DISTINCT * WHERE {?s1 wdt:P31 wd:Q59773381. ?s1 wdt:P176?o1.?o1  wdt:P17  wd:Q183.?o1  wdt:P31  wd:Q786820. }"
   },
   {
     "question": "When did Michael Jackson die?",
@@ -5331,7 +5244,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q2831>  <http://www.wikidata.org/prop/direct/P570> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q2831  wdt:P570 ?o1.  }"
   },
   {
     "question": "What is the highest volcano in Africa?",
@@ -5469,7 +5382,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?s1 WHERE {?s1  <http://www.wikidata.org/prop/direct/P30>  <http://www.wikidata.org/entity/Q15>.?s1  <http://www.wikidata.org/prop/direct/P31>/<http://www.wikidata.org/prop/direct/P279>*  <http://www.wikidata.org/entity/Q8072>.?s1 <http://www.wikidata.org/prop/direct/P2044>?o1. } ORDER BY DESC(?o1) LIMIT 1"
+    "sparql": "SELECT DISTINCT?s1 WHERE {?s1  wdt:P30  wd:Q15.?s1  wdt:P31/wdt:P279*  wd:Q8072.?s1 wdt:P2044?o1. } ORDER BY DESC(?o1) LIMIT 1"
   },
   {
     "question": "Which poet wrote the most books?",
@@ -5700,7 +5613,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1 where  {?s1 <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q389459> }"
+    "sparql": "SELECT?s1 where  {?s1 wdt:P31 wd:Q389459 }"
   },
   {
     "question": "Show me all Czech movies.",
@@ -5841,7 +5754,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { ?uri <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q11424>. {?uri <http://www.wikidata.org/prop/direct/P495> <http://www.wikidata.org/entity/Q213>. } UNION {?uri <http://www.wikidata.org/prop/direct/P495> <http://www.wikidata.org/entity/Q33946>. } }"
+    "sparql": "SELECT DISTINCT?uri WHERE { ?uri wdt:P31 wd:Q11424. {?uri wdt:P495 wd:Q213. } UNION {?uri wdt:P495 wd:Q33946. } }"
   },
   {
     "question": "Give me all taikonauts.",
@@ -6081,7 +5994,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {  {?volcano <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q8072>. } UNION {?volcano <http://www.wikidata.org/prop/direct/P31>?type.?type <http://www.wikidata.org/prop/direct/P279>* <http://www.wikidata.org/entity/Q8072>. }?volcano <http://www.wikidata.org/prop/direct/P17>?uri. } GROUP BY?uri HAVING(COUNT(?volcano)>10)"
+    "sparql": "SELECT DISTINCT?uri WHERE {  {?volcano wdt:P31 wd:Q8072. } UNION {?volcano wdt:P31?type.?type wdt:P279* wd:Q8072. }?volcano wdt:P17?uri. } GROUP BY?uri HAVING(COUNT(?volcano)>10)"
   },
   {
     "question": "Give me all movies with Tom Cruise.",
@@ -7260,159 +7173,6 @@
     "sparql": "SELECT?uri WHERE { wd:Q9439?childof?uri. VALUES?childof { wdt:P22 wdt:P25 }}"
   },
   {
-    "question": "Are there any castles in the United States?",
-    "entities": [
-      "castle",
-      "United States"
-    ],
-    "properties": [
-      "instance of",
-      "country",
-      "subclass of"
-    ],
-    "entities_matches": {
-      "castle": [
-        {
-          "id": "Q23413",
-          "label": "castle",
-          "description": "type of fortified structure built in Europe, Asia and the Middle East during the Middle Ages by nobility",
-          "url": "//www.wikidata.org/wiki/Q23413"
-        },
-        {
-          "id": "Q751876",
-          "label": "château",
-          "description": "type of manor house mostly built by noble families for representative purposes",
-          "url": "//www.wikidata.org/wiki/Q751876"
-        },
-        {
-          "id": "Q16865438",
-          "label": "Castle",
-          "description": "family name",
-          "url": "//www.wikidata.org/wiki/Q16865438"
-        },
-        {
-          "id": "Q96959952",
-          "label": "Castle",
-          "description": "given name",
-          "url": "//www.wikidata.org/wiki/Q96959952"
-        },
-        {
-          "id": "Q386880",
-          "label": "Castle",
-          "description": "American police procedural comedy-drama television series (2009-2016)",
-          "url": "//www.wikidata.org/wiki/Q386880"
-        }
-      ],
-      "United States": [
-        {
-          "id": "Q30",
-          "label": "United States",
-          "description": "country primarily located in North America",
-          "url": "//www.wikidata.org/wiki/Q30"
-        },
-        {
-          "id": "Q637413",
-          "label": "United States Census Bureau",
-          "description": "U.S. agency responsible for the census and related statistics",
-          "url": "//www.wikidata.org/wiki/Q637413"
-        },
-        {
-          "id": "Q11703",
-          "label": "United States Virgin Islands",
-          "description": "unincorporated territory of the United States of America",
-          "url": "//www.wikidata.org/wiki/Q11703"
-        },
-        {
-          "id": "Q4917",
-          "label": "United States dollar",
-          "description": "official currency of the United States",
-          "url": "//www.wikidata.org/wiki/Q4917"
-        },
-        {
-          "id": "Q214867",
-          "label": "National Gallery of Art",
-          "description": "national art museum in Washington, D.C.",
-          "url": "//www.wikidata.org/wiki/Q214867"
-        }
-      ]
-    },
-    "properties_matches": {
-      "instance of": [
-        {
-          "id": "P31",
-          "label": "instance of",
-          "description": "type to which this subject corresponds/belongs. Different from P279 (subclass of); for example: K2 is an instance of mountain; volcanoes form a subclass of mountains, and the volcano is a type (instance) of volcanic landform",
-          "url": "//www.wikidata.org/wiki/Property:P31"
-        },
-        {
-          "id": "P10241",
-          "label": "individual of taxon",
-          "description": "the taxon of an individual named organism (animal, plant)",
-          "url": "//www.wikidata.org/wiki/Property:P10241"
-        },
-        {
-          "id": "P1647",
-          "label": "subproperty of",
-          "description": "all resources related by this property are also related by that property",
-          "url": "//www.wikidata.org/wiki/Property:P1647"
-        }
-      ],
-      "country": [
-        {
-          "id": "P17",
-          "label": "country",
-          "description": "sovereign state that this item is in (not to be used for human beings)",
-          "url": "//www.wikidata.org/wiki/Property:P17"
-        },
-        {
-          "id": "P27",
-          "label": "country of citizenship",
-          "description": "the object is a country that recognizes the subject as its citizen",
-          "url": "//www.wikidata.org/wiki/Property:P27"
-        },
-        {
-          "id": "P495",
-          "label": "country of origin",
-          "description": "country of origin of this item (creative work, food, phrase, product, etc.)",
-          "url": "//www.wikidata.org/wiki/Property:P495"
-        },
-        {
-          "id": "P3005",
-          "label": "valid in place",
-          "description": "place where a statement is valid",
-          "url": "//www.wikidata.org/wiki/Property:P3005"
-        },
-        {
-          "id": "P1001",
-          "label": "applies to jurisdiction",
-          "description": "the item (institution, law, public office, public register, etc) or statement belongs to or has power over or applies to the value (a territorial jurisdiction: a country, state, municipality, etc)",
-          "url": "//www.wikidata.org/wiki/Property:P1001"
-        }
-      ],
-      "subclass of": [
-        {
-          "id": "P279",
-          "label": "subclass of",
-          "description": "this item is a subclass (subset) of that item; ALL instances of this item are instances of that item; different from P31 (instance of), e.g.: volcano is a subclass of mountain (and an instance of volcanic landform); Everest is an instance of mountain",
-          "url": "//www.wikidata.org/wiki/Property:P279"
-        },
-        {
-          "id": "P1647",
-          "label": "subproperty of",
-          "description": "all resources related by this property are also related by that property",
-          "url": "//www.wikidata.org/wiki/Property:P1647"
-        },
-        {
-          "id": "P10019",
-          "label": "equivalent in higher rank taxon",
-          "description": "an equivalent class that is species-neutral or scoped to higher ranking taxa",
-          "url": "//www.wikidata.org/wiki/Property:P10019"
-        }
-      ]
-    },
-    "sparql": "ASK WHERE { {?uri wdt:P31 wd:Q23413. } UNION {?uri wdt:P31?castlesubtype.?castlesubtype wdt:P279* wd:Q23413 }?uri wdt:P17 wd:Q30 }"
-  },
-  {
     "question": "Which languages are spoken in Estonia?",
     "entities": [
       "Estonia"
@@ -7566,7 +7326,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { ?uri <http://www.wikidata.org/prop/direct/P171>* <http://www.wikidata.org/entity/Q5113>.?uri <http://www.wikidata.org/prop/direct/P141> <http://www.wikidata.org/entity/Q219127>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { ?uri wdt:P171* wd:Q5113.?uri wdt:P141 wd:Q219127. }"
   },
   {
     "question": "Which countries are connected by the Rhine?",
@@ -8007,7 +7767,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q443120> <http://www.wikidata.org/prop/direct/P26>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q443120 wdt:P26?uri. }"
   },
   {
     "question": "What languages are spoken in Pakistan?",
@@ -8208,7 +7968,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q43653> <http://www.wikidata.org/prop/direct/P1029>?uri}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q43653 wdt:P1029?uri}"
   },
   {
     "question": "Give me all B-sides of the Ramones.",
@@ -8464,7 +8224,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { ?uri <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q4022>.?uri <http://www.wikidata.org/prop/direct/P403> <http://www.wikidata.org/entity/Q1693>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { ?uri wdt:P31 wd:Q4022.?uri wdt:P403 wd:Q1693. }"
   },
   {
     "question": "Where is Fort Knox located?",
@@ -8818,7 +8578,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count) WHERE { ?uri <http://www.wikidata.org/prop/direct/P39> <http://www.wikidata.org/entity/Q268218>}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count) WHERE { ?uri wdt:P39 wd:Q268218}"
   },
   {
     "question": "What are the names of the Teenage Mutant Ninja Turtles?",
@@ -8896,7 +8656,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { ?uri <http://www.wikidata.org/prop/direct/P361> <http://www.wikidata.org/entity/Q1381762>. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { ?uri wdt:P361 wd:Q1381762. }"
   },
   {
     "question": "Where does Piccadilly start?",
@@ -8974,7 +8734,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q1124023> <http://www.wikidata.org/prop/direct/P559>?uri}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q1124023 wdt:P559?uri}"
   },
   {
     "question": "What is the name of the university where Obama's wife studied?",
@@ -9199,7 +8959,7 @@
         }
       ]
     },
-    "sparql": "SELECT?o1 WHERE { <http://www.wikidata.org/entity/Q733>  <http://www.wikidata.org/prop/direct/P571> ?o1.  }"
+    "sparql": "SELECT?o1 WHERE { wd:Q733  wdt:P571 ?o1.  }"
   },
   {
     "question": "How short is the shortest active NBA player?",
@@ -9376,7 +9136,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?height WHERE {?uri <http://www.wikidata.org/prop/direct/P106>  <http://www.wikidata.org/entity/Q3665646>.?uri <http://www.wikidata.org/prop/direct/P54>/<http://www.wikidata.org/prop/direct/P118> <http://www.wikidata.org/entity/Q155223>. ?uri <http://www.wikidata.org/prop/P54>?teamMembership. FILTER NOT EXISTS {?teamMembership <http://www.wikidata.org/prop/qualifier/P582>?endDate }?uri  <http://www.wikidata.org/prop/direct/P2048>?height } ORDER BY?height LIMIT 1"
+    "sparql": "SELECT DISTINCT?height WHERE {?uri wdt:P106  wd:Q3665646.?uri wdt:P54/wdt:P118 wd:Q155223. ?uri p:P54?teamMembership. FILTER NOT EXISTS {?teamMembership pq:P582?endDate }?uri  wdt:P2048?height } ORDER BY?height LIMIT 1"
   },
   {
     "question": "Where did Abraham Lincoln die?",
@@ -9628,7 +9388,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q19024> <http://www.wikidata.org/prop/direct/P585>?uri}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q19024 wdt:P585?uri}"
   },
   {
     "question": "Which animals are critically endangered?",
@@ -9853,7 +9613,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {?uri <http://www.wikidata.org/prop/direct/P106> <http://www.wikidata.org/entity/Q82955>.?uri <http://www.wikidata.org/prop/direct/P26>?spouse. {?spouse <http://www.wikidata.org/prop/direct/P27> <http://www.wikidata.org/entity/Q183>. } UNION {?spouse <http://www.wikidata.org/prop/direct/P19>/<http://www.wikidata.org/prop/direct/P17> <http://www.wikidata.org/entity/Q183> } }"
+    "sparql": "SELECT DISTINCT?uri WHERE {?uri wdt:P106 wd:Q82955.?uri wdt:P26?spouse. {?spouse wdt:P27 wd:Q183. } UNION {?spouse wdt:P19/wdt:P17 wd:Q183 } }"
   },
   {
     "question": "How big is the earth's diameter?",
@@ -9914,60 +9674,6 @@
       ]
     },
     "sparql": "SELECT?c WHERE { wd:Q2 wdt:P2386?c. }"
-  },
-  {
-    "question": "Is the wife of President Obama called Michelle?",
-    "entities": [
-      "Barack Obama"
-    ],
-    "properties": [
-      "spouse"
-    ],
-    "entities_matches": {
-      "Barack Obama": [
-        {
-          "id": "Q76",
-          "label": "Barack Obama",
-          "description": "president of the United States from 2009 to 2017",
-          "url": "//www.wikidata.org/wiki/Q76"
-        },
-        {
-          "id": "Q649593",
-          "label": "Barack Obama Sr.",
-          "description": "Economist, father of Barack Obama jr. (1934–1982)",
-          "url": "//www.wikidata.org/wiki/Q649593"
-        },
-        {
-          "id": "Q59661289",
-          "label": "Barack Obama Presidential Library",
-          "description": "reference unit of the National Archives and Records Administration",
-          "url": "//www.wikidata.org/wiki/Q59661289"
-        },
-        {
-          "id": "Q47513588",
-          "label": "Barack Obama",
-          "description": "painting by Michael A. Glier",
-          "url": "//www.wikidata.org/wiki/Q47513588"
-        },
-        {
-          "id": "Q1379733",
-          "label": "presidency of Barack Obama",
-          "description": "44th presidential administration and cabinet of the USA (2009-2017)",
-          "url": "//www.wikidata.org/wiki/Q1379733"
-        }
-      ]
-    },
-    "properties_matches": {
-      "spouse": [
-        {
-          "id": "P26",
-          "label": "spouse",
-          "description": "the subject has the object as their spouse (husband, wife, partner, etc.). Use \"unmarried partner\" (P451) for non-married companions",
-          "url": "//www.wikidata.org/wiki/Property:P26"
-        }
-      ]
-    },
-    "sparql": "ASK WHERE { wd:Q76 wdt:P26?obj.?obj rdfs:label?label FILTER( REGEX(?label, \"Michelle\" ) ) }"
   },
   {
     "question": "Which U.S. state has the abbreviation MN?",
@@ -10888,7 +10594,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q471379> <http://www.wikidata.org/prop/direct/P527>/<http://www.wikidata.org/prop/direct/P276>?uri.?uri <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q207694>}"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q471379 wdt:P527/wdt:P276?uri.?uri wdt:P31 wd:Q207694}"
   },
   {
     "question": "When was the De Beers company founded?",
@@ -11068,7 +10774,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q9696> <http://www.wikidata.org/prop/P39>?position.?position  <http://www.wikidata.org/prop/statement/P39> <http://www.wikidata.org/entity/Q11696>.?position <http://www.wikidata.org/prop/qualifier/P1366>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q9696 p:P39?position.?position  ps:P39 wd:Q11696.?position pq:P1366?uri. }"
   },
   {
     "question": "Who are the parents of the wife of Juan Carlos I?",
@@ -11557,7 +11263,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?date WHERE { <http://www.wikidata.org/entity/Q9685> <http://www.wikidata.org/prop/direct/P570>?date . }"
+    "sparql": "SELECT DISTINCT?date WHERE { wd:Q9685 wdt:P570?date . }"
   },
   {
     "question": "Who founded Intel?",
@@ -11761,7 +11467,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE { <http://www.wikidata.org/entity/Q154216> <http://www.wikidata.org/prop/direct/P1303>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE { wd:Q154216 wdt:P1303?uri. }"
   },
   {
     "question": "How many rivers and lakes are in South Carolina?",
@@ -12039,7 +11745,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri WHERE {?country <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q6256>.?country  <http://www.wikidata.org/prop/direct/P30> <http://www.wikidata.org/entity/Q15>.?country <http://www.wikidata.org/prop/direct/P36>?uri. }"
+    "sparql": "SELECT DISTINCT?uri WHERE {?country wdt:P31 wd:Q6256.?country  wdt:P30 wd:Q15.?country wdt:P36?uri. }"
   },
   {
     "question": "Which bridges are of the same type as the Manhattan Bridge?",
@@ -12594,7 +12300,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?string WHERE {?uri <http://www.wikidata.org/prop/direct/P31>/(<http://www.wikidata.org/prop/direct/P279>*) <http://www.wikidata.org/entity/Q4830453>.?uri <http://www.wikidata.org/prop/direct/P1128>?number. FILTER(?number > 500000).?uri <http://www.wikidata.org/prop/direct/P856>?string. }"
+    "sparql": "SELECT DISTINCT?string WHERE {?uri wdt:P31/(wdt:P279*) wd:Q4830453.?uri wdt:P1128?number. FILTER(?number > 500000).?uri wdt:P856?string. }"
   },
   {
     "question": "What were the names of the three ships by Columbus?",
