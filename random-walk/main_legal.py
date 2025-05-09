@@ -253,10 +253,10 @@ def generate_question_with_gemini(pattern_text, api_key):
             {
                 "parts": [
                     {
-                        "text": f"""Generate a natural language question in English based on the following RDF triples on a knowledge graph containing university courses:
+                        "text": f"""Generate a natural language question in English based on the following RDF triples on a knowledge graph containing legal documents, laws, regulations, and their components (articles, sections, paragraphs, etc.):
 {pattern_text}
 
-The question should ask for the variables (starting with ?) in the triples. Make the question sound natural and cohesive. Only return the question without any explanation or preamble."""
+The question should ask for the variables (starting with ?) in the triples. Make the question sound natural and cohesive, using appropriate legal terminology. Only return the question without any explanation or preamble."""
                     }
                 ]
             }
@@ -415,7 +415,7 @@ if __name__ == "__main__":
     
     # Generate the dataset
     dataset = generate_dataset_from_ttl(
-        'final_result.ttl', 
+        'modified_data-lex2kg.ttl', 
         num_samples, 
         min_properties, 
         max_properties, 
@@ -440,7 +440,7 @@ if __name__ == "__main__":
         print(f"  {count} variables: {occurrences} samples ({occurrences/stats['total_samples']*100:.1f}%)")
     
     # Save the dataset to a JSON file
-    with open('question_sparql_pairs_curi_new.json', 'w', encoding='utf-8') as f:
+    with open('question_sparql_pairs_legal_new.json', 'w', encoding='utf-8') as f:
         json.dump(dataset, f, indent=2, ensure_ascii=False)
     
     print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs.json")
