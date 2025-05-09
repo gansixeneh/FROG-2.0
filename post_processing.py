@@ -1,7 +1,13 @@
 import json
 import re
-import os
-import sys
+
+def remove_spaces_before_chars(sparql_query):
+    """Remove spaces before ? and . in SPARQL queries"""
+    # Remove spaces before ? that has one space before it
+    modified_query = re.sub(r'(?<! ) \?', '?', sparql_query)
+    # Remove spaces before .
+    modified_query = re.sub(r'(?<! ) \.', '.', modified_query)
+    return modified_query
 
 def format_sparql_query(query):
     """
@@ -227,7 +233,7 @@ def process_json_file(input_file, output_file=None):
     """Process a JSON file containing SPARQL queries"""
     # If no output file specified, create one with '_modified' suffix
     if output_file is None:
-        output_file = input_file.replace('.json', '_indented.json')
+        output_file = input_file.replace('.json', '_modified.json')
     
     # Read the JSON file
     with open(input_file, 'r', encoding='utf-8') as f:
@@ -244,6 +250,7 @@ def process_json_file(input_file, output_file=None):
             if not item['sparql'].startswith('ASK'):
                 # Format the SPARQL query
                 item['sparql'] = format_sparql_query(item['sparql'])
+                item['sparql'] = remove_spaces_before_chars(item['sparql'])
                 item['sparql'] = convert_sparql_to_prefix_notation(item['sparql'])
             else:
                 items_to_remove.append(item)
@@ -258,12 +265,13 @@ def process_json_file(input_file, output_file=None):
     
     print(f"Processed {len(data)} queries and saved to {output_file}")
 
-def main():
+# Example usage:
+if __name__ == "__main__":
     # You can specify your file paths here or pass them as arguments
     files = [
         # "dataset/possible_uris/qald_10_converted_labels_possible_uris.json",
-        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_noises_possible_uris.json", 
-        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_noises_possible_uris.json"
+        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_possible_uris.json", 
+        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_possible_uris.json"
     ]
     
     for file_path in files:
@@ -271,6 +279,3 @@ def main():
             process_json_file(file_path)
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
-            
-if __name__ == "__main__":
-    main()
