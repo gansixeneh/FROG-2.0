@@ -7,8 +7,7 @@ def remove_spaces_before_chars(sparql_query):
     modified_query = re.sub(r'(?<! ) \?', '?', sparql_query)
     # Remove spaces before .
     modified_query = re.sub(r'(?<! ) \.', '.', modified_query)
-    # Remove spaces before (
-    modified_query = re.sub(r'(?<! ) \(', '(', modified_query)
+    
     return modified_query
 
 def format_sparql_query(query):
@@ -157,11 +156,14 @@ def format_after_clauses(after_clause):
             # Split by the clause
             parts = after_clause.split(clause)
             before = parts[0].strip()
-            after = clause + parts[1].strip()
+            after = clause + ' ' + parts[1].strip()
             
             if before:
                 formatted += f" {before}"
             formatted += f"\n{after}"
+            
+            print("After clause:", after_clause)
+            print("Formatted:", formatted)
             
             # We've processed this clause
             return formatted

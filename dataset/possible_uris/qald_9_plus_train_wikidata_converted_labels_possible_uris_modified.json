@@ -1074,7 +1074,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?type wdt:P279* wd:Q728.\n  wd:Q155644 wdt:P287?designer.\n  ?uri wdt:P279?type ;\n       wdt:P287?designer.\n  FILTER(?uri != wd:Q155644)\n}"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?type wdt:P279* wd:Q728.\n  wd:Q155644 wdt:P287?designer.\n  ?uri wdt:P279?type ;\n       wdt:P287?designer.\n  FILTER (?uri != wd:Q155644)\n}"
   },
   {
     "question": "Who is the owner of Universal Studios?",
@@ -1266,7 +1266,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657 ;\n       wdt:P2046?area ;\n       wdt:P1082?population.\n  BIND((?population/?area) AS?density).\n}\nORDER BYDESC(?density) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657 ;\n       wdt:P2046?area ;\n       wdt:P1082?population.\n  BIND((?population/?area) AS?density).\n}\nORDER BY DESC(?density) LIMIT 1"
   },
   {
     "question": "Which monarchs were married to a German?",
@@ -1833,7 +1833,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657 ;\n       wdt:P2046?area ;\n       wdt:P1082?population.\n  BIND((?population/?area) AS?density).\n}\nORDER BYDESC(?density) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657 ;\n       wdt:P2046?area ;\n       wdt:P1082?population.\n  BIND((?population/?area) AS?density).\n}\nORDER BY DESC(?density) LIMIT 1"
   },
   {
     "question": "Which spaceflights were launched from Baikonur?",
@@ -2445,7 +2445,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P54 wd:Q272059 ;\n       wdt:P2048?height.\n}\nORDER BYDESC(?height) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P54 wd:Q272059 ;\n       wdt:P2048?height.\n}\nORDER BY DESC(?height) LIMIT 1"
   },
   {
     "question": "Give me all writers that won the Nobel Prize in literature.",
@@ -3858,7 +3858,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?uri) as?c)\nWHERE {\n  ?uri wdt:P162 wd:Q72792.\n}"
+    "sparql": "SELECT (COUNT(?uri) as?c)\nWHERE {\n  ?uri wdt:P162 wd:Q72792.\n}"
   },
   {
     "question": "Give me all Danish movies.",
@@ -4102,7 +4102,7 @@
         }
       ]
     },
-    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q3665646 ;\n       wdt:P569?birthDate ;\n       wdt:P166?award.\n  ?award rdfs:label?awardLabel.\n  FILTER(CONTAINS(STR(?awardLabel), \"MVP\") || CONTAINS(STR(?awardLabel), \"Most Valuable Player\"))\n  FILTER(LANGMATCHES(LANG(?awardLabel), \"EN\" ) )\n}\nORDER BYDESC(?birthDate) LIMIT 4"
+    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q3665646 ;\n       wdt:P569?birthDate ;\n       wdt:P166?award.\n  ?award rdfs:label?awardLabel.\n  FILTER (CONTAINS(STR(?awardLabel), \"MVP\") || CONTAINS(STR(?awardLabel), \"Most Valuable Player\"))\n  FILTER (LANGMATCHES(LANG(?awardLabel), \"EN\" ) )\n}\nORDER BY DESC(?birthDate) LIMIT 4"
   },
   {
     "question": "Give me all companies in Munich.",
@@ -4396,7 +4396,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P57 wd:Q315484.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P57 wd:Q315484.\n}"
   },
   {
     "question": "Which rivers flow into a German lake?",
@@ -4603,7 +4603,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?uri)\nWHERE {\n  ?uri wdt:P31 wd:Q46970.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?uri)\nWHERE {\n  ?uri wdt:P31 wd:Q46970.\n}"
   },
   {
     "question": "Give me all islands that belong to Japan.",
@@ -5503,7 +5503,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q9259 ;\n       wdt:P575?date.\n  BIND(xsd:integer(YEAR(?date)) as?year)\n  BIND(xsd:integer(YEAR(NOW())) as?currentYear)\n  FILTER(?year <?currentYear &&?year <(?currentYear - 2)).\n}"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q9259 ;\n       wdt:P575?date.\n  BIND(xsd:integer(YEAR(?date)) as?year)\n  BIND(xsd:integer(YEAR(NOW())) as?currentYear)\n  FILTER(?year <?currentYear &&?year < (?currentYear - 2)).\n}"
   },
   {
     "question": "Give me all actors who were born in Paris after 1950.",
@@ -7366,7 +7366,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P361 wd:Q207329.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P361 wd:Q207329.\n}"
   },
   {
     "question": "Give me all the TV shows with Neil Patrick Harris.",
@@ -8506,7 +8506,7 @@
         }
       ]
     },
-    "sparql": "SELECT?value\nWHERE {\n  wd:Q83459 p:P1352?statement.\n  ?statement pq:P459 wd:Q180825 ;\n       ps:P1352?value.\n}\nORDER BYDESC(?value) LIMIT 1"
+    "sparql": "SELECT?value\nWHERE {\n  wd:Q83459 p:P1352?statement.\n  ?statement pq:P459 wd:Q180825 ;\n       ps:P1352?value.\n}\nORDER BY DESC(?value) LIMIT 1"
   },
   {
     "question": "How many films did Leonardo DiCaprio star in?",
@@ -8614,7 +8614,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P31 wd:Q11424 ;\n       wdt:P161 wd:Q38111.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P31 wd:Q11424 ;\n       wdt:P161 wd:Q38111.\n}"
   },
   {
     "question": "Which U.S. states are in the same time zone as Utah?",
@@ -9076,7 +9076,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q7075 ;\n       wdt:P571?date.\n  FILTER(YEAR(?date) < 1400 )\n}"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q7075 ;\n       wdt:P571?date.\n  FILTER (YEAR(?date) < 1400 )\n}"
   },
   {
     "question": "Which programming languages were influenced by Perl?",
@@ -9565,7 +9565,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P2044?elevation.\n}\nORDER BYDESC(?elevation) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P2044?elevation.\n}\nORDER BY DESC(?elevation) LIMIT 1"
   },
   {
     "question": "Which poet wrote the most books?",
@@ -10333,7 +10333,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?c)\nWHERE {\n  ?uri wdt:P114 wd:Q189709.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?c)\nWHERE {\n  ?uri wdt:P114 wd:Q189709.\n}"
   },
   {
     "question": "Give me all actors called Baldwin.",
@@ -11404,7 +11404,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q82955 ;\n       wdt:P69 wd:Q49088.\n}"
+    "sparql": "SELECT DISTINCT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q82955 ;\n       wdt:P69 wd:Q49088.\n}"
   },
   {
     "question": "Give me the birthdays of all actors of the television show Charmed.",
@@ -11872,7 +11872,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  wd:Q43874 wdt:P40?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  wd:Q43874 wdt:P40?uri.\n}"
   },
   {
     "question": "Show me all English Gothic buildings in Kent.",
@@ -12253,7 +12253,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri p:P2043?stmnode.\n  ?stmnode psv:P2043?valuenode.\n  ?valuenode wikibase:quantityAmount?length.\n  ?valuenode wikibase:quantityUnit?unit.\n  ?valuenode wikibase:quantityLowerBound?lowerbound.\n  ?valuenode wikibase:quantityUpperBound?upperbound.\n  BIND((?upperbound-?lowerbound)/2 AS?precision)\n  BIND(IF(?precision=0,?length,(CONCAT(str(?length), \"±\", str(?precision)))) AS?length2)\n  ?unit p:P2370?unitstmnode.\n  ?unitstmnode psv:P2370?unitvaluenode.\n  ?unitvaluenode wikibase:quantityAmount?conversion.\n  ?unitvaluenode wikibase:quantityUnit wd:Q11573.\n  BIND(?length *?conversion AS?length_in_m).\n}\nORDER BYDESC(?length_in_m) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri p:P2043?stmnode.\n  ?stmnode psv:P2043?valuenode.\n  ?valuenode wikibase:quantityAmount?length.\n  ?valuenode wikibase:quantityUnit?unit.\n  ?valuenode wikibase:quantityLowerBound?lowerbound.\n  ?valuenode wikibase:quantityUpperBound?upperbound.\n  BIND((?upperbound-?lowerbound)/2 AS?precision)\n  BIND(IF(?precision=0,?length, (CONCAT(str(?length), \"±\", str(?precision)))) AS?length2)\n  ?unit p:P2370?unitstmnode.\n  ?unitstmnode psv:P2370?unitvaluenode.\n  ?unitvaluenode wikibase:quantityAmount?conversion.\n  ?unitvaluenode wikibase:quantityUnit wd:Q11573.\n  BIND(?length *?conversion AS?length_in_m).\n}\nORDER BY DESC(?length_in_m) LIMIT 1"
   },
   {
     "question": "Which organizations were founded in 1930?",
@@ -12886,7 +12886,7 @@
         }
       ]
     },
-    "sparql": "SELECT?res\nWHERE {\n  ?mayor wdt:P31 wd:Q5.\n  ?mayor p:P39 _:a._:a ps:P39 wd:Q43185970._:a pq:P580?date.\n  ?mayor wdt:P102?res.\n}\nORDER BYDESC(?date) LIMIT 1"
+    "sparql": "SELECT?res\nWHERE {\n  ?mayor wdt:P31 wd:Q5.\n  ?mayor p:P39 _:a._:a ps:P39 wd:Q43185970._:a pq:P580?date.\n  ?mayor wdt:P102?res.\n}\nORDER BY DESC(?date) LIMIT 1"
   },
   {
     "question": "How heavy is Jupiter's lightest moon?",
@@ -13069,7 +13069,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?episode) AS?count)\nWHERE {\n  ?episode wdt:P4908 wd:Q5274359.\n}"
+    "sparql": "SELECT (COUNT(?episode) AS?count)\nWHERE {\n  ?episode wdt:P4908 wd:Q5274359.\n}"
   },
   {
     "question": "Give me all films produced by Hal Roach.",
@@ -13750,7 +13750,7 @@
         }
       ]
     },
-    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P31/wdt:P279* wd:Q8502.\n  ?res wdt:P2044?elevation.\n  ?res wdt:P30/wdt:P361 wd:Q2.\n}\nORDER BYDESC(?elevation) LIMIT 1 OFFSET 1"
+    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P31/wdt:P279* wd:Q8502.\n  ?res wdt:P2044?elevation.\n  ?res wdt:P30/wdt:P361 wd:Q2.\n}\nORDER BY DESC(?elevation) LIMIT 1 OFFSET 1"
   },
   {
     "question": "Which rockets were launched from Baikonur?",
@@ -13945,7 +13945,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?sub) AS?count)\nWHERE {\n  ?sub wdt:P31/wdt:P279* wd:Q9143.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?sub) AS?count)\nWHERE {\n  ?sub wdt:P31/wdt:P279* wd:Q9143.\n}"
   },
   {
     "question": "Which Chess players died in the same place they were born in?",
@@ -14560,7 +14560,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502.\n  ?uri p:P2044?stmnode.\n  ?stmnode psv:P2044?valuenode.\n  ?valuenode wikibase:quantityAmount?elevation.\n  ?valuenode wikibase:quantityUnit?unit.\n  wd:Q130736 wdt:P2044?elevationNangaParbat.\n  FILTER(?unit = wd:Q11573)\n  FILTER(?elevation >?elevationNangaParbat)\n}"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502.\n  ?uri p:P2044?stmnode.\n  ?stmnode psv:P2044?valuenode.\n  ?valuenode wikibase:quantityAmount?elevation.\n  ?valuenode wikibase:quantityUnit?unit.\n  wd:Q130736 wdt:P2044?elevationNangaParbat.\n  FILTER(?unit = wd:Q11573)\n  FILTER (?elevation >?elevationNangaParbat)\n}"
   },
   {
     "question": "Give me all B-sides of the Ramones.",
@@ -15718,7 +15718,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P54 wd:Q128109 ;\n       p:P54?memberOfStatement.\n  ?memberOfStatement a wikibase:BestRank ;\n       ?_ wd:Q128109 ;\n       pq:P580?startTime.\n  MINUS {?memberOfStatement pq:P582?endTime. } MINUS {?uri wdt:P2032?endCareer. }?uri p:P2067?stmnode.\n  ?stmnode psv:P2067?valuenode.\n  ?valuenode wikibase:quantityAmount?mass.\n  ?valuenode wikibase:quantityUnit?unit.\n  BIND(IF(?unit = wd:Q11570,?mass,?mass*0.453592) AS?massUnified)\n}\nORDER BYDESC(?massUnified) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P54 wd:Q128109 ;\n       p:P54?memberOfStatement.\n  ?memberOfStatement a wikibase:BestRank ;\n       ?_ wd:Q128109 ;\n       pq:P580?startTime.\n  MINUS {?memberOfStatement pq:P582?endTime. } MINUS {?uri wdt:P2032?endCareer. }?uri p:P2067?stmnode.\n  ?stmnode psv:P2067?valuenode.\n  ?valuenode wikibase:quantityAmount?mass.\n  ?valuenode wikibase:quantityUnit?unit.\n  BIND(IF(?unit = wd:Q11570,?mass,?mass*0.453592) AS?massUnified)\n}\nORDER BY DESC(?massUnified) LIMIT 1"
   },
   {
     "question": "Which languages are spoken in Estonia?",
@@ -15898,7 +15898,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q3624078.\n  ?uri wdt:P2046?area.\n}\nORDER BYDESC(?area) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q3624078.\n  ?uri wdt:P2046?area.\n}\nORDER BY DESC(?area) LIMIT 1"
   },
   {
     "question": "What is the largest city in america?",
@@ -16084,7 +16084,7 @@
         }
       ]
     },
-    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P17 wd:Q30.\n  ?res wdt:P31/wdt:P279* wd:Q515.\n  ?res wdt:P1082?population.\n}\nORDER BYDESC(?population) LIMIT 1"
+    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P17 wd:Q30.\n  ?res wdt:P31/wdt:P279* wd:Q515.\n  ?res wdt:P1082?population.\n}\nORDER BY DESC(?population) LIMIT 1"
   },
   {
     "question": "Who was the pope that founded the Vatican Television?",
@@ -16906,7 +16906,7 @@
         }
       ]
     },
-    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P31 wd:Q8502.\n  ?res wdt:P131+ wd:Q1202.\n  ?res wdt:P2044?height.\n}\nORDER BYDESC(?height) LIMIT 1"
+    "sparql": "SELECT?res\nWHERE {\n  ?res wdt:P31 wd:Q8502.\n  ?res wdt:P131+ wd:Q1202.\n  ?res wdt:P2044?height.\n}\nORDER BY DESC(?height) LIMIT 1"
   },
   {
     "question": "Who is the current federal minister of finance in Germany?",
@@ -16975,7 +16975,7 @@
         }
       ]
     },
-    "sparql": "SELECT?res\nWHERE {\n  ?res p:P39 _:a.\n  _:a ps:P39 wd:Q22575092.\n  :a pq:P580?start.\n}\nORDER BYDESC(?start) LIMIT 1"
+    "sparql": "SELECT?res\nWHERE {\n  ?res p:P39 _:a.\n  _:a ps:P39 wd:Q22575092.\n  :a pq:P580?start.\n}\nORDER BY DESC(?start) LIMIT 1"
   },
   {
     "question": "In which country is Mecca located?",
@@ -17506,7 +17506,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  {?uri wdt:P31 wd:Q483110.  } UNION {?uri wdt:P31?type.?type wdt:P279 wd:Q483110 }?uri wdt:P17 wd:Q29.\n  ?uri wdt:P1083?num.\n}\nORDER BYDESC(?num) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  {?uri wdt:P31 wd:Q483110.  } UNION {?uri wdt:P31?type.?type wdt:P279 wd:Q483110 }?uri wdt:P17 wd:Q29.\n  ?uri wdt:P1083?num.\n}\nORDER BY DESC(?num) LIMIT 1"
   },
   {
     "question": "How large is the area of UK?",
@@ -18325,7 +18325,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q18574233 ;\n       wdt:P569?dateOfBirth.\n}\nORDER BYDESC(?dateOfBirth) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q18574233 ;\n       wdt:P569?dateOfBirth.\n}\nORDER BY DESC(?dateOfBirth) LIMIT 1"
   },
   {
     "question": "Which river does the Brooklyn Bridge cross?",
@@ -19099,7 +19099,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P50 wd:Q7345 ;\n       wdt:P577?date.\n}\nORDER BYDESC(?date) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P50 wd:Q7345 ;\n       wdt:P577?date.\n}\nORDER BY DESC(?date) LIMIT 1"
   },
   {
     "question": "Where is Sungkyunkwan University?",
@@ -19513,7 +19513,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q41142 wdt:P26?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q41142 wdt:P26?uri.\n}"
   },
   {
     "question": "In which programming language is GIMP written?",
@@ -19972,7 +19972,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri p:P2043?stmnode.\n  ?stmnode psv:P2043?valuenode.\n  ?valuenode wikibase:quantityAmount?length.\n  ?valuenode wikibase:quantityUnit?unit.\n  ?valuenode wikibase:quantityLowerBound?lowerbound.\n  ?valuenode wikibase:quantityUpperBound?upperbound.\n  BIND((?upperbound-?lowerbound)/2 AS?precision)\n  BIND(IF(?precision=0,?length,(CONCAT(str(?length), \"±\", str(?precision)))) AS?length2)\n  ?unit p:P2370?unitstmnode.\n  ?unitstmnode psv:P2370?unitvaluenode.\n  ?unitvaluenode wikibase:quantityAmount?conversion.\n  ?unitvaluenode wikibase:quantityUnit wd:Q11573.\n  BIND(?length *?conversion AS?length_in_m).\n}\nORDER BYDESC(?length_in_m) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri p:P2043?stmnode.\n  ?stmnode psv:P2043?valuenode.\n  ?valuenode wikibase:quantityAmount?length.\n  ?valuenode wikibase:quantityUnit?unit.\n  ?valuenode wikibase:quantityLowerBound?lowerbound.\n  ?valuenode wikibase:quantityUpperBound?upperbound.\n  BIND((?upperbound-?lowerbound)/2 AS?precision)\n  BIND(IF(?precision=0,?length, (CONCAT(str(?length), \"±\", str(?precision)))) AS?length2)\n  ?unit p:P2370?unitstmnode.\n  ?unitstmnode psv:P2370?unitvaluenode.\n  ?unitvaluenode wikibase:quantityAmount?conversion.\n  ?unitvaluenode wikibase:quantityUnit wd:Q11573.\n  BIND(?length *?conversion AS?length_in_m).\n}\nORDER BY DESC(?length_in_m) LIMIT 1"
   },
   {
     "question": "When was John Adams born?",
@@ -20485,7 +20485,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?cnt)\nWHERE {\n  wd:Q937 wdt:P800?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?cnt)\nWHERE {\n  wd:Q937 wdt:P800?uri.\n}"
   },
   {
     "question": "Who composed the soundtrack for Cameron's Titanic?",
@@ -21088,7 +21088,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4830453.\n  ?uri wdt:P17 wd:Q668.\n  ?uri wdt:P1128?employees.\n}\nORDER BYDESC(?employees) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4830453.\n  ?uri wdt:P17 wd:Q668.\n  ?uri wdt:P1128?employees.\n}\nORDER BY DESC(?employees) LIMIT 1"
   },
   {
     "question": "Who was John F. Kennedy's vice president?",
@@ -21661,7 +21661,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:279* wd:Q515 ;\n       wdt:P1082?population.\n}\nORDER BYDESC(?population) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:279* wd:Q515 ;\n       wdt:P1082?population.\n}\nORDER BY DESC(?population) LIMIT 1"
   },
   {
     "question": "What is Donald Trump's main business?",
@@ -22222,7 +22222,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?val\nWHERE {\n  ?uri wdt:P17 wd:Q16 ;\n       wdt:P31/wdt:P279* wd:Q515 ;\n       wdt:P1082?val.\n}\nORDER BYDESC(?val) LIMIT 1"
+    "sparql": "SELECT DISTINCT?val\nWHERE {\n  ?uri wdt:P17 wd:Q16 ;\n       wdt:P31/wdt:P279* wd:Q515 ;\n       wdt:P1082?val.\n}\nORDER BY DESC(?val) LIMIT 1"
   },
   {
     "question": "Who is the mayor of the capital of French Polynesia?",
@@ -22681,7 +22681,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?country) as?cnt) {?country wdt:P31 wd:Q6256 ; wdt:P1082?population ; wdt:P2046?area. wd:Q183 wdt:P1082?germanPopulation. wd:Q183 wdt:P2046?germanArea. BIND((?population/?area) AS?density ) BIND((?germanPopulation/?germanArea) AS?germanDensity ) FILTER(?density >?germanDensity)}"
+    "sparql": "SELECT (COUNT(DISTINCT?country) as?cnt) {?country wdt:P31 wd:Q6256 ; wdt:P1082?population ; wdt:P2046?area. wd:Q183 wdt:P1082?germanPopulation. wd:Q183 wdt:P2046?germanArea. BIND((?population/?area) AS?density ) BIND((?germanPopulation/?germanArea) AS?germanDensity ) FILTER(?density >?germanDensity)}"
   },
   {
     "question": "What is the highest mountain in Italy?",
@@ -22822,7 +22822,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P17 wd:Q38 ;\n       wdt:P2044?elevation.\n}\nORDER BYDESC(?elevation) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P17 wd:Q38 ;\n       wdt:P2044?elevation.\n}\nORDER BY DESC(?elevation) LIMIT 1"
   },
   {
     "question": "List all games by GMT.",
@@ -23632,7 +23632,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q515 ;\n       wdt:P17 wd:Q408 ;\n       wdt:P1082?population.\n}\nORDER BYDESC(?population) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q515 ;\n       wdt:P17 wd:Q408 ;\n       wdt:P1082?population.\n}\nORDER BY DESC(?population) LIMIT 1"
   },
   {
     "question": "Who was married to president Chirac?",
@@ -23992,7 +23992,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q3665646 ;\n       wdt:P2048?height.\n}\nORDER BYDESC(?height) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q3665646 ;\n       wdt:P2048?height.\n}\nORDER BY DESC(?height) LIMIT 1"
   },
   {
     "question": "How many languages are spoken in Turkmenistan?",
@@ -24052,7 +24052,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q874 wdt:P2936?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q874 wdt:P2936?uri.\n}"
   },
   {
     "question": "To which party does the mayor of Paris belong?",
@@ -24208,7 +24208,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q10841764 ;\n       wdt:P1350?num.\n}\nORDER BYDESC(?num) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P106 wd:Q10841764 ;\n       wdt:P1350?num.\n}\nORDER BY DESC(?num) LIMIT 1"
   },
   {
     "question": "What country is Sitecore from?",
@@ -24631,7 +24631,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  wd:Q873 wdt:P40?uri.\n  ?uri wdt:P569?date.\n}\nORDER BYASC(?date) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  wd:Q873 wdt:P40?uri.\n  ?uri wdt:P569?date.\n}\nORDER BY ASC(?date) LIMIT 1"
   },
   {
     "question": "Which television shows were created by Walt Disney?",
@@ -24880,7 +24880,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?uri) AS?count)\nWHERE {\n  ?uri wdt:P31 wd:Q15149663.\n}"
+    "sparql": "SELECT (COUNT(?uri) AS?count)\nWHERE {\n  ?uri wdt:P31 wd:Q15149663.\n}"
   },
   {
     "question": "Which scientist is known for the Manhattan Project and the Nobel Peace Prize?",
@@ -25666,7 +25666,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  wd:Q12495 wdt:P1101?bkFloors.\n  ?uri wdt:P1101?otherFloors.\n  FILTER(?otherFloors >?bkFloors)\n}\nORDER BY?otherFloors LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  wd:Q12495 wdt:P1101?bkFloors.\n  ?uri wdt:P1101?otherFloors.\n  FILTER (?otherFloors >?bkFloors)\n}\nORDER BY?otherFloors LIMIT 1"
   },
   {
     "question": "How much did Pulp Fiction cost?",
@@ -26728,7 +26728,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q12280 ;\n       p:P2787?statement.\n  ?statement psv:P2787?value.\n  ?value wikibase:quantityAmount?len.\n  ?value wikibase:quantityUnit?unit.\n  BIND(IF(?unit = wd:Q11573,?len, IF(?unit = wd:Q3710,?len*0.3048, IF(?unit = wd:Q253276,?len*1609.34,IF(?unit = wd:Q828224,?len*1000,?len)))) AS?lenUnified)\n}\nORDER BYDESC(?lenUnified) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q12280 ;\n       p:P2787?statement.\n  ?statement psv:P2787?value.\n  ?value wikibase:quantityAmount?len.\n  ?value wikibase:quantityUnit?unit.\n  BIND(IF(?unit = wd:Q11573,?len, IF(?unit = wd:Q3710,?len*0.3048, IF(?unit = wd:Q253276,?len*1609.34,IF(?unit = wd:Q828224,?len*1000,?len)))) AS?lenUnified)\n}\nORDER BY DESC(?lenUnified) LIMIT 1"
   },
   {
     "question": "Who was buried in the Great Pyramid of Giza?",
@@ -26836,7 +26836,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q34969 wdt:P40?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?c)\nWHERE {\n  wd:Q34969 wdt:P40?uri.\n}"
   },
   {
     "question": "How tall is Michael Jordan?",
@@ -28252,7 +28252,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?s1) as?c)\nWHERE {\n  ?s1  ?p1  wd:Q739.\n  ?s1  wdt:P31  wd:Q34770.\n}"
+    "sparql": "SELECT (COUNT(?s1) as?c)\nWHERE {\n  ?s1  ?p1  wd:Q739.\n  ?s1  wdt:P31  wd:Q34770.\n}"
   },
   {
     "question": "What is the currency of the Czech Republic?",
@@ -29623,7 +29623,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502.\n  ?uri wdt:P30 wd:Q3960.\n  ?uri wdt:P2044?height.\n}\nORDER BYDESC(?height) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502.\n  ?uri wdt:P30 wd:Q3960.\n  ?uri wdt:P2044?height.\n}\nORDER BY DESC(?height) LIMIT 1"
   },
   {
     "question": "Give me the currency of China.",

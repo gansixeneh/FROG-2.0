@@ -672,7 +672,7 @@
         }
       ]
     },
-    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P2044?elevation ;\n       wdt:P17 wd:Q183.\n}\nORDER BYDESC(?elevation) LIMIT 1"
+    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q8502 ;\n       wdt:P2044?elevation ;\n       wdt:P17 wd:Q183.\n}\nORDER BY DESC(?elevation) LIMIT 1"
   },
   {
     "question": "Which American presidents were in office during the Vietnam War?",
@@ -969,7 +969,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?o\nWHERE {\n  wd:Q8740  wdt:P580  ?startWar.\n  wd:Q8740  wdt:P582  ?endWar.\n  wd:Q30  p:P6?blank.\n  ?blank ps:P6?o.\n  ?blank pq:P580?start.\n  ?blank pq:P582?end.\n  FILTER(?startWar <?start &&?endWar >?end)\n}"
+    "sparql": "SELECT DISTINCT?o\nWHERE {\n  wd:Q8740  wdt:P580  ?startWar.\n  wd:Q8740  wdt:P582  ?endWar.\n  wd:Q30  p:P6?blank.\n  ?blank ps:P6?o.\n  ?blank pq:P580?start.\n  ?blank pq:P582?end.\n  FILTER (?startWar <?start &&?endWar >?end)\n}"
   },
   {
     "question": "Butch Otter is the governor of which U.S. state?",
@@ -2804,7 +2804,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?cave wdt:P31 wd:Q35509 ;\n       wdt:P17?uri.\n}\nGROUP BY?uri HAVING(COUNT(?cave) > 2)"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?cave wdt:P31 wd:Q35509 ;\n       wdt:P17?uri.\n}\nGROUP BY?uri HAVING (COUNT(?cave) > 2)"
   },
   {
     "question": "Which airports are located in California, USA?",
@@ -4424,7 +4424,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?count)\nWHERE {\n  wd:Q83233 wdt:P40/wdt:P40?uri.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count)\nWHERE {\n  wd:Q83233 wdt:P40/wdt:P40?uri.\n}"
   },
   {
     "question": "Give me all professional skateboarders from Sweden.",
@@ -5869,7 +5869,7 @@
         }
       ]
     },
-    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657.\n  ?uri wdt:P571?date.\n}\nORDER BYDESC(?date) LIMIT 1"
+    "sparql": "SELECT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657.\n  ?uri wdt:P571?date.\n}\nORDER BY DESC(?date) LIMIT 1"
   },
   {
     "question": "Which classes does the Millepede belong to?",
@@ -9546,7 +9546,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri wdt:P17 wd:Q148.\n  ?uri wdt:P2043?length.\n}\nORDER BYDESC(?length) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q4022.\n  ?uri wdt:P17 wd:Q148.\n  ?uri wdt:P2043?length.\n}\nORDER BY DESC(?length) LIMIT 1"
   },
   {
     "question": "What is the area code of Berlin?",
@@ -10056,7 +10056,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q901.\n  ?uri wdt:P69?university.\n  wd:Q49113  wdt:P527?university.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q901.\n  ?uri wdt:P69?university.\n  wd:Q49113  wdt:P527?university.\n}"
   },
   {
     "question": "Which professional surfers were born in Australia?",
@@ -10350,7 +10350,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P19?birtplace.\n  ?birtplace wdt:P17 wd:Q408.\n  ?uri wdt:P106 wd:Q13561328.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P19?birtplace.\n  ?birtplace wdt:P17 wd:Q408.\n  ?uri wdt:P106 wd:Q13561328.\n}"
   },
   {
     "question": "Give me all Dutch parties.",
@@ -12857,7 +12857,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1\nWHERE {\n  ?s1  wdt:P17  wd:Q183.\n  ?s1 wdt:P31  wd:Q515.\n  ?s1  wdt:P1082  ?o1.\n  FILTER(?o1 > \"250000\"^^xsd:integer)\n}"
+    "sparql": "SELECT?s1\nWHERE {\n  ?s1  wdt:P17  wd:Q183.\n  ?s1 wdt:P31  wd:Q515.\n  ?s1  wdt:P1082  ?o1.\n  FILTER (?o1 > \"250000\"^^xsd:integer)\n}"
   },
   {
     "question": "Who is the daughter of Robert Kennedy married to?",
@@ -13847,7 +13847,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?s1) as?c)\nWHERE {\n  ?s1  wdt:P31  wd:Q11424.\n  ?s1  ?p  wd:Q2009573.\n  FILTER(?p = wdt:P144 ||?p = wdt:P674)\n}"
+    "sparql": "SELECT (COUNT(?s1) as?c)\nWHERE {\n  ?s1  wdt:P31  wd:Q11424.\n  ?s1  ?p  wd:Q2009573.\n  FILTER (?p = wdt:P144 ||?p = wdt:P674)\n}"
   },
   {
     "question": "Who does the voice of Bart Simpson?",
@@ -15346,7 +15346,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?s1\nWHERE {\n  ?s1  wdt:P30  wd:Q15.\n  ?s1  wdt:P31/wdt:P279*  wd:Q8072.\n  ?s1 wdt:P2044?o1.\n}\nORDER BYDESC(?o1) LIMIT 1"
+    "sparql": "SELECT DISTINCT?s1\nWHERE {\n  ?s1  wdt:P30  wd:Q15.\n  ?s1  wdt:P31/wdt:P279*  wd:Q8072.\n  ?s1 wdt:P2044?o1.\n}\nORDER BY DESC(?o1) LIMIT 1"
   },
   {
     "question": "Which poet wrote the most books?",
@@ -23994,7 +23994,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P39 wd:Q268218.\n}"
+    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P39 wd:Q268218.\n}"
   },
   {
     "question": "What are the names of the Teenage Mutant Ninja Turtles?",
@@ -31818,7 +31818,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?team wdt:P118 wd:Q9448.\n  ?uri wdt:P54?team ;\n       wdt:P569?dateOfBirth.\n}\nORDER BYDESC(?dateOfBirth) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?team wdt:P118 wd:Q9448.\n  ?uri wdt:P54?team ;\n       wdt:P569?dateOfBirth.\n}\nORDER BY DESC(?dateOfBirth) LIMIT 1"
   },
   {
     "question": "Which instruments does Cat Stevens play?",
@@ -32394,7 +32394,7 @@
         }
       ]
     },
-    "sparql": "SELECT(COUNT(?uri) AS?c)\nWHERE {\n  ?uri wdt:P131 wd:Q1456.\n  ?uri wdt:P31/wdt:P279* wd:Q23397.\n}"
+    "sparql": "SELECT (COUNT(?uri) AS?c)\nWHERE {\n  ?uri wdt:P131 wd:Q1456.\n  ?uri wdt:P31/wdt:P279* wd:Q23397.\n}"
   },
   {
     "question": "Who was called Rodzilla?",
@@ -33426,7 +33426,7 @@
         }
       ]
     },
-    "sparql": "SELECT( COUNT( DISTINCT?uri ) AS?c )\nWHERE {\n  ?uri wdt:P112 wd:Q36215.\n  ?uri wdt:P31/wdt:P279* wd:Q783794.\n}"
+    "sparql": "SELECT ( COUNT( DISTINCT?uri ) AS?c )\nWHERE {\n  ?uri wdt:P112 wd:Q36215.\n  ?uri wdt:P31/wdt:P279* wd:Q783794.\n}"
   },
   {
     "question": "Which book has the most pages?",
@@ -33720,7 +33720,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q571.\n  ?uri wdt:P1104?number.\n}\nORDER BYDESC(?number) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31/wdt:P279* wd:Q571.\n  ?uri wdt:P1104?number.\n}\nORDER BY DESC(?number) LIMIT 1"
   },
   {
     "question": "What is the largest state in the United States?",
@@ -34026,7 +34026,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657.\n  ?uri wdt:P2046?area.\n}\nORDER BYDESC(?area) LIMIT 1"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?uri wdt:P31 wd:Q35657.\n  ?uri wdt:P2046?area.\n}\nORDER BY DESC(?area) LIMIT 1"
   },
   {
     "question": "Give me the websites of companies with more than 500000 employees.",
