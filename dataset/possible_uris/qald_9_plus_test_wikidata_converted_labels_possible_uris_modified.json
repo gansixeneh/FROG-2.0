@@ -369,7 +369,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?o\nWHERE {\n  wd:Q8740  wdt:P580  ?startWar.\n  wd:Q8740  wdt:P582  ?endWar.\n  wd:Q30  p:P6?blank.\n  ?blank ps:P6?o.\n  ?blank pq:P580?start.\n  ?blank pq:P582?end.\n  FILTER (?startWar <?start &&?endWar >?end)\n}"
+    "sparql": "SELECT DISTINCT?o\nWHERE {\n  wd:Q8740  wdt:P580  ?startWar.\n  wd:Q8740  wdt:P582  ?endWar.\n  wd:Q30  p:P6?blank.\n  ?blank ps:P6?o.\n  ?blank pq:P580?start.\n  ?blank pq:P582?end.\n  FILTER(?startWar <?start &&?endWar >?end)\n}"
   },
   {
     "question": "Butch Otter is the governor of which U.S. state?",
@@ -933,7 +933,7 @@
         }
       ]
     },
-    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?cave wdt:P31 wd:Q35509 ;\n       wdt:P17?uri.\n}\nGROUP BY?uri HAVING (COUNT(?cave) > 2)"
+    "sparql": "SELECT DISTINCT?uri\nWHERE {\n  ?cave wdt:P31 wd:Q35509 ;\n       wdt:P17?uri.\n}\nGROUP BY?uri HAVING(COUNT(?cave) > 2)"
   },
   {
     "question": "Which airports are located in California, USA?",
@@ -1431,7 +1431,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count)\nWHERE {\n  wd:Q83233 wdt:P40/wdt:P40?uri.\n}"
+    "sparql": "SELECT(COUNT(DISTINCT?uri) as?count)\nWHERE {\n  wd:Q83233 wdt:P40/wdt:P40?uri.\n}"
   },
   {
     "question": "Give me all professional skateboarders from Sweden.",
@@ -3594,7 +3594,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q901.\n  ?uri wdt:P69?university.\n  wd:Q49113  wdt:P527?university.\n}"
+    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P106 wd:Q901.\n  ?uri wdt:P69?university.\n  wd:Q49113  wdt:P527?university.\n}"
   },
   {
     "question": "Which professional surfers were born in Australia?",
@@ -3747,7 +3747,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P19?birtplace.\n  ?birtplace wdt:P17 wd:Q408.\n  ?uri wdt:P106 wd:Q13561328.\n}"
+    "sparql": "SELECT(COUNT(DISTINCT?uri) AS?c)\nWHERE {\n  ?uri wdt:P19?birtplace.\n  ?birtplace wdt:P17 wd:Q408.\n  ?uri wdt:P106 wd:Q13561328.\n}"
   },
   {
     "question": "Give me all Dutch parties.",
@@ -4482,7 +4482,7 @@
         }
       ]
     },
-    "sparql": "SELECT?s1\nWHERE {\n  ?s1  wdt:P17  wd:Q183.\n  ?s1 wdt:P31  wd:Q515.\n  ?s1  wdt:P1082  ?o1.\n  FILTER (?o1 > \"250000\"^^xsd:integer)\n}"
+    "sparql": "SELECT?s1\nWHERE {\n  ?s1  wdt:P17  wd:Q183.\n  ?s1 wdt:P31  wd:Q515.\n  ?s1  wdt:P1082  ?o1.\n  FILTER(?o1 > \"250000\"^^xsd:integer)\n}"
   },
   {
     "question": "Who is the daughter of Robert Kennedy married to?",
@@ -4842,7 +4842,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(?s1) as?c)\nWHERE {\n  ?s1  wdt:P31  wd:Q11424.\n  ?s1  ?p  wd:Q2009573.\n  FILTER (?p = wdt:P144 ||?p = wdt:P674)\n}"
+    "sparql": "SELECT(COUNT(?s1) as?c)\nWHERE {\n  ?s1  wdt:P31  wd:Q11424.\n  ?s1  ?p  wd:Q2009573.\n  FILTER(?p = wdt:P144 ||?p = wdt:P674)\n}"
   },
   {
     "question": "Who does the voice of Bart Simpson?",
@@ -8578,7 +8578,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P39 wd:Q268218.\n}"
+    "sparql": "SELECT(COUNT(DISTINCT?uri) as?count)\nWHERE {\n  ?uri wdt:P39 wd:Q268218.\n}"
   },
   {
     "question": "What are the names of the Teenage Mutant Ninja Turtles?",
@@ -11596,7 +11596,7 @@
         }
       ]
     },
-    "sparql": "SELECT (COUNT(?uri) AS?c)\nWHERE {\n  ?uri wdt:P131 wd:Q1456.\n  ?uri wdt:P31/wdt:P279* wd:Q23397.\n}"
+    "sparql": "SELECT(COUNT(?uri) AS?c)\nWHERE {\n  ?uri wdt:P131 wd:Q1456.\n  ?uri wdt:P31/wdt:P279* wd:Q23397.\n}"
   },
   {
     "question": "Who was called Rodzilla?",
@@ -11994,7 +11994,7 @@
         }
       ]
     },
-    "sparql": "SELECT ( COUNT( DISTINCT?uri ) AS?c )\nWHERE {\n  ?uri wdt:P112 wd:Q36215.\n  ?uri wdt:P31/wdt:P279* wd:Q783794.\n}"
+    "sparql": "SELECT( COUNT( DISTINCT?uri ) AS?c )\nWHERE {\n  ?uri wdt:P112 wd:Q36215.\n  ?uri wdt:P31/wdt:P279* wd:Q783794.\n}"
   },
   {
     "question": "Which book has the most pages?",

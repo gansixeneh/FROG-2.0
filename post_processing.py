@@ -7,6 +7,8 @@ def remove_spaces_before_chars(sparql_query):
     modified_query = re.sub(r'(?<! ) \?', '?', sparql_query)
     # Remove spaces before .
     modified_query = re.sub(r'(?<! ) \.', '.', modified_query)
+    # Remove spaces before (
+    modified_query = re.sub(r'(?<! ) \(', '(', modified_query)
     return modified_query
 
 def format_sparql_query(query):
@@ -16,6 +18,9 @@ def format_sparql_query(query):
     """
     # Clean up the query
     query = query.strip()
+    
+    # Fix common formatting issues
+    query = re.sub(r'BYDESC', 'BY DESC', query, flags=re.IGNORECASE)
     
     # Format basic query structure
     if "WHERE" in query and "{" in query and "}" in query:
@@ -271,7 +276,9 @@ if __name__ == "__main__":
     files = [
         # "dataset/possible_uris/qald_10_converted_labels_possible_uris.json",
         "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_possible_uris.json", 
-        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_possible_uris.json"
+        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_possible_uris.json",
+        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_noises_possible_uris.json",
+        "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_noises_possible_uris.json",
     ]
     
     for file_path in files:
