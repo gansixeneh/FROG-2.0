@@ -281,6 +281,7 @@ if __name__ == "__main__":
         "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_possible_uris.json",
         "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_noises_possible_uris.json",
         "dataset/possible_uris/qald_9_plus_test_wikidata_converted_labels_noises_possible_uris.json",
+        "dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_finetune_possible_uris.json",
     ]
     
     for file_path in files:
