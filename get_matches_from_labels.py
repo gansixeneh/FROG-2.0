@@ -37,7 +37,8 @@ def process_questions(input_file: str):
         
         # Get matches for entities and properties
         entities_matches = get_entity_property_matches(entities, "entity")
-        properties_matches = get_entity_property_matches(properties, "property")
+        # properties_matches = get_entity_property_matches(properties, "property")
+        properties_matches = {}
         
         # Create new item with matches
         processed_item = {
@@ -60,6 +61,6 @@ def process_questions(input_file: str):
     print(f"Completed processing {len(processed_questions)} questions and saved to {output_file}")
 
 if __name__ == "__main__":
-    input_file = "dataset/labels/qald_9_plus_train_wikidata_converted_labels_noises_part1.json"
+    input_file = "dataset/labels/qald_9_plus_train_wikidata_converted_labels_finetune.json"
     
     process_questions(input_file)
