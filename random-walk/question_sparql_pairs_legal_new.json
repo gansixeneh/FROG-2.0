@@ -1,45 +1,81 @@
 [
   {
-    "question": "Regarding paragraph 7 of Section 3, Part 3, Chapter 13 of Law 32 of 2009, what is the list of articles it refers to, its number, and its title?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  <https://example.org/lex2kg/uu/2009/32/bab/0013/bagian/0003/paragraf/0007> <https://example.org/lex2kg/ontology/daftarPasal> ?x1 .\n  <https://example.org/lex2kg/uu/2009/32/bab/0013/bagian/0003/paragraf/0007> <https://example.org/lex2kg/ontology/nomor> ?x2 .\n  <https://example.org/lex2kg/uu/2009/32/bab/0013/bagian/0003/paragraf/0007> <https://example.org/lex2kg/ontology/judul> ?x3 .\n}",
-    "num_properties": 3,
-    "num_variables": 3
-  },
-  {
-    "question": "Within what segment does regulation number ?x2 contain element ?x1?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 <https://example.org/lex2kg/ontology/nomor> ?x2 .\n  ?x3 <https://example.org/lex2kg/ontology/segmen> ?x1 .\n}",
-    "num_properties": 2,
-    "num_variables": 3
-  },
-  {
-    "question": "What legal document or regulation contains Paragraph 5 concerning the obligations under Article 41, specifically regarding the duties of BP Tapera in implementing its tasks as outlined in Article 37, and what is the specific section or article that contains this paragraph?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 <https://example.org/lex2kg/ontology/paragraf> ?x1 .\n  ?x1 <https://example.org/lex2kg/ontology/judul> \"Paragraf 5 Kewajiban Pasal 41 Dalam melaksanakan tugas sebagaimana dimaksud dalam Pasal 37, BP Tapera berkewajiban untuk: a. menetapkan tata cara pemberian nomor identitas kepesertaan dan pembukaan rekening Peserta: b. menetapkan kebijakan operasional sesuai dengan kebijakan umum yang ditetapkan Komite Tapera: Cc. menyampaikan laporan pengelolaan program tabungan perumahan secara berkala 6 (enam) bulan sekali kepada Komite Tapera: d. menetapkan tata cara pemberian informasi kepada Peserta mengenai hak, termasuk informasi mengenai saldo Simpanan dan hasil pemupukannya: e. memublikasikan kinerja BP Tapera dan pengelolaan Dana Tapera melalui media massa cetak dan elektronik: . 18 - f. ' menetapkan standar kinerja dan target kinerja bagi Manajer Investasi, Bank Kustodian, dan Bank atau Perusahaan Pembiayaan: g. melakukan pengawasan terhadap pengelolaan Dana Taperaj, h. melakukan pembukuan sesuai dengan standar akuntansi keuangan yang berlaku: dan i. memberikan pelayanan konsultasi serta pengaduan dari Peserta, Pemberi Kerja, dan masyarakat.\" .\n}",
-    "num_properties": 2,
-    "num_variables": 2
-  },
-  {
-    "question": "According to legal documents, what is the full text specifying the location of the capital of Bener Meriah Regency?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/teks> \"Ibu kota Kabupaten Bener Meriah berkedudukan di Simpang Tiga Redelong.\" .\n}",
-    "num_properties": 1,
-    "num_variables": 1
-  },
-  {
-    "question": "Which legal segment contains the provision identified as ?x1?",
+    "question": "Which legal segment is a component of the legal document identified by ?x2?",
     "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 <https://example.org/lex2kg/ontology/segmen> ?x1 .\n}",
     "num_properties": 1,
     "num_variables": 2
   },
   {
-    "question": "Under Article 160 of Law Number 22 of 2009, what is the specific letter designation assigned to this provision?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/2009/22/pasal/0160/versi/20090622> <https://example.org/lex2kg/ontology/huruf> ?x1 .\n}",
+    "question": "Which legal text contains the component identified as ?x2, and what is the identifier of that text (?x1)?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x2 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "What is the text of the segment that constitutes the \"huruf\" component of the \"mengingat\" section in regulation UU Number 13 of 2011?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  <https://example.org/lex2kg/uu/2011/13/mengingat/huruf> <https://example.org/lex2kg/ontology/segmen> ?x2 .\n  ?x2 <https://example.org/lex2kg/ontology/teks> ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 2
+  },
+  {
+    "question": "What legal document has the number 39?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/nomor> \"39\"^^xsd:integer .\n}",
     "num_properties": 1,
     "num_variables": 1
   },
   {
-    "question": "What is the text and number of the segment that contains segment ?x2?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/segmen> ?x2 .\n  ?x1 <https://example.org/lex2kg/ontology/nomor> ?x4 .\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x3 .\n}",
+    "question": "What is the specific text and identifying number of the legal provision that stipulates the debt obligations of Muara Enim being transferred to Penukal Abab Lematang Ilir?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/nomor> \"c\" .\n  ?x1 <https://example.org/lex2kg/ontology/teks> \". utang piutang Kabupaten Muara Enim yang kegunaannya untuk Kabupaten Penukal Abab Lematang Ilir menjadi tanggung jawab Kabupaten Penukal Abab Lematang Ilir, dan\" .\n  ?x1 <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2013/7/pasal/0014/versi/20130111/ayat/0007/huruf/c/text> .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "What is the text of Article 50, version 20041018, of Law Number 39 of 2004?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2004/39/pasal/0050/versi/20041018> .\n  ?x2 <https://example.org/lex2kg/ontology/nomor> \"50\"^^xsd:integer .\n  <https://example.org/lex2kg/uu/2004/39/pasal/0050/versi/20041018> <https://example.org/lex2kg/ontology/teks> ?x1 .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "What is the text of the segment that is part of ?x3?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 <https://example.org/lex2kg/ontology/segmen> ?x2 .\n  ?x2 <https://example.org/lex2kg/ontology/teks> ?x1 .\n}",
+    "num_properties": 2,
+    "num_variables": 3
+  },
+  {
+    "question": "What is the text and segment associated with legal document number 9?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/nomor> \"9\" .\n  ?x1 <https://example.org/lex2kg/ontology/segmen> ?x3 .\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x2 .\n}",
+    "num_properties": 3,
+    "num_variables": 3
+  },
+  {
+    "question": "What is the number and full text of the legal provision that contains the segment with the text \"https://example.org/lex2kg/uu/2014/30/pasal/0024/versi/20201102/huruf/c/text\"?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 WHERE {\n  ?x3 <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2014/30/pasal/0024/versi/20201102/huruf/c/text> .\n  ?x3 <https://example.org/lex2kg/ontology/nomor> ?x1 .\n  ?x3 <https://example.org/lex2kg/ontology/teks> ?x2 .\n}",
+    "num_properties": 3,
+    "num_variables": 3
+  },
+  {
+    "question": "What are the texts of the provisions (?x4) that are part of the same legal component (?x2) as both provision ?x1 and provision ?x3?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x2 <https://example.org/lex2kg/ontology/ayat> ?x1 .\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x4 .\n  ?x2 <https://example.org/lex2kg/ontology/ayat> ?x3 .\n}",
     "num_properties": 3,
     "num_variables": 4
+  },
+  {
+    "question": "What is the date of the original version of Article 40 of Law Number 23 of 2002, and what article does it contain?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/2002/23/pasal/0040/versi/20021022> <https://example.org/lex2kg/ontology/jenisVersi> \"orisinal\" .\n  <https://example.org/lex2kg/uu/2002/23/pasal/0040/versi/20021022> <https://example.org/lex2kg/ontology/tanggal> ?x1 .\n  <https://example.org/lex2kg/uu/2002/23/pasal/0040/versi/20021022> <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2002/23/pasal/0040/versi/20021022/ayat/0002> .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "Which legal segment is a component of what other legal segment?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x2 <https://example.org/lex2kg/ontology/segmen> ?x1 .\n}",
+    "num_properties": 1,
+    "num_variables": 2
+  },
+  {
+    "question": "What is the text of Article 22 of Law Number 25 of 2009, version 20090718, and which paragraph does it contain?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/2009/25/pasal/0022/versi/20090718> <https://example.org/lex2kg/ontology/teks> ?x1 .\n  <https://example.org/lex2kg/uu/2009/25/pasal/0022/versi/20090718> <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2009/25/pasal/0022/versi/20090718/ayat/0001> .\n}",
+    "num_properties": 2,
+    "num_variables": 1
   },
   {
     "question": "Which legal segment contains the segment identified as ?x2?",
@@ -48,45 +84,9 @@
     "num_variables": 2
   },
   {
-    "question": "What is the version of Article 21 of Law Number 22 of 2009?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/2009/22/pasal/0021> <https://example.org/lex2kg/ontology/versi> ?x1 .\n}",
-    "num_properties": 1,
-    "num_variables": 1
-  },
-  {
-    "question": "Which version does article ?x1 have?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2017/18/pasal/0010/versi/20171122> .\n}",
-    "num_properties": 1,
-    "num_variables": 1
-  },
-  {
-    "question": "What is the text of the segment within the article that contains a specific provision?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 ?x3 ?x4 WHERE {\n  ?x4 <https://example.org/lex2kg/ontology/ayat> ?x1 .\n  ?x1 <https://example.org/lex2kg/ontology/segmen> ?x3 .\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x2 .\n}",
-    "num_properties": 3,
-    "num_variables": 4
-  },
-  {
-    "question": "What legal documents refer to Article 51, paragraph 1 of Law Number 3 of 2014?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2014/3/pasal/0051/versi/20140115/ayat/0001> .\n  <https://example.org/lex2kg/uu/2014/3/pasal/0051/versi/20140115/ayat/0001> <https://example.org/lex2kg/ontology/nomor> \"1\"^^xsd:integer .\n}",
-    "num_properties": 2,
-    "num_variables": 1
-  },
-  {
-    "question": "What legal text is associated with the segment identified as https://example.org/lex2kg/uu/2013/1/pasal/0002/versi/20130108/huruf/h/text?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  ?x1 <https://example.org/lex2kg/ontology/teks> ?x2 .\n  ?x1 <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2013/1/pasal/0002/versi/20130108/huruf/h/text> .\n}",
-    "num_properties": 2,
-    "num_variables": 2
-  },
-  {
-    "question": "According to Article 21, paragraph 1 of the law, what is the identifier and number of the provision that specifies the market segments where individual entrepreneurs and small-scale construction service businesses can operate?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 ?x2 WHERE {\n  <https://example.org/lex2kg/uu/2017/2/pasal/0021/versi/20170112/ayat/0001> <https://example.org/lex2kg/ontology/huruf> ?x2 .\n  ?x2 <https://example.org/lex2kg/ontology/nomor> ?x1 .\n  <https://example.org/lex2kg/uu/2017/2/pasal/0021/versi/20170112/ayat/0001> <https://example.org/lex2kg/ontology/teks> \"Usaha orang perseorangan sebagaimana dimaksud dalam Pasal 19 dan badan usaha Jasa Konstruksi kualifikasi kecil sebagaimana dimaksud dalam Pasal 20 ayat (1) huruf a hanya dapat menyelenggarakan Jasa Konstruksi pada segmen pasar yang:\na. berisiko kecil:\nb. berteknologi sederhana, dan\nc. berbiaya kecil.\n\" .\n}",
-    "num_properties": 3,
-    "num_variables": 2
-  },
-  {
-    "question": "What is the specific segment of legal text that contains the phrase \"Sengketa tentang wewenang mengadili terjadi:\" and is associated with the lettered component (huruf) of Article 0150, version 19811231, of Law number 8 of 1981?",
-    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/1981/8/pasal/0150/versi/19811231/huruf> <https://example.org/lex2kg/ontology/segmen> ?x1 .\n  ?x1 <https://example.org/lex2kg/ontology/teks> \"Sengketa tentang wewenang mengadili terjadi:\" .\n}",
-    "num_properties": 2,
+    "question": "What are the letters associated with Article 4, Paragraph 1 of the law from November 2016, version July 1st, 2016, and what is the text of letter \"a\" within that paragraph?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?x1 WHERE {\n  <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001> <https://example.org/lex2kg/ontology/huruf> <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001/huruf/a> .\n  <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001> <https://example.org/lex2kg/ontology/huruf> ?x1 .\n  <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001/huruf/a> <https://example.org/lex2kg/ontology/teks> \"2Y (dua persen) untuk periode penyampaian Surat Pernyataan pada bulan pertama sampai dengan akhir bulan ketiga terhitung sejak Undang-Undang ini mulai berlaku,\" .\n  <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001> <https://example.org/lex2kg/ontology/huruf> <https://example.org/lex2kg/uu/2016/11/pasal/0004/versi/20160701/ayat/0001/huruf/c> .\n}",
+    "num_properties": 4,
     "num_variables": 1
   }
 ]

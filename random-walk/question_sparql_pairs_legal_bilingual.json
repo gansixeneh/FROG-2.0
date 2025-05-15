@@ -1,0 +1,107 @@
+[
+  {
+    "question": "Apa teks dari huruf m ayat 1 pasal 51 UU nomor 8 tahun 2012 versi 11 Mei 2012?",
+    "englishQuestion": "What is the text of item m of paragraph 1 of article 51 of Law Number 8 of 2012, version May 11, 2012?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 ?value2 WHERE {\n  <https://example.org/lex2kg/uu/2012/8/pasal/0051/versi/20120511/ayat/0001/huruf/m> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2012/8/pasal/0051/versi/20120511/ayat/0001/huruf/m/text> .\n  <https://example.org/lex2kg/uu/2012/8/pasal/0051/versi/20120511/ayat/0001/huruf/m> <https://example.org/lex2kg/ontology/teks> ?value1 .\n  <https://example.org/lex2kg/uu/2012/8/pasal/0051/versi/20120511/ayat/0001/huruf/m> <https://example.org/lex2kg/ontology/nomor> ?value2 .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "Berdasarkan Undang-Undang Nomor 4 Tahun 2019, pasal 3 versi 13 Maret 2019 huruf a, nomor berapa yang ditetapkan untuk ketentuan tersebut?",
+    "englishQuestion": "According to Law Number 4 of 2019, Article 3, version March 13, 2019, letter a, what number is assigned to that provision?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2019/4/pasal/0003/versi/20190313/huruf/a> <https://example.org/lex2kg/ontology/teks> \"meningkatkan mutu pendidikan Bidan:\" .\n  <https://example.org/lex2kg/uu/2019/4/pasal/0003/versi/20190313/huruf/a> <https://example.org/lex2kg/ontology/nomor> ?value1 .\n  <https://example.org/lex2kg/uu/2019/4/pasal/0003/versi/20190313/huruf/a> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2019/4/pasal/0003/versi/20190313/huruf/a/text> .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "Pasal mana saja dalam UU tahun 1997 no 4 yang terkait dengan Pasal 11 UU tahun 1997 no 4?",
+    "englishQuestion": "Which articles in Law Number 4 of 1997 are related to Article 11 of Law Number 4 of 1997?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?article1 ?article2 WHERE {\n  ?article2 <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1997/4/pasal/0011> .\n  <https://example.org/lex2kg/uu/1997/4/pasal/0011> <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/1997/4/pasal/0011/versi/19970228> .\n  ?article2 <https://example.org/lex2kg/ontology/pasal> ?article1 .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "Apa isi teks dari UU tahun 2012 no 12 pasal 84 versi 20120810 ayat 2 huruf f?",
+    "englishQuestion": "What is the text content of item f, paragraph 2, Article 84, version August 10, 2012, of Law Number 12 of 2012?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2012/12/pasal/0084/versi/20120810/ayat/0002/huruf/f> <https://example.org/lex2kg/ontology/teks> ?value1 .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "Apa isi lengkap dari Pasal 85 Undang-Undang Nomor 18 Tahun 2017?",
+    "englishQuestion": "What is the complete content of Article 85 of Law Number 18 of 2017?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?article1 WHERE {\n  ?article1 <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2017/18/pasal/0085> .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "Berapakah nomor yang dimiliki oleh Pasal 4 Undang-Undang Nomor 14 Tahun 2015?",
+    "englishQuestion": "What number does Article 4 of Law Number 14 of 2015 have?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2015/14/pasal/0004> <https://example.org/lex2kg/ontology/nomor> ?value1 .\n  <https://example.org/lex2kg/uu/2015/14/pasal/0004> <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2015/14/pasal/0004/versi/20151125> .\n  <https://example.org/lex2kg/uu/2015/14/pasal/0004/versi/20151125> <https://example.org/lex2kg/ontology/tanggal> \"2015-11-25\"^^xsd:date .\n}",
+    "num_properties": 3,
+    "num_variables": 1
+  },
+  {
+    "question": "Apa saja jenis konten teks yang terdapat dalam berbagai komponen legislasi Indonesia?",
+    "englishQuestion": "What types of text content exist within different components of Indonesian legislation?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?letter1 ?value2 WHERE {\n  ?letter1 <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/1997/22/menimbang/huruf/description> .\n  <https://example.org/lex2kg/uu/1997/22/menimbang/huruf/description> <https://example.org/lex2kg/ontology/teks> ?value2 .\n}",
+    "num_properties": 2,
+    "num_variables": 2
+  },
+  {
+    "question": "Segmen apa yang dimiliki oleh huruf d ayat 0003 pasal 0009 versi 20020410 dari UU tahun 2002 no 4?",
+    "englishQuestion": "What segment does item d of paragraph 0003 of article 0009, version 20020410, of Law Number 4 of 2002 possess?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?article1 WHERE {\n  <https://example.org/lex2kg/uu/2002/4/pasal/0009/versi/20020410/ayat/0003/huruf/d> <https://example.org/lex2kg/ontology/segmen> ?article1 .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "Apa jenis versi dan nomor ayat pertama dari Pasal 25 UU Nomor 10 Tahun 1997 versi tanggal 10 April 1997?",
+    "englishQuestion": "What is the version type and number of the first paragraph of Article 25 of Law Number 10 of 1997, version dated April 10, 1997?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 ?value2 WHERE {\n  <https://example.org/lex2kg/uu/1997/10/pasal/0025/versi/19970410> <https://example.org/lex2kg/ontology/jenisVersi> ?value1 .\n  <https://example.org/lex2kg/uu/1997/10/pasal/0025/versi/19970410> <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/1997/10/pasal/0025/versi/19970410/ayat/0001> .\n  <https://example.org/lex2kg/uu/1997/10/pasal/0025/versi/19970410/ayat/0001> <https://example.org/lex2kg/ontology/nomor> ?value2 .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "Apa teks dari deskripsi huruf pada Pasal 7 UU Nomor 40 Tahun 2008 versi 10 November 2008?",
+    "englishQuestion": "What is the text of the description of the letter/item in Article 7 of Law Number 40 of 2008, version November 10, 2008?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2008/40/pasal/0007/versi/20081110/huruf> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2008/40/pasal/0007/versi/20081110/huruf/description> .\n  <https://example.org/lex2kg/uu/2008/40/pasal/0007/versi/20081110/huruf/description> <https://example.org/lex2kg/ontology/teks> ?value1 .\n}",
+    "num_properties": 2,
+    "num_variables": 1
+  },
+  {
+    "question": "Berapa nomor yang dimiliki oleh pertimbangan huruf b pada Undang-Undang Nomor 27 Tahun 2003?",
+    "englishQuestion": "What number does consideration letter b of Law Number 27 of 2003 possess?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2003/27/menimbang/huruf/b> <https://example.org/lex2kg/ontology/nomor> ?value1 .\n  <https://example.org/lex2kg/uu/2003/27/menimbang/huruf/b> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2003/27/menimbang/huruf/b/text> .\n}",
+    "num_properties": 2,
+    "num_variables": 1
+  },
+  {
+    "question": "Apa teks dari huruf h ayat 1 pasal 3 versi 4 Januari 2008 dari Undang-Undang Nomor 6 Tahun 2008?",
+    "englishQuestion": "What is the text of item h of paragraph 1 of Article 3, version January 4, 2008, of Law Number 6 of 2008?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2008/6/pasal/0003/versi/20080104/ayat/0001/huruf/h> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2008/6/pasal/0003/versi/20080104/ayat/0001/huruf/h/text> .\n  <https://example.org/lex2kg/uu/2008/6/pasal/0003/versi/20080104/ayat/0001/huruf/h> <https://example.org/lex2kg/ontology/teks> ?value1 .\n}",
+    "num_properties": 2,
+    "num_variables": 1
+  },
+  {
+    "question": "Apa isi teks dan nomor dari ayat 3 pasal 24 UU nomor 29 tahun 2007 versi 30 Juli 2007?",
+    "englishQuestion": "What is the text and number of Paragraph 3 of Article 24 of Law Number 29 of 2007, version July 30, 2007?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 ?value2 WHERE {\n  <https://example.org/lex2kg/uu/2007/29/pasal/0024/versi/20070730/ayat/0003> <https://example.org/lex2kg/ontology/teks> ?value1 .\n  <https://example.org/lex2kg/uu/2007/29/pasal/0024/versi/20070730/ayat/0003> <https://example.org/lex2kg/ontology/nomor> ?value2 .\n  <https://example.org/lex2kg/uu/2007/29/pasal/0024/versi/20070730/ayat/0003> <https://example.org/lex2kg/ontology/segmen> <https://example.org/lex2kg/uu/2007/29/pasal/0024/versi/20070730/ayat/0003/text> .\n}",
+    "num_properties": 3,
+    "num_variables": 2
+  },
+  {
+    "question": "Berapakah nomor yang dimiliki oleh UU Nomor 52 Tahun 2008 pasal 10 versi 26 November 2008 ayat 1?",
+    "englishQuestion": "What number does Paragraph 1 of Article 10, version November 26, 2008, of Law Number 52 of 2008 have?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2008/52/pasal/0010/versi/20081126/ayat/0001> <https://example.org/lex2kg/ontology/nomor> ?value1 .\n}",
+    "num_properties": 1,
+    "num_variables": 1
+  },
+  {
+    "question": "Bagaimana sistem penomoran untuk pasal dan bagian dalam kerangka hukum Indonesia?",
+    "englishQuestion": "What numbering systems are used for articles and sections in the Indonesian legal framework?",
+    "sparql": "PREFIX ns1: <http://example.org/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?value1 WHERE {\n  <https://example.org/lex2kg/uu/2004/39/pasal/0097> <https://example.org/lex2kg/ontology/nomor> ?value1 .\n  <https://example.org/lex2kg/uu/2004/39/pasal/0097> <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2004/39/pasal/0097/versi/20041018> .\n}",
+    "num_properties": 2,
+    "num_variables": 1
+  }
+]
