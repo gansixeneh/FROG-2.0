@@ -5,7 +5,7 @@ from collections import Counter
 with open('dataset/possible_uris/train_cot.json', 'r', encoding='utf-8') as f:
     train_cot = json.load(f)
 
-with open('dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_possible_uris_modified.json', 'r', encoding='utf-8') as f:
+with open('dataset/possible_uris/qald_9_plus_train_wikidata_converted_labels_noises_possible_uris_modified.json', 'r', encoding='utf-8') as f:
     qald_9 = json.load(f)
 
 # 1. Ensure all questions in train_cot are unique
@@ -40,9 +40,8 @@ for qald_item in qald_9:
     q = qald_item['question']
     if q in train_cot_map:
         for k, v in qald_item.items():
-            if k not in train_cot_map[q] or train_cot_map[q][k] != v:
-                train_cot_map[q][k] = v
-                updated = True
+            train_cot_map[q][k] = v
+            updated = True
 
 if updated:
     # Save the updated train_cot.json
