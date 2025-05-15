@@ -43,6 +43,7 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
     success_count = 0
     empty_results_count = 0
     error_count = 0
+    kosong = []
 
     # Process each query
     print(f"Executing {total_queries} SPARQL queries...")
@@ -76,6 +77,8 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
             if len(query_results) > 0:
                 success_count += 1
             else:
+                print("kagak ketemu", query_id)
+                kosong += [query_id]
                 empty_results_count += 1
 
         except Exception as e:
@@ -97,6 +100,8 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
     print(f"Successful queries with empty results: {empty_results_count}")
     print(f"Failed queries: {error_count}")
     print(f"Results saved to {output_json_path}")
+    print("============================")
+    print(kosong)
 
     return {
         "total_queries": total_queries,

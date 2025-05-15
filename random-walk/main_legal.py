@@ -316,43 +316,48 @@ def generate_dataset_from_ttl(ttl_file, num_samples, min_properties, max_propert
                     label_mapping[elem] = str(label)
                     break
         
-        # Create a description of the pattern for generating a question
-        pattern_description = []
-        for s, p, o in query_pattern:
-            s_label = get_label_or_format(s, label_mapping)
-            p_label = format_property_label(p)
-            o_label = get_label_or_format(o, label_mapping)
-            
-            pattern_description.append(f"({s_label}, {p_label}, {o_label})")
-        
-        pattern_text = "\n".join(pattern_description)
+        # Create a detailed description of the pattern for generating a question
+        pattern_description = create_detailed_pattern_description(query_pattern, label_mapping)
         
         # Generate bilingual questions using Gemini API with retries
         max_question_attempts = 3
         questions = None
         for q_attempt in range(max_question_attempts):
-            temp_questions = generate_questions_with_gemini(pattern_text, gemini_api_key)
+            temp_questions = generate_questions_with_gemini_improved(pattern_description, gemini_api_key)
             
-            # Check if the questions contain variable references or are too vague
+            # Check if temp_questions is None (API error)
+            if temp_questions is None:
+                print(f"  Gemini API returned None (attempt {q_attempt + 1}/{max_question_attempts})")
+                # Add longer delay for rate limiting
+                time.sleep(5 * (q_attempt + 1))  # Progressive backoff: 5s, 10s, 15s
+                continue
+            
+            # Check if the questions are specific enough
             id_question = temp_questions.get("indonesian", "")
             en_question = temp_questions.get("english", "")
             
             # Validate both questions
-            id_is_valid = not is_too_vague(id_question, "indonesian") and not re.search(r'\?[a-zA-Z]*\d+', id_question)
-            en_is_valid = not is_too_vague(en_question, "english") and not re.search(r'\?[a-zA-Z]*\d+', en_question)
+            id_is_valid = (not is_too_vague_improved(id_question, "indonesian") and 
+                          not re.search(r'\?[a-zA-Z]*\d+', id_question) and
+                          validate_question_specificity(id_question, pattern_description))
+            en_is_valid = (not is_too_vague_improved(en_question, "english") and 
+                          not re.search(r'\?[a-zA-Z]*\d+', en_question) and
+                          validate_question_specificity(en_question, pattern_description))
             
             if id_is_valid and en_is_valid:
                 questions = temp_questions
                 break
             
-            # If last attempt, use the validation function to fix it
+            # If last attempt, use the improved fallback function
             if q_attempt == max_question_attempts - 1:
-                id_question = validate_and_fix_question(id_question, pattern_text, "indonesian")
-                en_question = validate_and_fix_question(en_question, pattern_text, "english")
-                questions = {"indonesian": id_question, "english": en_question}
+                questions = generate_specific_fallback_question(pattern_description, query_pattern)
             
             # Add a small delay to avoid rate limits
-            time.sleep(1)
+            time.sleep(2)
+        
+        # If we still don't have questions after all attempts, use fallback
+        if questions is None:
+            questions = generate_specific_fallback_question(pattern_description, query_pattern)
         
         # Generate SPARQL query
         sparql_query = generate_sparql_query(query_pattern, ns1, rdfs, xsd)
@@ -375,6 +380,267 @@ def generate_dataset_from_ttl(ttl_file, num_samples, min_properties, max_propert
         print(f"Warning: Could only generate {samples_generated} samples after {max_attempts} attempts")
     
     return dataset
+
+def create_detailed_pattern_description(query_pattern, label_mapping):
+    """Create a detailed description of the pattern with specific entity information"""
+    pattern_description = []
+    for s, p, o in query_pattern:
+        s_label = get_detailed_label_or_format(s, label_mapping)
+        p_label = format_property_label(p)
+        o_label = get_detailed_label_or_format(o, label_mapping)
+        
+        pattern_description.append(f"({s_label}, {p_label}, {o_label})")
+    
+    return "\n".join(pattern_description)
+
+def get_detailed_label_or_format(term, label_mapping):
+    """Get a detailed human-readable label for a term, or format it appropriately."""
+    if isinstance(term, str):
+        return term  # It's already a variable or formatted
+    elif isinstance(term, URIRef) and term in label_mapping:
+        label = label_mapping[term]
+        # Also include the specific identifier for legal entities
+        if "/lex2kg/" in str(term):
+            entity_id = legal_entity_label(term)
+            return f"{entity_id} ({label})" if label != entity_id else entity_id
+        return label
+    elif isinstance(term, URIRef):
+        # Use legal_entity_label for legal URIs
+        if "/lex2kg/" in str(term):
+            return legal_entity_label(term)
+        else:
+            # For non-legal URIs, extract the name from the URI
+            return term.split('/')[-1].replace('_', ' ')
+    elif isinstance(term, Literal):
+        # If the literal is too long, truncate it for readability
+        str_value = str(term)
+        if len(str_value) > 50:
+            return str_value[:47] + "..."
+        return str_value
+    else:
+        return str(term)
+
+def is_too_vague_improved(question, language="english"):
+    """Check if a question is too vague to be useful - IMPROVED VERSION"""
+    # Check for specific legal references first
+    if re.search(r'(UU|Undang-Undang).*\d+.*tahun.*\d{4}', question):
+        return False  # Not vague if it contains specific law references
+    
+    if re.search(r'[Pp]asal\s+\d+', question):
+        return False  # Not vague if it contains specific article numbers
+    
+    if re.search(r'[Aa]rticle\s+\d+', question):
+        return False  # Not vague if it contains specific article numbers (English)
+    
+    if re.search(r'Law\s+(Number|No\.?)\s*\d+.*\d{4}', question):
+        return False  # Not vague if it contains specific law references (English)
+    
+    # Define vague patterns for both languages
+    vague_patterns = {
+        "english": [
+            r"\bthis article\b",
+            r"\bthis section\b", 
+            r"\bthis law\b", 
+            r"\bthis paragraph\b",
+            r"\bthis letter\b",
+            r"\bthis chapter\b"
+        ],
+        "indonesian": [
+            r"\bpasal ini\b",
+            r"\bbagian ini\b",
+            r"\bundang-undang ini\b",
+            r"\bayat ini\b",
+            r"\bhuruf ini\b",
+            r"\bbab ini\b",
+            r"\bUU ini\b"
+        ]
+    }
+    
+    # Use the appropriate patterns for the language
+    language_patterns = vague_patterns.get(language.lower(), vague_patterns["english"])
+    
+    # Check for vague patterns
+    for pattern in language_patterns:
+        if re.search(pattern, question.lower()):
+            return True
+    
+    # Check for questions that are too short or generic
+    if len(question.split()) < 6:
+        return True
+        
+    return False
+
+def validate_question_specificity(question, pattern_text):
+    """Validate that the question contains references to specific entities in the pattern"""
+    # Extract entities from pattern
+    law_entities = re.findall(r'/uu/(\d{4})/(\d+)', pattern_text)
+    articles = re.findall(r'/pasal/(\d+)', pattern_text)
+    
+    # Check if question mentions these entities
+    for year, number in law_entities:
+        # Check for various formats of law references
+        if not (re.search(rf'(UU|Law).*{number}.*{year}', question) or
+                re.search(rf'{year}.*{number}', question) or
+                re.search(rf'tahun\s*{year}', question)):
+            return False
+    
+    for article in articles:
+        article_num = int(article)
+        if not (re.search(rf'[Pp]asal\s*{article_num}', question) or
+                re.search(rf'[Aa]rticle\s*{article_num}', question)):
+            return False
+    
+    return True
+
+def generate_questions_with_gemini_improved(pattern_text, api_key):
+    """Generate bilingual questions with improved prompting for specificity"""
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key={api_key}"
+    
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": f"""Generate two versions of a natural language question (one in Bahasa Indonesia and one in English) based on the following information about Indonesian legal documents:
+{pattern_text}
+
+CRITICAL REQUIREMENTS FOR BOTH LANGUAGES:
+
+1. BE EXTREMELY SPECIFIC - Your questions MUST include ALL specific identifiers found in the pattern
+2. If you see specific entities like "UU no 39 tahun 2004 pasal 97", your question MUST mention these exact identifiers
+3. DO NOT generate generic questions about legal systems, numbering, or structures in general
+4. Each question should be asking for specific information about the specific legal entities mentioned
+
+Examples of GOOD questions:
+- "Apa nomor dari Pasal 97 dalam UU no 39 tahun 2004?"
+- "What is the number of Article 97 in Law Number 39 of 2004?"
+- "Berapa nomor yang dimiliki oleh Pasal 4 Undang-Undang Nomor 14 Tahun 2015?"
+- "What number does Article 4 of Law Number 14 of 2015 have?"
+
+Examples of BAD questions to AVOID:
+- "Bagaimana sistem penomoran untuk pasal dan bagian dalam kerangka hukum Indonesia?"
+- "What numbering systems are used for articles and sections?"
+- Generic questions without specific article/law numbers
+
+Format your response exactly as follows:
+Indonesian: [Question in Bahasa Indonesia]
+English: [Question in English]
+
+Remember: BE SPECIFIC! Include the actual law numbers, article numbers, and dates from the pattern."""
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.2,
+            "maxOutputTokens": 200
+        }
+    }
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        response_json = response.json()
+        response_text = response_json["candidates"][0]["content"]["parts"][0]["text"].strip()
+        
+        # Parse both questions from the response
+        id_match = re.search(r'Indonesian:\s*(.*?)(?:\n|$)', response_text)
+        en_match = re.search(r'English:\s*(.*?)(?:\n|$)', response_text)
+        
+        indonesian_question = id_match.group(1).strip() if id_match else None
+        english_question = en_match.group(1).strip() if en_match else response_text
+        
+        return {
+            "indonesian": indonesian_question,
+            "english": english_question
+        }
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 429:
+            print(f"Rate limit error (429). Waiting before retry...")
+            return None
+        else:
+            print(f"HTTP Error calling Gemini API: {e}")
+            return None
+    except Exception as e:
+        print(f"Error calling Gemini API: {e}")
+        return None
+
+def generate_specific_fallback_question(pattern_text, query_pattern):
+    """Generate specific fallback questions based on actual entities in the pattern"""
+    # Extract specific entities from pattern text
+    law_matches = re.findall(r'/uu/(\d{4})/(\d+)', pattern_text)
+    article_matches = re.findall(r'/pasal/(\d+)', pattern_text)
+    version_matches = re.findall(r'/versi/(\d{8})', pattern_text)
+    
+    # Determine what's being asked for based on the query pattern
+    asking_for_number = any('nomor' in str(p) for _, p, _ in query_pattern)
+    asking_for_text = any('teks' in str(p) for _, p, _ in query_pattern)
+    asking_for_title = any('judul' in str(p) for _, p, _ in query_pattern)
+    
+    # Build specific questions
+    indonesian_question = ""
+    english_question = ""
+    
+    if law_matches and article_matches:
+        year, number = law_matches[0]
+        article_num = int(article_matches[0])
+        
+        if version_matches:
+            version_date = datetime.strptime(version_matches[0], "%Y%m%d").strftime("%-d %B %Y")
+            # Replace English months with Indonesian
+            month_mapping = {
+                "January": "Januari", "February": "Februari", "March": "Maret",
+                "April": "April", "May": "Mei", "June": "Juni",
+                "July": "Juli", "August": "Agustus", "September": "September",
+                "October": "Oktober", "November": "November", "December": "Desember"
+            }
+            for eng, indo in month_mapping.items():
+                version_date = version_date.replace(eng, indo)
+            
+            if asking_for_number:
+                indonesian_question = f"Apa nomor dari Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
+                english_question = f"What is the number of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
+            elif asking_for_text:
+                indonesian_question = f"Apa isi dari Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
+                english_question = f"What is the content of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
+            else:
+                indonesian_question = f"Apa informasi tentang Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
+                english_question = f"What information exists about Article {article_num} in Law Number {number} of {year}, version {version_date}?"
+        else:
+            if asking_for_number:
+                indonesian_question = f"Apa nomor dari Pasal {article_num} dalam UU no {number} tahun {year}?"
+                english_question = f"What is the number of Article {article_num} in Law Number {number} of {year}?"
+            elif asking_for_text:
+                indonesian_question = f"Apa isi dari Pasal {article_num} dalam UU no {number} tahun {year}?"
+                english_question = f"What is the content of Article {article_num} in Law Number {number} of {year}?"
+            else:
+                indonesian_question = f"Apa informasi tentang Pasal {article_num} dalam UU no {number} tahun {year}?"
+                english_question = f"What information exists about Article {article_num} in Law Number {number} of {year}?"
+    
+    elif law_matches:
+        year, number = law_matches[0]
+        if asking_for_title:
+            indonesian_question = f"Apa judul dari UU no {number} tahun {year}?"
+            english_question = f"What is the title of Law Number {number} of {year}?"
+        else:
+            indonesian_question = f"Apa informasi tentang UU no {number} tahun {year}?"
+            english_question = f"What information exists about Law Number {number} of {year}?"
+    
+    # If we still don't have questions, create generic ones as last resort
+    if not indonesian_question:
+        return {
+            "indonesian": "Apa informasi yang tersedia dalam dokumen hukum ini?",
+            "english": "What information is available in this legal document?"
+        }
+    
+    return {
+        "indonesian": indonesian_question,
+        "english": english_question
+    }
 
 def score_entity_for_fixed_status(entity):
     """
@@ -434,332 +700,6 @@ def score_entity_for_fixed_status(entity):
             score -= 2
     
     return score
-
-def is_too_vague(question, language="english"):
-    """
-    Check if a question is too vague to be useful
-    
-    Args:
-        question (str): The question to check
-        language (str): The language of the question ("english" or "indonesian")
-        
-    Returns:
-        bool: True if the question is too vague, False otherwise
-    """
-    # Define vague patterns for both languages
-    vague_patterns = {
-        "english": [
-            r"\bthis article\b",
-            r"\bthis section\b", 
-            r"\bthis law\b", 
-            r"\bthis paragraph\b",
-            r"\bthis letter\b",
-            r"\bthis chapter\b"
-        ],
-        "indonesian": [
-            r"\bpasal ini\b",
-            r"\bbagian ini\b",
-            r"\bundang-undang ini\b",
-            r"\bayat ini\b",
-            r"\bhuruf ini\b",
-            r"\bbab ini\b",
-            r"\bUU ini\b"
-        ]
-    }
-    
-    # Use the appropriate patterns for the language
-    language_patterns = vague_patterns.get(language.lower(), vague_patterns["english"])
-    
-    # Check for vague patterns
-    for pattern in language_patterns:
-        if re.search(pattern, question.lower()):
-            # Check if there's specific qualification before the vague term
-            qualified = False
-            if language.lower() == "english":
-                qualified = re.search(r'(Article|Law|Section|Chapter) (\d+|[a-zA-Z])[^\?]+'+pattern, question.lower())
-            else:  # indonesian
-                qualified = re.search(r'(Pasal|UU|Bagian|Bab) (\d+|[a-zA-Z])[^\?]+'+pattern, question.lower())
-                
-            if not qualified:
-                return True
-    
-    # Check for questions that are too short or generic
-    if len(question.split()) < 6:
-        return True
-        
-    return False
-
-def generate_generic_legal_question(pattern_text, language="english"):
-    """
-    Generate a generic but meaningful legal question for patterns without specific identifiers
-    
-    Args:
-        pattern_text (str): The pattern text
-        language (str): The language to generate the question in ("english" or "indonesian")
-        
-    Returns:
-        str: A generic legal question
-    """
-    if language.lower() == "indonesian":
-        if "nomor" in pattern_text.lower():
-            return "Bagaimana sistem penomoran untuk pasal dan bagian dalam kerangka hukum Indonesia?"
-        
-        if "teks" in pattern_text.lower():
-            return "Apa saja jenis konten teks yang terdapat dalam berbagai komponen legislasi Indonesia?"
-        
-        if "merujuk" in pattern_text.lower():
-            return "Bagaimana ketentuan-ketentuan dalam hukum Indonesia saling merujuk atau berhubungan satu sama lain?"
-        
-        if "versi" in pattern_text.lower():
-            return "Bagaimana struktur dan identifikasi versi-versi artikel hukum dalam undang-undang Indonesia?"
-        
-        if "huruf" in pattern_text.lower():
-            return "Bagaimana subbagian berupa huruf digunakan untuk mengorganisir ketentuan hukum dalam legislasi Indonesia?"
-        
-        # Default generic question if no specific pattern is identified
-        return "Hubungan struktural seperti apa yang ada antara komponen-komponen berbeda dalam sistem hukum Indonesia?"
-    
-    else:  # English
-        if "nomor" in pattern_text.lower():
-            return "What numbering systems are used for articles and sections in the Indonesian legal framework?"
-        
-        if "teks" in pattern_text.lower():
-            return "What types of text content exist within different components of Indonesian legislation?"
-        
-        if "merujuk" in pattern_text.lower():
-            return "How do different provisions in Indonesian law reference or relate to one another?"
-        
-        if "versi" in pattern_text.lower():
-            return "How are different versions of legal articles structured and identified in Indonesian law?"
-        
-        if "huruf" in pattern_text.lower():
-            return "How are lettered subsections used to organize legal provisions in Indonesian legislation?"
-        
-        # Default generic question if no specific pattern is identified
-        return "What structural relationships exist between different components in the Indonesian legal system?"
-
-def validate_and_fix_question(question, pattern_text, language="english"):
-    """
-    Validate if the question contains variable references or is too vague, and fix it
-    
-    Args:
-        question (str): The generated question
-        pattern_text (str): The pattern description used to generate the question
-        language (str): The language of the question ("english" or "indonesian")
-        
-    Returns:
-        str: Improved question without variable references and with better specificity
-    """
-    # Check if question contains variable references
-    if re.search(r'\?[a-zA-Z]*\d+', question):
-        # Replace specific common variable patterns based on language
-        if language.lower() == "indonesian":
-            question = re.sub(r'\?var\d+', "entitas ini", question)
-            question = re.sub(r'\?article\d+', "pasal ini", question)
-            question = re.sub(r'\?paragraph\d+', "ayat ini", question)
-            question = re.sub(r'\?section\d+', "bagian ini", question)
-            question = re.sub(r'\?chapter\d+', "bab ini", question)
-            question = re.sub(r'\?text\d+', "teks ini", question)
-            question = re.sub(r'\?law\d+', "undang-undang ini", question)
-            question = re.sub(r'\?version\d+', "versi ini", question)
-            question = re.sub(r'\?title\d+', "judul ini", question)
-            question = re.sub(r'\?number\d+', "nomor ini", question)
-            question = re.sub(r'\?segment\d+', "segmen ini", question)
-            question = re.sub(r'\?letter\d+', "huruf ini", question)
-        else:  # English
-            question = re.sub(r'\?var\d+', "this entity", question)
-            question = re.sub(r'\?article\d+', "this article", question)
-            question = re.sub(r'\?paragraph\d+', "this paragraph", question)
-            question = re.sub(r'\?section\d+', "this section", question)
-            question = re.sub(r'\?chapter\d+', "this chapter", question)
-            question = re.sub(r'\?text\d+', "this text", question)
-            question = re.sub(r'\?law\d+', "this law", question)
-            question = re.sub(r'\?version\d+', "this version", question)
-            question = re.sub(r'\?title\d+', "this title", question)
-            question = re.sub(r'\?number\d+', "this number", question)
-            question = re.sub(r'\?segment\d+', "this segment", question)
-            question = re.sub(r'\?letter\d+', "this letter", question)
-        
-        # Replace any remaining variables based on language
-        if language.lower() == "indonesian":
-            question = re.sub(r'diidentifikasi oleh \?[a-zA-Z]*\d+', "", question)
-            question = re.sub(r'dengan \?[a-zA-Z]*\d+', "", question)
-            question = re.sub(r'\?[a-zA-Z]*\d+', "entitas mana", question)
-        else:  # English
-            question = re.sub(r'identified by \?[a-zA-Z]*\d+', "", question)
-            question = re.sub(r'with \?[a-zA-Z]*\d+', "", question)
-            question = re.sub(r'\?[a-zA-Z]*\d+', "which items", question)
-    
-    # Check if question is too vague after variable replacements
-    if is_too_vague(question, language):
-        # Extract any specific laws or articles from the pattern
-        law_match = re.search(r'/uu/(\d{4})/(\d+)', pattern_text)
-        article_match = re.search(r'/pasal/(\d+)', pattern_text)
-        
-        if law_match and article_match:
-            year, number = law_match.groups()
-            article_num = article_match.group(1)
-            
-            # Replace vague references with specific ones based on language
-            if language.lower() == "indonesian":
-                question = re.sub(r'\bpasal ini\b', f"Pasal {int(article_num)} UU no {number} tahun {year}", question)
-                question = re.sub(r'\bundang-undang ini\b', f"UU no {number} tahun {year}", question)
-                question = re.sub(r'\bUU ini\b', f"UU no {number} tahun {year}", question)
-            else:  # English
-                question = re.sub(r'\bthis article\b', f"Article {int(article_num)} of Law Number {number} of {year}", question)
-                question = re.sub(r'\bthis law\b', f"Law Number {number} of {year}", question)
-        else:
-            # If we can't find specific references, use a generic but meaningful question
-            question = generate_generic_legal_question(pattern_text, language)
-    
-    # Fix double spaces
-    question = re.sub(r' +', ' ', question).strip()
-    
-    # Fix question that might end without question mark
-    if not question.endswith('?'):
-        question = question + '?'
-    
-    # If the question becomes too generic or short, provide a better one
-    if len(question.split()) < 5:
-        return generate_generic_legal_question(pattern_text, language)
-    
-    return question
-
-def get_label_or_format(term, label_mapping):
-    """
-    Get a human-readable label for a term, or format it appropriately.
-    
-    Args:
-        term: The term to format (URIRef, Literal, or variable string)
-        label_mapping: Dictionary mapping URIRefs to their labels
-        
-    Returns:
-        A string representation of the term
-    """
-    if isinstance(term, str):
-        return term  # It's already a variable or formatted
-    elif isinstance(term, URIRef) and term in label_mapping:
-        return label_mapping[term]
-    elif isinstance(term, URIRef):
-        # Use legal_entity_label for legal URIs
-        if "/lex2kg/" in str(term):
-            return legal_entity_label(term)
-        else:
-            # For non-legal URIs, extract the name from the URI
-            return term.split('/')[-1].replace('_', ' ')
-    elif isinstance(term, Literal):
-        # If the literal is too long, truncate it for readability
-        str_value = str(term)
-        if len(str_value) > 50:
-            return str_value[:47] + "..."
-        return str_value
-    else:
-        return str(term)
-
-def generate_questions_with_gemini(pattern_text, api_key):
-    """
-    Generate a bilingual (Bahasa Indonesia and English) questions for the given pattern using the Gemini API.
-    
-    Args:
-        pattern_text: A string describing the pattern
-        api_key: The Gemini API key
-        
-    Returns:
-        dict: Dictionary with "indonesian" and "english" questions
-    """
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key={api_key}"
-    
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": f"""Generate two versions of a natural language question (one in Bahasa Indonesia and one in English) based on the following information about Indonesian legal documents:
-{pattern_text}
-
-Your questions should be based on the Indonesian legal system where:
-- "UU" means Law/Undang-Undang
-- "pasal" means article
-- "ayat" means paragraph
-- "huruf" means letter/item
-- "bab" means chapter
-- "bagian" means section
-- "versi" means version, typically with a date
-- "tahun" means year
-
-Format your response exactly as follows:
-Indonesian: [Question in Bahasa Indonesia]
-English: [Question in English]
-
-IMPORTANT REQUIREMENTS FOR BOTH LANGUAGES:
-1. BE SPECIFIC - Your questions MUST specify exactly which law, article, section, or paragraph they're referring to
-2. When numbers appear in the pattern (like "UU tahun 2014 no 37"), include these exact numbers in your questions
-3. NEVER use vague terms like "this article" or "pasal ini" without specifying which one
-4. Use proper Indonesian legal terminology in the Bahasa Indonesia version
-5. Use formal language appropriate for legal queries
-6. Include all relevant details from the pattern (law numbers, article numbers, dates, etc.)
-
-EXAMPLES OF EXCELLENT QUESTIONS:
-Indonesian: Apa judul dari UU tahun 2014 no 37 bab 7?
-English: What is the title of Chapter 7 of Law Number 37 of 2014?
-
-Indonesian: Siapa yang mengesahkan UU tahun 1999 no 42?
-English: Who enacted Law Number 42 of 1999?
-
-Indonesian: Apa isi dari UU tahun 2010 no 13 pasal 31 versi 24 November 2010 ayat 1?
-English: What is the content of Paragraph 1 of Article 31, version November 24, 2010, of Law Number 13 of 2010?
-
-EXAMPLES OF POOR QUESTIONS TO AVOID:
-- "Apa isi dari pasal ini?" (too vague - which article?)
-- "What articles reference this law?" (needs specific law reference)
-- "Nomor berapa yang ditetapkan untuk UU ini?" (needs specific law)
-
-Only return the question without any explanation or preamble."""
-                    }
-                ]
-            }
-        ],
-        "generationConfig": {
-            "temperature": 0.2,
-            "maxOutputTokens": 200
-        }
-    }
-    
-    headers = {
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        response_json = response.json()
-        response_text = response_json["candidates"][0]["content"]["parts"][0]["text"].strip()
-        
-        # Parse both questions from the response
-        id_match = re.search(r'Indonesian:\s*(.*?)(?:\n|$)', response_text)
-        en_match = re.search(r'English:\s*(.*?)(?:\n|$)', response_text)
-        
-        indonesian_question = id_match.group(1).strip() if id_match else None
-        english_question = en_match.group(1).strip() if en_match else response_text
-        
-        # Add fallback for missing questions
-        if not indonesian_question:
-            indonesian_question = generate_generic_legal_question(pattern_text, "indonesian")
-        
-        if not english_question:
-            english_question = generate_generic_legal_question(pattern_text, "english")
-        
-        return {
-            "indonesian": indonesian_question,
-            "english": english_question
-        }
-    except Exception as e:
-        print(f"Error calling Gemini API: {e}")
-        # Return fallback questions
-        return {
-            "indonesian": generate_generic_legal_question(pattern_text, "indonesian"),
-            "english": generate_generic_legal_question(pattern_text, "english")
-        }
 
 def generate_sparql_query(query_pattern, ns1, rdfs, xsd):
     """
@@ -919,7 +859,7 @@ if __name__ == "__main__":
         print(f"  {count} variables: {occurrences} samples ({occurrences/stats['total_samples']*100:.1f}%)")
     
     # Save the dataset to a JSON file
-    with open('question_sparql_pairs_legal_bilingual.json', 'w', encoding='utf-8') as f:
+    with open('question_sparql_pairs_legal_bilingual_improved.json', 'w', encoding='utf-8') as f:
         json.dump(dataset, f, indent=2, ensure_ascii=False)
     
-    print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs_legal_bilingual.json")
+    print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs_legal_bilingual_improved.json")
