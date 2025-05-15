@@ -67,7 +67,7 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         
         print("\nGenerating question-SPARQL pairs for university course data...")
         dataset = generator.generate_dataset(
-            size=100,  # Increased size for more diversity
+            size=200,  # Increased size for more diversity
             complexity_distribution={"basic": 0.3, "intermediate": 0.3, "advanced": 0.4},  # More advanced queries
             include_variations=False,
             variations_per_question=0
