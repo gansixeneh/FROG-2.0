@@ -1043,483 +1043,483 @@
     ]
   },
   {
-   "question": "What is the highest mountain?",
-   "thoughts": [
-     "1. The question asks for the highest mountain in the world.",
-     "2. From the retrieved resources, 'wd:Q8502' is the URI for mountain.",
-     "3. The property 'wdt:P31' (instance of) identifies entities as mountains.",
-     "4. The property 'wdt:P2044' (elevation above sea level) indicates height.",
-     "5. I need to find the mountain with the highest elevation.",
-     "6. Use ORDER BY DESC and LIMIT 1 to get the highest.",
-     "7. Formulate a query to find the mountain with the maximum elevation."
-   ]
- },
- {
-   "question": "Which poet wrote the most books?",
-   "thoughts": [
-     "1. The question asks for the poet who authored the most books.",
-     "2. From the retrieved resources, 'wd:Q49757' is the URI for poet.",
-     "3. 'wd:Q571' is the URI for book.",
-     "4. The property 'wdt:P106' (occupation) identifies people as poets.",
-     "5. The property 'wdt:P50' (author) links books to their authors.",
-     "6. The property 'wdt:P31' (instance of) identifies entities as books.",
-     "7. I need to count books per poet and return the one with the most.",
-     "8. Use GROUP BY and ORDER BY DESC with LIMIT 1."
-   ]
- },
- {
-   "question": "Which programming languages influenced Javascript?",
-   "thoughts": [
-     "1. The question asks for programming languages that influenced JavaScript.",
-     "2. From the retrieved resources, 'wd:Q2005' is the URI for JavaScript.",
-     "3. The property 'wdt:P737' (influenced by) indicates what influenced the subject.",
-     "4. Formulate a SPARQL query to retrieve the values of 'wdt:P737' for JavaScript."
-   ]
- },
- {
-   "question": "Which musician wrote the most books?",
-   "thoughts": [
-     "1. The question asks for the musician who authored the most books.",
-     "2. From the retrieved resources, 'wd:Q639669' is the URI for musician.",
-     "3. 'wd:Q571' is the URI for book.",
-     "4. The property 'wdt:P106' (occupation) identifies people as musicians.",
-     "5. The property 'wdt:P50' (author) links books to their authors.",
-     "6. The property 'wdt:P31' (instance of) identifies entities as books.",
-     "7. I need to count books per musician and find the maximum.",
-     "8. Use GROUP BY to count books per musician and ORDER BY DESC with LIMIT 1."
-   ]
- },
- {
-   "question": "Which films starring Clint Eastwood did he direct himself?",
-   "thoughts": [
-     "1. The question asks for films where Clint Eastwood was both actor and director.",
-     "2. From the retrieved resources, 'wd:Q43203' is the URI for Clint Eastwood.",
-     "3. The property 'wdt:P57' (director) links films to their directors.",
-     "4. The property 'wdt:P161' (cast member) links films to their actors.",
-     "5. I need films where Eastwood is both the director and a cast member.",
-     "6. Formulate a query to find films with Eastwood as both director and actor."
-   ]
- },
- {
-   "question": "Which software has been developed by organizations founded in California?",
-   "thoughts": [
-     "1. The question asks for software developed by California-founded organizations.",
-     "2. From the retrieved resources, 'wd:Q99' is the URI for California.",
-     "3. 'wd:Q17155032' is the URI for software category.",
-     "4. 'wd:Q4830453' is the URI for business.",
-     "5. The property 'wdt:P740' (location of formation) indicates founding location.",
-     "6. The property 'wdt:P178' (developer) links software to organizations.",
-     "7. I need to find software developed by companies founded in California.",
-     "8. The query uses subclass checking for software types and business types."
-   ]
- },
- {
-   "question": "Which instruments does Cat Stevens play?",
-   "thoughts": [
-     "1. The question asks for musical instruments played by Cat Stevens.",
-     "2. From the retrieved resources, 'wd:Q154216' is the URI for Cat Stevens.",
-     "3. The property 'wdt:P1303' (instrument) indicates instruments played by a musician.",
-     "4. Formulate a SPARQL query to retrieve all values of 'wdt:P1303' for Cat Stevens."
-   ]
- },
- {
-   "question": "How many airlines are members of the Star Alliance?",
-   "thoughts": [
-     "1. The question asks for the count of airlines in Star Alliance.",
-     "2. From the retrieved resources, 'wd:Q189709' is the URI for Star Alliance.",
-     "3. The property 'wdt:P114' (airline alliance) links airlines to their alliances.",
-     "4. I need to count distinct airlines that have Star Alliance as their alliance.",
-     "5. Use COUNT(DISTINCT) to get the total number of member airlines.",
-     "6. Formulate a query to count airlines with Star Alliance membership."
-   ]
- },
- {
-   "question": "Give me all actors called Baldwin.",
-   "thoughts": [
-     "1. The question asks for actors with 'Baldwin' in their name.",
-     "2. From the retrieved resources, 'wd:Q33999' is the URI for actor.",
-     "3. The property 'wdt:P106' (occupation) identifies people as actors.",
-     "4. I need to filter by label containing 'Baldwin'.",
-     "5. Use rdfs:label to get names and FILTER with CONTAINS.",
-     "6. Formulate a query to find actors whose labels contain 'Baldwin'."
-   ]
- },
- {
-   "question": "Who wrote The Hunger Games?",
-   "thoughts": [
-     "1. The question asks for the author of The Hunger Games.",
-     "2. From the retrieved resources, 'wd:Q11679' is the URI for The Hunger Games series.",
-     "3. The property 'wdt:P50' (author) indicates the writer of a work.",
-     "4. Formulate a SPARQL query to retrieve the author of The Hunger Games."
-   ]
- },
- {
-   "question": "For which label did Elvis record his first album?",
-   "thoughts": [
-     "1. The question asks for the record label of Elvis's first album.",
-     "2. From the retrieved resources, 'wd:Q59150527' is the URI for Elvis's albums in chronological order.",
-     "3. The property 'wdt:P527' (has parts) lists the albums.",
-     "4. The property 'wdt:P577' (publication date) indicates release dates.",
-     "5. The property 'wdt:P264' (record label) indicates the label.",
-     "6. I need to find the earliest album by date and get its label.",
-     "7. Use ORDER BY date and LIMIT 1 to get the first album's label."
-   ]
- },
- {
-   "question": "Where is the residence of the prime minister of Spain?",
-   "thoughts": [
-     "1. The question asks for the official residence of Spain's Prime Minister.",
-     "2. From the retrieved resources, 'wd:Q844587' is the URI for Prime Minister of Spain.",
-     "3. The property 'wdt:P263' (official residence) indicates official residences.",
-     "4. Formulate a SPARQL query to retrieve the official residence."
-   ]
- },
- {
-   "question": "Which actor was casted in the most movies?",
-   "thoughts": [
-     "1. The question asks for the actor who appeared in the most films.",
-     "2. From the retrieved resources, 'wd:Q33999' is the URI for actor.",
-     "3. The property 'wdt:P106' (occupation) identifies people as actors.",
-     "4. The property 'wdt:P161' (cast member) links films to their actors.",
-     "5. I need to count films per actor and find the maximum.",
-     "6. Use GROUP BY to count films per actor.",
-     "7. Use ORDER BY DESC and LIMIT 1 to get the actor with most films."
-   ]
- },
- {
-   "question": "Which countries have more than two official languages?",
-   "thoughts": [
-     "1. The question asks for countries with more than two official languages.",
-     "2. From the retrieved resources, 'wd:Q6256' is the URI for country.",
-     "3. The property 'wdt:P31' (instance of) identifies entities as countries.",
-     "4. The property 'wdt:P37' (official language) lists official languages.",
-     "5. I need to count languages per country and filter for counts > 2.",
-     "6. Use GROUP BY and HAVING to filter countries with more than 2 languages.",
-     "7. Formulate a query to find countries with multiple official languages."
-   ]
- },
- {
-   "question": "Show me all songs from Bruce Springsteen released between 1980 and 1990.",
-   "thoughts": [
-     "1. The question asks for Bruce Springsteen songs from a specific decade.",
-     "2. From the retrieved resources, 'wd:Q1225' is the URI for Bruce Springsteen.",
-     "3. 'wd:Q7366' is the URI for song.",
-     "4. The property 'wdt:P31' (instance of) identifies entities as songs.",
-     "5. The property 'wdt:P175' (performer) links songs to performers.",
-     "6. The property 'wdt:P577' (publication date) indicates release dates.",
-     "7. I need to filter for years between 1980 and 1990.",
-     "8. Use YEAR() function to extract year and FILTER for the range."
-   ]
- },
- {
-   "question": "Which television shows were created by John Cleese?",
-   "thoughts": [
-     "1. The question asks for TV shows created by John Cleese.",
-     "2. From the retrieved resources, 'wd:Q25014' is the URI for John Cleese.",
-     "3. 'wd:Q5398426' is the URI for television series.",
-     "4. The property 'wdt:P31' (instance of) identifies TV shows.",
-     "5. The property 'wdt:P170' (creator) links works to their creators.",
-     "6. The property 'wdt:P527' (has parts) might be used for collective creators.",
-     "7. Use UNION to check both direct creation and part of creation team.",
-     "8. Formulate a query to find TV shows created by John Cleese."
-   ]
- },
- {
-   "question": "When did Latvia join the EU?",
-   "thoughts": [
-     "1. The question asks for the date when Latvia joined the European Union.",
-     "2. From the retrieved resources, 'wd:Q211' is the URI for Latvia.",
-     "3. 'wd:Q458' is the URI for the European Union.",
-     "4. The property 'wdt:P463' (member of) indicates membership.",
-     "5. The qualifier 'pq:P580' (start time) indicates when membership began.",
-     "6. I need to find Latvia's EU membership with its start date.",
-     "7. Use property statements to access qualifiers.",
-     "8. Formulate a query to get the start date of Latvia's EU membership."
-   ]
- },
- {
-   "question": "Which soccer players were born on Malta?",
-   "thoughts": [
-     "1. The question asks for football players born on the island of Malta.",
-     "2. From the retrieved resources, 'wd:Q937857' is the URI for association football player.",
-     "3. 'wd:Q233' is the URI for Malta (the country).",
-     "4. The property 'wdt:P106' (occupation) identifies people as football players.",
-     "5. The property 'wdt:P19' (place of birth) indicates birth location.",
-     "6. The property 'wdt:P17' (country) links places to countries.",
-     "7. I need players born in places that are in Malta.",
-     "8. Formulate a query to find football players born in Malta."
-   ]
- },
- {
-   "question": "How many politicians graduated from Columbia University?",
-   "thoughts": [
-     "1. The question asks for the count of politicians who studied at Columbia.",
-     "2. From the retrieved resources, 'wd:Q49088' is the URI for Columbia University.",
-     "3. 'wd:Q82955' is the URI for politician.",
-     "4. The property 'wdt:P106' (occupation) identifies people as politicians.",
-     "5. The property 'wdt:P69' (educated at) indicates educational institutions.",
-     "6. I need to count distinct politicians educated at Columbia.",
-     "7. Use COUNT(DISTINCT) to get the total number.",
-     "8. Formulate a query to count politicians with Columbia education."
-   ]
- },
- {
-   "question": "Give me the birthdays of all actors of the television show Charmed.",
-   "thoughts": [
-     "1. The question asks for birth dates of actors from Charmed.",
-     "2. From the retrieved resources, 'wd:Q162371' is the URI for Charmed (TV series).",
-     "3. The property 'wdt:P161' (cast member) links shows to actors.",
-     "4. The property 'wdt:P569' (date of birth) indicates birth dates.",
-     "5. I need to find cast members of Charmed and get their birth dates.",
-     "6. Use property paths to chain from show to actors to birth dates.",
-     "7. Formulate a query to get birth dates of Charmed cast members."
-   ]
- },
- {
-   "question": "Which telecommunications organizations are located in Belgium?",
-   "thoughts": [
-     "1. The question asks for telecom organizations based in Belgium.",
-     "2. From the retrieved resources, 'wd:Q43229' is the URI for organization.",
-     "3. 'wd:Q31' is the URI for Belgium.",
-     "4. 'wd:Q418' is the URI for telecommunication.",
-     "5. The property 'wdt:P31' (instance of) identifies organization types.",
-     "6. The property 'wdt:P452' (industry) indicates the industry sector.",
-     "7. The property 'wdt:P17' (country) indicates location.",
-     "8. Use subclass checking for organization types.",
-     "9. Formulate a query to find telecom organizations in Belgium."
-   ]
- },
- {
-   "question": "Give me a list of all lakes in Denmark.",
-   "thoughts": [
-     "1. The question asks for all lakes located in Denmark.",
-     "2. From the retrieved resources, 'wd:Q35' is the URI for Denmark.",
-     "3. 'wd:Q23397' is the URI for lake.",
-     "4. The property 'wdt:P31' (instance of) identifies entities as lakes.",
-     "5. The property 'wdt:P17' (country) indicates which country a lake is in.",
-     "6. Formulate a query to find lakes with Denmark as their country."
-   ]
- },
- {
-   "question": "How many children does Eddie Murphy have?",
-   "thoughts": [
-     "1. The question asks for the number of children Eddie Murphy has.",
-     "2. From the retrieved resources, 'wd:Q43874' is the URI for Eddie Murphy.",
-     "3. The property 'wdt:P40' (child) lists a person's children.",
-     "4. I need to count distinct children of Eddie Murphy.",
-     "5. Use COUNT(DISTINCT) to get the total number of children.",
-     "6. Formulate a query to count Eddie Murphy's children."
-   ]
- },
- {
-   "question": "Show me all English Gothic buildings in Kent.",
-   "thoughts": [
-     "1. The question asks for Gothic architecture buildings in Kent.",
-     "2. From the retrieved resources, 'wd:Q176483' is the URI for Gothic architecture.",
-     "3. 'wd:Q67479626' is the URI for Kent (historic county).",
-     "4. The property 'wdt:P149' (architectural style) indicates building style.",
-     "5. The property 'wdt:P7959' (historic county) indicates location.",
-     "6. The property 'wdt:P279' (subclass of) allows checking Gothic subtypes.",
-     "7. Use subclass checking to include all Gothic architecture variants.",
-     "8. Formulate a query to find Gothic buildings in historic Kent."
-   ]
- },
- {
-   "question": "In which countries can you pay using the West African CFA franc?",
-   "thoughts": [
-     "1. The question asks for countries using the West African CFA franc.",
-     "2. From the retrieved resources, 'wd:Q861690' is the URI for West African CFA franc.",
-     "3. The property 'wdt:P38' (currency) indicates a country's currency.",
-     "4. Formulate a query to find entities with West African CFA franc as their currency."
-   ]
- },
- {
-   "question": "Which holidays are celebrated around the world?",
-   "thoughts": [
-     "1. The question asks for holidays celebrated globally.",
-     "2. From the retrieved resources, 'wd:Q1445650' is the URI for holiday.",
-     "3. The property 'wdt:P31' (instance of) identifies entities as holidays.",
-     "4. The property 'wdt:P279' (subclass of) allows checking holiday subtypes.",
-     "5. Use subclass checking to include all types of holidays.",
-     "6. Formulate a query to find all entities that are holidays or holiday subtypes."
-   ]
- },
- {
-   "question": "What is the longest river?",
-   "thoughts": [
-     "1. The question asks for the longest river in the world.",
-     "2. From the retrieved resources, 'wd:Q4022' is the URI for river.",
-     "3. The property 'wdt:P31' (instance of) identifies entities as rivers.",
-     "4. The property 'wdt:P2043' (length) indicates the length of rivers.",
-     "5. The query needs to handle unit conversions to compare lengths.",
-     "6. The property 'wdt:P2370' (conversion to SI unit) helps with unit conversion.",
-     "7. Convert all lengths to meters for comparison.",
-     "8. Use ORDER BY DESC and LIMIT 1 to get the longest river."
-   ]
- },
- {
-   "question": "Which organizations were founded in 1930?",
-   "thoughts": [
-     "1. The question asks for organizations established in the year 1930.",
-     "2. From the retrieved resources, 'wd:Q43229' is the URI for organization.",
-     "3. The property 'wdt:P571' (inception) indicates founding date.",
-     "4. The property 'wdt:P31' (instance of) identifies organization types.",
-     "5. The property 'wdt:P131' seems to be used for administrative relationships.",
-     "6. Filter for organizations with inception year equal to 1930.",
-     "7. Use YEAR() function to extract the year from dates.",
-     "8. Formulate a query to find organizations founded in 1930."
-   ]
- },
- {
-   "question": "What is the birth name of Angela Merkel?",
-   "thoughts": [
-     "1. The question asks for Angela Merkel's name at birth.",
-     "2. From the retrieved resources, 'wd:Q567' is the URI for Angela Merkel.",
-     "3. The property 'wdt:P1477' (birth name) indicates a person's birth name.",
-     "4. Formulate a SPARQL query to retrieve Angela Merkel's birth name."
-   ]
- },
- {
-   "question": "Who has Tom Cruise been married to?",
-   "thoughts": [
-     "1. The question asks for Tom Cruise's spouses.",
-     "2. From the retrieved resources, 'wd:Q37079' is the URI for Tom Cruise.",
-     "3. The property 'wdt:P26' (spouse) indicates marriage relationships.",
-     "4. Formulate a SPARQL query to retrieve all spouses of Tom Cruise."
-   ]
- },
- {
-   "question": "Which weapons did Heckler & Koch develop?",
-   "thoughts": [
-     "1. The question asks for weapons manufactured by Heckler & Koch.",
-     "2. From the retrieved resources, 'wd:Q152815' is the URI for Heckler & Koch.",
-     "3. 'wd:Q15142889' is the URI for weapon family.",
-     "4. The property 'wdt:P176' (manufacturer) links products to manufacturers.",
-     "5. The property 'wdt:P31' (instance of) with subclass checking identifies weapons.",
-     "6. Use 'wdt:P279' (subclass of) to check weapon family hierarchy.",
-     "7. Formulate a query to find weapons manufactured by Heckler & Koch."
-   ]
- },
- {
-   "question": "What is the smallest city by area in Germany?",
-   "thoughts": [
-     "1. The question asks for Germany's smallest city by population (Note: query uses population, not area).",
-     "2. From the retrieved resources, 'wd:Q515' is the URI for city.",
-     "3. 'wd:Q183' is the URI for Germany.",
-     "4. The property 'wdt:P17' (country) indicates which country a city is in.",
-     "5. The property 'wdt:P31' (instance of) with subclass checking identifies cities.",
-     "6. The property 'wdt:P1082' (population) is used instead of area.",
-     "7. Use ORDER BY and LIMIT 1 to get the smallest.",
-     "8. Note: The query finds smallest by population, not area as asked."
-   ]
- },
- {
-   "question": "What is the ruling party in Lisbon?",
-   "thoughts": [
-     "1. The question asks for the political party of Lisbon's current mayor.",
-     "2. From the retrieved resources, 'wd:Q43185970' is the URI for Mayor of Lisbon.",
-     "3. 'wd:Q5' is the URI for human.",
-     "4. The property 'wdt:P39' (position held) identifies political positions.",
-     "5. The qualifier 'pq:P580' (start time) indicates when the position started.",
-     "6. The property 'wdt:P102' (member of political party) indicates party affiliation.",
-     "7. Find the most recent mayor by date and get their party.",
-     "8. Use ORDER BY DESC on date and LIMIT 1 for the current mayor."
-   ]
- },
- {
-   "question": "How heavy is Jupiter's lightest moon?",
-   "thoughts": [
-     "1. The question asks for the mass of Jupiter's smallest moon.",
-     "2. From the retrieved resources, 'wd:Q61702557' is the URI for moon of Jupiter.",
-     "3. The property 'wdt:P31' (instance of) identifies Jovian moons.",
-     "4. The property 'wdt:P2067' (mass) indicates the mass of celestial bodies.",
-     "5. I need to find the moon with the smallest mass.",
-     "6. Use ORDER BY to sort by mass and LIMIT 1 to get the lightest.",
-     "7. Formulate a query to find the moon with minimum mass."
-   ]
- },
- {
-   "question": "How many employees does IBM have?",
-   "thoughts": [
-     "1. The question asks for IBM's employee count.",
-     "2. From the retrieved resources, 'wd:Q37156' is the URI for IBM.",
-     "3. The property 'wdt:P1128' (employees) indicates employee count.",
-     "4. Note: The query has a typo - 'emloyees' instead of 'employees'.",
-     "5. Formulate a SPARQL query to retrieve IBM's employee count."
-   ]
- },
- {
-   "question": "List all episodes of the first season of the HBO television series The Sopranos!",
-   "thoughts": [
-     "1. The question asks for episodes from The Sopranos season 1.",
-     "2. From the retrieved resources, 'wd:Q5274359' is the URI for The Sopranos season 1.",
-     "3. The property 'wdt:P4908' (season) links episodes to their seasons.",
-     "4. Note: The query counts episodes instead of listing them.",
-     "5. The SELECT uses COUNT instead of retrieving episode names.",
-     "6. A better query would SELECT the episodes themselves, not count them."
-   ]
- },
- {
-   "question": "Give me all films produced by Hal Roach.",
-   "thoughts": [
-     "1. The question asks for films produced by Hal Roach.",
-     "2. From the retrieved resources, 'wd:Q72792' is the URI for Hal Roach.",
-     "3. 'wd:Q11424' is the URI for film.",
-     "4. The property 'wdt:P31' (instance of) identifies entities as films.",
-     "5. The property 'wdt:P162' (producer) links films to their producers.",
-     "6. Formulate a query to find films where Hal Roach is the producer."
-   ]
- },
- {
-   "question": "Who played Agent Smith in Matrix?",
-   "thoughts": [
-     "1. The question asks who portrayed Agent Smith in The Matrix.",
-     "2. From the retrieved resources, 'wd:Q83495' is the URI for The Matrix film.",
-     "3. 'wd:Q2085488' is the URI for the character Agent Smith.",
-     "4. The property 'wdt:P161' (cast member) links films to actors.",
-     "5. The qualifier 'pq:P453' (character role) specifies which character.",
-     "6. I need to find the actor who played the Agent Smith role.",
-     "7. Use property statements to access role qualifiers.",
-     "8. Formulate a query to find the cast member who played Agent Smith."
-   ]
- },
- {
-   "question": "Which Greek parties are pro-European?",
-   "thoughts": [
-     "1. The question asks for Greek political parties supporting European integration.",
-     "2. From the retrieved resources, 'wd:Q7278' is the URI for political party.",
-     "3. 'wd:Q3781399' is the URI for pro-Europeanism.",
-     "4. 'wd:Q41' is the URI for Greece.",
-     "5. The property 'wdt:P31' (instance of) identifies political parties.",
-     "6. The property 'wdt:P17' (country) indicates the party's country.",
-     "7. The property 'wdt:P1142' (political ideology) indicates party ideology.",
-     "8. Formulate a query to find Greek parties with pro-European ideology."
-   ]
- },
- {
-   "question": "Give me a list of all bandleaders that play trumpet.",
-   "thoughts": [
-     "1. The question asks for bandleaders who are trumpet players.",
-     "2. From the retrieved resources, 'wd:Q806349' is the URI for bandleader.",
-     "3. 'wd:Q8338' is the URI for trumpet.",
-     "4. The property 'wdt:P106' (occupation) identifies people as bandleaders.",
-     "5. The property 'wdt:P1303' (instrument) indicates instruments played.",
-     "6. Formulate a query to find bandleaders who play trumpet."
-   ]
- },
- {
-   "question": "What is the second highest mountain on Earth?",
-   "thoughts": [
-     "1. The question asks for Earth's second tallest mountain.",
-     "2. From the retrieved resources, 'wd:Q8502' is the URI for mountain.",
-     "3. 'wd:Q2' is the URI for Earth.",
-     "4. The property 'wdt:P31' (instance of) with subclass checking identifies mountains.",
-     "5. The property 'wdt:P2044' (elevation above sea level) indicates height.",
-     "6. The property 'wdt:P30' (continent) and 'wdt:P361' (part of) link to Earth.",
-     "7. Sort by elevation descending and use OFFSET 1 to skip the highest.",
-     "8. Formulate a query to find the second highest mountain on Earth."
-   ]
- },
+    "question": "What is the highest mountain?",
+    "thoughts": [
+      "1. The question asks for the highest mountain in the world.",
+      "2. From the retrieved resources, 'wd:Q8502' is the URI for mountain.",
+      "3. The property 'wdt:P31' (instance of) identifies entities as mountains.",
+      "4. The property 'wdt:P2044' (elevation above sea level) indicates height.",
+      "5. I need to find the mountain with the highest elevation.",
+      "6. Use ORDER BY DESC and LIMIT 1 to get the highest.",
+      "7. Formulate a query to find the mountain with the maximum elevation."
+    ]
+  },
+  {
+    "question": "Which poet wrote the most books?",
+    "thoughts": [
+      "1. The question asks for the poet who authored the most books.",
+      "2. From the retrieved resources, 'wd:Q49757' is the URI for poet.",
+      "3. 'wd:Q571' is the URI for book.",
+      "4. The property 'wdt:P106' (occupation) identifies people as poets.",
+      "5. The property 'wdt:P50' (author) links books to their authors.",
+      "6. The property 'wdt:P31' (instance of) identifies entities as books.",
+      "7. I need to count books per poet and return the one with the most.",
+      "8. Use GROUP BY and ORDER BY DESC with LIMIT 1."
+    ]
+  },
+  {
+    "question": "Which programming languages influenced Javascript?",
+    "thoughts": [
+      "1. The question asks for programming languages that influenced JavaScript.",
+      "2. From the retrieved resources, 'wd:Q2005' is the URI for JavaScript.",
+      "3. The property 'wdt:P737' (influenced by) indicates what influenced the subject.",
+      "4. Formulate a SPARQL query to retrieve the values of 'wdt:P737' for JavaScript."
+    ]
+  },
+  {
+    "question": "Which musician wrote the most books?",
+    "thoughts": [
+      "1. The question asks for the musician who authored the most books.",
+      "2. From the retrieved resources, 'wd:Q639669' is the URI for musician.",
+      "3. 'wd:Q571' is the URI for book.",
+      "4. The property 'wdt:P106' (occupation) identifies people as musicians.",
+      "5. The property 'wdt:P50' (author) links books to their authors.",
+      "6. The property 'wdt:P31' (instance of) identifies entities as books.",
+      "7. I need to count books per musician and find the maximum.",
+      "8. Use GROUP BY to count books per musician and ORDER BY DESC with LIMIT 1."
+    ]
+  },
+  {
+    "question": "Which films starring Clint Eastwood did he direct himself?",
+    "thoughts": [
+      "1. The question asks for films where Clint Eastwood was both actor and director.",
+      "2. From the retrieved resources, 'wd:Q43203' is the URI for Clint Eastwood.",
+      "3. The property 'wdt:P57' (director) links films to their directors.",
+      "4. The property 'wdt:P161' (cast member) links films to their actors.",
+      "5. I need films where Eastwood is both the director and a cast member.",
+      "6. Formulate a query to find films with Eastwood as both director and actor."
+    ]
+  },
+  {
+    "question": "Which software has been developed by organizations founded in California?",
+    "thoughts": [
+      "1. The question asks for software developed by California-founded organizations.",
+      "2. From the retrieved resources, 'wd:Q99' is the URI for California.",
+      "3. 'wd:Q17155032' is the URI for software category.",
+      "4. 'wd:Q4830453' is the URI for business.",
+      "5. The property 'wdt:P740' (location of formation) indicates founding location.",
+      "6. The property 'wdt:P178' (developer) links software to organizations.",
+      "7. I need to find software developed by companies founded in California.",
+      "8. The query uses subclass checking for software types and business types."
+    ]
+  },
+  {
+    "question": "Which instruments does Cat Stevens play?",
+    "thoughts": [
+      "1. The question asks for musical instruments played by Cat Stevens.",
+      "2. From the retrieved resources, 'wd:Q154216' is the URI for Cat Stevens.",
+      "3. The property 'wdt:P1303' (instrument) indicates instruments played by a musician.",
+      "4. Formulate a SPARQL query to retrieve all values of 'wdt:P1303' for Cat Stevens."
+    ]
+  },
+  {
+    "question": "How many airlines are members of the Star Alliance?",
+    "thoughts": [
+      "1. The question asks for the count of airlines in Star Alliance.",
+      "2. From the retrieved resources, 'wd:Q189709' is the URI for Star Alliance.",
+      "3. The property 'wdt:P114' (airline alliance) links airlines to their alliances.",
+      "4. I need to count distinct airlines that have Star Alliance as their alliance.",
+      "5. Use COUNT(DISTINCT) to get the total number of member airlines.",
+      "6. Formulate a query to count airlines with Star Alliance membership."
+    ]
+  },
+  {
+    "question": "Give me all actors called Baldwin.",
+    "thoughts": [
+      "1. The question asks for actors with 'Baldwin' in their name.",
+      "2. From the retrieved resources, 'wd:Q33999' is the URI for actor.",
+      "3. The property 'wdt:P106' (occupation) identifies people as actors.",
+      "4. I need to filter by label containing 'Baldwin'.",
+      "5. Use rdfs:label to get names and FILTER with CONTAINS.",
+      "6. Formulate a query to find actors whose labels contain 'Baldwin'."
+    ]
+  },
+  {
+    "question": "Who wrote The Hunger Games?",
+    "thoughts": [
+      "1. The question asks for the author of The Hunger Games.",
+      "2. From the retrieved resources, 'wd:Q11679' is the URI for The Hunger Games series.",
+      "3. The property 'wdt:P50' (author) indicates the writer of a work.",
+      "4. Formulate a SPARQL query to retrieve the author of The Hunger Games."
+    ]
+  },
+  {
+    "question": "For which label did Elvis record his first album?",
+    "thoughts": [
+      "1. The question asks for the record label of Elvis's first album.",
+      "2. From the retrieved resources, 'wd:Q59150527' is the URI for Elvis's albums in chronological order.",
+      "3. The property 'wdt:P527' (has parts) lists the albums.",
+      "4. The property 'wdt:P577' (publication date) indicates release dates.",
+      "5. The property 'wdt:P264' (record label) indicates the label.",
+      "6. I need to find the earliest album by date and get its label.",
+      "7. Use ORDER BY date and LIMIT 1 to get the first album's label."
+    ]
+  },
+  {
+    "question": "Where is the residence of the prime minister of Spain?",
+    "thoughts": [
+      "1. The question asks for the official residence of Spain's Prime Minister.",
+      "2. From the retrieved resources, 'wd:Q844587' is the URI for Prime Minister of Spain.",
+      "3. The property 'wdt:P263' (official residence) indicates official residences.",
+      "4. Formulate a SPARQL query to retrieve the official residence."
+    ]
+  },
+  {
+    "question": "Which actor was casted in the most movies?",
+    "thoughts": [
+      "1. The question asks for the actor who appeared in the most films.",
+      "2. From the retrieved resources, 'wd:Q33999' is the URI for actor.",
+      "3. The property 'wdt:P106' (occupation) identifies people as actors.",
+      "4. The property 'wdt:P161' (cast member) links films to their actors.",
+      "5. I need to count films per actor and find the maximum.",
+      "6. Use GROUP BY to count films per actor.",
+      "7. Use ORDER BY DESC and LIMIT 1 to get the actor with most films."
+    ]
+  },
+  {
+    "question": "Which countries have more than two official languages?",
+    "thoughts": [
+      "1. The question asks for countries with more than two official languages.",
+      "2. From the retrieved resources, 'wd:Q6256' is the URI for country.",
+      "3. The property 'wdt:P31' (instance of) identifies entities as countries.",
+      "4. The property 'wdt:P37' (official language) lists official languages.",
+      "5. I need to count languages per country and filter for counts > 2.",
+      "6. Use GROUP BY and HAVING to filter countries with more than 2 languages.",
+      "7. Formulate a query to find countries with multiple official languages."
+    ]
+  },
+  {
+    "question": "Show me all songs from Bruce Springsteen released between 1980 and 1990.",
+    "thoughts": [
+      "1. The question asks for Bruce Springsteen songs from a specific decade.",
+      "2. From the retrieved resources, 'wd:Q1225' is the URI for Bruce Springsteen.",
+      "3. 'wd:Q7366' is the URI for song.",
+      "4. The property 'wdt:P31' (instance of) identifies entities as songs.",
+      "5. The property 'wdt:P175' (performer) links songs to performers.",
+      "6. The property 'wdt:P577' (publication date) indicates release dates.",
+      "7. I need to filter for years between 1980 and 1990.",
+      "8. Use YEAR() function to extract year and FILTER for the range."
+    ]
+  },
+  {
+    "question": "Which television shows were created by John Cleese?",
+    "thoughts": [
+      "1. The question asks for TV shows created by John Cleese.",
+      "2. From the retrieved resources, 'wd:Q25014' is the URI for John Cleese.",
+      "3. 'wd:Q5398426' is the URI for television series.",
+      "4. The property 'wdt:P31' (instance of) identifies TV shows.",
+      "5. The property 'wdt:P170' (creator) links works to their creators.",
+      "6. The property 'wdt:P527' (has parts) might be used for collective creators.",
+      "7. Use UNION to check both direct creation and part of creation team.",
+      "8. Formulate a query to find TV shows created by John Cleese."
+    ]
+  },
+  {
+    "question": "When did Latvia join the EU?",
+    "thoughts": [
+      "1. The question asks for the date when Latvia joined the European Union.",
+      "2. From the retrieved resources, 'wd:Q211' is the URI for Latvia.",
+      "3. 'wd:Q458' is the URI for the European Union.",
+      "4. The property 'wdt:P463' (member of) indicates membership.",
+      "5. The qualifier 'pq:P580' (start time) indicates when membership began.",
+      "6. I need to find Latvia's EU membership with its start date.",
+      "7. Use property statements to access qualifiers.",
+      "8. Formulate a query to get the start date of Latvia's EU membership."
+    ]
+  },
+  {
+    "question": "Which soccer players were born on Malta?",
+    "thoughts": [
+      "1. The question asks for football players born on the island of Malta.",
+      "2. From the retrieved resources, 'wd:Q937857' is the URI for association football player.",
+      "3. 'wd:Q233' is the URI for Malta (the country).",
+      "4. The property 'wdt:P106' (occupation) identifies people as football players.",
+      "5. The property 'wdt:P19' (place of birth) indicates birth location.",
+      "6. The property 'wdt:P17' (country) links places to countries.",
+      "7. I need players born in places that are in Malta.",
+      "8. Formulate a query to find football players born in Malta."
+    ]
+  },
+  {
+    "question": "How many politicians graduated from Columbia University?",
+    "thoughts": [
+      "1. The question asks for the count of politicians who studied at Columbia.",
+      "2. From the retrieved resources, 'wd:Q49088' is the URI for Columbia University.",
+      "3. 'wd:Q82955' is the URI for politician.",
+      "4. The property 'wdt:P106' (occupation) identifies people as politicians.",
+      "5. The property 'wdt:P69' (educated at) indicates educational institutions.",
+      "6. I need to count distinct politicians educated at Columbia.",
+      "7. Use COUNT(DISTINCT) to get the total number.",
+      "8. Formulate a query to count politicians with Columbia education."
+    ]
+  },
+  {
+    "question": "Give me the birthdays of all actors of the television show Charmed.",
+    "thoughts": [
+      "1. The question asks for birth dates of actors from Charmed.",
+      "2. From the retrieved resources, 'wd:Q162371' is the URI for Charmed (TV series).",
+      "3. The property 'wdt:P161' (cast member) links shows to actors.",
+      "4. The property 'wdt:P569' (date of birth) indicates birth dates.",
+      "5. I need to find cast members of Charmed and get their birth dates.",
+      "6. Use property paths to chain from show to actors to birth dates.",
+      "7. Formulate a query to get birth dates of Charmed cast members."
+    ]
+  },
+  {
+    "question": "Which telecommunications organizations are located in Belgium?",
+    "thoughts": [
+      "1. The question asks for telecom organizations based in Belgium.",
+      "2. From the retrieved resources, 'wd:Q43229' is the URI for organization.",
+      "3. 'wd:Q31' is the URI for Belgium.",
+      "4. 'wd:Q418' is the URI for telecommunication.",
+      "5. The property 'wdt:P31' (instance of) identifies organization types.",
+      "6. The property 'wdt:P452' (industry) indicates the industry sector.",
+      "7. The property 'wdt:P17' (country) indicates location.",
+      "8. Use subclass checking for organization types.",
+      "9. Formulate a query to find telecom organizations in Belgium."
+    ]
+  },
+  {
+    "question": "Give me a list of all lakes in Denmark.",
+    "thoughts": [
+      "1. The question asks for all lakes located in Denmark.",
+      "2. From the retrieved resources, 'wd:Q35' is the URI for Denmark.",
+      "3. 'wd:Q23397' is the URI for lake.",
+      "4. The property 'wdt:P31' (instance of) identifies entities as lakes.",
+      "5. The property 'wdt:P17' (country) indicates which country a lake is in.",
+      "6. Formulate a query to find lakes with Denmark as their country."
+    ]
+  },
+  {
+    "question": "How many children does Eddie Murphy have?",
+    "thoughts": [
+      "1. The question asks for the number of children Eddie Murphy has.",
+      "2. From the retrieved resources, 'wd:Q43874' is the URI for Eddie Murphy.",
+      "3. The property 'wdt:P40' (child) lists a person's children.",
+      "4. I need to count distinct children of Eddie Murphy.",
+      "5. Use COUNT(DISTINCT) to get the total number of children.",
+      "6. Formulate a query to count Eddie Murphy's children."
+    ]
+  },
+  {
+    "question": "Show me all English Gothic buildings in Kent.",
+    "thoughts": [
+      "1. The question asks for Gothic architecture buildings in Kent.",
+      "2. From the retrieved resources, 'wd:Q176483' is the URI for Gothic architecture.",
+      "3. 'wd:Q67479626' is the URI for Kent (historic county).",
+      "4. The property 'wdt:P149' (architectural style) indicates building style.",
+      "5. The property 'wdt:P7959' (historic county) indicates location.",
+      "6. The property 'wdt:P279' (subclass of) allows checking Gothic subtypes.",
+      "7. Use subclass checking to include all Gothic architecture variants.",
+      "8. Formulate a query to find Gothic buildings in historic Kent."
+    ]
+  },
+  {
+    "question": "In which countries can you pay using the West African CFA franc?",
+    "thoughts": [
+      "1. The question asks for countries using the West African CFA franc.",
+      "2. From the retrieved resources, 'wd:Q861690' is the URI for West African CFA franc.",
+      "3. The property 'wdt:P38' (currency) indicates a country's currency.",
+      "4. Formulate a query to find entities with West African CFA franc as their currency."
+    ]
+  },
+  {
+    "question": "Which holidays are celebrated around the world?",
+    "thoughts": [
+      "1. The question asks for holidays celebrated globally.",
+      "2. From the retrieved resources, 'wd:Q1445650' is the URI for holiday.",
+      "3. The property 'wdt:P31' (instance of) identifies entities as holidays.",
+      "4. The property 'wdt:P279' (subclass of) allows checking holiday subtypes.",
+      "5. Use subclass checking to include all types of holidays.",
+      "6. Formulate a query to find all entities that are holidays or holiday subtypes."
+    ]
+  },
+  {
+    "question": "What is the longest river?",
+    "thoughts": [
+      "1. The question asks for the longest river in the world.",
+      "2. From the retrieved resources, 'wd:Q4022' is the URI for river.",
+      "3. The property 'wdt:P31' (instance of) identifies entities as rivers.",
+      "4. The property 'wdt:P2043' (length) indicates the length of rivers.",
+      "5. The query needs to handle unit conversions to compare lengths.",
+      "6. The property 'wdt:P2370' (conversion to SI unit) helps with unit conversion.",
+      "7. Convert all lengths to meters for comparison.",
+      "8. Use ORDER BY DESC and LIMIT 1 to get the longest river."
+    ]
+  },
+  {
+    "question": "Which organizations were founded in 1930?",
+    "thoughts": [
+      "1. The question asks for organizations established in the year 1930.",
+      "2. From the retrieved resources, 'wd:Q43229' is the URI for organization.",
+      "3. The property 'wdt:P571' (inception) indicates founding date.",
+      "4. The property 'wdt:P31' (instance of) identifies organization types.",
+      "5. The property 'wdt:P131' seems to be used for administrative relationships.",
+      "6. Filter for organizations with inception year equal to 1930.",
+      "7. Use YEAR() function to extract the year from dates.",
+      "8. Formulate a query to find organizations founded in 1930."
+    ]
+  },
+  {
+    "question": "What is the birth name of Angela Merkel?",
+    "thoughts": [
+      "1. The question asks for Angela Merkel's name at birth.",
+      "2. From the retrieved resources, 'wd:Q567' is the URI for Angela Merkel.",
+      "3. The property 'wdt:P1477' (birth name) indicates a person's birth name.",
+      "4. Formulate a SPARQL query to retrieve Angela Merkel's birth name."
+    ]
+  },
+  {
+    "question": "Who has Tom Cruise been married to?",
+    "thoughts": [
+      "1. The question asks for Tom Cruise's spouses.",
+      "2. From the retrieved resources, 'wd:Q37079' is the URI for Tom Cruise.",
+      "3. The property 'wdt:P26' (spouse) indicates marriage relationships.",
+      "4. Formulate a SPARQL query to retrieve all spouses of Tom Cruise."
+    ]
+  },
+  {
+    "question": "Which weapons did Heckler & Koch develop?",
+    "thoughts": [
+      "1. The question asks for weapons manufactured by Heckler & Koch.",
+      "2. From the retrieved resources, 'wd:Q152815' is the URI for Heckler & Koch.",
+      "3. 'wd:Q15142889' is the URI for weapon family.",
+      "4. The property 'wdt:P176' (manufacturer) links products to manufacturers.",
+      "5. The property 'wdt:P31' (instance of) with subclass checking identifies weapons.",
+      "6. Use 'wdt:P279' (subclass of) to check weapon family hierarchy.",
+      "7. Formulate a query to find weapons manufactured by Heckler & Koch."
+    ]
+  },
+  {
+    "question": "What is the smallest city by area in Germany?",
+    "thoughts": [
+      "1. The question asks for Germany's smallest city by population (Note: query uses population, not area).",
+      "2. From the retrieved resources, 'wd:Q515' is the URI for city.",
+      "3. 'wd:Q183' is the URI for Germany.",
+      "4. The property 'wdt:P17' (country) indicates which country a city is in.",
+      "5. The property 'wdt:P31' (instance of) with subclass checking identifies cities.",
+      "6. The property 'wdt:P1082' (population) is used instead of area.",
+      "7. Use ORDER BY and LIMIT 1 to get the smallest.",
+      "8. Note: The query finds smallest by population, not area as asked."
+    ]
+  },
+  {
+    "question": "What is the ruling party in Lisbon?",
+    "thoughts": [
+      "1. The question asks for the political party of Lisbon's current mayor.",
+      "2. From the retrieved resources, 'wd:Q43185970' is the URI for Mayor of Lisbon.",
+      "3. 'wd:Q5' is the URI for human.",
+      "4. The property 'wdt:P39' (position held) identifies political positions.",
+      "5. The qualifier 'pq:P580' (start time) indicates when the position started.",
+      "6. The property 'wdt:P102' (member of political party) indicates party affiliation.",
+      "7. Find the most recent mayor by date and get their party.",
+      "8. Use ORDER BY DESC on date and LIMIT 1 for the current mayor."
+    ]
+  },
+  {
+    "question": "How heavy is Jupiter's lightest moon?",
+    "thoughts": [
+      "1. The question asks for the mass of Jupiter's smallest moon.",
+      "2. From the retrieved resources, 'wd:Q61702557' is the URI for moon of Jupiter.",
+      "3. The property 'wdt:P31' (instance of) identifies Jovian moons.",
+      "4. The property 'wdt:P2067' (mass) indicates the mass of celestial bodies.",
+      "5. I need to find the moon with the smallest mass.",
+      "6. Use ORDER BY to sort by mass and LIMIT 1 to get the lightest.",
+      "7. Formulate a query to find the moon with minimum mass."
+    ]
+  },
+  {
+    "question": "How many employees does IBM have?",
+    "thoughts": [
+      "1. The question asks for IBM's employee count.",
+      "2. From the retrieved resources, 'wd:Q37156' is the URI for IBM.",
+      "3. The property 'wdt:P1128' (employees) indicates employee count.",
+      "4. Note: The query has a typo - 'emloyees' instead of 'employees'.",
+      "5. Formulate a SPARQL query to retrieve IBM's employee count."
+    ]
+  },
+  {
+    "question": "List all episodes of the first season of the HBO television series The Sopranos!",
+    "thoughts": [
+      "1. The question asks for episodes from The Sopranos season 1.",
+      "2. From the retrieved resources, 'wd:Q5274359' is the URI for The Sopranos season 1.",
+      "3. The property 'wdt:P4908' (season) links episodes to their seasons.",
+      "4. Note: The query counts episodes instead of listing them.",
+      "5. The SELECT uses COUNT instead of retrieving episode names.",
+      "6. A better query would SELECT the episodes themselves, not count them."
+    ]
+  },
+  {
+    "question": "Give me all films produced by Hal Roach.",
+    "thoughts": [
+      "1. The question asks for films produced by Hal Roach.",
+      "2. From the retrieved resources, 'wd:Q72792' is the URI for Hal Roach.",
+      "3. 'wd:Q11424' is the URI for film.",
+      "4. The property 'wdt:P31' (instance of) identifies entities as films.",
+      "5. The property 'wdt:P162' (producer) links films to their producers.",
+      "6. Formulate a query to find films where Hal Roach is the producer."
+    ]
+  },
+  {
+    "question": "Who played Agent Smith in Matrix?",
+    "thoughts": [
+      "1. The question asks who portrayed Agent Smith in The Matrix.",
+      "2. From the retrieved resources, 'wd:Q83495' is the URI for The Matrix film.",
+      "3. 'wd:Q2085488' is the URI for the character Agent Smith.",
+      "4. The property 'wdt:P161' (cast member) links films to actors.",
+      "5. The qualifier 'pq:P453' (character role) specifies which character.",
+      "6. I need to find the actor who played the Agent Smith role.",
+      "7. Use property statements to access role qualifiers.",
+      "8. Formulate a query to find the cast member who played Agent Smith."
+    ]
+  },
+  {
+    "question": "Which Greek parties are pro-European?",
+    "thoughts": [
+      "1. The question asks for Greek political parties supporting European integration.",
+      "2. From the retrieved resources, 'wd:Q7278' is the URI for political party.",
+      "3. 'wd:Q3781399' is the URI for pro-Europeanism.",
+      "4. 'wd:Q41' is the URI for Greece.",
+      "5. The property 'wdt:P31' (instance of) identifies political parties.",
+      "6. The property 'wdt:P17' (country) indicates the party's country.",
+      "7. The property 'wdt:P1142' (political ideology) indicates party ideology.",
+      "8. Formulate a query to find Greek parties with pro-European ideology."
+    ]
+  },
+  {
+    "question": "Give me a list of all bandleaders that play trumpet.",
+    "thoughts": [
+      "1. The question asks for bandleaders who are trumpet players.",
+      "2. From the retrieved resources, 'wd:Q806349' is the URI for bandleader.",
+      "3. 'wd:Q8338' is the URI for trumpet.",
+      "4. The property 'wdt:P106' (occupation) identifies people as bandleaders.",
+      "5. The property 'wdt:P1303' (instrument) indicates instruments played.",
+      "6. Formulate a query to find bandleaders who play trumpet."
+    ]
+  },
+  {
+    "question": "What is the second highest mountain on Earth?",
+    "thoughts": [
+      "1. The question asks for Earth's second tallest mountain.",
+      "2. From the retrieved resources, 'wd:Q8502' is the URI for mountain.",
+      "3. 'wd:Q2' is the URI for Earth.",
+      "4. The property 'wdt:P31' (instance of) with subclass checking identifies mountains.",
+      "5. The property 'wdt:P2044' (elevation above sea level) indicates height.",
+      "6. The property 'wdt:P30' (continent) and 'wdt:P361' (part of) link to Earth.",
+      "7. Sort by elevation descending and use OFFSET 1 to skip the highest.",
+      "8. Formulate a query to find the second highest mountain on Earth."
+    ]
+  },
 
   {
     "question": "Which rockets were launched from Baikonur?",
