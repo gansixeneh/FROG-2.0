@@ -322,9 +322,10 @@ class NL2SPARQLGenerator:
         Returns:
             list: Templates for different question types and complexity levels
         """
-        # Legal document specific templates - UPDATED FOR MODIFIED KG
+        # Legal document specific templates - ORGANIZED BY COMPLEXITY
         legal_templates = [
-            # Basic information about laws (UU)
+            # ==================== BASIC TEMPLATES ====================
+            # Direct property retrieval (single triple pattern)
             {
                 "id": "law-title",
                 "category": "legal",
@@ -398,94 +399,6 @@ class NL2SPARQLGenerator:
                 "complexity": "basic"
             },
             {
-                "id": "article-text",
-                "category": "legal",
-                "questionTemplate": "Apa isi dari {entity}?",
-                "englishQuestion": "What is the content of {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?text WHERE {
-                    {entity} lex2kg-o:teks ?text .
-                    }
-                """,
-                "complexity": "basic"
-            },
-            {
-                "id": "article-version",
-                "category": "legal",
-                "questionTemplate": "Apa versi terbaru dari {entity}?",
-                "englishQuestion": "What is the latest version of {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?version WHERE {
-                    {entity} lex2kg-o:versi ?version .
-                    }
-                """,
-                "complexity": "basic"
-            },
-            {
-                "id": "chapter-title",
-                "category": "legal",
-                "questionTemplate": "Apa judul dari {entity}?",
-                "englishQuestion": "What is the title of {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    {entity} lex2kg-o:judul ?title .
-                    }
-                """,
-                "complexity": "basic"
-            },
-            
-            # Intermediate: Structure and relationships - UPDATED
-            {
-                "id": "law-articles",
-                "category": "legal",
-                "questionTemplate": "Berapa jumlah pasal dalam {entity}?",
-                "englishQuestion": "How many articles are in {entity}?",
-                "sparqlTemplate": """
-                    SELECT (COUNT(?article) AS ?count) WHERE {
-                    {entity} lex2kg-o:pasal ?article .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
-            {
-                "id": "law-chapters",
-                "category": "legal",
-                "questionTemplate": "Berapa jumlah bab dalam {entity}?",
-                "englishQuestion": "How many chapters are in {entity}?",
-                "sparqlTemplate": """
-                    SELECT (COUNT(?chapter) AS ?count) WHERE {
-                    {entity} lex2kg-o:bab ?chapter .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
-            {
-                "id": "article-sections",
-                "category": "legal",
-                "questionTemplate": "Berapa jumlah ayat dalam {entity}?",
-                "englishQuestion": "How many sections are in {entity}?",
-                "sparqlTemplate": """
-                    SELECT (COUNT(?section) AS ?count) WHERE {
-                    {entity} lex2kg-o:versi ?version .
-                    ?version lex2kg-o:ayat ?section .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
-            {
-                "id": "laws-enacted-in-year",
-                "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang disahkan pada tahun {value}?",
-                "englishQuestion": "What laws were enacted in the year {value}?",
-                "sparqlTemplate": """
-                    SELECT ?law ?title WHERE {
-                    ?law lex2kg-o:tahun {value} .
-                    ?law lex2kg-o:tentang ?title .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
-            {
                 "id": "law-year",
                 "category": "legal",
                 "questionTemplate": "Pada tahun berapa {entity} disahkan?",
@@ -533,20 +446,77 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic"
             },
-            
-            # Advanced: Complex relationships and analytics - UPDATED
             {
-                "id": "article-references",
+                "id": "law-menimbang",
                 "category": "legal",
-                "questionTemplate": "Pasal mana saja yang merujuk ke {entity}?",
-                "englishQuestion": "Which articles reference {entity}?",
+                "questionTemplate": "Apa yang menjadi pertimbangan dari {entity}?",
+                "englishQuestion": "What are the considerations of {entity}?",
                 "sparqlTemplate": """
-                    SELECT DISTINCT ?referringArticle ?text WHERE {
-                    ?referringArticle lex2kg-o:merujuk {entity} .
-                    ?referringArticle lex2kg-o:teks ?text .
+                    SELECT ?menimbang WHERE {
+                    {entity} lex2kg-o:menimbang ?menimbang .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "basic"
+            },
+            {
+                "id": "law-mengingat",
+                "category": "legal",
+                "questionTemplate": "Apa yang menjadi dasar hukum dari {entity}?",
+                "englishQuestion": "What is the legal basis of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?mengingat WHERE {
+                    {entity} lex2kg-o:mengingat ?mengingat .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "article-text",
+                "category": "legal",
+                "questionTemplate": "Apa isi dari {entity}?",
+                "englishQuestion": "What is the content of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?text WHERE {
+                    {entity} lex2kg-o:teks ?text .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "article-version",
+                "category": "legal",
+                "questionTemplate": "Apa versi terbaru dari {entity}?",
+                "englishQuestion": "What is the latest version of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?version WHERE {
+                    {entity} lex2kg-o:versi ?version .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "chapter-title",
+                "category": "legal",
+                "questionTemplate": "Apa judul dari {entity}?",
+                "englishQuestion": "What is the title of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?title WHERE {
+                    {entity} lex2kg-o:judul ?title .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "article-letters",
+                "category": "legal",
+                "questionTemplate": "Apa saja huruf yang terdapat dalam {entity}?",
+                "englishQuestion": "What letters are in {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?letter WHERE {
+                    {entity} lex2kg-o:huruf ?letter .
+                    }
+                """,
+                "complexity": "basic"
             },
             {
                 "id": "law-references-what",
@@ -558,22 +528,7 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:merujuk ?referenced .
                     }
                 """,
-                "complexity": "advanced"
-            },
-            {
-                "id": "laws-amended-what",
-                "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
-                "englishQuestion": "Which laws were amended by {entity}?",
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?amendedLaw ?title WHERE {
-                    {entity} lex2kg-o:mengubah ?versi .
-                    ?pasal lex2kg-o:versi ?versi .
-                    ?amendedLaw lex2kg-o:pasal ?pasal .
-                    ?amendedLaw lex2kg-o:tentang ?title .
-                    }
-                """,
-                "complexity": "advanced"
+                "complexity": "basic"
             },
             {
                 "id": "what-amended-law",
@@ -585,7 +540,7 @@ class NL2SPARQLGenerator:
                     ?amendingLaw lex2kg-o:mengubah {entity} .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "basic"
             },
             {
                 "id": "laws-deleted-what",
@@ -597,7 +552,7 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:menghapus ?deletedLaw .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "basic"
             },
             {
                 "id": "what-deleted-law",
@@ -609,51 +564,72 @@ class NL2SPARQLGenerator:
                     ?deletingLaw lex2kg-o:menghapus {entity} .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "basic"
             },
+            
+            # ==================== INTERMEDIATE TEMPLATES ====================
+            # Counting, filtering, simple joins, or multiple patterns
             {
-                "id": "law-by-keyword",
+                "id": "law-articles",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang berhubungan dengan '{value}'?",
-                "englishQuestion": "Which laws are related to '{value}'?",
+                "questionTemplate": "Berapa jumlah pasal dalam {entity}?",
+                "englishQuestion": "How many articles are in {entity}?",
                 "sparqlTemplate": """
-                    SELECT DISTINCT ?law ?title WHERE {
-                    ?law lex2kg-o:tentang ?title .
-                    FILTER(CONTAINS(LCASE(?title), LCASE({value})))
+                    SELECT (COUNT(?article) AS ?count) WHERE {
+                    {entity} lex2kg-o:pasal ?article .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "intermediate"
             },
             {
-                "id": "law-with-most-articles",
+                "id": "law-chapters",
                 "category": "legal",
-                "questionTemplate": "Undang-undang mana yang memiliki pasal terbanyak?",
-                "englishQuestion": "Which law has the most articles?",
+                "questionTemplate": "Berapa jumlah bab dalam {entity}?",
+                "englishQuestion": "How many chapters are in {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?law ?title (COUNT(?article) AS ?articleCount) WHERE {
-                    ?law lex2kg-o:tentang ?title .
-                    ?law lex2kg-o:pasal ?article .
+                    SELECT (COUNT(?chapter) AS ?count) WHERE {
+                    {entity} lex2kg-o:bab ?chapter .
                     }
-                    GROUP BY ?law ?title
-                    ORDER BY DESC(?articleCount)
-                    LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "intermediate"
             },
             {
-                "id": "law-by-enactor",
+                "id": "article-sections",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang disahkan oleh {value}?",
-                "englishQuestion": "What laws were enacted by {value}?",
+                "questionTemplate": "Berapa jumlah ayat dalam {entity}?",
+                "englishQuestion": "How many sections are in {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?law ?title ?date WHERE {
-                    ?law lex2kg-o:disahkanOleh {value} .
-                    ?law lex2kg-o:tentang ?title .
-                    ?law lex2kg-o:disahkanPada ?date .
+                    SELECT (COUNT(?section) AS ?count) WHERE {
+                    {entity} lex2kg-o:versi ?version .
+                    ?version lex2kg-o:ayat ?section .
                     }
-                    ORDER BY DESC(?date)
                 """,
-                "complexity": "advanced"
+                "complexity": "intermediate"
+            },
+            {
+                "id": "count-article-letters",
+                "category": "legal",
+                "questionTemplate": "Berapa jumlah huruf dalam {entity}?",
+                "englishQuestion": "How many letters are in {entity}?",
+                "sparqlTemplate": """
+                    SELECT (COUNT(?letter) AS ?count) WHERE {
+                    {entity} lex2kg-o:huruf ?letter .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "laws-enacted-in-year",
+                "category": "legal",
+                "questionTemplate": "Undang-undang apa saja yang disahkan pada tahun {value}?",
+                "englishQuestion": "What laws were enacted in the year {value}?",
+                "sparqlTemplate": """
+                    SELECT ?law ?title WHERE {
+                    ?law lex2kg-o:tahun {value} .
+                    ?law lex2kg-o:tentang ?title .
+                    }
+                """,
+                "complexity": "intermediate"
             },
             {
                 "id": "law-parts",
@@ -685,52 +661,79 @@ class NL2SPARQLGenerator:
                 "complexity": "intermediate"
             },
             {
-                "id": "article-letters",
+                "id": "article-references",
                 "category": "legal",
-                "questionTemplate": "Apa saja huruf yang terdapat dalam {entity}?",
-                "englishQuestion": "What letters are in {entity}?",
+                "questionTemplate": "Pasal mana saja yang merujuk ke {entity}?",
+                "englishQuestion": "Which articles reference {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?letter WHERE {
-                    {entity} lex2kg-o:huruf ?letter .
+                    SELECT DISTINCT ?referringArticle ?text WHERE {
+                    ?referringArticle lex2kg-o:merujuk {entity} .
+                    ?referringArticle lex2kg-o:teks ?text .
                     }
                 """,
                 "complexity": "intermediate"
             },
             {
-                "id": "count-article-letters",
+                "id": "law-by-keyword",
                 "category": "legal",
-                "questionTemplate": "Berapa jumlah huruf dalam {entity}?",
-                "englishQuestion": "How many letters are in {entity}?",
+                "questionTemplate": "Undang-undang apa saja yang berhubungan dengan '{value}'?",
+                "englishQuestion": "Which laws are related to '{value}'?",
                 "sparqlTemplate": """
-                    SELECT (COUNT(?letter) AS ?count) WHERE {
-                    {entity} lex2kg-o:huruf ?letter .
+                    SELECT DISTINCT ?law ?title WHERE {
+                    ?law lex2kg-o:tentang ?title .
+                    FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
                 """,
                 "complexity": "intermediate"
             },
             {
-                "id": "law-menimbang",
+                "id": "law-by-enactor",
                 "category": "legal",
-                "questionTemplate": "Apa yang menjadi pertimbangan dari {entity}?",
-                "englishQuestion": "What are the considerations of {entity}?",
+                "questionTemplate": "Undang-undang apa saja yang disahkan oleh {value}?",
+                "englishQuestion": "What laws were enacted by {value}?",
                 "sparqlTemplate": """
-                    SELECT ?menimbang WHERE {
-                    {entity} lex2kg-o:menimbang ?menimbang .
+                    SELECT ?law ?title ?date WHERE {
+                    ?law lex2kg-o:disahkanOleh {value} .
+                    ?law lex2kg-o:tentang ?title .
+                    ?law lex2kg-o:disahkanPada ?date .
+                    }
+                    ORDER BY DESC(?date)
+                """,
+                "complexity": "intermediate"
+            },
+            
+            # ==================== ADVANCED TEMPLATES ====================
+            # Complex joins, aggregations, or multi-step queries
+            {
+                "id": "laws-amended-what",
+                "category": "legal",
+                "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
+                "englishQuestion": "Which laws were amended by {entity}?",
+                "sparqlTemplate": """
+                    SELECT DISTINCT ?amendedLaw ?title WHERE {
+                    {entity} lex2kg-o:mengubah ?versi .
+                    ?pasal lex2kg-o:versi ?versi .
+                    ?amendedLaw lex2kg-o:pasal ?pasal .
+                    ?amendedLaw lex2kg-o:tentang ?title .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "advanced"
             },
             {
-                "id": "law-mengingat",
+                "id": "law-with-most-articles",
                 "category": "legal",
-                "questionTemplate": "Apa yang menjadi dasar hukum dari {entity}?",
-                "englishQuestion": "What is the legal basis of {entity}?",
+                "questionTemplate": "Undang-undang mana yang memiliki pasal terbanyak?",
+                "englishQuestion": "Which law has the most articles?",
                 "sparqlTemplate": """
-                    SELECT ?mengingat WHERE {
-                    {entity} lex2kg-o:mengingat ?mengingat .
+                    SELECT ?law ?title (COUNT(?article) AS ?articleCount) WHERE {
+                    ?law lex2kg-o:tentang ?title .
+                    ?law lex2kg-o:pasal ?article .
                     }
+                    GROUP BY ?law ?title
+                    ORDER BY DESC(?articleCount)
+                    LIMIT 1
                 """,
-                "complexity": "basic"
+                "complexity": "advanced"
             }
         ]
         
