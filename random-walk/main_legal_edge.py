@@ -10,14 +10,17 @@ from datetime import datetime
 from rdflib import Graph, Namespace, URIRef, Literal, RDF
 
 def separate_camel_case(text):
-    """Separate camelCase text into words"""
-    return re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    """
+    Separate camelCase text into words
+    """
+    return re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
 
 def legal_entity_label(url):
-    """Generate a human-readable label from a legal entity URL"""
-    parts = str(url).strip("/").split('/')
+    """
+    Generate a human-readable label from a legal entity URL
+    """
+    parts = str(url).strip("/").split("/")
     transformed_parts = []
-
     month_mapping = {
         "January": "Januari",
         "February": "Februari",
@@ -32,7 +35,6 @@ def legal_entity_label(url):
         "November": "November",
         "December": "Desember",
     }
-
     for i, part in enumerate(parts):
         if part == "lex2kg":
             transformed_parts = []
@@ -57,8 +59,17 @@ def legal_entity_label(url):
             transformed_parts.append(num)
         else:
             transformed_parts.append(separate_camel_case(part).lower())
-
     return " ".join(transformed_parts)
+
+def legal_property_label(x):
+    """
+    Generate a human-readable label from a legal property
+    """
+    if "http" in x:
+        x = x.split("/")[-1]
+    else:
+        x = x.split(":")[-1]
+    return separate_camel_case(x).lower()
 
 def format_property_label(property_uri):
     """Format a property URI into a readable label in Indonesian"""
@@ -293,15 +304,18 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=2
         pattern_description = create_detailed_pattern_description_with_labels(
             query_pattern, human_readable_mapping)
         
+        # Extract contents for variables to provide better context for question generation
+        variable_contents = extract_variable_contents(g, variable_mapping, context_pattern)
+        
         # Generate questions based on relationship type
         questions = generate_questions_for_predicate_with_labels(
             g, pred_name, pattern_description, query_pattern, 
-            variable_mapping, human_readable_mapping, gemini_api_key)
+            variable_mapping, human_readable_mapping, variable_contents, gemini_api_key)
         
         # If we couldn't generate questions, try fallback templates
         if not questions or not questions.get("indonesian") or not questions.get("english"):
             questions = generate_specific_fallback_question_with_labels(
-                pattern_description, query_pattern, human_readable_mapping)
+                pattern_description, query_pattern, human_readable_mapping, variable_contents)
         
         # Step 9: Generate SPARQL query without prefixes or newlines
         sparql_query = generate_simplified_sparql_query(query_pattern)
@@ -329,6 +343,31 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=2
         print(f"Warning: Could only generate {samples_generated} samples after {max_attempts} attempts")
     
     return dataset
+
+def extract_variable_contents(g, variable_mapping, context_pattern):
+    """Extract actual content for variables to provide better context for question generation"""
+    variable_contents = {}
+    
+    for entity, (var_name, label) in variable_mapping.items():
+        if isinstance(entity, Literal):
+            variable_contents[var_name] = str(entity)
+        elif isinstance(entity, URIRef):
+            # Look for text content associated with this entity
+            for s, p, o in context_pattern:
+                if s == entity and 'teks' in str(p) and isinstance(o, Literal):
+                    variable_contents[var_name] = str(o)
+                    break
+                elif o == entity and 'teks' in str(p) and isinstance(s, Literal):
+                    variable_contents[var_name] = str(s)
+                    break
+            
+            # If no text found in context pattern, try direct lookup
+            if var_name not in variable_contents:
+                text_triples = list(g.triples((entity, URIRef("https://example.org/lex2kg/ontology/teks"), None)))
+                if text_triples:
+                    variable_contents[var_name] = str(text_triples[0][2])
+    
+    return variable_contents
 
 def get_related_triples_for_predicate(g, pred_name, subject, object_):
     """Get important related triples based on the predicate type"""
@@ -441,7 +480,8 @@ def get_human_readable_label(term, human_readable_mapping):
         return str(term)
 
 def generate_questions_for_predicate_with_labels(g, pred_name, pattern_description, query_pattern, 
-                                              variable_mapping, human_readable_mapping, gemini_api_key=None):
+                                              variable_mapping, human_readable_mapping, 
+                                              variable_contents, gemini_api_key=None):
     """Generate questions based on the relationship type using human-readable labels"""
     # Extract metadata from pattern for templates
     entity_info = extract_entity_info_from_pattern_with_labels(
@@ -450,17 +490,27 @@ def generate_questions_for_predicate_with_labels(g, pred_name, pattern_descripti
     # Try to generate with Gemini API if available
     if gemini_api_key:
         # First try generating with Gemini
-        template_info = f"Relationship type: {pred_name}\nPattern: {pattern_description}\nEntity info: {entity_info}"
-        questions = generate_questions_with_gemini_improved(template_info, gemini_api_key)
+        template_info = f"Relationship type: {pred_name}\nPattern: {pattern_description}\nEntity info: {entity_info}\nVariable contents: {variable_contents}"
+        questions = generate_questions_with_gemini_improved(template_info, gemini_api_key, variable_mapping, variable_contents)
         if questions and questions.get("indonesian") and questions.get("english"):
             # Post-process to ensure no URIs are in the questions
             questions["indonesian"] = remove_uris_from_text(questions["indonesian"])
             questions["english"] = remove_uris_from_text(questions["english"])
+            
+            # Ensure no variable placeholders in questions
+            for var_name in variable_mapping:
+                if isinstance(var_name, tuple):
+                    var_name = var_name[0]
+                if var_name in questions["indonesian"] or var_name in questions["english"]:
+                    # If variables still appear, try again with templates
+                    return generate_questions_from_templates_with_labels(
+                        pred_name, entity_info, human_readable_mapping, variable_contents)
+            
             return questions
     
     # Fallback to templates if no API or API failed
     return generate_questions_from_templates_with_labels(
-        pred_name, entity_info, human_readable_mapping)
+        pred_name, entity_info, human_readable_mapping, variable_contents)
 
 def remove_uris_from_text(text):
     """Remove URI patterns from generated text"""
@@ -472,6 +522,11 @@ def remove_uris_from_text(text):
         return legal_entity_label(uri)
     
     text = re.sub(uri_pattern, replace_with_label, text)
+    
+    # Remove variable placeholders
+    var_pattern = r'\?[a-zA-Z]+\d+'
+    text = re.sub(var_pattern, "yang dicari", text)
+    
     return text
 
 def extract_entity_info_from_pattern_with_labels(g, query_pattern, variable_mapping, human_readable_mapping):
@@ -519,7 +574,106 @@ def extract_entity_info_from_pattern_with_labels(g, query_pattern, variable_mapp
     
     return entity_info
 
-def generate_questions_from_templates_with_labels(pred_name, entity_info, human_readable_mapping):
+def generate_questions_with_gemini_improved(pattern_text, api_key, variable_mapping, variable_contents):
+    """Generate bilingual questions with improved prompting for specificity"""
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key={api_key}"
+    
+    # Prepare context about variables to help model avoid including variable placeholders directly
+    variable_context = "\n\nVARIABLE INFORMATION:\n"
+    for var_name, content in variable_contents.items():
+        if isinstance(var_name, tuple):
+            var_name = var_name[0]
+        short_content = content[:100] + "..." if len(content) > 100 else content
+        variable_context += f"{var_name} - content: {short_content}\n"
+    
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": f"""Generate two versions of a natural language question (one in Bahasa Indonesia and one in English) based on the following information about Indonesian legal documents:
+{pattern_text}
+{variable_context}
+
+CRITICAL REQUIREMENTS FOR BOTH LANGUAGES:
+
+1. BE EXTREMELY SPECIFIC - Your questions MUST include ALL specific identifiers found in the pattern
+2. If you see specific entities like "UU no 39 tahun 2004 pasal 97", your question MUST mention these exact identifiers
+3. DO NOT generate generic questions about legal systems, numbering, or structures in general
+4. Each question should be asking for specific information about the specific legal entities mentioned
+5. NEVER include raw URLs or URIs in the questions - only use the human-readable labels provided
+6. DO NOT include phrases like "which has the URI" or references to URLs in the questions
+7. NEVER include variable placeholders like "?value1" or "?article1" in the questions - replace these with descriptive phrases like "apa" or "yang mana" for Indonesian, or "what", "which" for English
+8. When asking for content represented by a variable, use natural phrasing like "apa isi dari" or "what is the content of"
+
+Examples of GOOD questions:
+- "Apa nomor dari Pasal 97 dalam UU no 39 tahun 2004?"
+- "What is the number of Article 97 in Law Number 39 of 2004?"
+- "Berapa nomor yang dimiliki oleh Pasal 4 Undang-Undang Nomor 14 Tahun 2015?"
+- "What number does Article 4 of Law Number 14 of 2015 have?"
+
+Examples of BAD questions to AVOID:
+- "Bagaimana sistem penomoran untuk pasal dan bagian dalam kerangka hukum Indonesia?"
+- "What numbering systems are used for articles and sections?"
+- "Apa isi pasal pada https://example.org/lex2kg/uu/2009/22/pasal/0115?"
+- "What is the content of the article with URI https://example.org/lex2kg/uu/2009/22/pasal/0115?"
+- "Ayat mana yang dirujuk oleh Ayat 3 Pasal 157 yang memiliki teks ?value1?"
+- "What is the text ?value1 of the article referenced by paragraph 3?"
+
+Format your response exactly as follows:
+Indonesian: [Question in Bahasa Indonesia]
+English: [Question in English]
+
+Remember: BE SPECIFIC! Use the human-readable labels for all entities in the pattern and phrase questions naturally without variable placeholders."""
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.2,
+            "maxOutputTokens": 200
+        }
+    }
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        response_json = response.json()
+        response_text = response_json["candidates"][0]["content"]["parts"][0]["text"].strip()
+        
+        # Parse both questions from the response
+        id_match = re.search(r'Indonesian:\s*(.*?)(?:\n|$)', response_text)
+        en_match = re.search(r'English:\s*(.*?)(?:\n|$)', response_text)
+        
+        indonesian_question = id_match.group(1).strip() if id_match else None
+        english_question = en_match.group(1).strip() if en_match else response_text
+        
+        # Post-process to ensure no variable placeholders
+        if indonesian_question:
+            for var_name in variable_mapping:
+                if isinstance(var_name, tuple):
+                    var_name = var_name[0]
+                indonesian_question = indonesian_question.replace(var_name, "yang dicari")
+        
+        if english_question:
+            for var_name in variable_mapping:
+                if isinstance(var_name, tuple):
+                    var_name = var_name[0]
+                english_question = english_question.replace(var_name, "the requested information")
+        
+        return {
+            "indonesian": indonesian_question,
+            "english": english_question
+        }
+    except Exception as e:
+        print(f"Error calling Gemini API: {e}")
+        return None
+
+def generate_questions_from_templates_with_labels(pred_name, entity_info, human_readable_mapping, variable_contents):
     """Generate questions using templates based on the predicate type with human-readable labels"""
     # Define templates by predicate type
     templates = {
@@ -599,6 +753,29 @@ def generate_questions_from_templates_with_labels(pred_name, entity_info, human_
         ]
     }
     
+    # Additional templates for specific variable content conditions
+    if variable_contents:
+        for var_name, content in variable_contents.items():
+            if isinstance(var_name, tuple):
+                var_name = var_name[0]
+            
+            # If we have text content for a variable, add templates that include reference to it
+            if content and len(content) > 10:
+                # Truncate content for readability in templates
+                short_content = content[:50] + "..." if len(content) > 50 else content
+                
+                if "merujuk" in templates:
+                    templates["merujuk"].extend([
+                        {"id": "Ayat manakah yang dirujuk oleh ayat {paragraph_num} pasal {article_num} UU no {law_num} tahun {law_year}, yang ayat tersebut memiliki teks yang dicari?",
+                         "en": "Which paragraph is referenced by paragraph {paragraph_num} of article {article_num} of Law No. {law_num} of {law_year}, where the referenced paragraph has the requested text?"},
+                    ])
+                
+                if "teks" in templates:
+                    templates["teks"].extend([
+                        {"id": "Apa isi dari {entity_type} {entity_id} pasal {article_num} UU no {law_num} tahun {law_year}, yang memiliki nomor yang dicari?",
+                         "en": "What is the content of {entity_type} {entity_id} of article {article_num} of Law No. {law_num} of {law_year}, which has the requested number?"}
+                    ])
+    
     # Default templates if the predicate doesn't have specific templates
     default_templates = [
         {"id": "Apa informasi tentang {entity_label}?",
@@ -643,87 +820,14 @@ def generate_questions_from_templates_with_labels(pred_name, entity_info, human_
             "english": f"What information exists about Law No. {entity_info.get('law_num', '')} of {entity_info.get('law_year', '')}?"
         }
 
-def generate_questions_with_gemini_improved(pattern_text, api_key):
-    """Generate bilingual questions with improved prompting for specificity"""
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key={api_key}"
-    
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": f"""Generate two versions of a natural language question (one in Bahasa Indonesia and one in English) based on the following information about Indonesian legal documents:
-{pattern_text}
-
-CRITICAL REQUIREMENTS FOR BOTH LANGUAGES:
-
-1. BE EXTREMELY SPECIFIC - Your questions MUST include ALL specific identifiers found in the pattern
-2. If you see specific entities like "UU no 39 tahun 2004 pasal 97", your question MUST mention these exact identifiers
-3. DO NOT generate generic questions about legal systems, numbering, or structures in general
-4. Each question should be asking for specific information about the specific legal entities mentioned
-5. NEVER include raw URLs or URIs in the questions - only use the human-readable labels provided
-6. DO NOT include phrases like "which has the URI" or references to URLs in the questions
-
-Examples of GOOD questions:
-- "Apa nomor dari Pasal 97 dalam UU no 39 tahun 2004?"
-- "What is the number of Article 97 in Law Number 39 of 2004?"
-- "Berapa nomor yang dimiliki oleh Pasal 4 Undang-Undang Nomor 14 Tahun 2015?"
-- "What number does Article 4 of Law Number 14 of 2015 have?"
-
-Examples of BAD questions to AVOID:
-- "Bagaimana sistem penomoran untuk pasal dan bagian dalam kerangka hukum Indonesia?"
-- "What numbering systems are used for articles and sections?"
-- "Apa isi pasal pada https://example.org/lex2kg/uu/2009/22/pasal/0115?"
-- "What is the content of the article with URI https://example.org/lex2kg/uu/2009/22/pasal/0115?"
-
-Format your response exactly as follows:
-Indonesian: [Question in Bahasa Indonesia]
-English: [Question in English]
-
-Remember: BE SPECIFIC! Use the human-readable labels for all entities in the pattern."""
-                    }
-                ]
-            }
-        ],
-        "generationConfig": {
-            "temperature": 0.2,
-            "maxOutputTokens": 200
-        }
-    }
-    
-    headers = {
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        response_json = response.json()
-        response_text = response_json["candidates"][0]["content"]["parts"][0]["text"].strip()
-        
-        # Parse both questions from the response
-        id_match = re.search(r'Indonesian:\s*(.*?)(?:\n|$)', response_text)
-        en_match = re.search(r'English:\s*(.*?)(?:\n|$)', response_text)
-        
-        indonesian_question = id_match.group(1).strip() if id_match else None
-        english_question = en_match.group(1).strip() if en_match else response_text
-        
-        return {
-            "indonesian": indonesian_question,
-            "english": english_question
-        }
-    except Exception as e:
-        print(f"Error calling Gemini API: {e}")
-        return None
-
-def generate_specific_fallback_question_with_labels(pattern_text, query_pattern, human_readable_mapping):
+def generate_specific_fallback_question_with_labels(pattern_description, query_pattern, human_readable_mapping, variable_contents):
     """Generate specific fallback questions based on actual entities in the pattern with human-readable labels"""
     # Extract specific entities from pattern text
-    law_matches = re.findall(r'/uu/(\d{4})/(\d+)', pattern_text)
-    article_matches = re.findall(r'/pasal/(\d+)', pattern_text)
-    version_matches = re.findall(r'/versi/(\d{8})', pattern_text)
-    paragraph_matches = re.findall(r'/ayat/(\d+)', pattern_text)
-    letter_matches = re.findall(r'/huruf/([a-zA-Z0-9]+)', pattern_text)
+    law_matches = re.findall(r'/uu/(\d{4})/(\d+)', pattern_description)
+    article_matches = re.findall(r'/pasal/(\d+)', pattern_description)
+    version_matches = re.findall(r'/versi/(\d{8})', pattern_description)
+    paragraph_matches = re.findall(r'/ayat/(\d+)', pattern_description)
+    letter_matches = re.findall(r'/huruf/([a-zA-Z0-9]+)', pattern_description)
     
     # Determine what's being asked for based on the query pattern
     asking_for_number = any('nomor' in str(p) for _, p, _ in query_pattern)
@@ -732,6 +836,13 @@ def generate_specific_fallback_question_with_labels(pattern_text, query_pattern,
     asking_for_reference = any('merujuk' in str(p) for _, p, _ in query_pattern)
     asking_for_change = any('mengubah' in str(p) for _, p, _ in query_pattern)
     asking_for_delete = any('menghapus' in str(p) for _, p, _ in query_pattern)
+    
+    # Extract text content from variables if available
+    text_content = None
+    for var_name, content in variable_contents.items():
+        if content and len(content) > 10:
+            text_content = content[:80] + "..." if len(content) > 80 else content
+            break
     
     # Build specific questions
     indonesian_question = ""
@@ -761,8 +872,12 @@ def generate_specific_fallback_question_with_labels(pattern_text, query_pattern,
                 indonesian_question = f"Apa isi dari Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
                 english_question = f"What is the content of Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
             elif asking_for_reference:
-                indonesian_question = f"Ayat mana yang dirujuk oleh Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
-                english_question = f"Which paragraph is referenced by Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
+                if text_content:
+                    indonesian_question = f"Ayat mana yang dirujuk oleh Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}, yang memiliki teks \"{text_content}\"?"
+                    english_question = f"Which paragraph is referenced by Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, version {version_date}, that has the text \"{text_content}\"?"
+                else:
+                    indonesian_question = f"Ayat mana yang dirujuk oleh Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
+                    english_question = f"Which paragraph is referenced by Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
             else:
                 indonesian_question = f"Apa informasi tentang Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year} versi {version_date}?"
                 english_question = f"What information exists about Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, version {version_date}?"
@@ -773,6 +888,13 @@ def generate_specific_fallback_question_with_labels(pattern_text, query_pattern,
             elif asking_for_text:
                 indonesian_question = f"Apa isi dari Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year}?"
                 english_question = f"What is the content of Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}?"
+            elif asking_for_reference:
+                if text_content:
+                    indonesian_question = f"Ayat mana yang dirujuk oleh Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year}, yang mana ayat tersebut memiliki teks \"{text_content}\"?"
+                    english_question = f"Which paragraph is referenced by Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}, where that paragraph has the text \"{text_content}\"?"
+                else:
+                    indonesian_question = f"Ayat mana yang dirujuk oleh Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year}?"
+                    english_question = f"Which paragraph is referenced by Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}?"
             else:
                 indonesian_question = f"Apa informasi tentang Ayat {paragraph_num} Pasal {article_num} dalam UU no {number} tahun {year}?"
                 english_question = f"What information exists about Paragraph {paragraph_num} of Article {article_num} in Law Number {number} of {year}?"
