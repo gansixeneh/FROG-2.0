@@ -1,0 +1,137 @@
+[
+  {
+    "question": "Apa metode evaluasi untuk mata kuliah Computers and Society?",
+    "englishQuestion": "What is the evaluation method for the Computers and Society course?",
+    "sparql": "SELECT ?evaluation1 WHERE { <http://example.org/computers_and_society> <http://example.org/has_evaluation_method> ?evaluation1 . }",
+    "relation_type": "has_evaluation_method",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Berapa jumlah SKS untuk mata kuliah Competitive Programming Practicum?",
+    "englishQuestion": "How many credits does the Competitive Programming Practicum course have?",
+    "sparql": "SELECT ?value1 WHERE { <http://example.org/competitive_programming_practicum> <http://example.org/has_credits> ?value1 . }",
+    "relation_type": "has_credits",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Mata kuliah Compiler Techniques (Kode: CSCE604128) (Juga dikenal sebagai: Compiler Engineering, tekkom, tekom) juga dikenal sebagai tekkom?",
+    "englishQuestion": "Is the course Compiler Techniques (Code: CSCE604128) (Also known as: Compiler Engineering, tekkom, tekom) also known as tekkom?",
+    "sparql": "SELECT ?course1 WHERE { ?course1 <http://example.org/also_known_as> \"tekkom\" . }",
+    "relation_type": "also_known_as",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Berapa banyak mata kuliah, termasuk Computer Science Special Topics (Kode: CSCE604029) dan Cryptography and Information Security (Kode: CSCE604243) (Juga dikenal sebagai: Crypto, Cryptography), yang memiliki kelompok riset Center for Cyber Security and Cryptography, yang juga dikenal sebagai CCSC?",
+    "englishQuestion": "How many courses, including Computer Science Special Topics (Code: CSCE604029) and Cryptography and Information Security (Code: CSCE604243) (Also known as: Crypto, Cryptography), have the research group Center for Cyber Security and Cryptography, which is also known as CCSC?",
+    "sparql": "SELECT ?course1 (COUNT(?course2) AS ?count) WHERE { <http://example.org/center_for_cyber_security_and_cryptography> <http://example.org/also_known_as> \"CCSC\" . ?course1 <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography> . ?course2 <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography> . } GROUP BY ?course1",
+    "relation_type": "also_known_as",
+    "num_properties": 3,
+    "num_variables": 2,
+    "query_complexity": "count"
+  },
+  {
+    "question": "Apa nama lain dari mata kuliah Computers & Society (Kode: CSGE614093) yang juga dikenal sebagai KM, komas, kommas, yang juga merupakan mata kuliah wajib fakultas?",
+    "englishQuestion": "What is the \"also known as\" name of the Computers & Society course (Code: CSGE614093) which is also known as KM, komas, kommas, and has the course category Faculty Mandatory Course?",
+    "sparql": "SELECT ?course1 WHERE { ?course1 <http://example.org/also_known_as> \"komas\" . ?course1 <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course> . }",
+    "relation_type": "also_known_as",
+    "num_properties": 2,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Mata kuliah Pengantar Kecerdasan Buatan dan Ilmu Data (Kode: CSGE603130) termasuk dalam kategori mata kuliah apa?",
+    "englishQuestion": "What course category does the Introduction to Artificial Intelligence and Data Science course (Code: CSGE603130) belong to?",
+    "sparql": "SELECT ?course1 ?course2 WHERE { ?course1 <http://example.org/has_course_code> \"CSGE603130\" . ?course1 <http://example.org/has_credits> \"4\"^^<http://www.w3.org/2001/XMLSchema#integer> . ?course1 <http://example.org/has_course_category> ?course2 . }",
+    "relation_type": "has_course_code",
+    "num_properties": 3,
+    "num_variables": 2,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Berapa jumlah minimal SKS untuk mata kuliah Computer Science Special Topics yang termasuk dalam kategori Study Program Elective Course?",
+    "englishQuestion": "What is the minimum number of credits for the Computer Science Special Topics course, which is categorized as a Study Program Elective Course?",
+    "sparql": "SELECT ?value1 WHERE { <http://example.org/computer_science_special_topics> <http://example.org/has_minimum_credits> ?value1 . <http://example.org/computer_science_special_topics> <http://example.org/has_course_category> <http://example.org/study_program_elective_course> . }",
+    "relation_type": "has_minimum_credits",
+    "num_properties": 2,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Mata kuliah apa yang menjadi prasyarat untuk mata kuliah Simulasi dan Pemodelan?",
+    "englishQuestion": "What course is a prerequisite for the Simulation and Modeling course?",
+    "sparql": "SELECT ?course1 WHERE { <http://example.org/simulation_and_modeling> <http://example.org/has_prerequisite_course> ?course1 . }",
+    "relation_type": "has_prerequisite_course",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Berapa jumlah SKS untuk mata kuliah Software Quality Assurance?",
+    "englishQuestion": "How many credits does the Software Quality Assurance course have?",
+    "sparql": "SELECT ?value1 WHERE { <http://example.org/software_quality_assurance> <http://example.org/has_credits> ?value1 . }",
+    "relation_type": "has_credits",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Berapa jumlah SKS untuk mata kuliah Mobile Technology dengan kode yang dicari yang termasuk dalam kategori Study Program Elective Course?",
+    "englishQuestion": "How many credits does the Mobile Technology course with code the requested information, which belongs to the Study Program Elective Course category, have?",
+    "sparql": "SELECT ?course1 ?value2 WHERE { ?course1 <http://example.org/has_credits> \"3\"^^<http://www.w3.org/2001/XMLSchema#integer> . ?course1 <http://example.org/has_course_code> ?value2 . ?course1 <http://example.org/has_course_category> <http://example.org/study_program_elective_course> . }",
+    "relation_type": "has_credits",
+    "num_properties": 3,
+    "num_variables": 2,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Mata kuliah apa yang memiliki kode mata kuliah CSCE604126?",
+    "englishQuestion": "What course has the course code CSCE604126?",
+    "sparql": "SELECT ?course1 WHERE { ?course1 <http://example.org/has_course_code> \"CSCE604126\" . }",
+    "relation_type": "has_course_code",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Apakah mata kuliah Technopreneurship (Kode: yang dicari) (Juga dikenal sebagai: technop) memiliki kelompok riset bernama Information Retrieval and Natural Language Processing, dan jika ada, apa kode mata kuliahnya?",
+    "englishQuestion": "Does the Technopreneurship course (Code: the requested information) (Also known as: technop) have a research group named Information Retrieval and Natural Language Processing, and if so, what is its course code?",
+    "sparql": "SELECT ?course1 ?value2 WHERE { ?course1 <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing> . OPTIONAL { ?course1 <http://example.org/has_course_code> ?value2 . ?course1 <http://example.org/has_credits> \"3\"^^<http://www.w3.org/2001/XMLSchema#integer> . } }",
+    "relation_type": "has_research_group",
+    "num_properties": 3,
+    "num_variables": 2,
+    "query_complexity": "optional"
+  },
+  {
+    "question": "Mata kuliah apa yang menjadi prasyarat untuk mata kuliah System Programming (Kode: CSCE604227)?",
+    "englishQuestion": "What course is a prerequisite for the System Programming course (Code: CSCE604227)?",
+    "sparql": "SELECT ?course1 WHERE { ?course1 <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms> . ?course1 <http://example.org/has_course_code> \"CSCE604227\" . }",
+    "relation_type": "has_prerequisite_course",
+    "num_properties": 2,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Apakah mata kuliah Compiler Techniques (Kode: CSCE604128) (Juga dikenal sebagai: Compiler Engineering, tekkom, tekom) memiliki kategori mata kuliah pilihan program studi?",
+    "englishQuestion": "Does the Compiler Techniques course (Code: CSCE604128) (Also known as: Compiler Engineering, tekkom, tekom) have the course category Study Program Elective Course?",
+    "sparql": "SELECT ?course1 WHERE { ?course1 <http://example.org/has_course_category> <http://example.org/study_program_elective_course> . }",
+    "relation_type": "has_course_category",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  },
+  {
+    "question": "Apa kode mata kuliah untuk mata kuliah Digital Forensics?",
+    "englishQuestion": "What is the course code for the Digital Forensics course?",
+    "sparql": "SELECT ?value1 WHERE { <http://example.org/digital_forensics> <http://example.org/has_course_code> ?value1 . }",
+    "relation_type": "has_course_code",
+    "num_properties": 1,
+    "num_variables": 1,
+    "query_complexity": "basic"
+  }
+]

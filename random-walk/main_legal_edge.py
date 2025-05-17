@@ -190,9 +190,12 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=2
         if isinstance(object_, URIRef):
             entities_in_context.append(object_)
         
-        # Step 5: Add relationship-specific context
+        # Step 5: Add relationship-specific context, with the max_properties constraint
         related_triples = get_related_triples_for_predicate(g, pred_name, subject, object_)
-        for triple in related_triples:
+        
+        # FIX: Only add related triples if we're still under max_properties
+        available_slots = max_properties - len(context_pattern)
+        for triple in related_triples[:available_slots]:  # Limit by available slots
             if triple not in context_pattern:
                 context_pattern.append(triple)
                 s, p, o = triple
@@ -201,48 +204,65 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=2
                 if isinstance(o, URIRef) and o not in entities_in_context:
                     entities_in_context.append(o)
         
-        # Step 6: Continue expansion similarly to entity-first approach until we reach num_properties
+        # Update counter_p after adding related triples
         counter_p = len(context_pattern)
-        expansion_attempts = 0
-        max_expansion_attempts = 50
         
-        while counter_p < num_properties and expansion_attempts < max_expansion_attempts and entities_in_context:
-            expansion_attempts += 1
+        # FIX: Check if we already hit max properties limit - if so, skip the expansion loop
+        if counter_p >= max_properties:
+            # We've reached our limit, so make sure we don't exceed it
+            context_pattern = context_pattern[:max_properties]
+            counter_p = max_properties
+        else:
+            # Step 6: Continue expansion similarly to entity-first approach until we reach num_properties
+            expansion_attempts = 0
+            max_expansion_attempts = 50
             
-            # Pick a random entity from our context
-            entity = random.choice(entities_in_context)
-            
-            # Find properties for this entity
-            entity_properties = []
-            for s, p, o in g.triples((entity, None, None)):
-                if p not in [rdfs.label, rdfs.domain, rdfs.range, rdfs.subPropertyOf, ns1.also_known_as, RDF.type]:
-                    entity_properties.append((s, p, o))
-            
-            for s, p, o in g.triples((None, None, entity)):
-                if p not in [rdfs.label, rdfs.domain, rdfs.range, rdfs.subPropertyOf, ns1.also_known_as, RDF.type]:
-                    entity_properties.append((s, p, o))
-            
-            if not entity_properties:
-                continue
-            
-            # Pick a random property
-            random_prop_triple = random.choice(entity_properties)
-            
-            # Skip if this triple is already in our context
-            if random_prop_triple in context_pattern:
-                continue
-            
-            # Add this triple to context
-            context_pattern.append(random_prop_triple)
-            counter_p += 1
-            
-            # Add new entities to context
-            s, p, o = random_prop_triple
-            if isinstance(s, URIRef) and s not in entities_in_context:
-                entities_in_context.append(s)
-            if isinstance(o, URIRef) and o not in entities_in_context:
-                entities_in_context.append(o)
+            while counter_p < num_properties and counter_p < max_properties and expansion_attempts < max_expansion_attempts and entities_in_context:
+                expansion_attempts += 1
+                
+                # Pick a random entity from our context
+                entity = random.choice(entities_in_context)
+                
+                # Find properties for this entity
+                entity_properties = []
+                for s, p, o in g.triples((entity, None, None)):
+                    if p not in [rdfs.label, rdfs.domain, rdfs.range, rdfs.subPropertyOf, ns1.also_known_as, RDF.type]:
+                        entity_properties.append((s, p, o))
+                
+                for s, p, o in g.triples((None, None, entity)):
+                    if p not in [rdfs.label, rdfs.domain, rdfs.range, rdfs.subPropertyOf, ns1.also_known_as, RDF.type]:
+                        entity_properties.append((s, p, o))
+                
+                if not entity_properties:
+                    continue
+                
+                # Pick a random property
+                random_prop_triple = random.choice(entity_properties)
+                
+                # Skip if this triple is already in our context
+                if random_prop_triple in context_pattern:
+                    continue
+                
+                # Add this triple to context if we haven't hit max_properties
+                if counter_p < max_properties:
+                    context_pattern.append(random_prop_triple)
+                    counter_p += 1
+                    
+                    # Add new entities to context
+                    s, p, o = random_prop_triple
+                    if isinstance(s, URIRef) and s not in entities_in_context:
+                        entities_in_context.append(s)
+                    if isinstance(o, URIRef) and o not in entities_in_context:
+                        entities_in_context.append(o)
+                else:
+                    # We've hit our limit, so break out of the loop
+                    break
         
+        # FIX: Final check to ensure we don't exceed max_properties
+        if counter_p > max_properties:
+            context_pattern = context_pattern[:max_properties]
+            counter_p = max_properties
+            
         # If we couldn't find enough properties, skip this sample
         if counter_p < 1:
             print(f"  Skipping sample - couldn't find enough properties")
@@ -326,7 +346,7 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=2
             "englishQuestion": questions["english"],
             "sparql": sparql_query,
             "relation_type": pred_name,
-            "num_properties": counter_p,
+            "num_properties": len(query_pattern),  # FIX: Use actual length of query_pattern
             "num_variables": num_variables
         })
         
