@@ -1,6 +1,8 @@
 # backend/setup_project.sh
 #!/bin/bash
 
+# checkpoint
+
 # Create virtual environment
 python -m venv venv
 
