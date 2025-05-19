@@ -79,6 +79,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        
+        # Check if this is a file request
+        if 'file_request' in text_data_json:
+            await self.handle_file_request(text_data_json['file_request'])
+            return
+            
         message = text_data_json['message']
         
         # Send message to room group to indicate typing
@@ -114,6 +120,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message_id': str(assistant_message.id)
                 }
             )
+            
+            # Send visualization file info to client if available
+            if hasattr(self.agent, 'visualization_files') and self.agent.visualization_files:
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'visualization_files',
+                        'file_types': {k: v is not None for k, v in self.agent.visualization_files.items()},
+                        'message_id': f"vis_files_{self.message_counter}"
+                    }
+                )
+                self.message_counter += 1
+                
         except Exception as e:
             error_message = f"Error: {str(e)}\n{traceback.format_exc()}"
             error_msg_obj = await self.save_message(error_message, 'system')
@@ -126,6 +145,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message_id': str(error_msg_obj.id)
                 }
             )
+            
+    async def handle_file_request(self, file_type):
+        """Handle requests for visualization files"""
+        if not hasattr(self.agent, 'visualization_files') or not self.agent.visualization_files:
+            await self.send(text_data=json.dumps({
+                'file_error': 'No visualization files available',
+                'file_type': file_type
+            }))
+            return
+            
+        file_path = self.agent.visualization_files.get(file_type)
+        if not file_path or not os.path.exists(file_path):
+            await self.send(text_data=json.dumps({
+                'file_error': f'File of type {file_type} not found',
+                'file_type': file_type
+            }))
+            return
+            
+        # Read file content
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                file_content = f.read()
+                
+            # Send file content to client
+            await self.send(text_data=json.dumps({
+                'file_content': file_content,
+                'file_type': file_type,
+                'file_name': os.path.basename(file_path)
+            }))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                'file_error': f'Error reading file: {str(e)}',
+                'file_type': file_type
+            }))
     
     async def chat_message(self, event):
         message = event['message']
@@ -150,6 +203,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message_id': message_id
         }))
     
+    async def visualization_files(self, event):
+        """Send visualization files information to client"""
+        file_types = event['file_types']
+        message_id = event.get('message_id', f"vis_files_{self.message_counter}")
+        
+        # Send visualization files info to WebSocket
+        await self.send(text_data=json.dumps({
+            'visualization_files': file_types,
+            'message_id': message_id
+        }))
+    
     async def system_message(self, event):
         message = event['message']
         message_id = event.get('message_id', f"system_{self.message_counter}")
@@ -160,7 +224,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'role': 'system',
             'message_id': message_id
         }))
-    
+        
     @database_sync_to_async
     def save_message(self, content, role):
         """Save a message to the database"""

@@ -17,3 +17,9 @@ export interface Message {
 export interface ChatWithMessages extends Chat {
   messages: Message[];
 }
+
+export interface VisualizationFiles {
+  json: boolean;
+  mermaid: boolean;
+  ttl: boolean;
+}

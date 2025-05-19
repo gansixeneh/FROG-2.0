@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Chat, ChatWithMessages, Message } from "../types";
+import { Chat, ChatWithMessages, Message, VisualizationFiles } from "../types";
 import { fetchChats, fetchChat, createChat } from "../utils/api";
 
 interface ChatContextType {
@@ -16,10 +16,12 @@ interface ChatContextType {
   isLoading: boolean;
   isProcessing: boolean; // Track if a message is being processed
   socket: WebSocket | null;
+  visualizationFiles: VisualizationFiles | null;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
   toggleNav: () => void;
+  downloadVisualizationFile: (fileType: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -37,6 +39,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [visualizationFiles, setVisualizationFiles] = useState<VisualizationFiles | null>(null);
 
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
@@ -114,6 +117,33 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
       // Add to processed message set
       processedMessageIds.add(messageId);
+
+      // Handle visualization files information
+      if (data.visualization_files) {
+        console.log("Received visualization files info:", data.visualization_files);
+        setVisualizationFiles(data.visualization_files);
+        return;
+      }
+
+      // Handle file content/error responses
+      if (data.file_content || data.file_error) {
+        console.log(`Received file ${data.file_error ? 'error' : 'content'} for type:`, data.file_type);
+        if (data.file_content) {
+          // Create and download the file
+          const blob = new Blob([data.file_content], { type: 'text/plain' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = data.file_name || `${data.file_type}-${Date.now()}.${getFileExtension(data.file_type)}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } else if (data.file_error) {
+          alert(`Error downloading file: ${data.file_error}`);
+        }
+        return;
+      }
 
       if (data.role === "system" && data.debug) {
         // Handle debug message (system message with debug content)
@@ -324,6 +354,36 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const toggleNav = () => {
     setIsNavOpen((prev) => !prev);
   };
+  
+  // Download visualization file
+  const downloadVisualizationFile = (fileType: string) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
+      console.error("WebSocket is not connected, cannot download file");
+      alert("Connection error. Please refresh the page and try again.");
+      return;
+    }
+    
+    // Send file request to WebSocket
+    socket.send(
+      JSON.stringify({
+        file_request: fileType,
+      })
+    );
+  };
+  
+  // Helper function to get file extension based on file type
+  const getFileExtension = (fileType: string): string => {
+    switch (fileType) {
+      case 'json':
+        return 'json';
+      case 'mermaid':
+        return 'mmd';
+      case 'ttl':
+        return 'ttl';
+      default:
+        return 'txt';
+    }
+  };
 
   return (
     <ChatContext.Provider
@@ -334,10 +394,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         isLoading,
         isProcessing,
         socket,
+        visualizationFiles,
         loadChat,
         startNewChat,
         sendMessage,
         toggleNav,
+        downloadVisualizationFile,
       }}
     >
       {children}

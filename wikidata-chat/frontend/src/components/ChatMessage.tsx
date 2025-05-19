@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { formatSparqlQuery } from "../utils/sparqlFormatter";
+import VisualizationFiles from "./VisualizationFiles";
 
 interface ChatMessageProps {
   message: Message;
@@ -251,6 +252,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         >
           {processedContent}
         </ReactMarkdown>
+        
+        {/* Add visualization files component */}
+        <VisualizationFiles messageId={message.id} />
       </div>
     </div>
   );
