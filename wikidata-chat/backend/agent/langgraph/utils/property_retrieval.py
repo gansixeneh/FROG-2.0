@@ -24,20 +24,15 @@ class WikidataPropertyRetrieval:
         if weaviate_client:
             self.client = weaviate_client
         else:
-            # Initialize embedded Weaviate
             try:
-                from weaviate.embedded import EmbeddedOptions
-                embedded_options = EmbeddedOptions()
-                self.client = weaviate.WeaviateClient(embedded_options=embedded_options)
-                self.client.connect()
+                self.client = weaviate.connect_to_local(
+                    host="localhost",
+                    port=8080,
+                    grpc_port=50052,
+                )
             except Exception as e:
-                print(f"Error connecting to embedded Weaviate: {e}")
-                # Fallback to client mode if embedded fails
-                try:
-                    self.client = weaviate.Client("http://localhost:8080")
-                except Exception as e:
-                    print(f"Error connecting to local Weaviate: {e}")
-                    raise e
+                print(f"Error connecting to local Weaviate: {e}")
+                raise e
         
         # Create/get collection
         db_collection_name = "wikidata_property_db"
