@@ -1,6 +1,7 @@
 # backend/chat/consumers.py
 import json
 import traceback
+import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Chat, Message
@@ -8,8 +9,11 @@ import asyncio
 import os
 import uuid
 
-# Import the Wikidata Agent
-from agent.agent import WikidataAgent
+# Import the agent singleton instead of the WikidataAgent directly
+from agent.singletons import get_agent
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -33,8 +37,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Get API key from environment
         gemini_api_key = os.environ.get('GEMINI_API_KEY')
         
-        # Initialize the agent with a callback for debug output
-        self.agent = WikidataAgent(gemini_api_key=gemini_api_key, debug_callback=self.debug_callback)
+        # Use the agent singleton instead of creating a new instance
+        self.agent = get_agent(api_key=gemini_api_key, debug_callback=self.debug_callback)
+        logger.info(f"Connected WebSocket for chat_id: {self.chat_id}, using shared agent instance")
         
         # Add a message counter to prevent duplicate message issues
         self.message_counter = 0
@@ -45,13 +50,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        logger.info(f"Disconnected WebSocket for chat_id: {self.chat_id}")
     
     @database_sync_to_async
     def chat_exists(self, chat_id):
         """Check if a chat with the given ID exists"""
         try:
             return Chat.objects.filter(id=chat_id).exists()
-        except Exception:
+        except Exception as e:
+            logger.error(f"Error checking if chat exists: {e}")
             return False
     
     @database_sync_to_async
@@ -62,9 +69,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat_uuid = uuid.UUID(chat_id)
             return Chat.objects.create(id=chat_uuid, title="New Chat")
         except Exception as e:
-            print(f"Error creating chat: {e}")
-            return None
-    
+            logger.error(f"Error creating chat: {e}")
+            return None    
     async def debug_callback(self, output):
         """Callback function for agent debugging output"""
         await self.channel_layer.group_send(
@@ -119,8 +125,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'role': 'assistant',
                     'message_id': str(assistant_message.id)
                 }
-            )
-            
+            )            
             # Send visualization file info to client if available
             if hasattr(self.agent, 'visualization_files') and self.agent.visualization_files:
                 await self.channel_layer.group_send(
@@ -134,6 +139,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.message_counter += 1
                 
         except Exception as e:
+            logger.error(f"Error processing message: {e}")
             error_message = f"Error: {str(e)}\n{traceback.format_exc()}"
             error_msg_obj = await self.save_message(error_message, 'system')
             
@@ -161,8 +167,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'file_error': f'File of type {file_type} not found',
                 'file_type': file_type
             }))
-            return
-            
+            return            
         # Read file content
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -175,6 +180,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'file_name': os.path.basename(file_path)
             }))
         except Exception as e:
+            logger.error(f"Error reading file: {e}")
             await self.send(text_data=json.dumps({
                 'file_error': f'Error reading file: {str(e)}',
                 'file_type': file_type
@@ -206,8 +212,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def visualization_files(self, event):
         """Send visualization files information to client"""
         file_types = event['file_types']
-        message_id = event.get('message_id', f"vis_files_{self.message_counter}")
-        
+        message_id = event.get('message_id', f"vis_files_{self.message_counter}")        
         # Send visualization files info to WebSocket
         await self.send(text_data=json.dumps({
             'visualization_files': file_types,

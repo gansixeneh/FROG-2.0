@@ -5,6 +5,7 @@ import queue
 import threading
 import json
 import tempfile
+import logging
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
@@ -14,6 +15,9 @@ from langchain.callbacks.base import BaseCallbackHandler
 
 # Import LangGraph agent
 from agent.langgraph import WikidataGraphAgent
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class DebugHandler(BaseCallbackHandler):
     """Callback handler for capturing debug information and sending it through WebSocket."""
@@ -26,6 +30,12 @@ class DebugHandler(BaseCallbackHandler):
         self.is_running = True
         self.processing_thread = threading.Thread(target=self._process_queue, daemon=True)
         self.processing_thread.start()
+        logger.info("Initialized DebugHandler with callback")
+    
+    def update_callback(self, new_callback_func):
+        """Update the callback function without recreating the handler"""
+        logger.info("Updating debug callback function")
+        self.callback_func = new_callback_func
     
     def _process_queue(self):
         """Process messages from the queue and send them to the callback."""
@@ -41,7 +51,7 @@ class DebugHandler(BaseCallbackHandler):
                 # Queue is empty, continue waiting
                 continue
             except Exception as e:
-                print(f"Error in debug handler processing thread: {e}")
+                logger.error(f"Error in debug handler processing thread: {e}")
     
     def _send_to_callback(self, message):
         """Send a message to the callback function, handling both sync and async callbacks."""
@@ -65,7 +75,7 @@ class DebugHandler(BaseCallbackHandler):
                 try:
                     future.result(timeout=1.0)
                 except Exception as e:
-                    print(f"Error in async callback: {e}")
+                    logger.error(f"Error in async callback: {e}")
             else:
                 # Run the callback in the loop
                 loop.run_until_complete(self.callback_func(message))
@@ -74,7 +84,7 @@ class DebugHandler(BaseCallbackHandler):
             try:
                 self.callback_func(message)
             except Exception as e:
-                print(f"Error in sync callback: {e}")
+                logger.error(f"Error in sync callback: {e}")
     
     def _add_to_queue(self, message):
         """Add a message to the queue for processing."""
@@ -108,7 +118,6 @@ class DebugHandler(BaseCallbackHandler):
         self.is_running = False
         if hasattr(self, 'processing_thread') and self.processing_thread.is_alive():
             self.processing_thread.join(timeout=1.0)
-
 
 # Import tools from the correct location
 from agent.tools.search_tool import SearchWikidataTool
@@ -144,6 +153,23 @@ class WikidataAgent:
         
         # Store visualization files
         self.visualization_files = {}
+        
+        logger.info("Initialized WikidataAgent")
+    
+    def update_debug_callback(self, debug_callback):
+        """Update the debug callback function without recreating the agent"""
+        logger.info("Updating debug callback in WikidataAgent")
+        # Update the debug callback in the DebugHandler
+        if hasattr(self, 'debug_handler'):
+            self.debug_handler.update_callback(debug_callback)
+        
+        # Update the debug callback in the LangGraph agent
+        if hasattr(self, 'langgraph_agent'):
+            self.langgraph_agent.debug_callback = debug_callback
+            
+            # Also update in the visualizer if it exists
+            if hasattr(self.langgraph_agent, 'visualizer') and self.langgraph_agent.visualizer:
+                self.langgraph_agent.visualizer.debug_callback = debug_callback
 
     def query(self, user_question: str) -> str:
         """

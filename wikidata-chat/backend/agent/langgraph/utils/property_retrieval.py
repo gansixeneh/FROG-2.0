@@ -1,4 +1,3 @@
-
 # backend/agent/langgraph/utils/property_retrieval.py
 import pandas as pd
 import numpy as np
@@ -7,6 +6,13 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 import weaviate
+import logging
+
+# Import our model singleton
+from .singletons.model_singletons import get_sentence_transformer
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class WikidataPropertyRetrieval:
     """Class for managing Wikidata properties retrieval and search"""
@@ -17,7 +23,8 @@ class WikidataPropertyRetrieval:
         weaviate_client=None
     ) -> None:
         self.df_properties = df_properties
-        self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
+        # Use the singleton instead of creating a new instance
+        self.model_embed = get_sentence_transformer(embedding_model_name, trust_remote_code=True)
         self.stopwords = set(stopwords.words("english"))
         
         # Connect to local Weaviate or use provided client
@@ -31,7 +38,7 @@ class WikidataPropertyRetrieval:
                     grpc_port=50052,
                 )
             except Exception as e:
-                print(f"Error connecting to local Weaviate: {e}")
+                logger.error(f"Error connecting to local Weaviate: {e}")
                 raise e
         
         # Create/get collection
@@ -52,7 +59,7 @@ class WikidataPropertyRetrieval:
 
     def _initialize_collection(self):
         """Initialize the vector collection with property data"""
-        print("Initializing Wikidata property collection...")
+        logger.info("Initializing Wikidata property collection...")
         emb_properties = self.model_embed.encode(
             self.df_properties["label"].tolist(), show_progress_bar=True
         )
@@ -64,7 +71,7 @@ class WikidataPropertyRetrieval:
                     properties=row.to_dict(),
                     vector=emb_properties[i].tolist(),
                 )
-        print("Property collection initialized!")
+        logger.info("Property collection initialized!")
 
     def _search(self, q: str, k: int = 5) -> pd.DataFrame:
         """Search the vector database for similar properties"""
@@ -84,7 +91,7 @@ class WikidataPropertyRetrieval:
             )
             return df
         except Exception as e:
-            print(f"Error in property search: {e}")
+            logger.error(f"Error in property search: {e}")
             return pd.DataFrame()
 
     def _preprocess_into_tokens(self, q: str) -> list[str]:

@@ -1,13 +1,19 @@
-
 # backend/agent/langgraph/nodes/verbalization.py
 from datetime import datetime
 import re
 import json
+import logging
 from SPARQLWrapper import SPARQLWrapper, JSON
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from ..utils.state import WikidataGraphRAGState
 import google.generativeai as genai
+
+# Import our model singleton
+from ..utils.singletons.model_singletons import get_sentence_transformer
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 def replace_using_dict(original_string, replacements):
     """Replace substrings according to replacement dictionary"""
@@ -55,12 +61,13 @@ WHERE {{
         self.model_name = model_name
         self.query_model_encode_kwargs = query_model_encode_kwargs
         self.passage_model_encode_kwargs = passage_model_encode_kwargs
-        self.model = SentenceTransformer(model_name, **model_kwargs)
-        self.model.eval()
+        # Use the singleton instead of creating a new instance
+        self.model = get_sentence_transformer(model_name, **model_kwargs)
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         # Set a user agent to be respectful
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        logger.info(f"Initialized WikidataVerbalization with model: {model_name}")
 
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
@@ -76,8 +83,8 @@ WHERE {{
                 results_cleaned.append(tmp)
             return results_cleaned, None
         except Exception as e:
+            logger.error(f"Error executing SPARQL query: {e}")
             return [], e
-
     def get_po(self, entity: str):
         """Get predicate-object pairs for entity"""
         query = self.PO_TEMPLATE.format(entity=entity)
@@ -128,7 +135,6 @@ WHERE {{
                 candidates[p] = self.SENTENCE_TEMPLATE.format(
                     s=str(label_s), p=str(label_p), o=str(label_o)
                 )
-
         # Process subject-predicate pairs
         curr_p = None
         for result in sp:
@@ -169,8 +175,7 @@ WHERE {{
 
         # Extract results based on the most similar property
         property_used = list(candidates.keys())[similar_index]
-        result = []
-        
+        result = []        
         # Add predicate-object pairs
         for p_result in po:
             p = p_result.get('p', '')
@@ -208,6 +213,8 @@ class VerbalizationNode:
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
         
+        # Create WikidataVerbalization with optimized parameters
+        # Uses singleton model under the hood
         self.verbalization = WikidataVerbalization(
             model_name="jinaai/jina-embeddings-v3",
             query_model_encode_kwargs={
@@ -219,7 +226,7 @@ class VerbalizationNode:
                 "prompt_name": "retrieval.passage",
             }
         )
-        
+        logger.info("Initialized VerbalizationNode with WikidataVerbalization")        
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
         self.api.setQuery(q)
@@ -234,6 +241,7 @@ class VerbalizationNode:
                 results_cleaned.append(tmp)
             return results_cleaned, None
         except Exception as e:
+            logger.error(f"Error executing SPARQL query: {e}")
             return [], e
         
     def get_entities(self, entity: str, k: int = 5):
@@ -260,8 +268,8 @@ class VerbalizationNode:
             ]
             return parsed_data, None
         except Exception as e:
-            return [], e
-        
+            logger.error(f"Error searching for entities: {e}")
+            return [], e        
     def get_most_appropriate_entity_uri(self, entity, question, retrieved_entities):
         """Get the most appropriate Wikidata entity ID from retrieved entities"""
         if not retrieved_entities:
@@ -282,11 +290,10 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                 return match.group(1)
             return retrieved_entities[0]["uri"]  # Fallback to first entity
         except Exception as e:
-            print(f"Error identifying entity URI: {e}")
+            logger.error(f"Error identifying entity URI: {e}")
             if retrieved_entities:
                 return retrieved_entities[0]["uri"]  # Fallback to first entity
-            return None
-        
+            return None        
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
         start_time = datetime.now()
@@ -323,8 +330,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                 "Verbalization Node",
                 "retrieved resources",
                 {"entity": entity, "resources": retrieved_resources}
-            )
-            
+            )            
         if state.verbose > 0:
             print(f"Retrieved Resources: {retrieved_resources}")
             
@@ -367,8 +373,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                 
             try:
                 # Start verbalization timing
-                verb_start_time = datetime.now()
-                
+                verb_start_time = datetime.now()                
                 if hasattr(state, 'visualizer') and state.visualizer:
                     state.visualizer.log_event(
                         "Verbalization Node",
@@ -413,8 +418,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                             "top properties by similarity",
                             [f"{i+1}. Property: {p.split('/')[-1]}, Sentence: {s}, Similarity: {sim:.4f}" 
                              for i, (p, s, sim) in enumerate(top_cands)]
-                        )
-                
+                        )                
                 # Run verbalization
                 result, similarity = self.verbalization.run(
                     state.translated_question, 
@@ -442,7 +446,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                     )
                     
                 if state.verbose > 0:
-                    print(f"Verbalization Result: {result}\\nSimilarity: {similarity}")
+                    print(f"Verbalization Result: {result}\nSimilarity: {similarity}")
                     
                 # Determine if verbalization is successful
                 if similarity >= 0.6 and result:
@@ -458,8 +462,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                     state.next = "answer_generation"
                     
                     # Mark that verbalization was used successfully
-                    state.approach_used = "verbalization"
-                    
+                    state.approach_used = "verbalization"                    
                     # Log success
                     if hasattr(state, 'visualizer') and state.visualizer:
                         state.visualizer.log_event(
@@ -511,8 +514,7 @@ Return ONLY the entity ID (e.g., Q123) and nothing else.
                 "Verbalization Node",
                 "falling back to SPARQL",
                 {"reason": "No entity URI" if not entity_uri else "Verbalization failed or insufficient"}
-            )
-        
+            )        
         # End timing
         end_time = datetime.now()
         

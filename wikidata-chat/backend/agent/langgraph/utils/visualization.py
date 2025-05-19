@@ -479,6 +479,10 @@ class BoxologyVisualizer:
             "default": "box"                         # Rectangle for default
         }
     
+    def update_debug_callback(self, new_callback):
+        """Update the debug callback function without recreating the visualizer"""
+        self.debug_callback = new_callback
+    
     def set_question(self, question):
         """Set the question for this visualization session"""
         self.question = question
