@@ -1,4 +1,3 @@
-
 # backend/agent/langgraph/utils/visualization.py
 import re
 import html
@@ -8,6 +7,7 @@ from datetime import datetime
 import uuid
 import tempfile
 import os
+import hashlib
 from rdflib import Graph, Namespace, RDF, RDFS, Literal
 from rdflib.namespace import XSD
 
@@ -40,6 +40,7 @@ class CustomEncoder(json.JSONEncoder):
                     result["additional_kwargs"] = obj.additional_kwargs
                 return result
             else:
+                # Fallback to using the object's __dict__
                 return obj.__dict__
                 
         # Return default for any other types
@@ -215,11 +216,11 @@ class LogToRDF:
     def _determine_entity_type(self, entity):
         """Determine entity type based on content patterns"""
         # IP address pattern
-        if re.match(r'^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$', entity):
+        if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', entity):
             return self.LOG.IPv4
         
         # Port number
-        if re.match(r'^\\d{1,5}$', entity) and 1 <= int(entity) <= 65535:
+        if re.match(r'^\d{1,5}$', entity) and 1 <= int(entity) <= 65535:
             return self.LOG.Port
         
         # User pattern
@@ -246,7 +247,7 @@ class LogToRDF:
     def _extract_wikidata_refs(self, query_uri, query_text):
         """Extract Wikidata entity and property references from SPARQL query"""
         # Extract Wikidata entities (Q numbers)
-        entities = re.findall(r'wd:Q(\\d+)', query_text)
+        entities = re.findall(r'wd:Q(\d+)', query_text)
         for entity_id in entities:
             # Use LOGS_NS for entity references in this run
             entity_uri = self.LOGS_NS[f"WikidataEntity_Q{entity_id}"]
@@ -255,7 +256,7 @@ class LogToRDF:
             self.graph.add((entity_uri, self.LOG.wikidataId, Literal(f"Q{entity_id}")))
         
         # Extract Wikidata properties (P numbers)
-        properties = re.findall(r'wdt:P(\\d+)', query_text)
+        properties = re.findall(r'wdt:P(\d+)', query_text)
         for prop_id in properties:
             # Use LOGS_NS for property references in this run
             prop_uri = self.LOGS_NS[f"WikidataProperty_P{prop_id}"]
@@ -285,7 +286,7 @@ class LogToRDF:
     def _extract_keywords(self, template):
         """Extract keywords from template pattern"""
         # Remove parameter placeholders and extract meaningful words
-        cleaned = re.sub(r'<\\*>', '', template)
+        cleaned = re.sub(r'<\*>', '', template)
         words = cleaned.lower().split()
         # Filter out common words and short words
         keywords = [w for w in words if len(w) > 3 and w not in ['from', 'with', 'the', 'and', 'for']]
@@ -324,15 +325,15 @@ class LogToRDF:
         """Determine parameter type based on content"""
         param_str = str(param)
         
-        if re.match(r'^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$', param_str):
+        if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', param_str):
             return "ip"
-        elif re.match(r'^\\d{1,5}$', param_str) and 1 <= int(param_str) <= 65535:
+        elif re.match(r'^\d{1,5}$', param_str) and 1 <= int(param_str) <= 65535:
             return "port"
         elif re.match(r'^[a-zA-Z][a-zA-Z0-9_-]*$', param_str) and len(param_str) < 32:
             return "username"
         elif re.match(r'^https?://', param_str):
             return "url"
-        elif re.match(r'^\\d{4}-\\d{2}-\\d{2}', param_str):
+        elif re.match(r'^\d{4}-\d{2}-\d{2}', param_str):
             return "timestamp"
         else:
             return "unknown"
@@ -540,8 +541,8 @@ class BoxologyVisualizer:
         # Clean the question for filename
         if self.question:
             # Remove special characters and truncate
-            clean_question = re.sub(r'[^\\w\\s-]', '', self.question).strip()
-            clean_question = re.sub(r'[-\\s]+', '_', clean_question)[:50]
+            clean_question = re.sub(r'[^\w\s-]', '', self.question).strip()
+            clean_question = re.sub(r'[-\s]+', '_', clean_question)[:50]
             return f"{timestamp}_{clean_question}"
         else:
             return f"{timestamp}_unknown_question"
@@ -567,48 +568,6 @@ class BoxologyVisualizer:
         
         if self.verbose > 0:
             print(f"Logs saved to: {temp_file.name}")
-        
-        return temp_file.name
-    
-    def save_mermaid_diagram(self, mermaid_code):
-        """Save the mermaid diagram to a temporary file"""
-        # Create markdown content with mermaid code
-        markdown_content = f"""# WikidataGraphRAG Process Flow
-
-Question: {self.question}
-Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-```mermaid
-{mermaid_code}
-```
-"""
-        
-        # Create a temp file and save the Mermaid markdown
-        temp_file = tempfile.NamedTemporaryFile(suffix='.mmd', delete=False)
-        with open(temp_file.name, 'w', encoding='utf-8') as f:
-            f.write(markdown_content)
-        
-        if self.verbose > 0:
-            print(f"Mermaid diagram saved to: {temp_file.name}")
-        
-        return temp_file.name
-
-    def save_ttl(self):
-        """Convert logs to RDF and save as TTL file"""
-        # Create a converter with run ID
-        converter = LogToRDF()
-        converter.convert_logs_to_rdf(self.logs)
-        
-        # Serialize to TTL
-        ttl_content = converter.serialize_to_ttl()
-        
-        # Create a temp file and save the TTL content
-        temp_file = tempfile.NamedTemporaryFile(suffix='.ttl', delete=False)
-        with open(temp_file.name, 'w', encoding='utf-8') as f:
-            f.write(ttl_content)
-        
-        if self.verbose > 0:
-            print(f"TTL saved to: {temp_file.name}")
         
         return temp_file.name
     
@@ -663,7 +622,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
                     value_str = self.sanitize_for_mermaid(str(value))
                     lines.append(f"{indent}{key_str}: {value_str}")
             
-            return "\\n".join(lines)
+            return "\n".join(lines)
         
         elif isinstance(data, list):
             if not data:
@@ -679,14 +638,14 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
                     item_str = self.sanitize_for_mermaid(str(item))
                     lines.append(f"{indent}• {item_str}")
             
-            return "\\n".join(lines)
+            return "\n".join(lines)
         
         else:
             return indent + self.sanitize_for_mermaid(str(data))
     
-    def get_visualization_data(self):
-        """Generate visualization data (mermaid diagram, TTL file) and return file paths"""
-        if self.verbose < 1 or not self.logs:
+    def save_mermaid_diagram(self):
+        """Generate and save the mermaid diagram to a file"""
+        if not self.logs:
             return None
             
         # Create Mermaid diagram code
@@ -711,7 +670,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         components_list = list(components.keys())
         
         for comp_name in components:
-            node_id = re.sub(r'\\s+', '', comp_name)
+            node_id = re.sub(r'\s+', '', comp_name)
             shape = self.shapes.get(comp_name, self.shapes["default"])
             color = self.colors.get(comp_name, self.colors["default"])
             
@@ -774,8 +733,8 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         
         # Force vertical alignment between subgraphs
         for i in range(len(components_list) - 1):
-            current = re.sub(r'\\s+', '', components_list[i])
-            next_comp = re.sub(r'\\s+', '', components_list[i+1])
+            current = re.sub(r'\s+', '', components_list[i])
+            next_comp = re.sub(r'\s+', '', components_list[i+1])
             
             # Add invisible connection to force vertical layout
             mermaid_code.append(f"    {current}_subgraph --> {next_comp}_subgraph")
@@ -784,8 +743,8 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         
         # Create connections between subgraphs based on execution flow
         for i in range(len(components_list) - 1):
-            current = re.sub(r'\\s+', '', components_list[i])
-            next_comp = re.sub(r'\\s+', '', components_list[i+1])
+            current = re.sub(r'\s+', '', components_list[i])
+            next_comp = re.sub(r'\s+', '', components_list[i+1])
             
             # Get the last event from current component and first event from next component
             current_events = sorted(components[components_list[i]], key=lambda x: x["timestamp"])
@@ -808,16 +767,61 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         mermaid_code.append(f"    linkStyle {node_counter['count']} stroke:#000,stroke-width:2px,fill:none")
             
         # Convert to Mermaid diagram markdown
-        mermaid_diagram = "\\n".join(mermaid_code)
+        mermaid_diagram = "\n".join(mermaid_code)
         
-        # Save both JSON logs and Mermaid diagram
+        # Create a temp file and save the Mermaid markdown
+        temp_file = tempfile.NamedTemporaryFile(suffix='.mmd', delete=False)
+        
+        # Create markdown content with mermaid code
+        markdown_content = f"""# WikidataGraphRAG Process Flow
+
+Question: {self.question}
+Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+```mermaid
+{mermaid_diagram}
+```
+"""
+        
+        with open(temp_file.name, 'w', encoding='utf-8') as f:
+            f.write(markdown_content)
+        
+        if self.verbose > 0:
+            print(f"Mermaid diagram saved to: {temp_file.name}")
+        
+        return temp_file.name
+
+    def save_ttl(self):
+        """Convert logs to RDF and save as TTL file"""
+        # Create a converter with run ID
+        converter = LogToRDF()
+        converter.convert_logs_to_rdf(self.logs)
+        
+        # Serialize to TTL
+        ttl_content = converter.serialize_to_ttl()
+        
+        # Create a temp file and save the TTL content
+        temp_file = tempfile.NamedTemporaryFile(suffix='.ttl', delete=False)
+        with open(temp_file.name, 'w', encoding='utf-8') as f:
+            f.write(ttl_content)
+        
+        if self.verbose > 0:
+            print(f"TTL saved to: {temp_file.name}")
+        
+        return temp_file.name
+    
+    def save_visualization_files(self):
+        """Generate visualization data (mermaid diagram, TTL file) and return file paths"""
+        if self.verbose < 1 or not self.logs:
+            return None
+            
+        # Save files
         json_path = self.save_logs_to_json()
-        mermaid_path = self.save_mermaid_diagram(mermaid_diagram)
+        mermaid_path = self.save_mermaid_diagram()
         ttl_path = self.save_ttl()
         
         return {
             "json_path": json_path,
             "mermaid_path": mermaid_path,
             "ttl_path": ttl_path,
-            "mermaid_diagram": mermaid_diagram
         }
