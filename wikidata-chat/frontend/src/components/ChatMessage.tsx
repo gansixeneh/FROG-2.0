@@ -1,11 +1,21 @@
 // frontend/src/components/ChatMessage.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Message } from "../types";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { formatSparqlQuery } from "../utils/sparqlFormatter";
 import VisualizationFiles from "./VisualizationFiles";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+
+// Hook to create properly typed plugins
+const useMarkdownPlugins = () => {
+  return useMemo(() => ({
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeRaw as any],
+  }), []);
+};
 
 interface ChatMessageProps {
   message: Message;
@@ -14,6 +24,7 @@ interface ChatMessageProps {
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [processedContent, setProcessedContent] = useState(message.content);
+  const { remarkPlugins, rehypePlugins } = useMarkdownPlugins();
 
   useEffect(() => {
     // Process the message content when the message changes
@@ -99,6 +110,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       <div className="user-bubble px-4 py-3 bg-frog-accent text-frog-dark rounded-2xl rounded-tr-none shadow-md max-w-full">
         <ReactMarkdown
           className="prose max-w-none"
+          remarkPlugins={remarkPlugins}
+          rehypePlugins={rehypePlugins}
+          remarkRehypeOptions={{ passThrough: ['link'] }}
           components={{
             code: ({ node, inline, className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || "");
@@ -182,6 +196,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         </button>
         <ReactMarkdown
           className="prose max-w-none"
+          remarkPlugins={remarkPlugins}
+          rehypePlugins={rehypePlugins}
+          remarkRehypeOptions={{ passThrough: ['link'] }}
           components={{
             code: ({ node, inline, className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || "");

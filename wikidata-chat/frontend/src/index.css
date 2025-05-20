@@ -104,16 +104,27 @@ code {
   width: 100%;
   margin-top: 1rem;
   margin-bottom: 1rem;
+  border-spacing: 0 !important;
+  display: block !important;
+  overflow-x: auto !important;
 }
 
 .prose th, .prose td {
   border: 1px solid var(--frog-light);
   padding: 0.5rem;
+  border-color: inherit !important;
+  border-style: solid !important;
+  border-width: 2px !important;
 }
 
 .prose th {
   background-color: var(--frog-light);
   font-weight: 600;
+}
+
+/* Dark mode support for tables */
+.dark .prose table {
+  color: white;
 }
 
 /* Frog-themed scrollbar */
