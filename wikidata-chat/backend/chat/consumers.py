@@ -73,11 +73,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return None    
     async def debug_callback(self, output):
         """Callback function for agent debugging output"""
+        # Fun emojis for each node type
+        node_emojis = {
+            "Translation Node": "🌍",
+            "Entity Extraction Node": "🕵️",
+            "Strategy Selection Node": "🔀",
+            "Verbalization Node": "🗣️",
+            "Property Generation Node": "🧩",
+            "SPARQL Generation Node": "⚙️",
+            "Answer Generation Node": "🎁",
+            # Default emoji for any unrecognized nodes
+            "default": "🐸"
+        }
+        
+        # Extract the node name from the output if possible
+        node_name = None
+        for key in node_emojis:
+            if key in output:
+                node_name = key
+                break
+        
+        # Use the appropriate emoji
+        emoji = node_emojis.get(node_name, node_emojis["default"])
+        
+        # Format the message with the emoji
+        decorated_output = f"{emoji} {output}"
+        
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'debug_message',
-                'message': output,
+                'message': decorated_output,
                 'message_id': f"debug_{self.message_counter}"
             }
         )

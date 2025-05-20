@@ -507,31 +507,9 @@ class BoxologyVisualizer:
         
         # If debug_callback is provided, send the log entry through it
         if self.debug_callback:
-            debug_msg = f"📋 {component} - {event_type}"
+            debug_msg = f"{component} - {event_type}"
             if details:
-                if isinstance(details, dict):
-                    # Extract only key information from details for readability
-                    simplified_details = {}
-                    # Focus on the most important keys
-                    important_keys = ["entities", "properties", "entity_uri", "query", 
-                                      "similarity", "result", "sparql", "status", "error"]
-                    for key in important_keys:
-                        if key in details:
-                            simplified_details[key] = details[key]
-                    
-                    # Add selected_entity_uri which is especially useful
-                    if "selected_entity_uri" in details:
-                        simplified_details["selected_entity_uri"] = details["selected_entity_uri"]
-                    
-                    # For comprehensive results, just show count
-                    if "results" in details and isinstance(details["results"], list):
-                        simplified_details["result_count"] = len(details["results"])
-                        if len(details["results"]) > 0 and isinstance(details["results"][0], dict):
-                            simplified_details["sample_result"] = details["results"][0]
-                            
-                    debug_msg += f"\nDetails: {json.dumps(simplified_details, cls=CustomEncoder, indent=2)}"
-                else:
-                    debug_msg += f"\nDetails: {details}"
+                debug_msg += f"\nDetails: {json.dumps(details, cls=CustomEncoder, indent=2)}"
             
             if start_time and end_time:
                 duration = (end_time - start_time).total_seconds()
