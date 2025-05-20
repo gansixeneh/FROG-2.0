@@ -1,7 +1,6 @@
 // frontend/src/utils/api.ts
 import { Chat, ChatWithMessages } from '../types';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../config/api';
 
 export const fetchChats = async (): Promise<Chat[]> => {
   const response = await fetch(`${API_BASE_URL}/chats/`);

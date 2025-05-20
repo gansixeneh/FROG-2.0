@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { Chat, ChatWithMessages, Message, VisualizationFiles } from "../types";
 import { fetchChats, fetchChat, createChat } from "../utils/api";
+import { getWebSocketUrl } from "../config/api";
 
 interface ChatContextType {
   chats: Chat[];
@@ -97,7 +98,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     clearProcessedMessageIds();
 
     // Create new WebSocket connection
-    const wsUrl = `ws://localhost:8000/ws/chat/${chatId}/`;
+    const wsUrl = getWebSocketUrl(chatId);
     console.log("Connecting to WebSocket:", wsUrl);
 
     const newSocket = new WebSocket(wsUrl);
@@ -145,8 +146,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         return;
       }
 
-      if (data.role === "system" && data.debug) {
-        // Handle debug message (system message with debug content)
+      // Handle debug message (system message with debug content)
+      if (data.debug) {
         const newMessage: Message = {
           id: messageId,
           role: "system",
@@ -156,14 +157,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
         setCurrentChat((prev) => {
           if (!prev) return null;
-
           return {
             ...prev,
             messages: [...prev.messages, newMessage],
           };
         });
-      } else if (data.role && data.message) {
-        // Handle regular message
+      } 
+      // Handle regular message
+      else if (data.role && data.message) {
         const newMessage: Message = {
           id: messageId,
           role: data.role,

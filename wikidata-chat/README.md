@@ -94,6 +94,19 @@ cd frontend
 npm install
 ```
 
+#### Environment Configuration
+
+By default, the frontend connects to the ngrok URL `boss-amoeba-flying.ngrok-free.app`. 
+
+If you want to use a local backend instead:
+
+1. Create an `.env.local` file in the frontend directory:
+```
+REACT_APP_API_HOST=localhost:8000
+```
+
+2. Restart the development server if it's already running.
+
 ### 4. Start the Application
 
 #### Start the Backend

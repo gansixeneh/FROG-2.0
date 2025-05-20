@@ -1,6 +1,7 @@
 // frontend/src/components/Header.tsx
 import React from 'react';
 import { useChat } from '../context/ChatContext';
+import { API_HOST } from '../config/api';
 
 const Header: React.FC = () => {
   const { toggleNav, isNavOpen, startNewChat } = useChat();

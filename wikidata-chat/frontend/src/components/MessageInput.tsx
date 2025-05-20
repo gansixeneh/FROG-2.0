@@ -1,6 +1,7 @@
 // frontend/src/components/MessageInput.tsx
 import React, { useState } from 'react';
 import { useChat } from '../context/ChatContext';
+import { API_HOST } from '../config/api';
 
 const MessageInput: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -69,7 +70,7 @@ const MessageInput: React.FC = () => {
       
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | Powered by Gemini & Wikidata
+        FrOG: Framework of Open GraphRAG | Connected to: {API_HOST}
       </div>
     </div>
   );
