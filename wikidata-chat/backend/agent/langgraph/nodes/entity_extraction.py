@@ -66,13 +66,10 @@ Your output should look like:
                     start_time=extraction_start_time
                 )
                 
-            # Generate extraction using gemini model
-            response = self.genai_model.generate_content(
-                [
-                    {"role": "system", "parts": [system_prompt]},
-                    {"role": "user", "parts": [user_prompt]}
-                ]
-            )
+            # Generate extraction using gemini model - combine system prompt with user prompt
+            # Avoid using system role as it's not supported
+            combined_prompt = f"{system_prompt}\n\n{user_prompt}"
+            response = self.genai_model.generate_content(combined_prompt)
             completion = response.text
             
             # Log raw completion

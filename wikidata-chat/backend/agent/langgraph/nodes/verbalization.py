@@ -275,25 +275,42 @@ class VerbalizationNode:
         if not retrieved_entities:
             return None
         
-        prompt = f"""Find the most appropriate Wikidata entity ID for "{entity}" to answer the question: "{question}".
-Here are the retrieved entities:
-{json.dumps(retrieved_entities, indent=2)}
-
-Return ONLY the entity ID (e.g., Q123) and nothing else.
-"""
+        # Simple scoring function based on text similarity
+        def score_entity(entity_data):
+            # Base score - higher is better
+            score = 0
+            
+            # Check if the entity label matches the entity name exactly
+            label = entity_data.get("label", "").lower()
+            if label == entity.lower():
+                score += 10
+            elif entity.lower() in label:
+                score += 5
+            
+            # Check if description mentions relevant terms from the question
+            description = entity_data.get("description", "").lower()
+            question_words = question.lower().split()
+            relevant_words = [w for w in question_words if len(w) > 3 and w.lower() not in ["what", "where", "when", "who", "how", "the", "and", "for", "that"]]
+            
+            for word in relevant_words:
+                if word in description:
+                    score += 2
+            
+            return score
         
-        try:
-            response = self.genai_model.generate_content(prompt)
-            # Extract just the entity ID using regex
-            match = re.search(r'(?:^|\s)(Q\d+)(?:$|\s)', response.text)
-            if match:
-                return match.group(1)
-            return retrieved_entities[0]["uri"]  # Fallback to first entity
-        except Exception as e:
-            logger.error(f"Error identifying entity URI: {e}")
-            if retrieved_entities:
-                return retrieved_entities[0]["uri"]  # Fallback to first entity
-            return None        
+        # Score and rank entities
+        scored_entities = [(entity_data, score_entity(entity_data)) for entity_data in retrieved_entities]
+        scored_entities.sort(key=lambda x: x[1], reverse=True)
+        
+        # Return the highest scoring entity
+        if scored_entities:
+            return scored_entities[0][0]["uri"]
+        
+        # Fallback to first entity if available
+        if retrieved_entities:
+            return retrieved_entities[0]["uri"]
+            
+        return None        
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
         start_time = datetime.now()

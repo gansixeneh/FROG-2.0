@@ -170,14 +170,11 @@ SPARQL:"""
                 )
                 
             try:
-                # Create messages for Gemini
-                messages = [
-                    {"role": "system", "parts": [system_prompt]},
-                    {"role": "user", "parts": [user_prompt_template]}
-                ]
+                # Create combined prompt for Gemini - avoid using system role
+                combined_prompt = f"{system_prompt}\n\n{user_prompt_template}"
                 
                 # Generate SPARQL query
-                response = self.genai_model.generate_content(messages)
+                response = self.genai_model.generate_content(combined_prompt)
                 completion = response.text
                 
                 # Log raw completion
