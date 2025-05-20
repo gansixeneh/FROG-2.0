@@ -60,13 +60,13 @@ class StrategySelectionNode:
                     {"next_node": "verbalization"}
                 )
         else:
-            state.next = "sparql_generation"
+            state.next = "property_generation"  # FIXED: Route to property_generation instead
             # Log routing decision
             if hasattr(state, 'visualizer') and state.visualizer:
                 state.visualizer.log_event(
                     "Strategy Selection Node",
                     "routing decision",
-                    {"next_node": "sparql_generation"}
+                    {"next_node": "property_generation"}  # FIXED: Log property_generation
                 )
         
         # End timing
