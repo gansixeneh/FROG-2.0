@@ -10,6 +10,7 @@ import os
 import hashlib
 from rdflib import Graph, Namespace, RDF, RDFS, Literal
 from rdflib.namespace import XSD
+import asyncio
 
 class CustomEncoder(json.JSONEncoder):
     """Custom JSON encoder that handles NumPy data types and objects"""
@@ -535,8 +536,31 @@ class BoxologyVisualizer:
             if start_time and end_time:
                 duration = (end_time - start_time).total_seconds()
                 debug_msg += f"\nDuration: {duration:.3f}s"
-                
-            self.debug_callback(debug_msg)
+            
+            # self.debug_callback(debug_msg)
+            if asyncio.iscoroutinefunction(self.debug_callback):
+                try:
+                    loop = asyncio.get_event_loop()
+                    if loop.is_running():
+                        future = asyncio.run_coroutine_threadsafe(self.debug_callback(debug_msg), loop)
+                        # Optionally wait for result with timeout
+                        try:
+                            future.result(timeout=1.0)
+                        except Exception as e:
+                            print(f"Error in async callback: {e}")
+                    else:
+                        loop.run_until_complete(self.debug_callback(debug_msg))
+                except RuntimeError:
+                    # No event loop in this thread, create a new one
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    loop.run_until_complete(self.debug_callback(debug_msg))
+            else:
+                # Regular synchronous callback
+                try:
+                    self.debug_callback(debug_msg)
+                except Exception as e:
+                    print(f"Error in callback: {e}")
     
     def _get_filename_base(self):
         """Generate the base filename from datetime and question"""
