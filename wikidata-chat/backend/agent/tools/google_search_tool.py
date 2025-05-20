@@ -41,7 +41,7 @@ class GoogleSearchTool(BaseTool):
 
             # Execute the search query using Gemini's built-in search capability
             response = client.models.generate_content(
-                model=gemini - 2.0 - flash,
+                model="gemini-2.0-flash",
                 contents=query,
                 config=types.GenerateContentConfig(
                     tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
