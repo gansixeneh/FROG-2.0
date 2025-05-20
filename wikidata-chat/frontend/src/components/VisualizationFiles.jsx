@@ -1,18 +1,40 @@
 import React from 'react';
-import { useChat } from '../context/ChatContext';
 import '../styles/VisualizationFiles.css';
 
-const VisualizationFiles = ({ messageId }) => {
-  const { visualizationFiles, downloadVisualizationFile } = useChat();
+const VisualizationFiles = ({ message }) => {
+  // Get visualization files directly from the message prop
+  const visualizationFiles = message?.visualization_files;
 
   if (!visualizationFiles) return null;
 
   // Check if any files are available
-  const hasFiles = Object.values(visualizationFiles).some(val => val);
+  const hasFiles = Object.keys(visualizationFiles).length > 0;
   if (!hasFiles) return null;
 
   const handleDownload = (fileType) => {
-    downloadVisualizationFile(fileType);
+    const fileData = visualizationFiles[fileType];
+    if (!fileData || !fileData.content) return;
+
+    // Create a blob and download it
+    const blob = new Blob([fileData.content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileData.file_name || `${fileType}-${Date.now()}.${getFileExtension(fileType)}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  // Helper function to get file extension
+  const getFileExtension = (fileType) => {
+    switch (fileType) {
+      case 'json': return 'json';
+      case 'mermaid': return 'mmd';
+      case 'ttl': return 'ttl';
+      default: return 'txt';
+    }
   };
 
   return (

@@ -196,7 +196,7 @@ const ChatArea: React.FC = () => {
           }
         })}
 
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} id="messages-end" />
       </div>
     </div>
   );

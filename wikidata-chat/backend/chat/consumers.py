@@ -112,7 +112,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         
-        # Check if this is a file request
+        # Check if this is a file request (keep for backward compatibility)
         if 'file_request' in text_data_json:
             await self.handle_file_request(text_data_json['file_request'])
             return
@@ -135,34 +135,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Process the message with the agent
         try:
-            # Create a task to run the agent query
+            # Create a task to run the agent query - now returns tuple (response, visualization_files_content)
             loop = asyncio.get_event_loop()
-            response = await loop.run_in_executor(None, self.agent.query, message)
+            response, visualization_files_content = await loop.run_in_executor(None, self.agent.query, message)
             
             # Save assistant message
             assistant_message = await self.save_message(response, 'assistant')
             
-            # Send message to room group
+            # Send message to room group with visualization files content included
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'message': response,
                     'role': 'assistant',
-                    'message_id': str(assistant_message.id)
+                    'message_id': str(assistant_message.id),
+                    'visualization_files': visualization_files_content if visualization_files_content else None
                 }
-            )            
-            # Send visualization file info to client if available
-            if hasattr(self.agent, 'visualization_files') and self.agent.visualization_files:
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'visualization_files',
-                        'file_types': {k: v is not None for k, v in self.agent.visualization_files.items()},
-                        'message_id': f"vis_files_{self.message_counter}"
-                    }
-                )
-                self.message_counter += 1
+            )
                 
         except Exception as e:
             logger.error(f"Error processing message: {e}")
@@ -216,12 +206,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         role = event['role']
         message_id = event.get('message_id', f"auto_{self.message_counter}")
+        visualization_files = event.get('visualization_files', None)
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'role': role,
-            'message_id': message_id
+            'message_id': message_id,
+            'visualization_files': visualization_files
         }))
     
     async def debug_message(self, event):

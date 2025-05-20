@@ -171,7 +171,7 @@ class WikidataAgent:
             if hasattr(self.langgraph_agent, 'visualizer') and self.langgraph_agent.visualizer:
                 self.langgraph_agent.visualizer.debug_callback = debug_callback
 
-    def query(self, user_question: str) -> str:
+    def query(self, user_question: str) -> tuple:
         """
         Process a user question and return an answer based on Wikidata or web search as fallback
 
@@ -179,7 +179,9 @@ class WikidataAgent:
             user_question: The user's natural language question
 
         Returns:
-            A natural language answer based on Wikidata information or web search
+            A tuple containing:
+            - A natural language answer based on Wikidata information
+            - Visualization files content dictionary
         """
         # Use the LangGraph agent for the actual querying
         answer, explanation, visualization_data = self.langgraph_agent.query(
@@ -188,13 +190,28 @@ class WikidataAgent:
             boxology_verbose=2  # Enable visualization
         )
         
-        # Store visualization files for later download
+        # Store visualization files for later download and read contents
+        visualization_files_content = {}
         if visualization_data:
+            # Store paths for backward compatibility
             self.visualization_files = {
                 'json': visualization_data.get('json_path'),
                 'mermaid': visualization_data.get('mermaid_path'),
                 'ttl': visualization_data.get('ttl_path')
             }
+            
+        # Read file contents
+            for file_type, file_path in self.visualization_files.items():
+                if file_path and os.path.exists(file_path):
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            visualization_files_content[file_type] = {
+                                'content': f.read(),
+                                'file_name': os.path.basename(file_path)
+                            }
+                        logger.info(f"Read visualization file: {file_type} ({os.path.basename(file_path)})")
+                    except Exception as e:
+                        logger.error(f"Error reading {file_type} visualization file: {e}")
         
-        # Return the explanation as the response, which includes the answer and traceability
-        return explanation
+        # Return the explanation as the response, and visualization files content
+        return explanation, visualization_files_content

@@ -271,7 +271,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         </ReactMarkdown>
         
         {/* Add visualization files component */}
-        <VisualizationFiles messageId={message.id} />
+        <VisualizationFiles message={message} />
       </div>
     </div>
   );

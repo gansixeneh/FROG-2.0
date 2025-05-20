@@ -17,12 +17,10 @@ interface ChatContextType {
   isLoading: boolean;
   isProcessing: boolean; // Track if a message is being processed
   socket: WebSocket | null;
-  visualizationFiles: VisualizationFiles | null;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
   toggleNav: () => void;
-  downloadVisualizationFile: (fileType: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -40,7 +38,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const [visualizationFiles, setVisualizationFiles] = useState<VisualizationFiles | null>(null);
 
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
@@ -119,14 +116,35 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       // Add to processed message set
       processedMessageIds.add(messageId);
 
-      // Handle visualization files information
-      if (data.visualization_files) {
-        console.log("Received visualization files info:", data.visualization_files);
-        setVisualizationFiles(data.visualization_files);
-        return;
+      // Handle debug message (system message with debug content) - MUST BE CHECKED FIRST FOR REAL-TIME UPDATES
+      if (data.debug) {
+        const newMessage: Message = {
+          id: messageId,
+          role: "system",
+          content: data.debug,
+          created_at: new Date().toISOString(),
+        };
+
+        setCurrentChat((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            messages: [...prev.messages, newMessage],
+          };
+        });
+
+        // For system messages, immediately scroll to the bottom for real-time feedback
+        setTimeout(() => {
+          const messagesEndElement = document.getElementById('messages-end');
+          if (messagesEndElement) {
+            messagesEndElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 50);
+        
+        return; // Stop processing after handling debug message
       }
 
-      // Handle file content/error responses
+      // Handle file content/error responses (legacy support)
       if (data.file_content || data.file_error) {
         console.log(`Received file ${data.file_error ? 'error' : 'content'} for type:`, data.file_type);
         if (data.file_content) {
@@ -143,33 +161,17 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         } else if (data.file_error) {
           alert(`Error downloading file: ${data.file_error}`);
         }
-        return;
+        return; // Stop processing after handling file response
       }
-
-      // Handle debug message (system message with debug content)
-      if (data.debug) {
-        const newMessage: Message = {
-          id: messageId,
-          role: "system",
-          content: data.debug,
-          created_at: new Date().toISOString(),
-        };
-
-        setCurrentChat((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            messages: [...prev.messages, newMessage],
-          };
-        });
-      } 
-      // Handle regular message
-      else if (data.role && data.message) {
+      
+      // Handle regular message with possible visualization files
+      if (data.role && data.message) {
         const newMessage: Message = {
           id: messageId,
           role: data.role,
           content: data.message,
           created_at: new Date().toISOString(),
+          visualization_files: data.visualization_files || undefined,
         };
 
         setCurrentChat((prev) => {
@@ -185,7 +187,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
           setIsProcessing(false);
           refreshChatsList();
         }
+        return; // Stop processing after handling regular message
       }
+      
+      // Log unhandled message type
+      console.warn("Unhandled WebSocket message type:", data);
     };
 
     newSocket.onopen = () => {
@@ -356,23 +362,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     setIsNavOpen((prev) => !prev);
   };
   
-  // Download visualization file
-  const downloadVisualizationFile = (fileType: string) => {
-    if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
-      console.error("WebSocket is not connected, cannot download file");
-      alert("Connection error. Please refresh the page and try again.");
-      return;
-    }
-    
-    // Send file request to WebSocket
-    socket.send(
-      JSON.stringify({
-        file_request: fileType,
-      })
-    );
-  };
-  
-  // Helper function to get file extension based on file type
+  // Helper function to get file extension based on file type (used for legacy file handling)
   const getFileExtension = (fileType: string): string => {
     switch (fileType) {
       case 'json':
@@ -395,12 +385,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         isLoading,
         isProcessing,
         socket,
-        visualizationFiles,
         loadChat,
         startNewChat,
         sendMessage,
         toggleNav,
-        downloadVisualizationFile,
       }}
     >
       {children}
