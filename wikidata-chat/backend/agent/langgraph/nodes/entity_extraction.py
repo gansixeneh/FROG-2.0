@@ -10,7 +10,7 @@ class EntityExtractionNode:
     """Node for extracting entities and properties from questions"""
     def __init__(self, genai_model):
         self.genai_model = genai_model
-        self.json_pattern = r"```(?:json)?\\s*([\\s\\S]*?)```"
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
         
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
