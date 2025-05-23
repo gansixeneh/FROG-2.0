@@ -41,7 +41,6 @@ class SPARQLWrapperClient:
         if prefixes is None:
             self.prefixes = {
                 'lex2kg-o': '<https://example.org/lex2kg/ontology/>',
-                'lex2kg': '<https://example.org/lex2kg/>',
                 'rdfs': '<https://www.w3.org/2000/01/rdf-schema#>',
                 'xsd': '<http://www.w3.org/2001/XMLSchema#>'
             }
@@ -70,7 +69,6 @@ class SPARQLWrapperClient:
         try:
             # Add prefixes to the query
             full_query = f"{self._format_prefixes()}\n{sparql_query}"
-            print(f"Executing SPARQL query: {full_query}")
             
             self.sparql.setQuery(full_query)
             results = self.sparql.query().convert()
@@ -93,7 +91,6 @@ class PatternBasedSPARQLGenerator:
         if prefixes is None:
             self.prefixes = {
                 'lex2kg-o': 'https://example.org/lex2kg/ontology/',
-                'lex2kg': 'https://example.org/lex2kg/',
                 'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
                 'xsd': 'http://www.w3.org/2001/XMLSchema#'
             }
@@ -167,11 +164,19 @@ class PatternBasedSPARQLGenerator:
         return properties
         
     def _shorten_uri(self, uri):
-        """Convert full URI to prefixed form"""
+        """Convert full URI to prefixed form - only for ontology properties, keep entities as full URIs"""
         uri_str = str(uri)
+        
+        # Only use lex2kg-o prefix for ontology properties (they don't contain forward slashes after the ontology part)
+        if uri_str.startswith('https://example.org/lex2kg/ontology/'):
+            return f"lex2kg-o:{uri_str[len('https://example.org/lex2kg/ontology/'):]}"
+        
+        # For other prefixes like rdfs, xsd
         for prefix, namespace in self.prefixes.items():
-            if uri_str.startswith(namespace):
+            if prefix != 'lex2kg-o' and uri_str.startswith(namespace):
                 return f"{prefix}:{uri_str[len(namespace):]}"
+        
+        # For entities (which contain forward slashes), keep as full URI in angle brackets
         return f"<{uri_str}>"
         
     def _format_sparql(self, sparql):
@@ -788,10 +793,9 @@ def main():
     """Main function to generate pattern-based dataset using SPARQLWrapper with Jena endpoint"""
     endpoint_url = 'http://localhost:3030/modified-lex2kg/sparql'
     
-    # Define custom prefixes for the legal knowledge graph
+    # Define custom prefixes for the legal knowledge graph - removed lex2kg prefix to avoid forward slash issues
     custom_prefixes = {
         'lex2kg-o': 'https://example.org/lex2kg/ontology/',
-        'lex2kg': 'https://example.org/lex2kg/',
         'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
         'xsd': 'http://www.w3.org/2001/XMLSchema#'
     }
