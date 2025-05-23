@@ -24,4 +24,4 @@ def save_sparqls_to_file(json_file_path):
         json.dump(sparqls, f, ensure_ascii=False, indent=2)
 
 # Example usage:
-save_sparqls_to_file('rw-legal-new/pattern_based_dataset.json')
+save_sparqls_to_file('rw-curi/pattern_based_dataset.json')
