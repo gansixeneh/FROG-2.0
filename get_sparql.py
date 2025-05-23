@@ -18,7 +18,7 @@ def get_sparql_queries(json_file_path):
 
 def save_sparqls_to_file(json_file_path):
     sparqls = get_sparql_queries(json_file_path)
-    output_file = f"{json_file_path}_sparql.json"
+    output_file = f"{json_file_path[:-5]}_sparql.json"
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(sparqls, f, ensure_ascii=False, indent=2)
 
