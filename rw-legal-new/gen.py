@@ -766,13 +766,13 @@ class PatternBasedSPARQLGenerator:
             
         return dataset
         
-    def export_json(self, dataset, output_path='pattern_based_dataset_sparqlwrapper.json'):
+    def export_json(self, dataset, output_path='pattern_based_dataset.json'):
         """Export dataset to JSON"""
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
         
-    def export_csv(self, dataset, output_path='pattern_based_dataset_sparqlwrapper.csv'):
+    def export_csv(self, dataset, output_path='pattern_based_dataset.csv'):
         """Export dataset to CSV"""
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
