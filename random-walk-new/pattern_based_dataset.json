@@ -1,764 +1,764 @@
 [
   {
     "id": "q1",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_course_code ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:practicum . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
   },
   {
     "id": "q2",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { ns1:human-computer_interaction ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q3",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q4",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:also_known_as ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ns1:game_development ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q5",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range ns1:course_category . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q6",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q7",
-    "sparql": "SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?hidden . ?target rdfs:range ?hidden . ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "3_prop_linear_middle_v3",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q8",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ns1:statistics_and_probability ns1:has_prerequisite_course ?hidden . }",
-    "pattern_type": "2_prop_branching_v2",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q9",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_2 . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
+    "id": "q7",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q8",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q9",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q10",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q11",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_1 . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q12",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_software_security ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q13",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q14",
     "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q11",
-    "sparql": "SELECT ?target WHERE { ns1:computational_geometry ns1:has_course_category ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q12",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+    "id": "q15",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q13",
-    "sparql": "SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:range ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q14",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_course_category ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q15",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_minimum_credits ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
     "id": "q16",
-    "sparql": "SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:calculus_2 . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_credits ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
   },
   {
     "id": "q17",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . }",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q18",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:project . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:capture_the_flag . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
   },
   {
     "id": "q19",
-    "sparql": "SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:range ?target . }",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q20",
+    "sparql": "SELECT ?target WHERE { ns1:database ns1:has_prerequisite_course ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q20",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:group_project . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
     "id": "q21",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ns1:statistics_and_probability ns1:has_prerequisite_course ?hidden . }",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ns1:operating_system ns1:has_prerequisite_course ?hidden . }",
     "pattern_type": "2_prop_branching_v2",
     "complexity": "intermediate"
   },
   {
     "id": "q22",
-    "sparql": "SELECT ?target WHERE { ns1:discrete_mathematics_2 ns1:has_course_category ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q23",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q24",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q25",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q26",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q27",
-    "sparql": "SELECT ?target WHERE { ns1:computational_geometry ns1:has_prerequisite_course ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q28",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range ns1:course_category . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q29",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:domain ns1:course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q30",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q31",
-    "sparql": "SELECT ?target WHERE { ns1:has_evaluation_method rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q32",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:range ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q33",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q34",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q35",
-    "sparql": "SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_evaluation_method ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q36",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q37",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range ns1:course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q38",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q39",
-    "sparql": "SELECT ?target WHERE { ns1:advanced_database ns1:has_course_category ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q40",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:project_assignment . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q41",
-    "sparql": "SELECT ?target WHERE { ns1:integrated_personality_development_skills ns1:has_evaluation_method ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q42",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q43",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q44",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q45",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q46",
-    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_evaluation_method ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q47",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q48",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q49",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range xsd:integer . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q50",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:lab_assignment . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q51",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q52",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:has_research_group ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q53",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q54",
-    "sparql": "SELECT ?target WHERE { ns1:has_research_group rdfs:range ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q55",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q56",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q57",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:domain ns1:course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q58",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q59",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:machine_learning_and_computer_vision . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q60",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:computer_system_laboratory . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q61",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:group_task . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q62",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:also_known_as ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q63",
-    "sparql": "SELECT ?target WHERE { ns1:digital_forensics ns1:has_evaluation_method ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q64",
-    "sparql": "SELECT ?target WHERE { ns1:has_evaluation_method rdfs:range ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q65",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q66",
-    "sparql": "SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q67",
-    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_evaluation_method ?target . }",
-    "pattern_type": "3_prop_star_v2",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q68",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q69",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q70",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q71",
     "sparql": "SELECT ?target WHERE { ns1:internet_of_things ns1:has_course_category ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q72",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_course_code ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q73",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q74",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:test . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q75",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q76",
-    "sparql": "SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:domain ns1:course . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q77",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:practicum . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q78",
-    "sparql": "SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:domain ?target . }",
+    "id": "q23",
+    "sparql": "SELECT ?target WHERE { ns1:computational_geometry ns1:has_evaluation_method ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q79",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_presentation . }",
+    "id": "q24",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q80",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q81",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:domain ns1:course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q82",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_digital_systems . }",
+    "id": "q25",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
-    "id": "q83",
-    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_research_group ?target . }",
+    "id": "q26",
+    "sparql": "SELECT ?target WHERE { ns1:mobile_technology ns1:has_evaluation_method ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q84",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:task . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q85",
-    "sparql": "SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q86",
-    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_prerequisite_course ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q87",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q88",
+    "id": "q27",
     "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q89",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q90",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q91",
-    "sparql": "SELECT ?target WHERE { ns1:web_application_architecture ns1:has_evaluation_method ?target . }",
+    "id": "q28",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_prerequisite_course ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q92",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_evaluation_method ns1:task . }",
+    "id": "q29",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
-    "id": "q93",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:case_study . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:has_research_group ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q94",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q95",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q96",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q97",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q98",
-    "sparql": "SELECT ?target WHERE { ?hidden rdfs:range ?target . ?hidden rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q99",
-    "sparql": "SELECT ?target WHERE { ?hidden rdfs:range ?target . ?hidden rdfs:domain ns1:course . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q100",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:group_project . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q101",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q102",
-    "sparql": "SELECT ?target WHERE { ?hidden rdfs:domain ?target . ?hidden rdfs:range ns1:evaluation . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q103",
-    "sparql": "SELECT ?target WHERE { ns1:advanced_database ns1:has_prerequisite_course ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q104",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q105",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q106",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?target ns1:has_prerequisite_course ?hidden . }",
-    "pattern_type": "3_prop_star_v5",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q107",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_digital_systems . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q108",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:ept_or_toefl_or_ielts_or_similar_exams . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q109",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q110",
-    "sparql": "SELECT ?target WHERE { ns1:advanced_database ns1:has_research_group ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q111",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q112",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:supervisor_evaluation . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q113",
-    "sparql": "SELECT ?target WHERE { ns1:has_course_category rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q114",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_credits ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q115",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q116",
-    "sparql": "SELECT ?target WHERE { ns1:has_evaluation_method rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q117",
-    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_research_group ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q118",
-    "sparql": "SELECT ?target WHERE { ns1:platform_based_programming ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . }",
-    "pattern_type": "3_prop_star_v2",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q119",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q120",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q121",
-    "sparql": "SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q122",
-    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q123",
+    "id": "q30",
     "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
-    "id": "q124",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_evaluation_method ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q125",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range ns1:course_category . }",
+    "id": "q31",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q126",
+    "id": "q32",
+    "sparql": "SELECT ?target WHERE { ns1:calculus_1 ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q33",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q34",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q35",
+    "sparql": "SELECT ?target WHERE { ns1:mobile_technology ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q36",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q37",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q38",
+    "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q39",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_digital_systems . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q40",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:laboratory_assignment . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . ?hidden ns1:has_course_category ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q41",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:computer_system_laboratory . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q42",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:test . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q43",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q44",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q45",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_presentation . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q46",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q47",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_evaluation_method ns1:final_project . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q48",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q49",
+    "sparql": "SELECT ?target WHERE { ns1:knowledge_representation_and_reasoning ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q50",
+    "sparql": "SELECT ?target WHERE { ns1:linear_algebra ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q51",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q52",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q53",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q54",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q55",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_minimum_credits ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q56",
+    "sparql": "SELECT ?target WHERE { ns1:compiler_techniques ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q57",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q58",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:programming_basics_1 . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q59",
+    "sparql": "SELECT ?target WHERE { ns1:natural_language_processing ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q60",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q61",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:presentation . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q62",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q63",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q64",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q65",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q66",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q67",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:task . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q68",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:software_engineering ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q69",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:test . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q70",
+    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q71",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q72",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q73",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:has_course_code ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q74",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:lab_assignment . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q75",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q76",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q77",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q78",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q79",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q80",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ns1:calculus_2 ns1:has_prerequisite_course ?hidden . ?hidden ns1:also_known_as ?target . }",
+    "pattern_type": "3_prop_star_v3",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q81",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q82",
+    "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q83",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:operating_system . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q84",
     "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:test . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
-    "id": "q127",
-    "sparql": "SELECT ?target WHERE { ns1:computer_science_special_topics ns1:has_research_group ?target . }",
+    "id": "q85",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:database . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q86",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q87",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_evaluation_method ?target . }",
     "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q88",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q89",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q90",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q91",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q92",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q93",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q94",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q95",
+    "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q96",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_elective_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q97",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q98",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_computer_organization . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q99",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q100",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:group_presentation . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q101",
+    "sparql": "SELECT ?target WHERE { ns1:final_project_group_assignment ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q102",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q103",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:machine_learning_and_computer_vision . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q104",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:operating_system . ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:also_known_as ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q105",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q106",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:final_project . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q107",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q108",
+    "sparql": "SELECT ?target WHERE { ns1:linear_algebra ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q109",
+    "sparql": "SELECT ?target WHERE { ns1:english ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q110",
+    "sparql": "SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q111",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q112",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q113",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q114",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q115",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:practicum . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q116",
+    "sparql": "SELECT ?target WHERE { ns1:spoken_language_processing ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q117",
+    "sparql": "SELECT ?target WHERE { ns1:religion ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q118",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_digital_systems ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q119",
+    "sparql": "SELECT ?target WHERE { ns1:research_methodology_and_scientific_writing ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q120",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q121",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q122",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q123",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_minimum_credits ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q124",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q125",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q126",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q127",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
@@ -769,68 +769,260 @@
   },
   {
     "id": "q129",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:domain ?target . }",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q130",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q131",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ns1:computer_network ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ?target . }",
+    "pattern_type": "3_prop_star_v3",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q132",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:software_engineering . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q133",
+    "sparql": "SELECT ?target WHERE { ns1:embedded_systems ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q134",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q135",
     "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . }",
     "pattern_type": "2_prop_branching_v4",
     "complexity": "intermediate"
   },
   {
-    "id": "q132",
+    "id": "q136",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ns1:database ns1:has_prerequisite_course ?hidden . }",
+    "pattern_type": "2_prop_branching_v2",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q137",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_evaluation_method ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q138",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q139",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q140",
+    "sparql": "SELECT ?target WHERE { ns1:game_development ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q141",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q142",
     "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q133",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:projects_and_presentations . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q134",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
-    "pattern_type": "2_prop_branching_v4",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q135",
-    "sparql": "SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . }",
+    "id": "q143",
+    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_course_category ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q136",
-    "sparql": "SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ns1:has_prerequisite . ?hidden rdfs:domain ?hidden2 . ?hidden rdfs:range ?target . }",
-    "pattern_type": "3_prop_star_v1",
+    "id": "q144",
+    "sparql": "SELECT ?target WHERE { ns1:operating_system ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:also_known_as ?target . }",
+    "pattern_type": "3_prop_star_v2",
     "complexity": "advanced"
   },
   {
-    "id": "q137",
-    "sparql": "SELECT ?target WHERE { ?target rdfs:range ns1:course . }",
+    "id": "q145",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q146",
+    "sparql": "SELECT ?target WHERE { ns1:data_mining ns1:has_course_category ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q147",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q148",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:programming_basics_2 . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q138",
-    "sparql": "SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . }",
+    "id": "q149",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q150",
+    "sparql": "SELECT ?target WHERE { ns1:knowledge_representation_and_reasoning ns1:has_prerequisite_course ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q139",
-    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . }",
+    "id": "q151",
+    "sparql": "SELECT ?target WHERE { ns1:cryptography_and_information_security ns1:has_prerequisite_course ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q152",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:report_document . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q153",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q154",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q155",
+    "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q156",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_task . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q157",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_research_group ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q158",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q159",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_projects . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q160",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:has_credits ?target . }",
     "pattern_type": "3_prop_star_v1",
     "complexity": "advanced"
+  },
+  {
+    "id": "q161",
+    "sparql": "SELECT ?target WHERE { ns1:robotics ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q162",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_projects_and_demos . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q163",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:projects_and_presentations . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q164",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:reliable_software_engineering . ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_course_code ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q165",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:data_structures_and_algorithms . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q166",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q167",
+    "sparql": "SELECT ?target WHERE { ns1:linear_algebra ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q168",
+    "sparql": "SELECT ?target WHERE { ns1:advanced_programming ns1:has_evaluation_method ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q169",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:individual_review . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q170",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . ?hidden ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . ?hidden ns1:has_credits ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q171",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
   }
 ]

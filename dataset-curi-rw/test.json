@@ -1,0 +1,302 @@
+[
+    {
+      "id": "q13",
+      "question": "What courses have language theory and automata as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q19",
+      "question": "What are the alternative names for courses associated with the reliable software engineering research group?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q23",
+      "question": "What evaluation method does computational geometry use?",
+      "sparql": "SELECT ?target WHERE { ns1:computational_geometry ns1:has_evaluation_method ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q30",
+      "question": "What evaluation methods are used by university mandatory courses?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q33",
+      "question": "What courses are associated with the information retrieval and natural language processing research group?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q37",
+      "question": "What are the course codes of prerequisite courses for language theory and automata?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q38",
+      "question": "What study program mandatory prerequisite courses does cloud computing require?",
+      "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q39",
+      "question": "How many credits do courses that have introduction to digital systems as a prerequisite have?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_digital_systems . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q44",
+      "question": "What are the course codes for courses that use individual review as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q51",
+      "question": "What courses are associated with the reliable software engineering research group?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:reliable_software_engineering . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q55",
+      "question": "What is the minimum credits requirement for courses in the computer system laboratory research group?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_minimum_credits ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q60",
+      "question": "What are the alternative names for courses that have linear algebra as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q65",
+      "question": "What are the course codes for university mandatory courses?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q66",
+      "question": "What courses have operating system as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q67",
+      "question": "What are the course codes for courses that use task as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:task . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q68",
+      "question": "What are the course codes of prerequisite courses for software engineering?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:software_engineering ns1:has_prerequisite_course ?hidden . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q83",
+      "question": "What evaluation methods are used by courses that have operating system as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:operating_system . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q85",
+      "question": "What course category do courses that have database as a prerequisite belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:database . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q88",
+      "question": "What evaluation methods are used by courses in the information retrieval and natural language processing research group?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q91",
+      "question": "How many credits do courses in the digital library and distance learning laboratory research group have?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q92",
+      "question": "What are the course codes for courses that have language theory and automata as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q94",
+      "question": "What evaluation methods are used by courses in the information retrieval and natural language processing research group?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q97",
+      "question": "What are the course codes of prerequisite courses for language theory and automata?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q98",
+      "question": "How many credits do courses that have introduction to computer organization as a prerequisite have?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_computer_organization . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q99",
+      "question": "What are the course codes for courses that have research methodology and scientific writing as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q100",
+      "question": "What research groups use group presentation as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:group_presentation . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q105",
+      "question": "What are the course codes for courses that have language theory and automata as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q106",
+      "question": "What course category do courses that use final project as their evaluation method belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:final_project . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q111",
+      "question": "What course category do courses that have linear algebra as a prerequisite belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q113",
+      "question": "What research group is system administration associated with?",
+      "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_research_group ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q116",
+      "question": "What evaluation method does spoken language processing use?",
+      "sparql": "SELECT ?target WHERE { ns1:spoken_language_processing ns1:has_evaluation_method ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q120",
+      "question": "What are the alternative names of prerequisite courses for language theory and automata?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ns1:language_theory_and_automata ns1:has_prerequisite_course ?hidden . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q121",
+      "question": "What evaluation methods are used by study program mandatory courses?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q122",
+      "question": "What are the course codes for courses that use presentation or demo of project assignments as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q124",
+      "question": "What are the alternative names for courses that have language theory and automata as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q129",
+      "question": "What are the prerequisite courses for introduction to artificial intelligence and data science?",
+      "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q130",
+      "question": "What research group is information retrieval associated with?",
+      "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_research_group ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q132",
+      "question": "What are the course codes for courses that have software engineering as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:software_engineering . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q134",
+      "question": "What courses use report document as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q135",
+      "question": "What are the course codes for faculty mandatory courses?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q136",
+      "question": "What course category do prerequisite courses for database belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ns1:database ns1:has_prerequisite_course ?hidden . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q138",
+      "question": "What course category do courses in the reliable software engineering research group belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q140",
+      "question": "What are the prerequisite courses for game development?",
+      "sparql": "SELECT ?target WHERE { ns1:game_development ns1:has_prerequisite_course ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q145",
+      "question": "What course category do courses in the intelligent systems and robotics research group belong to?",
+      "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
+      "complexity": "intermediate"
+    },
+    {
+      "id": "q149",
+      "question": "What courses are associated with the intelligent systems and robotics research group?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:intelligent_systems_and_robotics . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q153",
+      "question": "What courses have language theory and automata as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q155",
+      "question": "What research group is cloud computing associated with?",
+      "sparql": "SELECT ?target WHERE { ns1:cloud_computing ns1:has_research_group ?target . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q162",
+      "question": "What courses use programming projects and demos as their evaluation method?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_projects_and_demos . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q166",
+      "question": "What courses have discrete mathematics 1 as a prerequisite?",
+      "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }",
+      "complexity": "basic"
+    },
+    {
+      "id": "q168",
+      "question": "What evaluation method does advanced programming use?",
+      "sparql": "SELECT ?target WHERE { ns1:advanced_programming ns1:has_evaluation_method ?target . }",
+      "complexity": "basic"
+    }
+]

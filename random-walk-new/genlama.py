@@ -83,7 +83,7 @@ class PatternBasedSPARQLGenerator:
         """Extract all properties from the graph"""
         properties = set()
         
-        # Skip RDF type and all RDFS properties
+       # Skip RDF type and all RDFS properties
         rdf_type = URIRef('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
         rdfs_namespace = 'http://www.w3.org/2000/01/rdf-schema#'
         
@@ -312,7 +312,7 @@ class PatternBasedSPARQLGenerator:
         Generate 3-property patterns:
         - O—X—X—? (linear, target at end)
         - O—X—?—O (linear, target in middle)  
-        - X branches to O, O, ? (star pattern, target is one branch)
+        - X branches to O, O, ? (star pattern)
         
         Each pattern has 8 variations (2^3) based on subject/object position swapping
         """
@@ -445,7 +445,7 @@ class PatternBasedSPARQLGenerator:
         """Generate star pattern: ?hidden branches to fixed_entity1, fixed_entity2, ?target"""
         patterns = []
         
-        # Find fixed entities for two branches
+        # Find two fixed entities for the branches
         entities1 = list(self.prop_to_objects[prop1])
         entities2 = list(self.prop_to_objects[prop2])
         
@@ -523,13 +523,13 @@ class PatternBasedSPARQLGenerator:
             
         return dataset
         
-    def export_json(self, dataset, output_path='pattern_based_dataset.json'):
+    def export_json(self, dataset, output_path='pattern_based_dataset_lama.json'):
         """Export dataset to JSON"""
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
         
-    def export_csv(self, dataset, output_path='pattern_based_dataset.csv'):
+    def export_csv(self, dataset, output_path='pattern_based_dataset_lama.csv'):
         """Export dataset to CSV"""
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -552,6 +552,7 @@ def main():
     
     if not os.path.exists(ttl_file):
         print(f"Error: {ttl_file} not found!")
+        print("Please ensure the university course TTL file is in the current directory.")
         return
         
     # Initialize generator
@@ -562,9 +563,12 @@ def main():
     print("Generating pattern-based dataset...")
     dataset = generator.generate_dataset(size=200)
     
-    # Export results
-    generator.export_json(dataset)
-    generator.export_csv(dataset)
+    # Export results with descriptive names
+    json_output = 'pattern_based_sparql_dataset_lama.json'
+    csv_output = 'pattern_based_sparql_dataset_lama.csv'
+    
+    generator.export_json(dataset, json_output)
+    generator.export_csv(dataset, csv_output)
     
     # Print statistics
     complexity_counts = Counter()
