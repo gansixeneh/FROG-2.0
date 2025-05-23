@@ -90,7 +90,7 @@ def split_dataset(folder_name, total_pairs=150, train_size=80, val_size=20, test
 # Usage example
 if __name__ == "__main__":
     # Replace 'your_folder_name' with the actual folder name
-    folder_name = "rw-curi"
+    folder_name = "rw-legal"
     
     # Split the dataset
     split_dataset(folder_name)
