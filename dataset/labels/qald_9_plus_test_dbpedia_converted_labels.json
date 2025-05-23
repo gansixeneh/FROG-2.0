@@ -1,0 +1,2316 @@
+[
+  {
+    "question": "What is the time zone of Salt Lake City?",
+    "entities": [
+      "Salt Lake City"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "timeZone"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Salt_Lake_City dbo:timeZone ?uri }"
+  },
+  {
+    "question": "Who killed Caesar?",
+    "entities": [
+      "Assassins of Julius Caesar"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dct:subject dbc:Assassins_of_Julius_Caesar }"
+  },
+  {
+    "question": "What is the highest mountain in Germany?",
+    "entities": [
+      "Germany"
+    ],
+    "ontology": {
+      "classes": [
+        "Mountain"
+      ],
+      "obj properties": [
+        "elevation",
+        "type",
+        "locatedInArea"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri rdf:type onto:Mountain ; onto:elevation ?elevation ; onto:locatedInArea res:Germany } ORDER BY DESC(?elevation) LIMIT 1"
+  },
+  {
+    "question": "Which American presidents were in office during the Vietnam War?",
+    "entities": [
+      "Vietnam War",
+      "Presidents of the United States"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject",
+        "commander"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri dct:subject dbc:Presidents_of_the_United_States . res:Vietnam_War dbo:commander ?uri }"
+  },
+  {
+    "question": "Butch Otter is the governor of which U.S. state?",
+    "entities": [
+      "Butch Otter"
+    ],
+    "ontology": {
+      "classes": [
+        "WikicatStatesOfTheUnitedStates"
+      ],
+      "obj properties": [],
+      "data properties": [
+        "governor"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a yago:WikicatStatesOfTheUnitedStates ; dbp:governor res:Butch_Otter }"
+  },
+  {
+    "question": "How many gold medals did Michael Phelps win at the 2008 Olympics?",
+    "entities": [
+      "Michael Phelps"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "goldMedalist"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT Count(?sub) as ?c WHERE { ?sub dbo:goldMedalist dbr:Michael_Phelps . filter (contains (str(?sub), \"2008\") && contains (str(?sub), \"Olympics\")) }"
+  },
+  {
+    "question": "Which artists were born on the same date as Rachel Stevens?",
+    "entities": [
+      "Rachel Stevens"
+    ],
+    "ontology": {
+      "classes": [
+        "Artist"
+      ],
+      "obj properties": [
+        "birthDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Artist . dbr:Rachel_Stevens dbo:birthDate ?birthdate . ?uri dbo:birthDate ?birthdate }"
+  },
+  {
+    "question": "What is the profession of Frank Herbert?",
+    "entities": [
+      "Frank Herbert"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "occupation"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:Frank_Herbert dbpedia2:occupation ?string }"
+  },
+  {
+    "question": "Are Taiko some kind of Japanese musical instrument?",
+    "entities": [
+      "Taiko"
+    ],
+    "ontology": {
+      "classes": [
+        "WikicatJapaneseMusicalInstruments"
+      ],
+      "obj properties": [],
+      "data properties": []
+    },
+    "sparql": "ASK WHERE { res:Taiko a yago:WikicatJapaneseMusicalInstruments }"
+  },
+  {
+    "question": "How many seats does the home stadium of FC Porto have?",
+    "entities": [
+      "FC Porto"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "capacity",
+        "ground"
+      ],
+      "data properties": [
+        "capacity"
+      ]
+    },
+    "sparql": "SELECT ?capacity WHERE { { dbr:FC_Porto dbo:ground ?ground . ?ground dbo:capacity ?capacity } UNION { dbr:FC_Porto dbo:ground ?ground . ?ground dbp:capacity ?capacity } }"
+  },
+  {
+    "question": "Which frequent flyer program has the most airlines?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Airline"
+      ],
+      "obj properties": [
+        "type"
+      ],
+      "data properties": [
+        "frequentFlyer"
+      ]
+    },
+    "sparql": "SELECT ?uri WHERE { ?airline rdf:type dbo:Airline . ?airline dbp:frequentFlyer ?uri. } GROUP BY ?uri ORDER BY DESC(COUNT(DISTINCT ?airline)) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "Which European countries have a constitutional monarchy?",
+    "entities": [
+      "Constitutional monarchy",
+      "Countries in Europe"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject",
+        "governmentType"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri dct:subject dbc:Countries_in_Europe ; dbo:governmentType dbr:Constitutional_monarchy }"
+  },
+  {
+    "question": "Which countries have places with more than two caves?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Cave",
+        "Country"
+      ],
+      "obj properties": [
+        "type",
+        "location"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?cave rdf:type dbo:Cave ; dbo:location ?uri . ?uri rdf:type dbo:Country } GROUP BY ?uri HAVING ( COUNT(?cave) > 2 )"
+  },
+  {
+    "question": "Which airports are located in California, USA?",
+    "entities": [
+      "California"
+    ],
+    "ontology": {
+      "classes": [
+        "Airport"
+      ],
+      "obj properties": [
+        "location",
+        "operator",
+        "isPartOf",
+        "city"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Airport { ?uri dbo:location res:California } UNION { ?uri dbo:city res:California } UNION { ?uri dbo:city ?city . ?city dbo:isPartOf res:California } UNION { ?uri dbo:operator res:California } }"
+  },
+  {
+    "question": "What are the nicknames of San Francisco?",
+    "entities": [
+      "San Francisco"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "nick"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:San_Francisco foaf:nick ?string }"
+  },
+  {
+    "question": "What is Angela Merkel’s birth name?",
+    "entities": [
+      "Angela Merkel"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "birthName"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:Angela_Merkel dbp:birthName ?string }"
+  },
+  {
+    "question": "Who is the mayor of Berlin?",
+    "entities": [
+      "Berlin"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "leader"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Berlin dbp:leader ?uri }"
+  },
+  {
+    "question": "Which countries in the European Union adopted the Euro?",
+    "entities": [
+      "Euro"
+    ],
+    "ontology": {
+      "classes": [
+        "Country"
+      ],
+      "obj properties": [
+        "currency"
+      ],
+      "data properties": [
+        "currencyCode"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Country { ?uri dbo:currency res:Euro } UNION { ?uri dbp:currencyCode \"EUR\"@en } }"
+  },
+  {
+    "question": "Which software has been published by Mean Hamster Software?",
+    "entities": [
+      "Mean Hamster Software"
+    ],
+    "ontology": {
+      "classes": [
+        "Software"
+      ],
+      "obj properties": [
+        "type",
+        "publisher"
+      ],
+      "data properties": [
+        "publisher"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type onto:Software { ?uri prop:publisher \"Mean Hamster Software\"@en } UNION { ?uri onto:publisher res:Mean_Hamster_Software } }"
+  },
+  {
+    "question": "Which country was Bill Gates born in?",
+    "entities": [
+      "Bill Gates"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country",
+        "isPartOf",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?country WHERE { { dbr:Bill_Gates dbo:birthPlace ?birthPlace . ?birthPlace dbo:country ?country } UNION { dbr:Bill_Gates dbo:birthPlace ?birthPlace . ?birthPlace dbo:isPartOf ?place . ?place dbo:country ?country } }"
+  },
+  {
+    "question": "How many grand-children did Jacques Cousteau have?",
+    "entities": [
+      "Jacques Cousteau"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "child"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT COUNT(DISTINCT ?y AS ?y) WHERE { res:Jacques_Cousteau dbo:child ?x . ?x dbo:child ?y . }"
+  },
+  {
+    "question": "Give me all professional skateboarders from Sweden.",
+    "entities": [
+      "Sweden",
+      "Skateboarder"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country",
+        "occupation",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:occupation dbr:Skateboarder { ?uri dbo:birthPlace dbr:Sweden } UNION { ?uri dbo:birthPlace ?place . ?place dbo:country dbr:Sweden } }"
+  },
+  {
+    "question": "Which monarchs of the United Kingdom were married to a German?",
+    "entities": [
+      "Germany"
+    ],
+    "ontology": {
+      "classes": [
+        "WikicatMonarchsOfTheUnitedKingdom"
+      ],
+      "obj properties": [
+        "type",
+        "spouse",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type yago:WikicatMonarchsOfTheUnitedKingdom ; dbo:spouse ?spouse . ?spouse dbo:birthPlace res:Germany }"
+  },
+  {
+    "question": "Give me all Argentine films.",
+    "entities": [
+      "Argentina"
+    ],
+    "ontology": {
+      "classes": [
+        "ArgentineFilms",
+        "Film"
+      ],
+      "obj properties": [
+        "country",
+        "type"
+      ],
+      "data properties": [
+        "country"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { { ?uri rdf:type yago:ArgentineFilms } UNION { ?uri rdf:type dbo:Film { ?uri dbo:country res:Argentina } UNION { ?uri dbp:country \"Argentina\"@en } } }"
+  },
+  {
+    "question": "How did Michael Jackson die?",
+    "entities": [
+      "Michael Jackson"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "deathCause"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?s WHERE { res:Michael_Jackson dbp:deathCause ?s }"
+  },
+  {
+    "question": "Which U.S. state has been admitted latest?",
+    "entities": [
+      "States of the United States"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject"
+      ],
+      "data properties": [
+        "admittancedate"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dct:subject dbc:States_of_the_United_States ; dbp:admittancedate ?x } ORDER BY DESC(?x) LIMIT 1"
+  },
+  {
+    "question": "Which classes does the Millepede belong to?",
+    "entities": [
+      "Millipede"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "taxon"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?String WHERE { res:Millipede dbp:taxon ?String }"
+  },
+  {
+    "question": "Give me the homepage of Forbes.",
+    "entities": [
+      "Forbes"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "homepage"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:Forbes foaf:homepage ?string }"
+  },
+  {
+    "question": "Who is the husband of Amanda Palmer?",
+    "entities": [
+      "Amanda Palmer"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:spouse res:Amanda_Palmer }"
+  },
+  {
+    "question": "Who painted The Storm on the Sea of Galilee?",
+    "entities": [
+      "The Storm on the Sea of Galilee"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "author"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:The_Storm_on_the_Sea_of_Galilee dbo:author ?uri }"
+  },
+  {
+    "question": "What is the highest place of Karakoram?",
+    "entities": [
+      "Karakoram"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "highest"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Karakoram dbp:highest ?uri }"
+  },
+  {
+    "question": "When did Finland join the EU?",
+    "entities": [
+      "Finland"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "accessioneudate"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?date WHERE { res:Finland dbp:accessioneudate ?date }"
+  },
+  {
+    "question": "Which actors play in Big Bang Theory?",
+    "entities": [
+      "The Big Bang Theory"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "starring"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:The_Big_Bang_Theory dbo:starring ?uri }"
+  },
+  {
+    "question": "Which computer scientist won an oscar?",
+    "entities": [
+      "Computer science",
+      "Academy Award"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "field",
+        "award"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:field res:Computer_science ; dbo:award res:Academy_Award }"
+  },
+  {
+    "question": "Who wrote Harry Potter?",
+    "entities": [
+      "Harry Potter"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "author"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Harry_Potter dbp:author ?uri }"
+  },
+  {
+    "question": "Give me all writers that won the Nobel Prize in literature.",
+    "entities": [
+      "Nobel Prize in Literature"
+    ],
+    "ontology": {
+      "classes": [
+        "Writer"
+      ],
+      "obj properties": [
+        "award"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Writer ; dbo:award res:Nobel_Prize_in_Literature }"
+  },
+  {
+    "question": "Give me English actors starring in Lovesick.",
+    "entities": [
+      "United Kingdom",
+      "Lovesick (1983 film)"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country",
+        "starring",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Lovesick_(1983_film) dbo:starring ?uri . ?uri dbo:birthPlace ?city . ?city dbo:country res:United_Kingdom }"
+  },
+  {
+    "question": "What is the nick name of Baghdad?",
+    "entities": [
+      "Baghdad"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "nick"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?nm WHERE { dbr:Baghdad foaf:nick ?nm }"
+  },
+  {
+    "question": "In which city was the president of Montenegro born?",
+    "entities": [
+      "Capital city",
+      "President of Montenegro"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "type",
+        "birthPlace"
+      ],
+      "data properties": [
+        "title"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?x dbp:title dbr:President_of_Montenegro ; dbo:birthPlace ?uri . ?uri dbo:type dbr:Capital_city }"
+  },
+  {
+    "question": "Which U.S. state has the highest population density?",
+    "entities": [
+      "United States"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "label",
+        "country",
+        "capital"
+      ],
+      "data properties": [
+        "densityrank"
+      ]
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri dbo:country res:United_States . ?uri dbo:capital ?capital . ?uri dbp:densityrank ?density . OPTIONAL {?uri rdfs:label ?string. FILTER (lang(?string) = 'en') } } ORDER BY ASC(?density) LIMIT 1"
+  },
+  {
+    "question": "What is the longest river in China?",
+    "entities": [
+      "China"
+    ],
+    "ontology": {
+      "classes": [
+        "River"
+      ],
+      "obj properties": [
+        "country"
+      ],
+      "data properties": [
+        "length"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:River ; dbo:country res:China ; dbp:length ?l } ORDER BY DESC(?l) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "What is the area code of Berlin?",
+    "entities": [
+      "Berlin"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "areaCode"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:Berlin dbo:areaCode ?string }"
+  },
+  {
+    "question": "How many scientists graduated from an Ivy League university?",
+    "entities": [
+      "Ivy League"
+    ],
+    "ontology": {
+      "classes": [
+        "University",
+        "Scientist"
+      ],
+      "obj properties": [
+        "almaMater",
+        "affiliation"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT (COUNT(DISTINCT ?uri) AS ?c) WHERE { ?uri a dbo:Scientist ; dbo:almaMater ?university . ?university dbo:affiliation res:Ivy_League ; a dbo:University }"
+  },
+  {
+    "question": "Which professional surfers were born in Australia?",
+    "entities": [
+      "Australia",
+      "Surfer"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country",
+        "occupation",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { { ?uri dbo:occupation res:Surfer ; dbo:birthPlace res:Australia } UNION { ?uri dbo:occupation res:Surfer ; dbo:birthPlace ?place . ?place dbo:country res:Australia } }"
+  },
+  {
+    "question": "Give me all Dutch parties.",
+    "entities": [
+      "Netherlands"
+    ],
+    "ontology": {
+      "classes": [
+        "PoliticalParty"
+      ],
+      "obj properties": [
+        "country"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:PoliticalParty ; dbo:country res:Netherlands }"
+  },
+  {
+    "question": "How many moons does Mars have?",
+    "entities": [
+      "Mars"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "satellites"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?n WHERE { res:Mars dbp:satellites ?n }"
+  },
+  {
+    "question": "What is Batman's real name?",
+    "entities": [
+      "Batman"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "name"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?label WHERE { res:Batman foaf:name ?label FILTER ( str(?label) != \"Batman\" ) }"
+  },
+  {
+    "question": "What is Elon Musk famous for?",
+    "entities": [
+      "Elon Musk"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "knownFor"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Elon_Musk dbo:knownFor ?uri }"
+  },
+  {
+    "question": "Who is the author of WikiLeaks?",
+    "entities": [
+      "WikiLeaks"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "author"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { res:WikiLeaks onto:author ?uri }"
+  },
+  {
+    "question": "Sean Parnell was the governor of which U.S. state?",
+    "entities": [
+      "Sean Parnell"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "region"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Sean_Parnell dbo:region ?uri }"
+  },
+  {
+    "question": "How many years was the Ford Model T manufactured?",
+    "entities": [
+      "Ford Model T"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "productionEndYear",
+        "productionStartYear"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?years WHERE { res:Ford_Model_T dbo:productionEndYear ?end ; dbo:productionStartYear ?start. BIND ( ( year(xsd:date(?end)) - year(xsd:date(?start)) ) AS ?years) }"
+  },
+  {
+    "question": "When was Carlo Giuliani shot?",
+    "entities": [
+      "Death of Carlo Giuliani"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "deathDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?date) WHERE { res:Death_of_Carlo_Giuliani dbo:deathDate ?date }"
+  },
+  {
+    "question": "Give me all animals that are extinct.",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Animal"
+      ],
+      "obj properties": [
+        "conservationStatus"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Animal ; dbo:conservationStatus \"EX\" }"
+  },
+  {
+    "question": "Who was the wife of President Lincoln?",
+    "entities": [
+      "Abraham Lincoln"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri ?string WHERE { dbr:Abraham_Lincoln onto:spouse ?uri }"
+  },
+  {
+    "question": "How many awards has Bertrand Russell?",
+    "entities": [
+      "Bertrand Russell"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "awards"
+      ]
+    },
+    "sparql": "SELECT (COUNT(?Awards) AS ?Counter) WHERE { dbr:Bertrand_Russell dbp:awards ?Awards }"
+  },
+  {
+    "question": "Is Pamela Anderson a vegan?",
+    "entities": [
+      "Pamela Anderson"
+    ],
+    "ontology": {
+      "classes": [
+        "WikicatAmericanVegans"
+      ],
+      "obj properties": [],
+      "data properties": []
+    },
+    "sparql": "ASK WHERE { dbr:Pamela_Anderson a yago:WikicatAmericanVegans }"
+  },
+  {
+    "question": "Which space probes were sent into orbit around the sun?",
+    "entities": [
+      "Missions to the Sun"
+    ],
+    "ontology": {
+      "classes": [
+        "Satellite",
+        "ArtificialSatellite"
+      ],
+      "obj properties": [
+        "subject",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?s WHERE { ?s dct:subject dbc:Missions_to_the_Sun ; rdf:type ?type FILTER ( ?type IN (dbo:Satellite, dbo:ArtificialSatellite) ) }"
+  },
+  {
+    "question": "Which German cities have more than 250000 inhabitants?",
+    "entities": [
+      "Germany"
+    ],
+    "ontology": {
+      "classes": [
+        "Town",
+        "City"
+      ],
+      "obj properties": [
+        "country",
+        "populationTotal"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { { ?uri a dbo:City } UNION { ?uri a dbo:Town } ?uri dbo:country res:Germany ; dbo:populationTotal ?population FILTER ( ?population > 250000 ) }"
+  },
+  {
+    "question": "Who is the daughter of Robert Kennedy married to?",
+    "entities": [
+      "Robert F. Kennedy"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "child",
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Robert_F._Kennedy dbo:child ?child . ?child dbo:spouse ?uri }"
+  },
+  {
+    "question": "How many students does the Free University of Amsterdam have?",
+    "entities": [
+      "Vrije Universiteit Amsterdam"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "numberOfStudents"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?num WHERE { dbr:Vrije_Universiteit_Amsterdam dbo:numberOfStudents ?num }"
+  },
+  {
+    "question": "What is the revenue of IBM?",
+    "entities": [
+      "IBM"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "revenue"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?number WHERE { res:IBM onto:revenue ?number }"
+  },
+  {
+    "question": "How many James Bond movies do exist?",
+    "entities": [
+      "Category"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT (COUNT(DISTINCT ?uri) AS ?c) WHERE { ?uri dct:subject res:Category:James_Bond_films }"
+  },
+  {
+    "question": "Who does the voice of Bart Simpson?",
+    "entities": [
+      "Bart Simpson"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "voiceactor"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Bart_Simpson dbp:voiceactor ?uri }"
+  },
+  {
+    "question": "Who was Tom Hanks married to?",
+    "entities": [
+      "Tom Hanks"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { dbr:Tom_Hanks dbo:spouse ?uri }"
+  },
+  {
+    "question": "Through which countries does the Yenisei river flow?",
+    "entities": [
+      "Yenisei River"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Yenisei_River dbo:country ?uri }"
+  },
+  {
+    "question": "Give me all cars that are produced in Germany.",
+    "entities": [
+      "Germany"
+    ],
+    "ontology": {
+      "classes": [
+        "Automobile"
+      ],
+      "obj properties": [
+        "manufacturer",
+        "location",
+        "assembly",
+        "locationCountry"
+      ],
+      "data properties": [
+        "manufacturer",
+        "assembly"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Automobile { ?uri dbo:assembly res:Germany } UNION { ?uri dbp:assembly res:Germany } UNION { { ?uri dbo:manufacturer ?x } UNION { ?uri dbp:manufacturer ?x } { ?x dbo:locationCountry res:Germany } UNION { ?x dbo:location res:Germany } } }"
+  },
+  {
+    "question": "When did Michael Jackson die?",
+    "entities": [
+      "Michael Jackson"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "deathDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?date WHERE { res:Michael_Jackson dbo:deathDate ?date }"
+  },
+  {
+    "question": "What is the highest volcano in Africa?",
+    "entities": [
+      "Countries in Africa"
+    ],
+    "ontology": {
+      "classes": [
+        "Volcano"
+      ],
+      "obj properties": [
+        "subject",
+        "locatedInArea",
+        "elevation"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Volcano ; dbo:locatedInArea ?area . ?area dct:subject dbc:Countries_in_Africa . ?uri dbo:elevation ?elevation } ORDER BY DESC(?elevation) LIMIT 1"
+  },
+  {
+    "question": "Which poet wrote the most books?",
+    "entities": [
+      "Poet"
+    ],
+    "ontology": {
+      "classes": [
+        "Book"
+      ],
+      "obj properties": [
+        "type",
+        "author",
+        "occupation"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:occupation res:Poet . ?x dbo:author ?uri . ?x rdf:type dbo:Book . } ORDER BY DESC(COUNT(?x)) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "Give me all gangsters from the prohibition era.",
+    "entities": [
+      "Prohibition-era gangsters",
+      "Gangster"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject",
+        "occupation"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:occupation dbr:Gangster ; dct:subject dbc:Prohibition-era_gangsters }"
+  },
+  {
+    "question": "Give me all spacecrafts that flew to Mars.",
+    "entities": [
+      "Mars rovers"
+    ],
+    "ontology": {
+      "classes": [
+        "Satellite",
+        "ArtificialSatellite"
+      ],
+      "obj properties": [
+        "subject",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?s WHERE { ?s dct:subject dbc:Mars_rovers ; rdf:type ?type FILTER ( ?type IN (dbo:Satellite, dbo:ArtificialSatellite) ) }"
+  },
+  {
+    "question": "Show me all Czech movies.",
+    "entities": [
+      "Czech Republic"
+    ],
+    "ontology": {
+      "classes": [
+        "Film"
+      ],
+      "obj properties": [
+        "country"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Film ; dbo:country res:Czech_Republic }"
+  },
+  {
+    "question": "Give me all taikonauts.",
+    "entities": [
+      "People",
+      "China"
+    ],
+    "ontology": {
+      "classes": [
+        "Astronaut"
+      ],
+      "obj properties": [
+        "nationality"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { { ?uri a dbo:Astronaut ; dbo:nationality res:People's_Republic_of_China } UNION { ?uri a dbo:Astronaut ; dbo:nationality res:China } }"
+  },
+  {
+    "question": "Which countries have more than ten volcanoes?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Volcano",
+        "Country"
+      ],
+      "obj properties": [
+        "locatedInArea"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?x a dbo:Volcano ; dbo:locatedInArea ?uri . ?uri a dbo:Country } GROUP BY ?uri HAVING ( COUNT(?x) > 10 )"
+  },
+  {
+    "question": "Give me all movies with Tom Cruise.",
+    "entities": [
+      "Tom Cruise"
+    ],
+    "ontology": {
+      "classes": [
+        "Film"
+      ],
+      "obj properties": [
+        "label",
+        "type",
+        "starring"
+      ],
+      "data properties": [
+        "starring"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type onto:Film { ?uri prop:starring res:Tom_Cruise } UNION { ?uri onto:starring res:Tom_Cruise } OPTIONAL { ?uri rdfs:label ?string FILTER ( lang(?string) = \"en\" ) } }"
+  },
+  {
+    "question": "When did Dracula's creator die?",
+    "entities": [
+      "Count Dracula"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "creator",
+        "deathDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?date) WHERE { res:Count_Dracula dbo:creator ?x . ?x dbo:deathDate ?date. }"
+  },
+  {
+    "question": "Who created English Wikipedia?",
+    "entities": [
+      "Wikipedia"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "author"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { res:Wikipedia onto:author ?uri }"
+  },
+  {
+    "question": "Give me all female German chancellors.",
+    "entities": [
+      "Chancellor of Germany"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "incumbent"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Chancellor_of_Germany dbp:incumbent ?uri }"
+  },
+  {
+    "question": "Who owns Aldi?",
+    "entities": [
+      "Aldi"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "founders"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Aldi dbp:founders ?uri }"
+  },
+  {
+    "question": "Which books were written by Danielle Steel?",
+    "entities": [
+      "Danielle Steel"
+    ],
+    "ontology": {
+      "classes": [
+        "Book"
+      ],
+      "obj properties": [
+        "type",
+        "author"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri rdf:type onto:Book ; onto:author res:Danielle_Steel }"
+  },
+  {
+    "question": "Who was influenced by Socrates?",
+    "entities": [
+      "Socrates"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "influencedBy"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:influencedBy res:Socrates }"
+  },
+  {
+    "question": "How deep is Lake Chiemsee?",
+    "entities": [
+      "Chiemsee"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "maximumDepth"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?n WHERE { res:Chiemsee dbo:maximumDepth ?n }"
+  },
+  {
+    "question": "Which companies work in the aerospace industry as well as in medicine?",
+    "entities": [
+      "Aerospace",
+      "Medical"
+    ],
+    "ontology": {
+      "classes": [
+        "Company"
+      ],
+      "obj properties": [
+        "industry"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Company ; dbo:industry dbr:Aerospace ; dbo:industry dbr:Medical }"
+  },
+  {
+    "question": "Which professional surfers were born on the Philippines?",
+    "entities": [
+      "Surfer",
+      "Philippines"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "occupation",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:occupation dbr:Surfer ; dbo:birthPlace res:Philippines }"
+  },
+  {
+    "question": "Who were the parents of Queen Victoria?",
+    "entities": [
+      "Queen Victoria"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "parent"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Queen_Victoria dbo:parent ?uri }"
+  },
+  {
+    "question": "Are there any castles in the United States?",
+    "entities": [
+      "Castles in the United States"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject"
+      ],
+      "data properties": []
+    },
+    "sparql": "ASK WHERE { ?uri dct:subject dbc:Castles_in_the_United_States }"
+  },
+  {
+    "question": "Which languages are spoken in Estonia?",
+    "entities": [
+      "Estonia"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "spokenIn"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:spokenIn res:Estonia }"
+  },
+  {
+    "question": "Give me a list of all critically endangered birds.",
+    "entities": [
+      "Critically endangered animals"
+    ],
+    "ontology": {
+      "classes": [
+        "Bird"
+      ],
+      "obj properties": [
+        "subject",
+        "type",
+        "conservationStatus"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri ?p WHERE { ?uri rdf:type dbo:Bird { ?uri dbo:conservationStatus \"CR\" } UNION { ?uri dct:subject dbc:Critically_endangered_animals } }"
+  },
+  {
+    "question": "Which countries are connected by the Rhine?",
+    "entities": [
+      "Rhine",
+      "Rhine"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "country"
+      ],
+      "data properties": [
+        "country"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { {res:Rhine dbo:country ?uri } UNION {dbr:Rhine dbp:country ?uri} }"
+  },
+  {
+    "question": "Who was the father of Queen Elizabeth II?",
+    "entities": [
+      "Elizabeth II"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "parent",
+        "gender"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT * WHERE { res:Elizabeth_II dbo:parent ?uri . ?uri foaf:gender \"male\"@en }"
+  },
+  {
+    "question": "Give me all chemical elements.",
+    "entities": [
+      "Chemical elements"
+    ],
+    "ontology": {
+      "classes": [
+        "Thing"
+      ],
+      "obj properties": [
+        "subject",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type owl:Thing ; dct:subject dbc:Chemical_elements }"
+  },
+  {
+    "question": "Give me all American presidents of the last 20 years.",
+    "entities": [
+      "Presidents of the United States"
+    ],
+    "ontology": {
+      "classes": [
+        "Person"
+      ],
+      "obj properties": [
+        "subject",
+        "type",
+        "activeYearsEndDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type dbo:Person ; dct:subject dbc:Presidents_of_the_United_States ; dbo:activeYearsEndDate ?termEnd FILTER ( ( year(now()) - year(?termEnd) ) <= 20 ) }"
+  },
+  {
+    "question": "When is the movie Worst Case Scenario going to be in cinemas in the Netherlands?",
+    "entities": [
+      "Worst Case Scenario (film)"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "releaseDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?rel WHERE { res:Worst_Case_Scenario_(film) ?p ?o ; dbo:releaseDate ?rel FILTER contains(lcase(str(?o)), \"netherlands\") }"
+  },
+  {
+    "question": "Whom did Lance Bass marry?",
+    "entities": [
+      "Lance Bass"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { {res:Lance_Bass dbo:spouse ?uri} UNION {?uri dbo:spouse res:Lance_Bass} }"
+  },
+  {
+    "question": "Which subsidiary of TUI Travel serves both Glasgow and Dublin?",
+    "entities": [
+      "TUI Travel",
+      "Glasgow International Airport",
+      "Dublin Airport"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "targetAirport",
+        "subsidiary"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:TUI_Travel dbo:subsidiary ?uri . ?uri dbo:targetAirport res:Glasgow_International_Airport ; dbo:targetAirport res:Dublin_Airport }"
+  },
+  {
+    "question": "What languages are spoken in Pakistan?",
+    "entities": [
+      "Pakistan"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "language"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Pakistan dbo:language ?uri }"
+  },
+  {
+    "question": "Who is the daughter of Bill Clinton married to?",
+    "entities": [
+      "Bill Clinton"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "label",
+        "child",
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { dbr:Bill_Clinton dbo:child ?child . ?child dbo:spouse ?uri . ?uri rdfs:label ?string }"
+  },
+  {
+    "question": "Who was on the Apollo 11 mission?",
+    "entities": [
+      "Apollo 11"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "crewMembers"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Apollo_11 dbp:crewMembers ?uri }"
+  },
+  {
+    "question": "What is the wavelength of Indigo?",
+    "entities": [
+      "Indigo"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "wavelength"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?n WHERE { dbr:Indigo dbo:wavelength ?n }"
+  },
+  {
+    "question": "Give me all B-sides of the Ramones.",
+    "entities": [
+      "Ramones"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "musicalArtist",
+        "bSide"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { ?x dbo:musicalArtist res:Ramones ; dbo:bSide ?string }"
+  },
+  {
+    "question": "Who was called Scarface?",
+    "entities": [],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "alias"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri dbo:alias ?alias FILTER contains(lcase(?alias), \"scarface\") }"
+  },
+  {
+    "question": "Which rivers flow into the North Sea?",
+    "entities": [
+      "North Sea"
+    ],
+    "ontology": {
+      "classes": [
+        "River"
+      ],
+      "obj properties": [
+        "riverMouth"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:River ; dbo:riverMouth res:North_Sea }"
+  },
+  {
+    "question": "Where is Fort Knox located?",
+    "entities": [
+      "Fort Knox"
+    ],
+    "ontology": {
+      "classes": [
+        "Place"
+      ],
+      "obj properties": [
+        "location"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Fort_Knox dbo:location ?uri. ?uri a dbo:Place. }"
+  },
+  {
+    "question": "Which daughters of British earls died at the same place they were born at?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "WikicatDaughtersOfBritishEarls"
+      ],
+      "obj properties": [
+        "type",
+        "deathPlace",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type yago:WikicatDaughtersOfBritishEarls ; dbo:birthPlace ?x ; dbo:deathPlace ?y FILTER ( ?x = ?y ) }"
+  },
+  {
+    "question": "How many emperors did China have?",
+    "entities": [
+      "Emperor of China"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "title"
+      ]
+    },
+    "sparql": "SELECT COUNT(DISTINCT ?uri AS ?uri) WHERE { ?uri dbp:title res:Emperor_of_China . }"
+  },
+  {
+    "question": "What are the names of the Teenage Mutant Ninja Turtles?",
+    "entities": [
+      "Teenage Mutant Ninja Turtles"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "givenName"
+      ],
+      "data properties": [
+        "members"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?s WHERE { res:Teenage_Mutant_Ninja_Turtles dbp:members ?x . ?x foaf:givenName ?s }"
+  },
+  {
+    "question": "Where does Piccadilly start?",
+    "entities": [
+      "Piccadilly"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "routeStart"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:routeStart res:Piccadilly }"
+  },
+  {
+    "question": "What is the name of the university where Obama's wife studied?",
+    "entities": [
+      "Barack Obama"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "almaMater",
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?s WHERE { res:Barack_Obama dbo:spouse ?x . ?x dbo:almaMater ?s }"
+  },
+  {
+    "question": "When did Paraguay proclaim its independence?",
+    "entities": [
+      "Paraguay"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "foundingDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?date WHERE { res:Paraguay dbo:foundingDate ?date }"
+  },
+  {
+    "question": "How short is the shortest active NBA player?",
+    "entities": [
+      "National Basketball Association"
+    ],
+    "ontology": {
+      "classes": [
+        "BasketballPlayer"
+      ],
+      "obj properties": [
+        "activeYearsEndYear",
+        "height",
+        "league"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?n WHERE { ?x a dbo:BasketballPlayer ; dbo:league res:National_Basketball_Association ; dbo:height ?n FILTER NOT EXISTS { ?x dbo:activeYearsEndYear ?d } } ORDER BY ASC(?n) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "Where did Abraham Lincoln die?",
+    "entities": [
+      "Abraham Lincoln"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "deathPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Abraham_Lincoln dbo:deathPlace ?uri }"
+  },
+  {
+    "question": "When was Jack Wolfskin founded?",
+    "entities": [
+      "Jack Wolfskin"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "foundingYear"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?year) WHERE { res:Jack_Wolfskin dbo:foundingYear ?year }"
+  },
+  {
+    "question": "In which city is the headquarter of Air China?",
+    "entities": [
+      "Air China"
+    ],
+    "ontology": {
+      "classes": [
+        "City108524735"
+      ],
+      "obj properties": [
+        "headquarter"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Air_China dbo:headquarter ?uri . ?uri a yago:City108524735 }"
+  },
+  {
+    "question": "What is the founding year of the brewery that produces Pilsner Urquell?",
+    "entities": [
+      "Pilsner Urquell"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "foundingYear"
+      ],
+      "data properties": [
+        "brewery"
+      ]
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?num) WHERE { res:Pilsner_Urquell dbp:brewery ?uri . ?uri dbo:foundingYear ?num }"
+  },
+  {
+    "question": "When did the Boston Tea Party take place?",
+    "entities": [
+      "Boston Tea Party"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "date"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?d WHERE { res:Boston_Tea_Party dbp:date ?d }"
+  },
+  {
+    "question": "Which animals are critically endangered?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Animal"
+      ],
+      "obj properties": [
+        "conservationStatus"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Animal ; dbo:conservationStatus \"CR\" }"
+  },
+  {
+    "question": "Which politicians were married to a German?",
+    "entities": [
+      "Germany"
+    ],
+    "ontology": {
+      "classes": [
+        "Politician"
+      ],
+      "obj properties": [
+        "country",
+        "spouse",
+        "birthPlace"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Politician ; dbo:spouse ?spouse { ?spouse dbo:birthPlace res:Germany } UNION { ?spouse dbo:birthPlace ?p . ?p dbo:country res:Germany } }"
+  },
+  {
+    "question": "How big is the earth's diameter?",
+    "entities": [
+      "Earth"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "meanRadius"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT (( xsd:double(?radius) * 2 ) AS ?diameter) WHERE { res:Earth dbo:meanRadius ?radius }"
+  },
+  {
+    "question": "Is the wife of President Obama called Michelle?",
+    "entities": [
+      "Barack Obama"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "label",
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "ASK WHERE { res:Barack_Obama onto:spouse ?spouse . ?spouse rdfs:label ?name FILTER regex(?name, \"Michelle\") }"
+  },
+  {
+    "question": "Which U.S. state has the abbreviation MN?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "WikicatStatesOfTheUnitedStates"
+      ],
+      "obj properties": [],
+      "data properties": [
+        "postalabbreviation"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a yago:WikicatStatesOfTheUnitedStates ; dbp:postalabbreviation \"MN\"^^rdf:langString }"
+  },
+  {
+    "question": "When did Muhammad die?",
+    "entities": [
+      "Muhammad"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "deathDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?date) WHERE { res:Muhammad dbo:deathDate ?date }"
+  },
+  {
+    "question": "What is the atmosphere of the Moon composed of?",
+    "entities": [
+      "Moon"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "atmosphereComposition"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Moon dbp:atmosphereComposition ?uri }"
+  },
+  {
+    "question": "Who is the governor of Texas?",
+    "entities": [
+      "Texas"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "governor"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?string WHERE { res:Texas dbp:governor ?string }"
+  },
+  {
+    "question": "Which movies did Kurosawa direct?",
+    "entities": [
+      "Akira Kurosawa"
+    ],
+    "ontology": {
+      "classes": [
+        "Film"
+      ],
+      "obj properties": [
+        "type",
+        "director"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri rdf:type dbo:Film ; dbo:director res:Akira_Kurosawa }"
+  },
+  {
+    "question": "What was the name of the famous battle in 1836 in San Antonio?",
+    "entities": [
+      "San Antonio"
+    ],
+    "ontology": {
+      "classes": [
+        "MilitaryConflict"
+      ],
+      "obj properties": [
+        "date",
+        "place"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri a dbo:MilitaryConflict ; dbo:place dbr:San_Antonio ; dbo:date ?date FILTER ( ?date > \"1835-12-31T00:00:00Z\"^^xsd:dateTime ) FILTER ( ?date <= \"1836-12-31T00:00:00Z\"^^xsd:dateTime ) }"
+  },
+  {
+    "question": "Give me the official websites of actors of the television show Charmed.",
+    "entities": [
+      "Charmed"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "homepage",
+        "starring"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Charmed onto:starring ?actors . ?actors foaf:homepage ?uri }"
+  },
+  {
+    "question": "How many calories does a baguette have?",
+    "entities": [
+      "Baguette"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "calories"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?n WHERE { res:Baguette dbp:calories ?n }"
+  },
+  {
+    "question": "Give me all libraries established before 1400.",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Library"
+      ],
+      "obj properties": [],
+      "data properties": [
+        "established"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri a dbo:Library ; dbp:established ?year FILTER ( ?year < 1400 ) }"
+  },
+  {
+    "question": "Give me all Frisian islands that belong to the Netherlands.",
+    "entities": [
+      "Netherlands"
+    ],
+    "ontology": {
+      "classes": [
+        "WikicatFrisianIslands"
+      ],
+      "obj properties": [
+        "country",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type yago:WikicatFrisianIslands ; dbo:country res:Netherlands }"
+  },
+  {
+    "question": "Which museum exhibits The Scream by Munch?",
+    "entities": [
+      "The Scream"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "museum"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:The_Scream dbo:museum ?uri }"
+  },
+  {
+    "question": "When was the De Beers company founded?",
+    "entities": [
+      "De Beers"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "foundingYear"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?date) WHERE { res:De_Beers dbo:foundingYear ?date }"
+  },
+  {
+    "question": "Who became president after JFK died?",
+    "entities": [
+      "John F. Kennedy"
+    ],
+    "ontology": {
+      "classes": [
+        "Person"
+      ],
+      "obj properties": [],
+      "data properties": [
+        "presidentStart",
+        "presidentEnd"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:John_F._Kennedy dbp:presidentEnd ?x . ?uri dbp:presidentStart ?x; a dbo:Person. }"
+  },
+  {
+    "question": "Who are the parents of the wife of Juan Carlos I?",
+    "entities": [
+      "Juan Carlos I of Spain"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "parent",
+        "spouse"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Juan_Carlos_I_of_Spain dbo:spouse ?x . ?x dbo:parent ?uri }"
+  },
+  {
+    "question": "Who is the novelist of the work a song of ice and fire?",
+    "entities": [
+      "A Song of Ice and Fire"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "author"
+      ]
+    },
+    "sparql": "SELECT ?Novelist WHERE { dbr:A_Song_of_Ice_and_Fire dbp:author ?Novelist }"
+  },
+  {
+    "question": "In which studio did the Beatles record their first album?",
+    "entities": [
+      "The Beatles"
+    ],
+    "ontology": {
+      "classes": [
+        "Album"
+      ],
+      "obj properties": [
+        "type",
+        "artist",
+        "releaseDate"
+      ],
+      "data properties": [
+        "studio"
+      ]
+    },
+    "sparql": "SELECT ?studio WHERE { ?album dbo:artist dbr:The_Beatles ; rdf:type dbo:Album ; dbo:releaseDate ?date ; dbp:studio ?studio } ORDER BY ASC(?date) LIMIT 1"
+  },
+  {
+    "question": "Which beer brewing companies are located in North-Rhine Westphalia?",
+    "entities": [
+      "Companies based in North Rhine-Westphalia"
+    ],
+    "ontology": {
+      "classes": [
+        "Brewery"
+      ],
+      "obj properties": [
+        "subject",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?company WHERE { ?company dct:subject dbc:Companies_based_in_North_Rhine-Westphalia ; rdf:type dbo:Brewery }"
+  },
+  {
+    "question": "When did princess Diana die?",
+    "entities": [
+      "Diana, Princess of Wales"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "deathDate"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT xsd:date(?d) WHERE { res:Diana,_Princess_of_Wales dbo:deathDate ?d }"
+  },
+  {
+    "question": "Who founded Intel?",
+    "entities": [
+      "Intel"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "founders"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Intel dbp:founders ?uri }"
+  },
+  {
+    "question": "Who is the youngest player in the Premier League?",
+    "entities": [
+      "Premier League"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "birthDate",
+        "team",
+        "league"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbo:team ?team . ?league dbo:league res:Premier_League . ?league dbo:team ?team . ?uri dbo:birthDate ?date } ORDER BY DESC(?date) LIMIT 1"
+  },
+  {
+    "question": "Which instruments does Cat Stevens play?",
+    "entities": [
+      "Cat Stevens"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "instrument"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { res:Cat_Stevens dbo:instrument ?uri }"
+  },
+  {
+    "question": "How many rivers and lakes are in South Carolina?",
+    "entities": [
+      "South Carolina",
+      "Rivers and streams of South Carolina"
+    ],
+    "ontology": {
+      "classes": [
+        "Lake"
+      ],
+      "obj properties": [
+        "subject",
+        "type",
+        "location"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT (COUNT(DISTINCT ?uri) AS ?count) WHERE { { ?uri dbo:location dbr:South_Carolina ; rdf:type dbo:Lake } UNION { ?uri dct:subject dbc:Rivers_and_streams_of_South_Carolina } }"
+  },
+  {
+    "question": "Who was called Rodzilla?",
+    "entities": [],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "nick"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri foaf:nick \"Rodzilla\"@en }"
+  },
+  {
+    "question": "Give me the capitals of all countries in Africa.",
+    "entities": [
+      "Countries in Africa"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "subject",
+        "capital"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?country dct:subject dbc:Countries_in_Africa ; dbo:capital ?uri }"
+  },
+  {
+    "question": "Which bridges are of the same type as the Manhattan Bridge?",
+    "entities": [
+      "Manhattan Bridge"
+    ],
+    "ontology": {
+      "classes": [
+        "Bridge"
+      ],
+      "obj properties": [
+        "type",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?bridge WHERE { dbr:Manhattan_Bridge dbo:type ?type . ?bridge dbo:type ?type ; rdf:type dbo:Bridge }"
+  },
+  {
+    "question": "How many companies were founded by the founder of Facebook?",
+    "entities": [
+      "Facebook"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "foundedBy"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT (COUNT(DISTINCT ?x) AS ?c) WHERE { res:Facebook dbo:foundedBy ?uri . ?x dbo:foundedBy ?uri }"
+  },
+  {
+    "question": "Show me hiking trails in the Grand Canyon where there's no danger of flash floods.",
+    "entities": [
+      "Grand Canyon",
+      "Flash flood"
+    ],
+    "ontology": {
+      "classes": [],
+      "obj properties": [],
+      "data properties": [
+        "trailheads",
+        "hazards"
+      ]
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri dbp:trailheads res:Grand_Canyon FILTER NOT EXISTS { ?uri dbp:hazards res:Flash_flood } }"
+  },
+  {
+    "question": "Which book has the most pages?",
+    "entities": [],
+    "ontology": {
+      "classes": [
+        "Book"
+      ],
+      "obj properties": [
+        "type",
+        "numberOfPages"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT DISTINCT ?uri WHERE { ?uri rdf:type dbo:Book ; dbo:numberOfPages ?n } ORDER BY DESC(?n) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "What is the largest state in the United States?",
+    "entities": [
+      "States of the United States"
+    ],
+    "ontology": {
+      "classes": [
+        "AdministrativeRegion"
+      ],
+      "obj properties": [
+        "subject",
+        "type",
+        "areaTotal"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri dct:subject dbc:States_of_the_United_States ; rdf:type dbo:AdministrativeRegion ; dbo:areaTotal ?area } ORDER BY DESC(?area) OFFSET 0 LIMIT 1"
+  },
+  {
+    "question": "Give me the websites of companies with more than 500000 employees.",
+    "entities": [],
+    "ontology": {
+      "classes": [],
+      "obj properties": [
+        "numberOfEmployees",
+        "homepage"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT distinct ?web WHERE { ?sub dbo:numberOfEmployees ?obj . ?sub foaf:homepage ?web FILTER( xsd:integer(?obj) > 500000 ) . }"
+  },
+  {
+    "question": "What were the names of the three ships by Columbus?",
+    "entities": [
+      "Exploration ships",
+      "Christopher Columbus"
+    ],
+    "ontology": {
+      "classes": [
+        "Ship"
+      ],
+      "obj properties": [
+        "subject",
+        "type"
+      ],
+      "data properties": []
+    },
+    "sparql": "SELECT ?uri WHERE { ?uri rdf:type dbo:Ship ; dct:subject dbc:Christopher_Columbus ; dct:subject dbc:Exploration_ships }"
+  }
+]
