@@ -1,0 +1,322 @@
+[
+  {
+    "question": "How many credits are awarded for study program mandatory courses that have Programming Basics 1 as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_credits ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Programming Basics 1?",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_1 ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "Which courses have Introduction to Artificial Intelligence and Data Science as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Parallel Programming?",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "Which courses use laboratory assignments as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:laboratory_assignment . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Robotics?",
+    "sparql": "SELECT ?target WHERE { ns1:robotics ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "Which study program mandatory courses have Introduction to Computer Organization as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_computer_organization . ?target ns1:has_course_category ns1:study_program_mandatory_course . }"
+  },
+  {
+    "question": "Which courses have Linear Algebra as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:linear_algebra . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Data Mining?",
+    "sparql": "SELECT ?target WHERE { ns1:data_mining ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "Which courses that have Introduction to Artificial Intelligence and Data Science as a prerequisite use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "Which research group is associated with Computer Assisted Teaching?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_research_group ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Distributed Systems that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What are the course codes of courses that have Statistics and Probability as a prerequisite and use group projects as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . ?hidden ns1:has_evaluation_method ns1:group_project . ?hidden ns1:has_course_code ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Software Project?",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Operating System?",
+    "sparql": "SELECT ?target WHERE { ns1:operating_system ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Competitive Programming that use programming projects as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:competitive_programming ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:programming_projects . }"
+  },
+  {
+    "question": "How many credits are awarded for courses that have Advanced Programming as a prerequisite and use group projects as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:advanced_programming . ?hidden ns1:has_evaluation_method ns1:group_project . ?hidden ns1:has_credits ?target . }"
+  },
+  {
+    "question": "Which courses have Platform Based Programming as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . }"
+  },
+  {
+    "question": "What is the course category of courses that have Programming Basics 1 as a prerequisite and use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:has_evaluation_method ns1:test . ?hidden ns1:has_course_category ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Software Engineering?",
+    "sparql": "SELECT ?target WHERE { ns1:software_engineering ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in System Programming?",
+    "sparql": "SELECT ?target WHERE { ns1:system_programming ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Introduction to Software Security?",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_software_security ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Algorithm Design and Analysis?",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Computer Network that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What evaluation methods are used in Software Product Line Engineering?",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "Which research group is associated with Distributed Systems?",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_research_group ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Software Product Line Engineering?",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "Which courses have Advanced Programming as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:advanced_programming . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Bioinformatics that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What are the course codes of prerequisite courses for Computer Network that use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:has_course_code ?target . }"
+  },
+  {
+    "question": "Which courses use programming projects and demos as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_projects_and_demos . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Software Engineering that use programming assignments as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:software_engineering ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:programming_assignment . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Numerical Analysis?",
+    "sparql": "SELECT ?target WHERE { ns1:numerical_analysis ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Robotics?",
+    "sparql": "SELECT ?target WHERE { ns1:robotics ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "What are the prerequisite courses for courses associated with the Intelligent Systems and Robotics research group that use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . ?hidden ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Bioinformatics?",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Cryptography and Information Security that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:cryptography_and_information_security ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What evaluation methods are used in Competitive Programming Practicum?",
+    "sparql": "SELECT ?target WHERE { ns1:competitive_programming_practicum ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Operating System that use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:operating_system ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:task . }"
+  },
+  {
+    "question": "Which courses use project assignments as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:project_assignment . }"
+  },
+  {
+    "question": "What are the study program mandatory prerequisite courses for System Administration?",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }"
+  },
+  {
+    "question": "Which courses that have Database as a prerequisite use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:database . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What is the course category of courses that use capture the flag as an evaluation method and have Introduction to Computer Organization as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:capture_the_flag . ?hidden ns1:has_prerequisite_course ns1:introduction_to_computer_organization . ?hidden ns1:has_course_category ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Algorithm Design and Analysis that use programming projects as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:programming_projects . }"
+  },
+  {
+    "question": "Which courses that have Language Theory and Automata as a prerequisite use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Advanced Database?",
+    "sparql": "SELECT ?target WHERE { ns1:advanced_database ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "Which courses are associated with the Center for Cyber Security and Cryptography research group?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }"
+  },
+  {
+    "question": "Which courses have Data Structures and Algorithms as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:data_structures_and_algorithms . }"
+  },
+  {
+    "question": "Which courses use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:task . }"
+  },
+  {
+    "question": "Which courses have Platform Based Programming as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . }"
+  },
+  {
+    "question": "What evaluation methods are used in Ethical Hacking?",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Cryptography and Information Security?",
+    "sparql": "SELECT ?target WHERE { ns1:cryptography_and_information_security ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "Which courses use programming activities as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_activities . }"
+  },
+  {
+    "question": "Which courses use final projects as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:final_project . }"
+  },
+  {
+    "question": "What are the faculty mandatory prerequisite courses for Deep Learning?",
+    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }"
+  },
+  {
+    "question": "What are the prerequisite courses for System Programming?",
+    "sparql": "SELECT ?target WHERE { ns1:system_programming ns1:has_prerequisite_course ?target . }"
+  },
+  {
+    "question": "Which courses use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What evaluation methods are used in Algorithm Design and Analysis?",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Functional Programming?",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Programming Basics 2?",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_2 ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Parallel Programming that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What are the alternative names or abbreviations for courses associated with the Computer System Laboratory research group that have Platform Based Programming as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:also_known_as ?target . }"
+  },
+  {
+    "question": "What are the study program mandatory prerequisite courses for Web Application Architecture?",
+    "sparql": "SELECT ?target WHERE { ns1:web_application_architecture ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }"
+  },
+  {
+    "question": "Which courses are associated with the Digital Library and Distance Learning Laboratory research group?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . }"
+  },
+  {
+    "question": "Which courses have Linear Algebra as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:linear_algebra . }"
+  },
+  {
+    "question": "Which courses have Database as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:database . }"
+  },
+  {
+    "question": "Which courses that have Calculus 2 as a prerequisite use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "What evaluation methods are used in Computer Vision?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "Which courses use supervisor evaluations as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:supervisor_evaluation . }"
+  },
+  {
+    "question": "What evaluation methods are used in Algorithm Design and Analysis?",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What evaluation methods are used in Computer Network?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Bioinformatics that use tests as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }"
+  },
+  {
+    "question": "Which courses have Discrete Mathematics 1 as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_1 . }"
+  },
+  {
+    "question": "Which courses have Language Theory and Automata as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }"
+  },
+  {
+    "question": "What evaluation methods are used in Software Product Line Engineering?",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "Which courses are university mandatory courses?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . }"
+  },
+  {
+    "question": "What is the minimum credit requirement for faculty mandatory courses that use presentations as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:presentation . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_minimum_credits ?target . }"
+  },
+  {
+    "question": "Which courses that have Computer Network as a prerequisite use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . ?target ns1:has_evaluation_method ns1:task . }"
+  },
+  {
+    "question": "What evaluation methods are used in Computers and Society?",
+    "sparql": "SELECT ?target WHERE { ns1:computers_and_society ns1:has_evaluation_method ?target . }"
+  },
+  {
+    "question": "What are the prerequisite courses for Internet of Things that use tasks as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:internet_of_things ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:task . }"
+  }
+]
