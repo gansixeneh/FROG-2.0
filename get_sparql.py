@@ -18,10 +18,9 @@ def get_sparql_queries(json_file_path):
 
 def save_sparqls_to_file(json_file_path):
     sparqls = get_sparql_queries(json_file_path)
-    base_name = os.path.splitext(os.path.basename(json_file_path))[0]
-    output_file = f"{base_name}_sparql.json"
+    output_file = f"{json_file_path}_sparql.json"
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(sparqls, f, ensure_ascii=False, indent=2)
 
 # Example usage:
-save_sparqls_to_file('rw-curi/pattern_based_dataset.json')
+save_sparqls_to_file('rw-legal/pattern_based_dataset.json')
