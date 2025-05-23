@@ -96,6 +96,23 @@ class PatternBasedSPARQLGenerator:
             }
         else:
             self.prefixes = prefixes
+        
+        # Properties to exclude for better quality
+        self.excluded_properties = {
+            # Universal properties (same value everywhere)
+            'https://example.org/lex2kg/ontology/jenisPeraturan',
+            'https://example.org/lex2kg/ontology/yurisdiksi', 
+            'https://example.org/lex2kg/ontology/bahasa',
+            'https://example.org/lex2kg/ontology/jabatanPengesah',
+            
+            # Technical/internal properties  
+            'https://example.org/lex2kg/ontology/segmen',
+            'https://example.org/lex2kg/ontology/teks',
+            
+            # Over-granular properties
+            'https://example.org/lex2kg/ontology/huruf',
+            'https://example.org/lex2kg/ontology/nomor'
+        }
             
         # Extract entities and properties from endpoint
         self.entities = self._extract_entities()
@@ -112,6 +129,16 @@ class PatternBasedSPARQLGenerator:
         total_triples = self._get_total_triples()
         print(f"Connected to SPARQL endpoint with {total_triples} triples")
         print(f"Found {len(self.entities)} entities and {len(self.properties)} properties")
+        
+    def _get_property_exclusion_filters(self):
+        """Generate SPARQL FILTER clauses to exclude low-quality properties"""
+        filters = []
+        for prop in self.excluded_properties:
+            filters.append(f"?prop != <{prop}>")
+            filters.append(f"?prop1 != <{prop}>")
+            filters.append(f"?prop2 != <{prop}>")
+            filters.append(f"?prop3 != <{prop}>")
+        return " && ".join(set(filters))  # Remove duplicates with set()
         
     def _get_total_triples(self):
         """Get total number of triples in the dataset"""
@@ -147,13 +174,21 @@ class PatternBasedSPARQLGenerator:
     
     def _extract_properties(self):
         """Extract meaningful properties, excluding low-quality ones"""
-        query = """
-        SELECT DISTINCT ?property WHERE {
+        # Build exclusion filters for the query
+        exclusion_filters = []
+        for prop in self.excluded_properties:
+            exclusion_filters.append(f"?property != <{prop}>")
+        
+        exclusion_filter_str = " && ".join(exclusion_filters)
+        
+        query = f"""
+        SELECT DISTINCT ?property WHERE {{
             ?s ?property ?o .
             FILTER(STRSTARTS(STR(?property), "https://example.org/lex2kg/ontology/"))
             FILTER(?property != <https://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
             FILTER(!STRSTARTS(STR(?property), "https://www.w3.org/2000/01/rdf-schema#"))
-        }
+            FILTER({exclusion_filter_str})
+        }}
         """
         
         result = self.client.query(query)
@@ -215,13 +250,21 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
         
+        # Build exclusion filters for the query
+        exclusion_filters = []
+        for prop in self.excluded_properties:
+            exclusion_filters.append(f"?prop != <{prop}>")
+        
+        exclusion_filter_str = " && ".join(exclusion_filters)
+        
         # Discovery query to find all valid property-entity combinations
-        discovery_query = """
-            SELECT DISTINCT ?prop ?entity WHERE {
+        discovery_query = f"""
+            SELECT DISTINCT ?prop ?entity WHERE {{
                 ?s ?prop ?entity .
                 FILTER(STRSTARTS(STR(?prop), "https://example.org/lex2kg/ontology/"))
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 1000
         """
         
@@ -302,9 +345,19 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
         
+        # Build exclusion filters for the query
+        exclusion_filters = []
+        for prop in self.excluded_properties:
+            exclusion_filters.extend([
+                f"?prop1 != <{prop}>",
+                f"?prop2 != <{prop}>"
+            ])
+        
+        exclusion_filter_str = " && ".join(exclusion_filters)
+        
         # Discovery query for middle target pattern: entity1 prop1 ?target . ?target prop2 entity2
-        middle_discovery_query = """
-            SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {
+        middle_discovery_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {{
                 ?entity1 ?prop1 ?middle .
                 ?middle ?prop2 ?entity2 .
                 FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
@@ -312,20 +365,22 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
                 FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2)
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 500
         """
         
         # Discovery query for branching pattern: ?target prop1 ?hidden . ?hidden prop2 entity
-        branching_discovery_query = """
-            SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {
+        branching_discovery_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {{
                 ?target ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
                 FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
                 FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2)
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 500
         """
         
@@ -472,9 +527,20 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
         
+        # Build exclusion filters for the query
+        exclusion_filters = []
+        for prop in self.excluded_properties:
+            exclusion_filters.extend([
+                f"?prop1 != <{prop}>",
+                f"?prop2 != <{prop}>",
+                f"?prop3 != <{prop}>"
+            ])
+        
+        exclusion_filter_str = " && ".join(exclusion_filters)
+        
         # Discovery query for linear end pattern: entity prop1 ?h1 . ?h1 prop2 ?h2 . ?h2 prop3 ?target
-        linear_end_query = """
-            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity WHERE {
+        linear_end_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity WHERE {{
                 ?entity ?prop1 ?h1 .
                 ?h1 ?prop2 ?h2 .
                 ?h2 ?prop3 ?target .
@@ -483,13 +549,14 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 200
         """
         
         # Discovery query for linear middle pattern: entity1 prop1 ?h . ?h prop2 ?target . ?target prop3 entity2
-        linear_middle_query = """
-            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {
+        linear_middle_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {{
                 ?entity1 ?prop1 ?h .
                 ?h ?prop2 ?target .
                 ?target ?prop3 ?entity2 .
@@ -499,13 +566,14 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
                 FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 200
         """
         
         # Discovery query for star pattern: ?hidden prop1 entity1 . ?hidden prop2 entity2 . ?hidden prop3 ?target
-        star_query = """
-            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {
+        star_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {{
                 ?hidden ?prop1 ?entity1 .
                 ?hidden ?prop2 ?entity2 .
                 ?hidden ?prop3 ?target .
@@ -516,7 +584,8 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER(?entity1 != ?entity2)
-            }
+                FILTER({exclusion_filter_str})
+            }}
             LIMIT 200
         """
         
