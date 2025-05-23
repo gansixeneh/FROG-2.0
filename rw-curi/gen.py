@@ -1,8 +1,9 @@
 """
 Pattern-based SPARQL Query Generator
 
-This generator creates SPARQL queries based on graph patterns rather than fixed templates.
-It generates queries with 1-3 properties using various connection patterns.
+This generator creates SPARQL queries based on graph patterns using a discovery-first approach.
+It first discovers valid property combinations through discovery queries, then selects from them.
+This ensures that generated queries always have at least 1 result.
 
 Patterns:
 - O = Fixed entity (known)
@@ -51,11 +52,6 @@ class PatternBasedSPARQLGenerator:
         self.entities = self._extract_entities()
         self.properties = self._extract_properties()
         
-        # Create property-entity mapping for efficient pattern generation
-        self.prop_to_subjects = defaultdict(set)
-        self.prop_to_objects = defaultdict(set)
-        self._build_property_mappings()
-        
         # Pattern weights (higher = more likely)
         self.pattern_weights = {
             1: 0.5,  # 50% chance for 1-property patterns
@@ -93,13 +89,6 @@ class PatternBasedSPARQLGenerator:
                 
         return list(properties)
         
-    def _build_property_mappings(self):
-        """Build mappings from properties to their subjects/objects"""
-        for s, p, o in self.graph:
-            if isinstance(s, URIRef) and isinstance(o, URIRef):
-                self.prop_to_subjects[p].add(s)
-                self.prop_to_objects[p].add(o)
-                
     def _shorten_uri(self, uri):
         """Convert full URI to prefixed form"""
         uri_str = str(uri)
@@ -122,7 +111,487 @@ class PatternBasedSPARQLGenerator:
         sparql = re.sub(r'\s*}\s*', ' }', sparql)
         
         return sparql
+    
+    def generate_1_property_patterns(self, count=100):
+        """
+        Generate 1-property patterns using discovery-first approach
         
+        Args:
+            count (int): Number of patterns to generate
+            
+        Returns:
+            list: List of pattern dictionaries
+        """
+        patterns = []
+        
+        # Discovery query to find all valid property-entity combinations
+        discovery_query = """
+            SELECT DISTINCT ?prop ?entity WHERE {
+                ?s ?prop ?entity .
+                FILTER(STRSTARTS(STR(?prop), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity), "http://example.org/"))
+            }
+        """
+        
+        print("Executing discovery query for 1-property patterns...")
+        try:
+            results = list(self.graph.query(discovery_query))
+            print(f"Found {len(results)} valid property-entity combinations")
+            
+            if not results:
+                return patterns
+                
+            # Generate patterns by randomly selecting from valid combinations
+            attempts = 0
+            max_attempts = count * 3
+            
+            while len(patterns) < count and attempts < max_attempts:
+                attempts += 1
+                
+                # Randomly select a valid combination
+                prop, entity = random.choice(results)
+                prop_str = self._shorten_uri(prop)
+                entity_str = self._shorten_uri(entity)
+                
+                # Generate both subject and object target patterns
+                pattern_type = random.choice(['subject_target', 'object_target'])
+                
+                if pattern_type == 'subject_target':
+                    # Pattern: ?target prop fixed_entity
+                    sparql = f"SELECT ?target WHERE {{ ?target {prop_str} {entity_str} . }}"
+                    pattern_id = f'1p_subj_{len(patterns)}'
+                    pattern_type_name = '1_prop_subject_target'
+                else:
+                    # Pattern: fixed_entity prop ?target  
+                    # Need to find a valid subject for this property
+                    subject_query = f"""
+                        SELECT DISTINCT ?subj WHERE {{
+                            ?subj <{str(prop)}> <{str(entity)}> .
+                        }}
+                    """
+                    subject_results = list(self.graph.query(subject_query))
+                    if not subject_results:
+                        continue
+                        
+                    subj = random.choice(subject_results)[0]
+                    subj_str = self._shorten_uri(subj)
+                    sparql = f"SELECT ?target WHERE {{ {subj_str} {prop_str} ?target . }}"
+                    pattern_id = f'1p_obj_{len(patterns)}'
+                    pattern_type_name = '1_prop_object_target'
+                
+                # Validate that this pattern has results
+                if self._validate_pattern(sparql):
+                    patterns.append({
+                        'id': pattern_id,
+                        'sparql': self._format_sparql(sparql),
+                        'pattern_type': pattern_type_name,
+                        'complexity': 'basic',
+                        'property': prop_str,
+                        'fixed_entity': entity_str if pattern_type == 'subject_target' else subj_str
+                    })
+                    
+        except Exception as e:
+            print(f"Error in 1-property pattern discovery: {e}")
+            
+        return patterns
+    
+    def generate_2_property_patterns(self, count=100):
+        """
+        Generate 2-property patterns using discovery-first approach
+        
+        Args:
+            count (int): Number of patterns to generate
+            
+        Returns:
+            list: List of pattern dictionaries
+        """
+        patterns = []
+        
+        # Discovery query for middle target pattern: entity1 prop1 ?target . ?target prop2 entity2
+        middle_discovery_query = """
+            SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {
+                ?entity1 ?prop1 ?middle .
+                ?middle ?prop2 ?entity2 .
+                FILTER(STRSTARTS(STR(?prop1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop2), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity2), "http://example.org/"))
+                FILTER(?prop1 != ?prop2)
+            }
+        """
+        
+        # Discovery query for branching pattern: ?target prop1 ?hidden . ?hidden prop2 entity
+        branching_discovery_query = """
+            SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {
+                ?target ?prop1 ?hidden .
+                ?hidden ?prop2 ?entity .
+                FILTER(STRSTARTS(STR(?prop1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop2), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity), "http://example.org/"))
+                FILTER(?prop1 != ?prop2)
+            }
+        """
+        
+        print("Executing discovery queries for 2-property patterns...")
+        
+        try:
+            # Get middle target combinations
+            middle_results = list(self.graph.query(middle_discovery_query))
+            print(f"Found {len(middle_results)} valid middle-target combinations")
+            
+            # Get branching combinations  
+            branching_results = list(self.graph.query(branching_discovery_query))
+            print(f"Found {len(branching_results)} valid branching combinations")
+            
+            all_combinations = []
+            
+            # Process middle target results
+            for result in middle_results:
+                prop1, prop2, entity1, entity2, middle = result
+                all_combinations.append({
+                    'type': 'middle_target',
+                    'data': (prop1, prop2, entity1, entity2, middle)
+                })
+            
+            # Process branching results
+            for result in branching_results:
+                prop1, prop2, entity = result  
+                all_combinations.append({
+                    'type': 'branching',
+                    'data': (prop1, prop2, entity)
+                })
+            
+            if not all_combinations:
+                return patterns
+                
+            # Generate patterns by randomly selecting from valid combinations
+            attempts = 0
+            max_attempts = count * 3
+            
+            while len(patterns) < count and attempts < max_attempts:
+                attempts += 1
+                
+                combination = random.choice(all_combinations)
+                
+                if combination['type'] == 'middle_target':
+                    pattern = self._create_middle_target_pattern(combination['data'], len(patterns))
+                else:
+                    pattern = self._create_branching_pattern(combination['data'], len(patterns))
+                
+                if pattern:
+                    patterns.append(pattern)
+                    
+        except Exception as e:
+            print(f"Error in 2-property pattern discovery: {e}")
+            
+        return patterns
+    
+    def _create_middle_target_pattern(self, data, pattern_index):
+        """Create middle target pattern from discovery data"""
+        prop1, prop2, entity1, entity2, middle = data
+        
+        prop1_str = self._shorten_uri(prop1)
+        prop2_str = self._shorten_uri(prop2)
+        entity1_str = self._shorten_uri(entity1)
+        entity2_str = self._shorten_uri(entity2)
+        
+        # Generate random variation (4 possibilities)
+        variation = random.randint(0, 3)
+        
+        variations = [
+            f"{entity1_str} {prop1_str} ?target . ?target {prop2_str} {entity2_str}",  # original
+            f"?target {prop1_str} {entity1_str} . {entity2_str} {prop2_str} ?target",  # both swapped
+            f"{entity1_str} {prop1_str} ?target . {entity2_str} {prop2_str} ?target",  # second swapped
+            f"?target {prop1_str} {entity1_str} . ?target {prop2_str} {entity2_str}"   # first swapped
+        ]
+        
+        sparql = f"SELECT ?target WHERE {{ {variations[variation]} . }}"
+        
+        if self._validate_pattern(sparql):
+            return {
+                'id': f'2p_mid_{variation}_{pattern_index}',
+                'sparql': self._format_sparql(sparql),
+                'pattern_type': f'2_prop_middle_target_v{variation+1}',
+                'complexity': 'intermediate',
+                'properties': [prop1_str, prop2_str],
+                'fixed_entities': [entity1_str, entity2_str]
+            }
+        return None
+    
+    def _create_branching_pattern(self, data, pattern_index):
+        """Create branching pattern from discovery data"""
+        prop1, prop2, entity = data
+        
+        prop1_str = self._shorten_uri(prop1)
+        prop2_str = self._shorten_uri(prop2)
+        entity_str = self._shorten_uri(entity)
+        
+        # Generate random variation (4 possibilities)
+        variation = random.randint(0, 3)
+        
+        variations = [
+            f"?target {prop1_str} ?hidden . ?hidden {prop2_str} {entity_str}",      # original
+            f"?hidden {prop1_str} ?target . {entity_str} {prop2_str} ?hidden",      # both swapped
+            f"?target {prop1_str} ?hidden . {entity_str} {prop2_str} ?hidden",      # second swapped
+            f"?hidden {prop1_str} ?target . ?hidden {prop2_str} {entity_str}"       # first swapped
+        ]
+        
+        sparql = f"SELECT ?target WHERE {{ {variations[variation]} . }}"
+        
+        if self._validate_pattern(sparql):
+            return {
+                'id': f'2p_branch_{variation}_{pattern_index}',
+                'sparql': self._format_sparql(sparql),
+                'pattern_type': f'2_prop_branching_v{variation+1}',
+                'complexity': 'intermediate',
+                'properties': [prop1_str, prop2_str],
+                'fixed_entity': entity_str
+            }
+        return None
+    
+    def generate_3_property_patterns(self, count=100):
+        """
+        Generate 3-property patterns using discovery-first approach
+        
+        Args:
+            count (int): Number of patterns to generate
+            
+        Returns:
+            list: List of pattern dictionaries
+        """
+        patterns = []
+        
+        # Discovery query for linear end pattern: entity prop1 ?h1 . ?h1 prop2 ?h2 . ?h2 prop3 ?target
+        linear_end_query = """
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity WHERE {
+                ?entity ?prop1 ?h1 .
+                ?h1 ?prop2 ?h2 .
+                ?h2 ?prop3 ?target .
+                FILTER(STRSTARTS(STR(?prop1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop2), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop3), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity), "http://example.org/"))
+                FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
+            }
+        """
+        
+        # Discovery query for linear middle pattern: entity1 prop1 ?h . ?h prop2 ?target . ?target prop3 entity2
+        linear_middle_query = """
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {
+                ?entity1 ?prop1 ?h .
+                ?h ?prop2 ?target .
+                ?target ?prop3 ?entity2 .
+                FILTER(STRSTARTS(STR(?prop1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop2), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop3), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity2), "http://example.org/"))
+                FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
+            }
+        """
+        
+        # Discovery query for star pattern: ?hidden prop1 entity1 . ?hidden prop2 entity2 . ?hidden prop3 ?target
+        star_query = """
+            SELECT DISTINCT ?prop1 ?prop2 ?prop3 ?entity1 ?entity2 WHERE {
+                ?hidden ?prop1 ?entity1 .
+                ?hidden ?prop2 ?entity2 .
+                ?hidden ?prop3 ?target .
+                FILTER(STRSTARTS(STR(?prop1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop2), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?prop3), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity1), "http://example.org/"))
+                FILTER(STRSTARTS(STR(?entity2), "http://example.org/"))
+                FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
+                FILTER(?entity1 != ?entity2)
+            }
+        """
+        
+        print("Executing discovery queries for 3-property patterns...")
+        
+        try:
+            # Get all types of 3-property combinations
+            linear_end_results = list(self.graph.query(linear_end_query))
+            linear_middle_results = list(self.graph.query(linear_middle_query))
+            star_results = list(self.graph.query(star_query))
+            
+            print(f"Found {len(linear_end_results)} linear-end combinations")
+            print(f"Found {len(linear_middle_results)} linear-middle combinations")
+            print(f"Found {len(star_results)} star combinations")
+            
+            all_combinations = []
+            
+            # Process all result types
+            for result in linear_end_results:
+                all_combinations.append({
+                    'type': 'linear_end',
+                    'data': result
+                })
+            
+            for result in linear_middle_results:
+                all_combinations.append({
+                    'type': 'linear_middle', 
+                    'data': result
+                })
+                
+            for result in star_results:
+                all_combinations.append({
+                    'type': 'star',
+                    'data': result
+                })
+            
+            if not all_combinations:
+                return patterns
+                
+            # Generate patterns by randomly selecting from valid combinations
+            attempts = 0
+            max_attempts = count * 3
+            
+            while len(patterns) < count and attempts < max_attempts:
+                attempts += 1
+                
+                combination = random.choice(all_combinations)
+                
+                if combination['type'] == 'linear_end':
+                    pattern = self._create_linear_end_pattern(combination['data'], len(patterns))
+                elif combination['type'] == 'linear_middle':
+                    pattern = self._create_linear_middle_pattern(combination['data'], len(patterns))
+                else:
+                    pattern = self._create_star_pattern(combination['data'], len(patterns))
+                
+                if pattern:
+                    patterns.append(pattern)
+                    
+        except Exception as e:
+            print(f"Error in 3-property pattern discovery: {e}")
+            
+        return patterns
+    
+    def _create_linear_end_pattern(self, data, pattern_index):
+        """Create linear end pattern from discovery data"""
+        prop1, prop2, prop3, entity = data
+        
+        props_str = [self._shorten_uri(p) for p in [prop1, prop2, prop3]]
+        entity_str = self._shorten_uri(entity)
+        
+        # Generate random variation (8 possibilities using bit manipulation)
+        variation = random.randint(0, 7)
+        
+        pattern_parts = []
+        
+        # Determine direction of each triple based on bit pattern
+        if variation & 1:  # bit 0: reverse first triple
+            pattern_parts.append(f"?hidden1 {props_str[0]} {entity_str}")
+        else:
+            pattern_parts.append(f"{entity_str} {props_str[0]} ?hidden1")
+            
+        if variation & 2:  # bit 1: reverse second triple
+            pattern_parts.append(f"?hidden2 {props_str[1]} ?hidden1")
+        else:
+            pattern_parts.append(f"?hidden1 {props_str[1]} ?hidden2")
+            
+        if variation & 4:  # bit 2: reverse third triple
+            pattern_parts.append(f"?target {props_str[2]} ?hidden2")
+        else:
+            pattern_parts.append(f"?hidden2 {props_str[2]} ?target")
+            
+        pattern = " . ".join(pattern_parts)
+        sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
+        
+        if self._validate_pattern(sparql):
+            return {
+                'id': f'3p_linear_end_{variation}_{pattern_index}',
+                'sparql': self._format_sparql(sparql),
+                'pattern_type': f'3_prop_linear_end_v{variation+1}',
+                'complexity': 'advanced',
+                'properties': props_str,
+                'fixed_entity': entity_str
+            }
+        return None
+    
+    def _create_linear_middle_pattern(self, data, pattern_index):
+        """Create linear middle pattern from discovery data"""
+        prop1, prop2, prop3, entity1, entity2 = data
+        
+        props_str = [self._shorten_uri(p) for p in [prop1, prop2, prop3]]
+        entity1_str = self._shorten_uri(entity1)
+        entity2_str = self._shorten_uri(entity2)
+        
+        # Generate random variation (8 possibilities)
+        variation = random.randint(0, 7)
+        
+        pattern_parts = []
+        
+        if variation & 1:  # bit 0
+            pattern_parts.append(f"?hidden {props_str[0]} {entity1_str}")
+        else:
+            pattern_parts.append(f"{entity1_str} {props_str[0]} ?hidden")
+            
+        if variation & 2:  # bit 1
+            pattern_parts.append(f"?target {props_str[1]} ?hidden")
+        else:
+            pattern_parts.append(f"?hidden {props_str[1]} ?target")
+            
+        if variation & 4:  # bit 2
+            pattern_parts.append(f"{entity2_str} {props_str[2]} ?target")
+        else:
+            pattern_parts.append(f"?target {props_str[2]} {entity2_str}")
+            
+        pattern = " . ".join(pattern_parts)
+        sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
+        
+        if self._validate_pattern(sparql):
+            return {
+                'id': f'3p_linear_mid_{variation}_{pattern_index}',
+                'sparql': self._format_sparql(sparql),
+                'pattern_type': f'3_prop_linear_middle_v{variation+1}',
+                'complexity': 'advanced',
+                'properties': props_str,
+                'fixed_entities': [entity1_str, entity2_str]
+            }
+        return None
+    
+    def _create_star_pattern(self, data, pattern_index):
+        """Create star pattern from discovery data"""
+        prop1, prop2, prop3, entity1, entity2 = data
+        
+        props_str = [self._shorten_uri(p) for p in [prop1, prop2, prop3]]
+        entity1_str = self._shorten_uri(entity1)
+        entity2_str = self._shorten_uri(entity2)
+        
+        # Generate random variation (8 possibilities)
+        variation = random.randint(0, 7)
+        
+        pattern_parts = []
+        
+        if variation & 1:  # bit 0
+            pattern_parts.append(f"{entity1_str} {props_str[0]} ?hidden")
+        else:
+            pattern_parts.append(f"?hidden {props_str[0]} {entity1_str}")
+            
+        if variation & 2:  # bit 1
+            pattern_parts.append(f"{entity2_str} {props_str[1]} ?hidden")
+        else:
+            pattern_parts.append(f"?hidden {props_str[1]} {entity2_str}")
+            
+        if variation & 4:  # bit 2
+            pattern_parts.append(f"?target {props_str[2]} ?hidden")
+        else:
+            pattern_parts.append(f"?hidden {props_str[2]} ?target")
+            
+        pattern = " . ".join(pattern_parts)
+        sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
+        
+        if self._validate_pattern(sparql):
+            return {
+                'id': f'3p_star_{variation}_{pattern_index}',
+                'sparql': self._format_sparql(sparql),
+                'pattern_type': f'3_prop_star_v{variation+1}',
+                'complexity': 'advanced',
+                'properties': props_str,
+                'fixed_entities': [entity1_str, entity2_str]
+            }
+        return None
+    
     def _validate_pattern(self, sparql_query):
         """Check if pattern has results in the graph"""
         try:
@@ -132,367 +601,8 @@ class PatternBasedSPARQLGenerator:
             print(f"Error validating query: {e}")
             return False
     
-    def generate_1_property_patterns(self, count=100):
-        """
-        Generate 1-property patterns: ? — O and O — ?
-        
-        Args:
-            count (int): Number of patterns to generate
-            
-        Returns:
-            list: List of pattern dictionaries
-        """
-        patterns = []
-        attempts = 0
-        max_attempts = count * 5
-        
-        while len(patterns) < count and attempts < max_attempts:
-            attempts += 1
-            
-            # Randomly select a property
-            prop = random.choice(self.properties)
-            prop_str = self._shorten_uri(prop)
-            
-            # Get available subjects and objects for this property
-            subjects = list(self.prop_to_subjects[prop])
-            objects = list(self.prop_to_objects[prop])
-            
-            if not subjects or not objects:
-                continue
-                
-            # Pattern 1: ?target prop fixed_entity (target as subject)
-            if objects and random.random() < 0.5:
-                fixed_entity = random.choice(objects)
-                fixed_str = self._shorten_uri(fixed_entity)
-                
-                sparql = f"SELECT ?target WHERE {{ ?target {prop_str} {fixed_str} . }}"
-                
-                if self._validate_pattern(sparql):
-                    patterns.append({
-                        'id': f'1p_subj_{len(patterns)}',
-                        'sparql': self._format_sparql(sparql),
-                        'pattern_type': '1_prop_subject_target',
-                        'complexity': 'basic',
-                        'property': prop_str,
-                        'fixed_entity': fixed_str
-                    })
-                    
-            # Pattern 2: fixed_entity prop ?target (target as object)
-            else:
-                fixed_entity = random.choice(subjects)
-                fixed_str = self._shorten_uri(fixed_entity)
-                
-                sparql = f"SELECT ?target WHERE {{ {fixed_str} {prop_str} ?target . }}"
-                
-                if self._validate_pattern(sparql):
-                    patterns.append({
-                        'id': f'1p_obj_{len(patterns)}',
-                        'sparql': self._format_sparql(sparql),
-                        'pattern_type': '1_prop_object_target',
-                        'complexity': 'basic',
-                        'property': prop_str,
-                        'fixed_entity': fixed_str
-                    })
-                    
-        return patterns
-    
-    def generate_2_property_patterns(self, count=100):
-        """
-        Generate 2-property patterns:
-        - O—?—O (target in middle)
-        - ?—X—O (target at start, branching)
-        
-        Each pattern has 4 variations (2^2) based on subject/object position swapping
-        """
-        patterns = []
-        attempts = 0
-        max_attempts = count * 10
-        
-        while len(patterns) < count and attempts < max_attempts:
-            attempts += 1
-            
-            # Randomly select two properties
-            if len(self.properties) < 2:
-                break
-                
-            prop1, prop2 = random.sample(self.properties, 2)
-            prop1_str = self._shorten_uri(prop1)
-            prop2_str = self._shorten_uri(prop2)
-            
-            pattern_type = random.choice(['middle_target', 'branching'])
-            
-            if pattern_type == 'middle_target':
-                # O—?—O pattern: fixed_entity1 prop1 ?target . ?target prop2 fixed_entity2
-                patterns.extend(self._generate_middle_target_pattern(prop1, prop2, prop1_str, prop2_str))
-            else:
-                # ?—X—O pattern: ?target prop1 ?hidden . ?hidden prop2 fixed_entity
-                patterns.extend(self._generate_branching_pattern(prop1, prop2, prop1_str, prop2_str))
-                
-            if len(patterns) >= count:
-                break
-                
-        return patterns[:count]
-    
-    def _generate_middle_target_pattern(self, prop1, prop2, prop1_str, prop2_str):
-        """Generate O—?—O pattern with 4 variations"""
-        patterns = []
-        
-        # Find entities that can connect via these properties
-        entities1 = list(self.prop_to_subjects[prop1])
-        entities2 = list(self.prop_to_objects[prop2])
-        
-        if not entities1 or not entities2:
-            return patterns
-            
-        entity1 = random.choice(entities1)
-        entity2 = random.choice(entities2)
-        entity1_str = self._shorten_uri(entity1)
-        entity2_str = self._shorten_uri(entity2)
-        
-        # Generate 4 variations by swapping subject/object positions
-        variations = [
-            f"{entity1_str} {prop1_str} ?target . ?target {prop2_str} {entity2_str}",  # original
-            f"?target {prop1_str} {entity1_str} . {entity2_str} {prop2_str} ?target",  # both swapped
-            f"{entity1_str} {prop1_str} ?target . {entity2_str} {prop2_str} ?target",  # second swapped
-            f"?target {prop1_str} {entity1_str} . ?target {prop2_str} {entity2_str}"   # first swapped
-        ]
-        
-        for i, variation in enumerate(variations):
-            sparql = f"SELECT ?target WHERE {{ {variation} . }}"
-            
-            if self._validate_pattern(sparql):
-                patterns.append({
-                    'id': f'2p_mid_{i}_{len(patterns)}',
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': f'2_prop_middle_target_v{i+1}',
-                    'complexity': 'intermediate',
-                    'properties': [prop1_str, prop2_str],
-                    'fixed_entities': [entity1_str, entity2_str]
-                })
-                
-        return patterns
-    
-    def _generate_branching_pattern(self, prop1, prop2, prop1_str, prop2_str):
-        """Generate ?—X—O pattern with 4 variations"""
-        patterns = []
-        
-        # Find entity that can be connected via prop2
-        entities = list(self.prop_to_objects[prop2])
-        if not entities:
-            return patterns
-            
-        fixed_entity = random.choice(entities)
-        fixed_str = self._shorten_uri(fixed_entity)
-        
-        # Generate 4 variations
-        variations = [
-            f"?target {prop1_str} ?hidden . ?hidden {prop2_str} {fixed_str}",      # original
-            f"?hidden {prop1_str} ?target . {fixed_str} {prop2_str} ?hidden",      # both swapped
-            f"?target {prop1_str} ?hidden . {fixed_str} {prop2_str} ?hidden",      # second swapped
-            f"?hidden {prop1_str} ?target . ?hidden {prop2_str} {fixed_str}"       # first swapped
-        ]
-        
-        for i, variation in enumerate(variations):
-            sparql = f"SELECT ?target WHERE {{ {variation} . }}"
-            
-            if self._validate_pattern(sparql):
-                patterns.append({
-                    'id': f'2p_branch_{i}_{len(patterns)}',
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': f'2_prop_branching_v{i+1}',
-                    'complexity': 'intermediate',
-                    'properties': [prop1_str, prop2_str],
-                    'fixed_entity': fixed_str
-                })
-                
-        return patterns
-    
-    def generate_3_property_patterns(self, count=100):
-        """
-        Generate 3-property patterns:
-        - O—X—X—? (linear, target at end)
-        - O—X—?—O (linear, target in middle)  
-        - X branches to O, O, ? (star pattern, target is one branch)
-        
-        Each pattern has 8 variations (2^3) based on subject/object position swapping
-        """
-        patterns = []
-        attempts = 0
-        max_attempts = count * 15
-        
-        while len(patterns) < count and attempts < max_attempts:
-            attempts += 1
-            
-            if len(self.properties) < 3:
-                break
-                
-            # Randomly select three properties
-            prop1, prop2, prop3 = random.sample(self.properties, 3)
-            props_str = [self._shorten_uri(p) for p in [prop1, prop2, prop3]]
-            
-            pattern_type = random.choice(['linear_end', 'linear_middle', 'star'])
-            
-            if pattern_type == 'linear_end':
-                patterns.extend(self._generate_linear_end_pattern(prop1, prop2, prop3, props_str))
-            elif pattern_type == 'linear_middle':
-                patterns.extend(self._generate_linear_middle_pattern(prop1, prop2, prop3, props_str))
-            else:
-                patterns.extend(self._generate_star_pattern(prop1, prop2, prop3, props_str))
-                
-            if len(patterns) >= count:
-                break
-                
-        return patterns[:count]
-    
-    def _generate_linear_end_pattern(self, prop1, prop2, prop3, props_str):
-        """Generate O—X—X—? pattern with 8 variations"""
-        patterns = []
-        
-        # Find a starting entity
-        entities = list(self.prop_to_subjects[prop1])
-        if not entities:
-            return patterns
-            
-        start_entity = random.choice(entities)
-        start_str = self._shorten_uri(start_entity)
-        
-        # Generate 8 variations using bit manipulation
-        for i in range(8):
-            pattern_parts = []
-            
-            # Determine direction of each triple based on bit pattern
-            if i & 1:  # bit 0: reverse first triple
-                pattern_parts.append(f"?hidden1 {props_str[0]} {start_str}")
-            else:
-                pattern_parts.append(f"{start_str} {props_str[0]} ?hidden1")
-                
-            if i & 2:  # bit 1: reverse second triple
-                pattern_parts.append(f"?hidden2 {props_str[1]} ?hidden1")
-            else:
-                pattern_parts.append(f"?hidden1 {props_str[1]} ?hidden2")
-                
-            if i & 4:  # bit 2: reverse third triple
-                pattern_parts.append(f"?target {props_str[2]} ?hidden2")
-            else:
-                pattern_parts.append(f"?hidden2 {props_str[2]} ?target")
-                
-            pattern = " . ".join(pattern_parts)
-            sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
-            
-            if self._validate_pattern(sparql):
-                patterns.append({
-                    'id': f'3p_linear_end_{i}_{len(patterns)}',
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': f'3_prop_linear_end_v{i+1}',
-                    'complexity': 'advanced',
-                    'properties': props_str,
-                    'fixed_entity': start_str
-                })
-                
-        return patterns
-    
-    def _generate_linear_middle_pattern(self, prop1, prop2, prop3, props_str):
-        """Generate O—X—?—O pattern with 8 variations"""
-        patterns = []
-        
-        # Find start and end entities
-        start_entities = list(self.prop_to_subjects[prop1])
-        end_entities = list(self.prop_to_objects[prop3])
-        
-        if not start_entities or not end_entities:
-            return patterns
-            
-        start_entity = random.choice(start_entities)
-        end_entity = random.choice(end_entities)
-        start_str = self._shorten_uri(start_entity)
-        end_str = self._shorten_uri(end_entity)
-        
-        # Generate 8 variations
-        for i in range(8):
-            pattern_parts = []
-            
-            if i & 1:  # bit 0
-                pattern_parts.append(f"?hidden {props_str[0]} {start_str}")
-            else:
-                pattern_parts.append(f"{start_str} {props_str[0]} ?hidden")
-                
-            if i & 2:  # bit 1
-                pattern_parts.append(f"?target {props_str[1]} ?hidden")
-            else:
-                pattern_parts.append(f"?hidden {props_str[1]} ?target")
-                
-            if i & 4:  # bit 2
-                pattern_parts.append(f"{end_str} {props_str[2]} ?target")
-            else:
-                pattern_parts.append(f"?target {props_str[2]} {end_str}")
-                
-            pattern = " . ".join(pattern_parts)
-            sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
-            
-            if self._validate_pattern(sparql):
-                patterns.append({
-                    'id': f'3p_linear_mid_{i}_{len(patterns)}',
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': f'3_prop_linear_middle_v{i+1}',
-                    'complexity': 'advanced',
-                    'properties': props_str,
-                    'fixed_entities': [start_str, end_str]
-                })
-                
-        return patterns
-    
-    def _generate_star_pattern(self, prop1, prop2, prop3, props_str):
-        """Generate star pattern: ?hidden branches to fixed_entity1, fixed_entity2, ?target"""
-        patterns = []
-        
-        # Find fixed entities for two branches
-        entities1 = list(self.prop_to_objects[prop1])
-        entities2 = list(self.prop_to_objects[prop2])
-        
-        if not entities1 or not entities2:
-            return patterns
-            
-        fixed_entity1 = random.choice(entities1)
-        fixed_entity2 = random.choice(entities2)
-        fixed_str1 = self._shorten_uri(fixed_entity1)
-        fixed_str2 = self._shorten_uri(fixed_entity2)
-        
-        # Generate 8 variations
-        for i in range(8):
-            pattern_parts = []
-            
-            if i & 1:  # bit 0
-                pattern_parts.append(f"{fixed_str1} {props_str[0]} ?hidden")
-            else:
-                pattern_parts.append(f"?hidden {props_str[0]} {fixed_str1}")
-                
-            if i & 2:  # bit 1
-                pattern_parts.append(f"{fixed_str2} {props_str[1]} ?hidden")
-            else:
-                pattern_parts.append(f"?hidden {props_str[1]} {fixed_str2}")
-                
-            if i & 4:  # bit 2
-                pattern_parts.append(f"?target {props_str[2]} ?hidden")
-            else:
-                pattern_parts.append(f"?hidden {props_str[2]} ?target")
-                
-            pattern = " . ".join(pattern_parts)
-            sparql = f"SELECT ?target WHERE {{ {pattern} . }}"
-            
-            if self._validate_pattern(sparql):
-                patterns.append({
-                    'id': f'3p_star_{i}_{len(patterns)}',
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': f'3_prop_star_v{i+1}',
-                    'complexity': 'advanced',
-                    'properties': props_str,
-                    'fixed_entities': [fixed_str1, fixed_str2]
-                })
-                
-        return patterns
-    
     def generate_dataset(self, size=1000):
-        """Generate dataset based on pattern weights"""
+        """Generate dataset based on pattern weights using discovery-first approach"""
         dataset = []
         
         # Calculate number of queries for each complexity level
@@ -502,7 +612,7 @@ class PatternBasedSPARQLGenerator:
         
         print(f"Generating {num_1_prop} 1-property, {num_2_prop} 2-property, {num_3_prop} 3-property patterns...")
         
-        # Generate patterns
+        # Generate patterns using discovery-first approach
         patterns_1 = self.generate_1_property_patterns(num_1_prop)
         patterns_2 = self.generate_2_property_patterns(num_2_prop)  
         patterns_3 = self.generate_3_property_patterns(num_3_prop)
@@ -558,7 +668,7 @@ def main():
     print("Initializing pattern-based SPARQL generator...")
     generator = PatternBasedSPARQLGenerator(ttl_file)
     
-    # Generate dataset
+    # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
     dataset = generator.generate_dataset(size=200)
     
