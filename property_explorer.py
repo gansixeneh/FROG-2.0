@@ -11,7 +11,7 @@ import json
 
 
 class SPARQLPropertyExplorer:
-    def __init__(self, endpoint_url: str = "http://localhost:3030/curi/sparql"):
+    def __init__(self, endpoint_url: str = "http://localhost:3030/modified-lex2kg/sparql"):
         """
         Initialize the SPARQL wrapper with the given endpoint URL
         
