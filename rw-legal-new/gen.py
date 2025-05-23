@@ -80,15 +80,37 @@ class PatternBasedSPARQLGenerator:
         return list(entities)
     
     def _extract_properties(self):
-        """Extract all properties from the graph"""
+        """Extract meaningful properties, excluding low-quality ones"""
         properties = set()
         
-        # Skip RDF type and all RDFS properties
+        # Properties to exclude for better quality
+        excluded_properties = {
+            # Universal properties (same value everywhere)
+            'https://example.org/lex2kg/ontology/jenisPeraturan',
+            'https://example.org/lex2kg/ontology/yurisdiksi', 
+            # 'https://example.org/lex2kg/ontology/disahkanDi',
+            'https://example.org/lex2kg/ontology/bahasa',
+            'https://example.org/lex2kg/ontology/jabatanPengesah',
+            # 'https://example.org/lex2kg/ontology/jenisVersi',
+            
+            # Technical/internal properties  
+            'https://example.org/lex2kg/ontology/segmen',
+            'https://example.org/lex2kg/ontology/teks',
+            
+            # Over-granular properties
+            'https://example.org/lex2kg/ontology/huruf',
+            'https://example.org/lex2kg/ontology/nomor'
+        }
+        
+        # Skip RDF type and RDFS properties
         rdf_type = URIRef('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
         rdfs_namespace = 'http://www.w3.org/2000/01/rdf-schema#'
         
         for s, p, o in self.graph:
-            if isinstance(p, URIRef) and p != rdf_type and not str(p).startswith(rdfs_namespace):
+            if (isinstance(p, URIRef) and 
+                p != rdf_type and 
+                not str(p).startswith(rdfs_namespace) and
+                str(p) not in excluded_properties):
                 properties.add(p)
                 
         return list(properties)

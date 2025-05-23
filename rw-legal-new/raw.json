@@ -1,0 +1,574 @@
+[
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 2009 no 24 bab 5 bagian 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2009/24/bab/0005/bagian/0002> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Apa yang dirujuk oleh UU tahun 1982 no 6 pasal 36 versi 12 April 1982 ayat 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1982/6/pasal/0036/versi/19820412/ayat/0002> <https://example.org/lex2kg/ontology/merujuk> ?target . }"
+    },
+    {
+      "question": "Apa saja paragraf dari UU tahun 2006 no 23 bab 5 bagian 1?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2006/23/bab/0005/bagian/0001> <https://example.org/lex2kg/ontology/paragraf> ?target . }"
+    },
+    {
+      "question": "Apa saja bab dari UU tahun 1997 no 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1997/2> <https://example.org/lex2kg/ontology/bab> ?target . }"
+    },
+    {
+      "question": "Apa yang memiliki daftar pasal UU tahun 2019 no 23 bab 6 bagian 2?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/daftarPasal> <https://example.org/lex2kg/uu/2019/23/bab/0006/bagian/0002/daftarPasal> . }"
+    },
+    {
+      "question": "Apa saja ayat dari UU tahun 2001 no 4 pasal 8 versi 21 Juni 2001?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2001/4/pasal/0008/versi/20010621> <https://example.org/lex2kg/ontology/ayat> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki versi yang berisi UU tahun 2004 no 23 pasal 35 versi 22 September 2004 ayat 2?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/versi> ?hidden . ?hidden <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2004/23/pasal/0035/versi/20040922/ayat/0002> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 2008 no 6?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2008/6/mengingat> . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU tahun 2004 no 26?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2004/26> <https://example.org/lex2kg/ontology/menimbang> ?target . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2009 no 52 bab 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2009/52/bab/0002> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU yang memiliki UU tahun 1997 no 24 bab 7?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/pasal> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/1997/24/bab/0007> . }"
+    },
+    {
+      "question": "Apa judul dari UU yang memiliki UU tahun 2000 no 24 bab 4?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tentang> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2000/24/bab/0004> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 1999 no 2 pasal 22?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1999/2/pasal/0022> . }"
+    },
+    {
+      "question": "UU mana yang memiliki pasal dengan versi UU tahun 2014 no 17 pasal 82 versi 5 Agustus 2014?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> ?hidden . ?hidden <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2014/17/pasal/0082/versi/20140805> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengubah UU tahun 2017 no 6 pasal 6 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengubah> <https://example.org/lex2kg/uu/2017/6/pasal/0006/versi/20201102> . }"
+    },
+    {
+      "question": "Peraturan mana yang merujuk UU tahun 1986 no 5 pasal 116 versi 29 Desember 1986 huruf a?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/1986/5/pasal/0116/versi/19861229/huruf/a> . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2010 no 4?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2010/4> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 2017 no 18 pasal 21?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2017/18/pasal/0021> . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2012 no 22 bab 4?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2012/22/bab/0004> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Apa yang disisipkan oleh UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 26?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0150/versi/20201102/huruf/0026> <https://example.org/lex2kg/ontology/menyisipkan> ?target . }"
+    },
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 2008 no 53 bab 3?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/53/bab/0003> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU yang mengingat bagian mengingat dari UU tahun 2014 no 14?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/menimbang> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2014/14/mengingat> . }"
+    },
+    {
+      "question": "Kapan disahkan UU yang menimbang bagian menimbang dari UU tahun 2007 no 46?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanPada> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/2007/46/menimbang> . }"
+    },
+    {
+      "question": "Pada tahun berapa UU yang mengingat bagian mengingat dari UU tahun 2015 no 7 disahkan?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tahun> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2015/7/mengingat> . }"
+    },
+    {
+      "question": "Peraturan mana yang merujuk UU tahun 1983 no 6 pasal 180?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/1983/6/pasal/0180> . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU tahun 1992 no 12?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1992/12> <https://example.org/lex2kg/ontology/menimbang> ?target . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU tahun 2014 no 17 bab 3 bagian 9 paragraf 5 daftar pasal?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2014/17/bab/0003/bagian/0009/paragraf/0005/daftarPasal> <https://example.org/lex2kg/ontology/pasal> ?target . }"
+    },
+    {
+      "question": "Apa yang dihapus oleh UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 61?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0081/versi/20201102/huruf/0061> <https://example.org/lex2kg/ontology/menghapus> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki versi yang berisi UU tahun 2003 no 38 pasal 10 versi 18 Desember 2003 ayat 2?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/versi> ?hidden . ?hidden <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2003/38/pasal/0010/versi/20031218/ayat/0002> . }"
+    },
+    {
+      "question": "Apa saja bab dari UU tahun 2008 no 3?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/3> <https://example.org/lex2kg/ontology/bab> ?target . }"
+    },
+    {
+      "question": "Apa yang memiliki bagian dengan daftar pasal UU tahun 1997 no 26 bab 2 bagian 4?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bagian> ?hidden . ?hidden <https://example.org/lex2kg/ontology/daftarPasal> <https://example.org/lex2kg/uu/1997/26/bab/0002/bagian/0004/daftarPasal> . }"
+    },
+    {
+      "question": "UU mana yang memiliki pasal dengan versi UU tahun 1950 no 5 pasal 26 versi 20 Juli 1950?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> ?hidden . ?hidden <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/1950/5/pasal/0026/versi/19500720> . }"
+    },
+    {
+      "question": "Apa yang dirujuk oleh UU tahun 2003 no 28 pasal 10 versi 9 Desember 2003 ayat 3?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2003/28/pasal/0010/versi/20031209/ayat/0003> <https://example.org/lex2kg/ontology/merujuk> ?target . }"
+    },
+    {
+      "question": "Pasal mana yang memiliki versi UU tahun 2014 no 3 pasal 59 versi 15 Januari 2014?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2014/3/pasal/0059/versi/20140115> . }"
+    },
+    {
+      "question": "Apa yang memiliki daftar pasal UU tahun 2013 no 17 bab 19?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/daftarPasal> <https://example.org/lex2kg/uu/2013/17/bab/0019/daftarPasal> . }"
+    },
+    {
+      "question": "Apa yang memiliki daftar pasal dengan pasal UU tahun 2000 no 2 pasal 13?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/daftarPasal> ?hidden . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2000/2/pasal/0013> . }"
+    },
+    {
+      "question": "Bab mana yang memiliki UU tahun 2007 no 3 bab 4 bagian 3?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bagian> <https://example.org/lex2kg/uu/2007/3/bab/0004/bagian/0003> . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2014 no 17 bab 3?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2014/17/bab/0003> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU yang menimbang bagian menimbang dari UU tahun 1957 no 55?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/pasal> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/1957/55/menimbang> . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU tahun 2008 no 5?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/5> <https://example.org/lex2kg/ontology/menimbang> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2002 no 8?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2002/8> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Bagian mana yang memiliki UU tahun 2012 no 12 bab 4 bagian 7 paragraf 1?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/paragraf> <https://example.org/lex2kg/uu/2012/12/bab/0004/bagian/0007/paragraf/0001> . }"
+    },
+    {
+      "question": "Apa yang merujuk pasal dengan versi UU tahun 2017 no 18 pasal 24 versi 22 November 2017?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/merujuk> ?hidden . ?hidden <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2017/18/pasal/0024/versi/20171122> . }"
+    },
+    {
+      "question": "Siapa yang mengesahkan UU yang memiliki UU tahun 2007 no 21 pasal 3?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanOleh> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2007/21/pasal/0003> . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU yang mengingat bagian mengingat dari UU tahun 1977 no 2?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/menimbang> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1977/2/mengingat> . }"
+    },
+    {
+      "question": "Pada tahun berapa UU yang menimbang bagian menimbang dari UU tahun 2013 no 3 disahkan?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tahun> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/2013/3/menimbang> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 2013 no 6 bab 8?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2013/6/bab/0008> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 1986 no 5 pasal 81?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1986/5/pasal/0081> . }"
+    },
+    {
+      "question": "Siapa yang mengesahkan UU yang memiliki UU tahun 2014 no 32 pasal 18?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanOleh> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2014/32/pasal/0018> . }"
+    },
+    {
+      "question": "Kapan disahkan UU yang memiliki UU tahun 2018 no 9 bab 6?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanPada> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2018/9/bab/0006> . }"
+    },
+    {
+      "question": "Peraturan mana yang menghapus UU tahun 2004 no 31 pasal 95 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2004/31/pasal/0095/versi/20201102> . }"
+    },
+    {
+      "question": "UU mana yang memiliki bab dengan bagian UU tahun 2007 no 40 bab 4 bagian 1?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bab> ?hidden . ?hidden <https://example.org/lex2kg/ontology/bagian> <https://example.org/lex2kg/uu/2007/40/bab/0004/bagian/0001> . }"
+    },
+    {
+      "question": "Peraturan mana yang menghapus UU tahun 2009 no 10 pasal 16 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2009/10/pasal/0016/versi/20201102> . }"
+    },
+    {
+      "question": "Di mana disahkan UU yang memiliki UU tahun 1997 no 31 pasal 54?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanDi> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1997/31/pasal/0054> . }"
+    },
+    {
+      "question": "Kapan disahkan UU yang memiliki UU tahun 2007 no 13 bab 3?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanPada> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2007/13/bab/0003> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 2008 no 21 bab 13?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2008/21/bab/0013> . }"
+    },
+    {
+      "question": "Apa yang memiliki bagian dengan paragraf UU tahun 2012 no 12 bab 2 bagian 3 paragraf 3?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bagian> ?hidden . ?hidden <https://example.org/lex2kg/ontology/paragraf> <https://example.org/lex2kg/uu/2012/12/bab/0002/bagian/0003/paragraf/0003> . }"
+    },
+    {
+      "question": "Versi mana yang memiliki UU tahun 2007 no 28 pasal 2 versi 17 Juli 2007 ayat 7?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2007/28/pasal/0002/versi/20070717/ayat/0007> . }"
+    },
+    {
+      "question": "Apa yang diubah oleh UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0150/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 2008 no 56 bab 4?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2008/56/bab/0004> . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU tahun 2006 no 11 bab 34 daftar pasal?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2006/11/bab/0034/daftarPasal> <https://example.org/lex2kg/ontology/pasal> ?target . }"
+    },
+    {
+      "question": "Siapa yang mengesahkan UU yang mengingat bagian mengingat dari UU tahun 2008 no 24?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanOleh> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2008/24/mengingat> . }"
+    },
+    {
+      "question": "Apa saja bab dari UU tahun 2013 no 20?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2013/20> <https://example.org/lex2kg/ontology/bab> ?target . }"
+    },
+    {
+      "question": "Tanggal berapa dari UU yang memiliki UU tahun 1997 no 10 pasal 23 versi 10 April 1997 ayat 2?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tanggal> ?target . ?hidden <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/1997/10/pasal/0023/versi/19970410/ayat/0002> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 1999 no 53?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1999/53/mengingat> . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2007 no 19 bab 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2007/19/bab/0002> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Di mana disahkan UU yang memiliki UU tahun 2014 no 33 pasal 68?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanDi> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2014/33/pasal/0068> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 1987 no 4?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1987/4/mengingat> . }"
+    },
+    {
+      "question": "Versi mana yang memiliki UU tahun 2003 no 32 pasal 15 versi 18 Desember 2003 ayat 4?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2003/32/pasal/0015/versi/20031218/ayat/0004> . }"
+    },
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 1985 no 16 bab 10?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1985/16/bab/0010> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 1997 no 16?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1997/16> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 1992 no 11 bab 6?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1992/11/bab/0006> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Peraturan mana yang mengubah UU tahun 2014 no 7 pasal 24 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengubah> <https://example.org/lex2kg/uu/2014/7/pasal/0024/versi/20201102> . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU tahun 2020 no 11 bab 3 bagian 2 paragraf 4 daftar pasal?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/bab/0003/bagian/0002/paragraf/0004/daftarPasal> <https://example.org/lex2kg/ontology/pasal> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU tahun 1985 no 16?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1985/16> <https://example.org/lex2kg/ontology/menimbang> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 1997 no 22 pasal 42?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1997/22/pasal/0042> . }"
+    },
+    {
+      "question": "Apa saja bab dari UU yang menimbang bagian menimbang dari UU tahun 1993 no 4?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/bab> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/1993/4/menimbang> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 1995 no 6?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1995/6/mengingat> . }"
+    },
+    {
+      "question": "Apa saja versi dari UU tahun 1995 no 1 pasal 100?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1995/1/pasal/0100> <https://example.org/lex2kg/ontology/versi> ?target . }"
+    },
+    {
+      "question": "Peraturan mana yang menghapus UU tahun 2013 no 18 pasal 112 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2013/18/pasal/0112/versi/20201102> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 2009 no 49?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2009/49/mengingat> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 2010 no 1 pasal 1?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2010/1/pasal/0001> . }"
+    },
+    {
+      "question": "Apa yang dihapus oleh UU tahun 2020 no 11 pasal 20 versi 2 November 2020 huruf 10?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0020/versi/20201102/huruf/0010> <https://example.org/lex2kg/ontology/menghapus> ?target . }"
+    },
+    {
+      "question": "Apa yang disisipkan oleh UU tahun 2011 no 8 pasal 1 versi 20 Juli 2011 huruf 6?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2011/8/pasal/0001/versi/20110720/huruf/0006> <https://example.org/lex2kg/ontology/menyisipkan> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 1954 no 21?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/21> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 1983 no 7 pasal 4?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1983/7/pasal/0004> . }"
+    },
+    {
+      "question": "Apa yang memiliki daftar pasal UU tahun 1997 no 24 bab 12?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/daftarPasal> <https://example.org/lex2kg/uu/1997/24/bab/0012/daftarPasal> . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2011 no 24 bab 5?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2011/24/bab/0005> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2009 no 49?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2009/49> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Apa judul dari UU yang mengingat bagian mengingat dari UU tahun 1973 no 7?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tentang> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1973/7/mengingat> . }"
+    },
+    {
+      "question": "Peraturan mana yang menyisipkan UU tahun 2015 no 9 pasal 292A versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menyisipkan> <https://example.org/lex2kg/uu/2015/9/pasal/0292A/versi/20201102> . }"
+    },
+    {
+      "question": "Apa yang dihapus oleh UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 23?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0150/versi/20201102/huruf/0023> <https://example.org/lex2kg/ontology/menghapus> ?target . }"
+    },
+    {
+      "question": "Apa yang disisipkan oleh UU tahun 2020 no 11 pasal 56 versi 2 November 2020 huruf 5?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0056/versi/20201102/huruf/0005> <https://example.org/lex2kg/ontology/menyisipkan> ?target . }"
+    },
+    {
+      "question": "Apa saja versi dari UU tahun 2014 no 5 pasal 112?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2014/5/pasal/0112> <https://example.org/lex2kg/ontology/versi> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2008 no 7?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/7> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Apa yang memiliki daftar pasal dengan pasal UU tahun 2011 no 17 pasal 30?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/daftarPasal> ?hidden . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2011/17/pasal/0030> . }"
+    },
+    {
+      "question": "UU mana yang memiliki UU tahun 1983 no 7 pasal 2?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1983/7/pasal/0002> . }"
+    },
+    {
+      "question": "Peraturan mana yang menghapus UU tahun 2009 no 22 pasal 177 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2009/22/pasal/0177/versi/20201102> . }"
+    },
+    {
+      "question": "Apa daftar pasal dari UU yang memiliki UU tahun 2000 no 2 pasal 13?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/daftarPasal> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2000/2/pasal/0013> . }"
+    },
+    {
+      "question": "Peraturan mana yang menyisipkan UU tahun 2013 no 18 pasal 12A versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menyisipkan> <https://example.org/lex2kg/uu/2013/18/pasal/0012A/versi/20201102> . }"
+    },
+    {
+      "question": "Bab mana yang memiliki UU tahun 2011 no 17 bab 6 bagian 1?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/bagian> <https://example.org/lex2kg/uu/2011/17/bab/0006/bagian/0001> . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2008 no 18?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/18> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Di mana disahkan UU yang mengingat bagian mengingat dari UU tahun 2016 no 13?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanDi> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2016/13/mengingat> . }"
+    },
+    {
+      "question": "Apa saja ayat dari UU tahun 2009 no 4 pasal 67 versi 12 Januari 2009?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2009/4/pasal/0067/versi/20090112> <https://example.org/lex2kg/ontology/ayat> ?target . }"
+    },
+    {
+      "question": "Apa yang disisipkan oleh UU tahun 2020 no 11 pasal 176 versi 2 November 2020 huruf 6?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0176/versi/20201102/huruf/0006> <https://example.org/lex2kg/ontology/menyisipkan> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU yang memiliki UU tahun 2002 no 23 bab 2?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/mengingat> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2002/23/bab/0002> . }"
+    },
+    {
+      "question": "Apa saja pasal dari UU yang memiliki UU tahun 2009 no 31 bab 1?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/pasal> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2009/31/bab/0001> . }"
+    },
+    {
+      "question": "Di mana disahkan UU yang mengingat bagian mengingat dari UU tahun 1985 no 9?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanDi> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1985/9/mengingat> . }"
+    },
+    {
+      "question": "Apa yang dirujuk oleh UU tahun 2008 no 30 pasal 16 versi 21 Juli 2008 ayat 5?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2008/30/pasal/0016/versi/20080721/ayat/0005> <https://example.org/lex2kg/ontology/merujuk> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2003 no 36?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2003/36> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Apa saja bagian dari UU tahun 2019 no 17 bab 3?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2019/17/bab/0003> <https://example.org/lex2kg/ontology/bagian> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU yang memiliki UU tahun 1981 no 8 pasal 195?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/menimbang> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/1981/8/pasal/0195> . }"
+    },
+    {
+      "question": "Apa yang diubah oleh UU tahun 2020 no 11 pasal 51 versi 2 November 2020 huruf 24?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0051/versi/20201102/huruf/0024> <https://example.org/lex2kg/ontology/mengubah> ?target . }"
+    },
+    {
+      "question": "Apa yang dihapus oleh UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 50?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0081/versi/20201102/huruf/0050> <https://example.org/lex2kg/ontology/menghapus> ?target . }"
+    },
+    {
+      "question": "Apa yang diubah oleh UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 12?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0022/versi/20201102/huruf/0012> <https://example.org/lex2kg/ontology/mengubah> ?target . }"
+    },
+    {
+      "question": "Apa saja versi dari UU tahun 2011 no 22 pasal 28?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2011/22/pasal/0028> <https://example.org/lex2kg/ontology/versi> ?target . }"
+    },
+    {
+      "question": "Apa yang disisipkan oleh UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 18?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0150/versi/20201102/huruf/0018> <https://example.org/lex2kg/ontology/menyisipkan> ?target . }"
+    },
+    {
+      "question": "Apa yang diubah oleh UU tahun 2020 no 11 pasal 17 versi 2 November 2020 huruf 15?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0017/versi/20201102/huruf/0015> <https://example.org/lex2kg/ontology/mengubah> ?target . }"
+    },
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 2004 no 33 bab 10 bagian 5?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2004/33/bab/0010/bagian/0005> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Pada tahun berapa UU yang menimbang bagian menimbang dari UU tahun 2008 no 9 disahkan?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tahun> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/2008/9/menimbang> . }"
+    },
+    {
+      "question": "Pada tahun berapa UU yang memiliki UU tahun 2009 no 13 bab 8 disahkan?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tahun> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2009/13/bab/0008> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengingat bagian mengingat dari UU tahun 2013 no 16?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2013/16/mengingat> . }"
+    },
+    {
+      "question": "Peraturan mana yang mengubah UU tahun 1983 no 6 pasal 13 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/mengubah> <https://example.org/lex2kg/uu/1983/6/pasal/0013/versi/20201102> . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 2007 no 4?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2007/4> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Peraturan mana yang menimbang bagian menimbang dari UU tahun 2008 no 8?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/2008/8/menimbang> . }"
+    },
+    {
+      "question": "Apa yang diubah oleh UU tahun 2020 no 11 pasal 83 versi 2 November 2020 huruf 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2020/11/pasal/0083/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?target . }"
+    },
+    {
+      "question": "Apa saja paragraf dari UU tahun 2014 no 17 bab 5 bagian 10?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2014/17/bab/0005/bagian/0010> <https://example.org/lex2kg/ontology/paragraf> ?target . }"
+    },
+    {
+      "question": "Apa saja daftar pasal dari UU tahun 2017 no 3 bab 2?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2017/3/bab/0002> <https://example.org/lex2kg/ontology/daftarPasal> ?target . }"
+    },
+    {
+      "question": "Siapa yang mengesahkan UU yang mengingat bagian mengingat dari UU tahun 2012 no 15?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanOleh> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2012/15/mengingat> . }"
+    },
+    {
+      "question": "Apa saja versi dari UU tahun 2016 no 9 pasal 54?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2016/9/pasal/0054> <https://example.org/lex2kg/ontology/versi> ?target . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU yang memiliki UU tahun 2003 no 29 bab 6?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/menimbang> ?target . ?hidden <https://example.org/lex2kg/ontology/bab> <https://example.org/lex2kg/uu/2003/29/bab/0006> . }"
+    },
+    {
+      "question": "Pasal mana yang memiliki versi UU tahun 2008 no 18 pasal 36 versi 7 Mei 2008?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/versi> <https://example.org/lex2kg/uu/2008/18/pasal/0036/versi/20080507> . }"
+    },
+    {
+      "question": "Apa judul dari UU yang memiliki UU tahun 2011 no 5 pasal 30?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tentang> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2011/5/pasal/0030> . }"
+    },
+    {
+      "question": "Peraturan mana yang menyisipkan UU tahun 2009 no 30 pasal S51A versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menyisipkan> <https://example.org/lex2kg/uu/2009/30/pasal/0S51A/versi/20201102> . }"
+    },
+    {
+      "question": "Peraturan mana yang menghapus UU tahun 2009 no 30 pasal 20 versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2009/30/pasal/0020/versi/20201102> . }"
+    },
+    {
+      "question": "Apa yang menjadi dasar hukum dari UU tahun 1994 no 6?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1994/6> <https://example.org/lex2kg/ontology/mengingat> ?target . }"
+    },
+    {
+      "question": "Pada tahun berapa UU yang mengingat bagian mengingat dari UU tahun 1997 no 12 disahkan?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tahun> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/1997/12/mengingat> . }"
+    },
+    {
+      "question": "Apa judul dari UU yang memiliki UU tahun 2008 no 19 pasal 4?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/tentang> ?target . ?hidden <https://example.org/lex2kg/ontology/pasal> <https://example.org/lex2kg/uu/2008/19/pasal/0004> . }"
+    },
+    {
+      "question": "Versi mana yang memiliki UU tahun 2014 no 17 pasal 28 versi 5 Agustus 2014 ayat 2?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/ayat> <https://example.org/lex2kg/uu/2014/17/pasal/0028/versi/20140805/ayat/0002> . }"
+    },
+    {
+      "question": "Apa yang menjadi pertimbangan dari UU yang mengingat bagian mengingat dari UU tahun 2017 no 10?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/menimbang> ?target . ?hidden <https://example.org/lex2kg/ontology/mengingat> <https://example.org/lex2kg/uu/2017/10/mengingat> . }"
+    },
+    {
+      "question": "Apa saja ayat dari UU tahun 2009 no 25 pasal 47 versi 18 Juli 2009?",
+      "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/2009/25/pasal/0047/versi/20090718> <https://example.org/lex2kg/ontology/ayat> ?target . }"
+    },
+    {
+      "question": "Kapan disahkan UU yang menimbang bagian menimbang dari UU tahun 2003 no 16?",
+      "sparql": "SELECT ?target WHERE { ?hidden <https://example.org/lex2kg/ontology/disahkanPada> ?target . ?hidden <https://example.org/lex2kg/ontology/menimbang> <https://example.org/lex2kg/uu/2003/16/menimbang> . }"
+    },
+    {
+      "question": "Peraturan mana yang menyisipkan UU tahun 2007 no 40 pasal 153H versi 2 November 2020?",
+      "sparql": "SELECT ?target WHERE { ?target <https://example.org/lex2kg/ontology/menyisipkan> <https://example.org/lex2kg/uu/2007/40/pasal/0153H/versi/20201102> . }"
+    }
+  ]
