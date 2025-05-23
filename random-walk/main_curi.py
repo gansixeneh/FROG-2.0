@@ -94,103 +94,270 @@ def create_variable_name(entity, index, g):
     
     return var_name
 
-def score_entity_for_fixed_status(entity, g):
+def identify_query_structure(triples):
     """
-    Score an entity to determine if it should be kept fixed (not turned into a variable).
-    Higher scores indicate entities that should remain fixed.
+    Identify the structure of the query (path, tree, etc.) and nodes in sequence.
+    Returns the structure type and a list of nodes in sequential order if possible.
     """
-    score = 0
-    
-    if isinstance(entity, URIRef):
-        entity_str = str(entity)
+    if not triples:
+        return "empty", []
         
-        # Course names are valuable to keep fixed
-        if "course" in entity_str.lower() or g.value(entity, RDF.type) == URIRef("http://example.org/course"):
-            score += 10
-            
-            # Check if the course has a label
-            rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
-            labels = list(g.objects(entity, rdfs.label))
-            if labels:
-                score += 5  # Courses with labels are more valuable as fixed points
+    # For a single triple
+    if len(triples) == 1:
+        s, p, o = triples[0]
+        return "path", [s, o]
         
-        # Evaluation methods are less important to keep fixed
-        if "evaluation" in entity_str.lower() or g.value(entity, RDF.type) == URIRef("http://example.org/evaluation"):
-            score -= 3
+    # Try to identify a path structure
+    node_connections = {}
+    # Count connections for each node
+    for s, p, o in triples:
+        if s not in node_connections:
+            node_connections[s] = []
+        if o not in node_connections:
+            node_connections[o] = []
             
-        # Research groups might be interesting as variables
-        if "lab" in entity_str.lower() or "research" in entity_str.lower() or g.value(entity, RDF.type) == URIRef("http://example.org/research_lab"):
-            score -= 2
-            
-    elif isinstance(entity, Literal):
-        # Course codes are valuable to keep fixed
-        if re.match(r'^[A-Z]{4}\d+$', str(entity)):
-            score += 8
-        # Credit values might be interesting as variables
-        elif re.match(r'^\d+$', str(entity)) and int(str(entity)) <= 6:  # Credits are typically 1-6
-            score -= 2
-        # Longer text descriptions might be valuable as variables
-        elif len(str(entity)) > 20:
-            score -= 3
+        node_connections[s].append(o)
+        node_connections[o].append(s)
     
-    return score
+    # Find endpoints (nodes with only one connection)
+    endpoints = [node for node, connections in node_connections.items() 
+                 if len(set(connections)) == 1]
+    
+    # If we have exactly 2 endpoints, we might have a path
+    if len(endpoints) == 2:
+        # Try to reconstruct the path
+        path = [endpoints[0]]
+        current = endpoints[0]
+        
+        while len(path) < len(node_connections):
+            # Get connections for current node
+            connections = set(node_connections[current])
+            # Remove the previous node in the path (if any)
+            if len(path) > 1:
+                connections.discard(path[-2])
+                
+            # If there are no more connections or more than one, it's not a simple path
+            if len(connections) != 1:
+                return "complex", []
+                
+            # Add the next node to the path
+            next_node = list(connections)[0]
+            path.append(next_node)
+            current = next_node
+            
+            # If we reached the other endpoint, we're done
+            if current == endpoints[1]:
+                break
+        
+        # Verify that we've included all nodes
+        if set(path) == set(node_connections.keys()):
+            return "path", path
+    
+    # If not a path, categorize as "complex" for now
+    return "complex", []
 
-def get_related_triples_for_predicate(g, pred_name, subject, object_):
+def create_path_based_variable_mapping(g, path, num_variables):
     """
-    Get important related triples based on the predicate type.
-    Returns at most 2 additional triples to prevent exceeding property limits.
+    Create a strategic variable mapping based on the identified path structure.
+    Ensures that variables are chosen to create a coherent query without redundant triples.
     """
-    related_triples = []
-    ns1 = Namespace("http://example.org/")
+    if len(path) < num_variables:
+        # Can't have more variables than nodes
+        num_variables = len(path)
     
-    if pred_name == "has_prerequisite_course":
-        # For prerequisites, add course codes and credits of both the course and prerequisite
-        for entity in [subject, object_]:
-            code_triples = list(g.triples((entity, ns1.has_course_code, None)))
-            if code_triples and len(related_triples) < 2:
-                related_triples.append(code_triples[0])
-            credit_triples = list(g.triples((entity, ns1.has_credits, None)))
-            if credit_triples and len(related_triples) < 2:
-                related_triples.append(credit_triples[0])
-                
-    elif pred_name == "has_course_code":
-        # For course codes, add credits and course category
-        credit_triples = list(g.triples((subject, ns1.has_credits, None)))
-        if credit_triples:
-            related_triples.append(credit_triples[0])
-        category_triples = list(g.triples((subject, ns1.has_course_category, None)))
-        if category_triples and len(related_triples) < 2:
-            related_triples.append(category_triples[0])
+    # For paths, we want to select variables strategically
+    if len(path) == 2:  # 1-hop path (A-B)
+        # Choose either A or B to be the variable
+        entity_to_replace = random.choice(path)
+        return {entity_to_replace: create_variable_name(entity_to_replace, 0, g)}
+        
+    elif len(path) == 3:  # 2-hop path (A-B-C)
+        # Must have 2 variables - either A,B or B,C to avoid redundancy
+        if num_variables == 2:
+            if random.choice([True, False]):
+                # Choose A and B
+                return {
+                    path[0]: create_variable_name(path[0], 0, g),
+                    path[1]: create_variable_name(path[1], 1, g)
+                }
+            else:
+                # Choose B and C
+                return {
+                    path[1]: create_variable_name(path[1], 0, g),
+                    path[2]: create_variable_name(path[2], 1, g)
+                }
+        else:
+            # If we want only 1 variable (which might not be ideal), choose B
+            return {path[1]: create_variable_name(path[1], 0, g)}
             
-    elif pred_name == "has_credits":
-        # For credits, add course code and category
-        code_triples = list(g.triples((subject, ns1.has_course_code, None)))
-        if code_triples:
-            related_triples.append(code_triples[0])
-        category_triples = list(g.triples((subject, ns1.has_course_category, None)))
-        if category_triples and len(related_triples) < 2:
-            related_triples.append(category_triples[0])
-            
-    elif pred_name == "has_evaluation_method":
-        # For evaluation methods, add course code and credits
-        code_triples = list(g.triples((subject, ns1.has_course_code, None)))
-        if code_triples:
-            related_triples.append(code_triples[0])
-        credit_triples = list(g.triples((subject, ns1.has_credits, None)))
-        if credit_triples and len(related_triples) < 2:
-            related_triples.append(credit_triples[0])
-                
-    elif pred_name == "has_research_group":
-        # For research groups, add course code and credits
-        code_triples = list(g.triples((subject, ns1.has_course_code, None)))
-        if code_triples:
-            related_triples.append(code_triples[0])
-        credit_triples = list(g.triples((subject, ns1.has_credits, None)))
-        if credit_triples and len(related_triples) < 2:
-            related_triples.append(credit_triples[0])
+    elif len(path) == 4:  # 3-hop path (A-B-C-D)
+        if num_variables == 3:
+            # Choose 3 variables - either A,B,C or B,C,D
+            if random.choice([True, False]):
+                return {
+                    path[0]: create_variable_name(path[0], 0, g),
+                    path[1]: create_variable_name(path[1], 1, g),
+                    path[2]: create_variable_name(path[2], 2, g)
+                }
+            else:
+                return {
+                    path[1]: create_variable_name(path[1], 0, g),
+                    path[2]: create_variable_name(path[2], 1, g),
+                    path[3]: create_variable_name(path[3], 2, g)
+                }
+        elif num_variables == 2:
+            # Choose B and C to avoid redundancy
+            return {
+                path[1]: create_variable_name(path[1], 0, g),
+                path[2]: create_variable_name(path[2], 1, g)
+            }
     
-    # Return at most 2 triples to avoid exceeding pattern limits
-    return related_triples[:2]
+    # For more complex cases, select variables strategically
+    # Score entities based on their position and connectivity
+    scores = {}
+    for i, entity in enumerate(path):
+        # Entities in the middle of the path are more important
+        position_score = 1 - abs(i - (len(path)-1)/2) / (len(path)-1)
+        scores[entity] = position_score
+    
+    # Sort entities by score
+    sorted_entities = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    
+    # Select the top entities based on num_variables
+    mapping = {}
+    for i, (entity, _) in enumerate(sorted_entities[:num_variables]):
+        mapping[entity] = create_variable_name(entity, i, g)
+    
+    return mapping
+
+def find_next_entity_for_path(g, current_path, used_entities, max_path_length):
+    """
+    Find the next entity to extend the path, ensuring we're building a meaningful path structure.
+    Returns a tuple of (next_entity, connecting_predicate, is_subject) where is_subject indicates 
+    if the next entity is in subject position with respect to the last entity in the path.
+    """
+    if not current_path or len(current_path) >= max_path_length:
+        return None, None, None
+    
+    last_entity = current_path[-1]
+    
+    # Try to find outgoing connections (where last_entity is the subject)
+    outgoing_connections = []
+    for s, p, o in g.triples((last_entity, None, None)):
+        if o not in used_entities and o != last_entity and isinstance(o, URIRef):
+            # Avoid metadata predicates
+            if p not in [rdflib.RDFS.label, rdflib.RDFS.domain, rdflib.RDFS.range, 
+                         rdflib.RDFS.subPropertyOf, rdflib.RDF.type]:
+                outgoing_connections.append((o, p, True))
+    
+    # Try to find incoming connections (where last_entity is the object)
+    incoming_connections = []
+    for s, p, o in g.triples((None, None, last_entity)):
+        if s not in used_entities and s != last_entity and isinstance(s, URIRef):
+            # Avoid metadata predicates
+            if p not in [rdflib.RDFS.label, rdflib.RDFS.domain, rdflib.RDFS.range, 
+                         rdflib.RDFS.subPropertyOf, rdflib.RDF.type]:
+                incoming_connections.append((s, p, False))
+    
+    # Combine all possibilities
+    all_connections = outgoing_connections + incoming_connections
+    
+    if not all_connections:
+        return None, None, None
+    
+    # Select a connection with preference for building a meaningful path
+    # Score connections based on their properties
+    scored_connections = []
+    for entity, pred, is_subject in all_connections:
+        score = 0
+        
+        # Prefer connections that continue the topic of the path
+        predicate_name = str(pred).split('/')[-1]
+        if any(topic in predicate_name for topic in ['prerequisite', 'course', 'credits', 'evaluation']):
+            score += 5
+        
+        # Prefer entities that are courses if the path is about courses
+        if 'course' in str(entity).lower() or g.value(entity, RDF.type) == URIRef("http://example.org/course"):
+            score += 3
+        
+        scored_connections.append((entity, pred, is_subject, score))
+    
+    # Sort by score and use weighted random selection
+    scored_connections.sort(key=lambda x: x[3], reverse=True)
+    weights = [max(0.1, conn[3]) for conn in scored_connections]
+    total_weight = sum(weights)
+    weights = [w/total_weight for w in weights]
+    
+    selected_conn = random.choices(scored_connections, weights=weights, k=1)[0]
+    return selected_conn[0], selected_conn[1], selected_conn[2]
+
+def build_path_pattern(g, start_predicate, max_hops):
+    """
+    Build a coherent path pattern starting with a selected predicate.
+    Returns a tuple of (pattern, path_entities) where pattern is a list of triples
+    and path_entities is a list of entities in sequential order.
+    """
+    # Find all triples with this predicate
+    triples_with_predicate = list(g.triples((None, start_predicate, None)))
+    if not triples_with_predicate:
+        return [], []
+    
+    # Pick a random triple with this predicate
+    initial_triple = random.choice(triples_with_predicate)
+    subject, predicate, object_ = initial_triple
+    
+    # Initialize the pattern and path
+    pattern = [initial_triple]
+    
+    # Determine which direction to extend the path
+    if random.choice([True, False]) or not isinstance(subject, URIRef):
+        # Extend from object
+        path = [subject, object_]
+        current = object_
+    else:
+        # Extend from subject
+        path = [object_, subject]
+        current = subject
+    
+    used_entities = set(path)
+    
+    # Extend the path up to max_hops
+    while len(pattern) < max_hops:
+        next_entity, connecting_pred, is_subject = find_next_entity_for_path(
+            g, path, used_entities, max_hops + 1)
+        
+        if next_entity is None:
+            break
+        
+        # Add the new triple to the pattern
+        if is_subject:
+            pattern.append((current, connecting_pred, next_entity))
+            path.append(next_entity)
+        else:
+            pattern.append((next_entity, connecting_pred, current))
+            path = [next_entity] + path
+        
+        used_entities.add(next_entity)
+        current = next_entity
+    
+    return pattern, path
+
+def determine_optimal_variable_count(path_length):
+    """
+    Determine the optimal number of variables based on path length.
+    Following the improved logic:
+    - 1-hop: 1 variable
+    - 2-hop: 2 variables
+    - 3-hop: 2 or 3 variables
+    """
+    if path_length == 2:  # 1-hop (A-B)
+        return 1
+    elif path_length == 3:  # 2-hop (A-B-C)
+        return 2
+    elif path_length == 4:  # 3-hop (A-B-C-D)
+        return random.choice([2, 3])
+    else:
+        return min(path_length - 1, 3)  # Fallback
 
 def create_detailed_pattern_description(query_pattern, g, label_cache=None):
     """Create a detailed description of the pattern"""
@@ -298,28 +465,30 @@ def extract_variable_contents(g, variable_mapping, context_pattern):
     return variable_contents
 
 def generate_questions_for_predicate(g, pred_name, pattern_description, query_pattern, 
-                                     variable_mapping, variable_contents, gemini_api_key=None, query_complexity=None):
+                                     variable_mapping, variable_contents, gemini_api_key=None, query_complexity=None, selected_variable=None):
     """Generate questions based on the relationship type and query complexity"""
     # Extract metadata from pattern for templates
     entity_info = extract_entity_info_from_pattern(g, query_pattern, variable_mapping)
     
     # Try to generate with Gemini API if available
     if gemini_api_key:
-        template_info = f"Relationship type: {pred_name}\nPattern: {pattern_description}\nEntity info: {entity_info}\nVariable contents: {variable_contents}\nQuery complexity: {query_complexity}"
-        questions = generate_questions_with_gemini(template_info, gemini_api_key, variable_mapping, variable_contents, query_complexity, query_pattern)
+        # Add information about the selected variable to guide question generation
+        selected_var_info = f"\nSelected Variable: {selected_variable}" if selected_variable else ""
+        template_info = f"Relationship type: {pred_name}\nPattern: {pattern_description}\nEntity info: {entity_info}\nVariable contents: {variable_contents}\nQuery complexity: {query_complexity}{selected_var_info}"
+        questions = generate_questions_with_gemini(template_info, gemini_api_key, variable_mapping, variable_contents, query_complexity, query_pattern, selected_variable)
         if questions and questions.get("indonesian") and questions.get("english"):
             # Ensure no variable placeholders in questions
             for var_name in variable_mapping:
                 if var_name in questions["indonesian"] or var_name in questions["english"]:
                     # If variables still appear, try again with templates
-                    return generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity, query_pattern)
+                    return generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity, query_pattern, selected_variable)
             
             return questions
     
     # Fallback to templates if no API or API failed
-    return generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity, query_pattern)
+    return generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity, query_pattern, selected_variable)
 
-def generate_questions_with_gemini(pattern_text, api_key, variable_mapping, variable_contents, query_complexity=None, query_pattern=None):
+def generate_questions_with_gemini(pattern_text, api_key, variable_mapping, variable_contents, query_complexity=None, query_pattern=None, selected_variable=None):
     """Generate bilingual questions with improved prompting for specificity"""
     url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key={api_key}"
     
@@ -327,7 +496,10 @@ def generate_questions_with_gemini(pattern_text, api_key, variable_mapping, vari
     variable_context = "\n\nVARIABLE INFORMATION:\n"
     for var_name, content in variable_contents.items():
         short_content = content[:100] + "..." if len(content) > 100 else content
-        variable_context += f"{var_name} - content: {short_content}\n"
+        if var_name == selected_variable:
+            variable_context += f"{var_name} - content: {short_content} (THIS IS THE SELECTED VARIABLE FOR THE QUERY)\n"
+        else:
+            variable_context += f"{var_name} - content: {short_content}\n"
     
     # Add context about query complexity
     complexity_context = ""
@@ -344,24 +516,29 @@ def generate_questions_with_gemini(pattern_text, api_key, variable_mapping, vari
     query_context = ""
     if query_pattern:
         query_context = "\n\nQUERY PATTERN TYPE:"
-        # Analyze pattern to determine basic structure
-        subject_is_variable = False
-        object_is_variable = False
         
-        if len(query_pattern) > 0:
-            s, p, o = query_pattern[0]
-            subject_is_variable = isinstance(s, str) and s.startswith('?')
-            object_is_variable = isinstance(o, str) and o.startswith('?')
+        if selected_variable:
+            query_context += f"\nThis query is asking specifically about {selected_variable} in the context of the other variables."
+            query_context += f"\nThe question should focus on finding the value of {selected_variable} given the other constraints."
+        else:
+            # Analyze pattern to determine basic structure
+            subject_is_variable = False
+            object_is_variable = False
             
-            if subject_is_variable and not object_is_variable:
-                query_context += "\nThis query is asking for COURSES that have a specific property or relationship."
-                query_context += "\nExample: 'Which courses belong to the Study Program Elective Course category?'"
-            elif not subject_is_variable and object_is_variable:
-                query_context += "\nThis query is asking for PROPERTIES of a specific course."
-                query_context += "\nExample: 'What is the category of the Database course?'"
-            elif subject_is_variable and object_is_variable:
-                query_context += "\nThis query is asking for relationships between variables."
-                query_context += "\nExample: 'What courses have which prerequisites?'"
+            if len(query_pattern) > 0:
+                s, p, o = query_pattern[0]
+                subject_is_variable = isinstance(s, str) and s.startswith('?')
+                object_is_variable = isinstance(o, str) and o.startswith('?')
+                
+                if subject_is_variable and not object_is_variable:
+                    query_context += "\nThis query is asking for COURSES that have a specific property or relationship."
+                    query_context += "\nExample: 'Which courses belong to the Study Program Elective Course category?'"
+                elif not subject_is_variable and object_is_variable:
+                    query_context += "\nThis query is asking for PROPERTIES of a specific course."
+                    query_context += "\nExample: 'What is the category of the Database course?'"
+                elif subject_is_variable and object_is_variable:
+                    query_context += "\nThis query is asking for relationships between variables."
+                    query_context += "\nExample: 'What courses have which prerequisites?'"
     
     payload = {
         "contents": [
@@ -384,6 +561,7 @@ CRITICAL REQUIREMENTS FOR BOTH LANGUAGES:
 6. When asking for content represented by a variable, use natural phrasing like "apa" or "what"
 7. If query complexity is specified, make sure the question reflects that complexity (filters, counting, optional information)
 8. MOST IMPORTANT: Your question MUST align perfectly with the SPARQL query pattern. If the query asks for "What courses have category X", your question CANNOT ask "Does course Y have category X"
+9. If a specific variable is selected, the question should be focused on finding THAT variable's value
 
 Examples of GOOD questions:
 - "Berapa jumlah kredit untuk mata kuliah Advanced Programming dengan kode CSCM602223?"
@@ -450,7 +628,7 @@ Remember: BE SPECIFIC! Use the entity labels and information in the pattern and 
         print(f"Error calling Gemini API: {e}")
         return None
 
-def generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity=None):
+def generate_questions_from_templates(pred_name, entity_info, variable_contents, query_complexity=None, query_pattern=None, selected_variable=None):
     """Generate questions using templates based on the predicate type"""
     # Define templates by predicate type
     templates = {
@@ -556,7 +734,7 @@ def generate_questions_from_templates(pred_name, entity_info, variable_contents,
         
         return {
             "indonesian": id_question,
-            "english": en_question
+            "english": english_question
         }
     except KeyError as e:
         # If template has placeholders we can't fill, use fallback
@@ -565,166 +743,11 @@ def generate_questions_from_templates(pred_name, entity_info, variable_contents,
             "english": f"What information exists about the {entity_info.get('entity_label', '')} course?"
         }
 
-def get_meaningful_pattern_expansions(g, context_pattern, entities_in_context, num_additional_properties):
-    """
-    Get meaningful expansions to the context pattern that create interesting query patterns.
-    This function prioritizes different types of meaningful expansions:
-    1. Joins - connecting entities through multiple relationships
-    2. Filters - adding properties that can act as filters
-    3. Paths - finding longer paths between entities
-    4. Comparisons - finding entities that can be compared
-    """
-    ns1 = Namespace("http://example.org/")
-    expansion_candidates = []
-    
-    # Look for each expansion type
-    for entity in entities_in_context:
-        # Find all potential triples involving this entity
-        potential_triples = []
-        for s, p, o in g.triples((entity, None, None)):
-            if (s, p, o) not in context_pattern:
-                potential_triples.append(((s, p, o), "outgoing"))
-                
-        for s, p, o in g.triples((None, None, entity)):
-            if (s, p, o) not in context_pattern:
-                potential_triples.append(((s, p, o), "incoming"))
-                
-        if not potential_triples:
-            continue
-            
-        # Score and categorize each expansion
-        for triple_data in potential_triples:
-            triple, direction = triple_data
-            s, p, o = triple
-            
-            # Skip metadata predicates
-            if p in [rdflib.RDFS.label, rdflib.RDFS.domain, rdflib.RDFS.range, rdflib.RDFS.subPropertyOf, rdflib.RDF.type]:
-                continue
-                
-            # Determine the type of expansion
-            expansion_type = "basic"
-            score = 1
-            
-            # Check if it's forming a join
-            other_entity = o if direction == "outgoing" else s
-            if isinstance(other_entity, URIRef) and any(
-                (other_entity == s or other_entity == o) 
-                for s, p, o in context_pattern if (other_entity != entity)
-            ):
-                expansion_type = "join"
-                score = 10
-                
-            # Check if it's creating a path
-            elif isinstance(other_entity, URIRef) and len(context_pattern) >= 2:
-                path_potential = any(
-                    (x == entity and z == other_entity) or (z == entity and x == other_entity)
-                    for x, y, z in context_pattern
-                )
-                if path_potential:
-                    expansion_type = "path"
-                    score = 8
-                    
-            # Check if it's creating a filter condition
-            elif (p == ns1.has_course_category or 
-                  p == ns1.has_credits or 
-                  p == ns1.has_evaluation_method or
-                  p == ns1.has_research_group):
-                expansion_type = "filter"
-                score = 6
-                
-            # Check if it's connecting to a similar type of entity 
-            # (good for comparisons)
-            elif isinstance(other_entity, URIRef):
-                same_type = False
-                entity_type = g.value(entity, rdflib.RDF.type)
-                other_type = g.value(other_entity, rdflib.RDF.type)
-                if entity_type and other_type and entity_type == other_type:
-                    expansion_type = "comparison"
-                    score = 7
-            
-            expansion_candidates.append((triple, expansion_type, score))
-    
-    # Sort by score descending
-    expansion_candidates.sort(key=lambda x: x[2], reverse=True)
-    
-    # Take the top candidates up to the number needed
-    selected_expansions = []
-    for i in range(min(len(expansion_candidates), num_additional_properties)):
-        selected_expansions.append(expansion_candidates[i][0])
-        
-    return selected_expansions
-
-def create_strategic_variable_mapping(g, context_pattern, num_variables):
-    """
-    Create a strategic variable mapping to make interesting query patterns.
-    This assigns variables in ways that create more complex and meaningful queries.
-    """
-    # Get all elements that could be variables
-    all_elements = []
-    element_usage_count = {}
-    
-    for s, p, o in context_pattern:
-        if isinstance(s, (URIRef, Literal)):
-            all_elements.append(s)
-            element_usage_count[s] = element_usage_count.get(s, 0) + 1
-        if isinstance(o, (URIRef, Literal)):
-            all_elements.append(o)
-            element_usage_count[o] = element_usage_count.get(o, 0) + 1
-    
-    # Remove duplicates
-    all_elements = list(set(all_elements))
-    
-    # Different strategies for variable assignment
-    strategies = [
-        # Strategy 1: Make variables at join points (entities that appear multiple times)
-        lambda x: (element_usage_count.get(x, 0) > 1, element_usage_count.get(x, 0)),
-        
-        # Strategy 2: Make literals variables, especially numeric ones
-        lambda x: (isinstance(x, Literal) and re.match(r'^\d+$', str(x)), 1),
-        
-        # Strategy 3: Select entities based on type
-        lambda x: (isinstance(x, URIRef) and g.value(x, rdflib.RDF.type) == URIRef("http://example.org/course"), 1),
-        
-        # Strategy 4: Based on fixed/variable scoring as before
-        lambda x: (True, score_entity_for_fixed_status(x, g))
-    ]
-    
-    # Choose a random strategy with weighted probabilities
-    # Strategies earlier in the list have higher probability
-    strategy_weights = [0.4, 0.3, 0.2, 0.1]
-    strategy_index = random.choices(range(len(strategies)), weights=strategy_weights, k=1)[0]
-    chosen_strategy = strategies[strategy_index]
-    
-    # Score elements using the chosen strategy
-    all_elements_with_scores = []
-    for elem in all_elements:
-        matches, score = chosen_strategy(elem)
-        if matches:
-            all_elements_with_scores.append((elem, -score))  # Negative to reverse sort order
-        else:
-            all_elements_with_scores.append((elem, 9999))  # High score = less likely to be a variable
-    
-    # Sort by score
-    all_elements_with_scores.sort(key=lambda x: x[1])
-    
-    # Select elements to make into variables
-    if len(all_elements_with_scores) < num_variables:
-        num_variables = len(all_elements_with_scores)
-        
-    elements_to_replace = [e for e, _ in all_elements_with_scores[:num_variables]]
-    
-    # Create mapping from elements to variables with meaningful names
-    variable_mapping = {}
-    for i, elem in enumerate(elements_to_replace):
-        var_name = create_variable_name(elem, i, g)
-        variable_mapping[elem] = var_name
-    
-    return variable_mapping
-
 def generate_complex_sparql_query(query_pattern, query_complexity=None):
     """
     Generate a more complex SPARQL query based on the pattern.
     Depending on the complexity level, adds filters, aggregations, etc.
+    MODIFIED: Only select one variable in the SELECT clause
     """
     # Get variables used in the pattern
     variables = set()
@@ -733,6 +756,14 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
             variables.add(s)
         if isinstance(o, str) and o.startswith('?'):
             variables.add(o)
+    
+    if not variables:
+        # If no variables, return a basic query format
+        query = "SELECT * WHERE { " + " ".join([f"{s} {p} {o} ." for s, p, o in query_pattern]) + " }"
+        return query, "basic"
+    
+    # Select only one variable for the SELECT clause
+    selected_variable = random.choice(list(variables))
     
     # If no complexity specified, choose based on pattern
     if query_complexity is None:
@@ -763,8 +794,8 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
             filter_value = random.randint(1, 5)  # Common value range for credits
             filter_op = random.choice([">", ">=", "<", "<=", "="])
             
-            # Build the query
-            select_clause = "SELECT " + " ".join(sorted(variables)) + " WHERE {"
+            # Build the query with only the selected variable
+            select_clause = f"SELECT {selected_variable} WHERE {{"
             where_clauses = []
             for s, p, o in query_pattern:
                 s_str = format_term_for_sparql(s)
@@ -774,38 +805,21 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
             
             filter_clause = f"FILTER({filter_var} {filter_op} {filter_value})"
             query = select_clause + " " + " ".join(where_clauses) + " " + filter_clause + " }"
-            return query, query_complexity
+            return query, query_complexity, selected_variable
     
-    elif query_complexity == "count" and variables:
+    elif query_complexity == "count":
         # Generate a COUNT query
-        count_var = random.choice(list(variables))
-        other_vars = [v for v in variables if v != count_var]
+        # With count, we're counting instances of the selected variable
+        select_clause = f"SELECT (COUNT({selected_variable}) AS ?count) WHERE {{"
+        where_clauses = []
+        for s, p, o in query_pattern:
+            s_str = format_term_for_sparql(s)
+            p_str = format_term_for_sparql(p)
+            o_str = format_term_for_sparql(o)
+            where_clauses.append(f"{s_str} {p_str} {o_str} .")
         
-        if other_vars:
-            # Count with GROUP BY
-            group_var = random.choice(other_vars)
-            select_clause = f"SELECT {group_var} (COUNT({count_var}) AS ?count) WHERE {{"
-            where_clauses = []
-            for s, p, o in query_pattern:
-                s_str = format_term_for_sparql(s)
-                p_str = format_term_for_sparql(p)
-                o_str = format_term_for_sparql(o)
-                where_clauses.append(f"{s_str} {p_str} {o_str} .")
-            
-            query = select_clause + " " + " ".join(where_clauses) + f" }} GROUP BY {group_var}"
-            return query, query_complexity
-        else:
-            # Simple count
-            select_clause = f"SELECT (COUNT({count_var}) AS ?count) WHERE {{"
-            where_clauses = []
-            for s, p, o in query_pattern:
-                s_str = format_term_for_sparql(s)
-                p_str = format_term_for_sparql(p)
-                o_str = format_term_for_sparql(o)
-                where_clauses.append(f"{s_str} {p_str} {o_str} .")
-            
-            query = select_clause + " " + " ".join(where_clauses) + " }"
-            return query, query_complexity
+        query = select_clause + " " + " ".join(where_clauses) + " }"
+        return query, query_complexity, "?count"  # Return ?count as the selected variable for count queries
     
     elif query_complexity == "optional" and len(query_pattern) >= 2:
         # Generate a query with an OPTIONAL clause
@@ -814,8 +828,8 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
         main_pattern = query_pattern[:optional_start]
         optional_pattern = query_pattern[optional_start:]
         
-        # Build the query
-        select_clause = "SELECT " + " ".join(sorted(variables)) + " WHERE {"
+        # Build the query with only the selected variable
+        select_clause = f"SELECT {selected_variable} WHERE {{"
         
         # Main pattern
         main_clauses = []
@@ -835,10 +849,10 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
         
         optional_part = "OPTIONAL { " + " ".join(optional_clauses) + " }"
         query = select_clause + " " + " ".join(main_clauses) + " " + optional_part + " }"
-        return query, query_complexity
+        return query, query_complexity, selected_variable
     
-    # Default to basic query
-    select_clause = "SELECT " + " ".join(sorted(variables)) + " WHERE {"
+    # Default to basic query with only the selected variable
+    select_clause = f"SELECT {selected_variable} WHERE {{"
     where_clauses = []
     for s, p, o in query_pattern:
         s_str = format_term_for_sparql(s)
@@ -847,7 +861,7 @@ def generate_complex_sparql_query(query_pattern, query_complexity=None):
         where_clauses.append(f"{s_str} {p_str} {o_str} .")
     
     query = select_clause + " " + " ".join(where_clauses) + " }"
-    return query, "basic"
+    return query, "basic", selected_variable
 
 def format_term_for_sparql(term):
     """
@@ -900,14 +914,16 @@ def generate_statistics(dataset):
     
     return stats
 
-def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=3, gemini_api_key=None):
+def generate_improved_dataset(ttl_file, num_samples, max_hops=3, gemini_api_key=None):
     """
-    Generate a dataset of question-SPARQL pairs from a TTL file using the edge-first approach:
+    Generate a dataset of question-SPARQL pairs from a TTL file using the improved approach:
     1. Pick a random relationship type (edge) from the knowledge graph
-    2. Find a triple using this relationship 
-    3. Expand the context with up to max_properties-1 additional properties in a way that creates
-       meaningful query patterns (joins, paths, filters)
-    4. Set variables strategically to create interesting query patterns
+    2. Build a coherent path pattern with 1-3 hops
+    3. Set variables strategically based on the path length:
+       - 1-hop: 1 variable
+       - 2-hop: 2 variables
+       - 3-hop: 2-3 variables
+    4. Select only one variable for the SELECT clause
     5. Generate natural language questions based on the pattern
     """
     # Load the TTL file
@@ -946,105 +962,50 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=3
         weights = [1 / (predicate_usage[p] + 1) for p in filtered_predicates]
         selected_predicate = random.choices(filtered_predicates, weights=weights, k=1)[0]
         
-        # Step a: Determine the actual number of properties to use (1 to max_properties)
-        num_properties = random.randint(1, max_properties)
+        # Step 2: Determine the number of hops for this sample (1-3)
+        num_hops = random.randint(1, max_hops)
         
-        # Step 2: Find all triples with this predicate
-        triples_with_predicate = list(g.triples((None, selected_predicate, None)))
-        if not triples_with_predicate:
-            print(f"  No triples found for predicate {selected_predicate}")
+        # Step 3: Build a coherent path pattern
+        pattern, path = build_path_pattern(g, selected_predicate, num_hops)
+        
+        if not pattern or len(path) < 2:
+            print(f"  Failed to build a valid path pattern")
             continue
         
-        # Step 3: Pick a random triple with this predicate
-        random_triple = random.choice(triples_with_predicate)
-        subject, predicate, object_ = random_triple
+        # Step 4: Determine the optimal number of variables based on path length
+        num_variables = determine_optimal_variable_count(len(path))
         
-        # Get the predicate name for relationship-specific processing
-        pred_name = str(predicate).split('/')[-1]
-        print(f"  Selected predicate: {pred_name}")
+        # Step 5: Create strategic variable mapping based on the path
+        variable_mapping = create_path_based_variable_mapping(g, path, num_variables)
         
-        # Step 4: Build a context pattern starting with this triple
-        context_pattern = [random_triple]
-        entities_in_context = []
-        
-        # Add subject and object to entities list if they're URIRefs
-        if isinstance(subject, URIRef):
-            entities_in_context.append(subject)
-        if isinstance(object_, URIRef):
-            entities_in_context.append(object_)
-            
-        # Track number of properties
-        counter_p = 1  # Start with 1 for the initial triple
-        
-        # Step 5: Add relationship-specific context - but respect the property limit
-        related_triples = get_related_triples_for_predicate(g, pred_name, subject, object_)
-        # Only add as many related triples as we can without exceeding num_properties
-        for triple in related_triples:
-            if triple not in context_pattern and counter_p < num_properties:
-                context_pattern.append(triple)
-                counter_p += 1
-                s, p, o = triple
-                if isinstance(s, URIRef) and s not in entities_in_context:
-                    entities_in_context.append(s)
-                if isinstance(o, URIRef) and o not in entities_in_context:
-                    entities_in_context.append(o)
-            
-            # Stop adding if we've reached the limit
-            if counter_p >= num_properties:
-                break
-        
-        # Step 6: Continue expansion using meaningful patterns
-        if counter_p < num_properties and entities_in_context:
-            additional_properties_needed = num_properties - counter_p
-            meaningful_expansions = get_meaningful_pattern_expansions(
-                g, context_pattern, entities_in_context, additional_properties_needed)
-            
-            for triple in meaningful_expansions:
-                if triple not in context_pattern and counter_p < num_properties:
-                    context_pattern.append(triple)
-                    counter_p += 1
-                    
-                    # Add new entities to context
-                    s, p, o = triple
-                    if isinstance(s, URIRef) and s not in entities_in_context:
-                        entities_in_context.append(s)
-                    if isinstance(o, URIRef) and o not in entities_in_context:
-                        entities_in_context.append(o)
-                        
-                # Stop if we've reached the limit
-                if counter_p >= num_properties:
-                    break
-        
-        # If we couldn't find enough properties, skip this sample
-        if counter_p < 1:
-            print(f"  Skipping sample - couldn't find enough properties")
+        if not variable_mapping:
+            print(f"  Failed to create variable mapping")
             continue
         
-        # Step 7: Set variables strategically to create interesting patterns
-        num_variables = min(max(1, counter_p - 1), 3)  # Ensure between 1 and 3 variables
-        variable_mapping = create_strategic_variable_mapping(g, context_pattern, num_variables)
-        num_variables = len(variable_mapping)  # Update actual number of variables created
-        
-        # Replace elements with variables in context pattern
+        # Step 6: Replace elements with variables in pattern
         query_pattern = []
-        for s, p, o in context_pattern:
+        for s, p, o in pattern:
             new_s = variable_mapping.get(s, s)
             new_o = variable_mapping.get(o, o)
             query_pattern.append((new_s, p, new_o))
         
-        # Extract contents for variables to provide better context for question generation
-        variable_contents = extract_variable_contents(g, variable_mapping, context_pattern)
+        # Step 7: Extract contents for variables to provide better context
+        variable_contents = extract_variable_contents(g, variable_mapping, pattern)
         
-        # Create pattern description with human-readable labels
+        # Step 8: Create pattern description with human-readable labels
         pattern_description = create_detailed_pattern_description(query_pattern, g)
         
-        # Generate SPARQL query with complexity appropriate to the pattern
-        sparql_query, query_complexity = generate_complex_sparql_query(query_pattern)
+        # Step 9: Get the predicate name for relationship-specific processing
+        pred_name = str(selected_predicate).split('/')[-1]
         
-        # Generate questions based on relationship type and query complexity
+        # Step 10: Generate SPARQL query with complexity appropriate to the pattern
+        # This now returns the selected variable as well
+        sparql_query, query_complexity, selected_variable = generate_complex_sparql_query(query_pattern)
+        
+        # Step 11: Generate questions based on relationship type, query complexity, and selected variable
         questions = generate_questions_for_predicate(
             g, pred_name, pattern_description, query_pattern, 
-            variable_mapping, variable_contents, gemini_api_key, query_complexity)
+            variable_mapping, variable_contents, gemini_api_key, query_complexity, selected_variable)
         
         # Add to dataset
         dataset.append({
@@ -1052,9 +1013,10 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=3
             "englishQuestion": questions["english"],
             "sparql": sparql_query,
             "relation_type": pred_name,
-            "num_properties": counter_p,
-            "num_variables": num_variables,
-            "query_complexity": query_complexity
+            "num_properties": len(pattern),
+            "num_variables": len(variable_mapping),
+            "query_complexity": query_complexity,
+            "selected_variable": selected_variable
         })
         
         # Update usage count for this predicate
@@ -1065,6 +1027,8 @@ def generate_dataset_from_ttl_edge_first(ttl_file, num_samples, max_properties=3
         print(f"  Successfully generated sample {samples_generated}/{num_samples}")
         print(f"  Indonesian: {questions['indonesian']}")
         print(f"  English: {questions['english']}")
+        print(f"  Path length: {len(path)}, Properties: {len(pattern)}, Variables: {len(variable_mapping)}")
+        print(f"  Selected variable: {selected_variable}")
     
     if samples_generated < num_samples:
         print(f"Warning: Could only generate {samples_generated} samples after {max_attempts} attempts")
@@ -1079,14 +1043,14 @@ if __name__ == "__main__":
     # Number of samples to generate
     num_samples = 15
     
-    # Maximum number of properties per pattern (max 3 hops)
-    max_properties = 3
+    # Maximum number of hops per pattern
+    max_hops = 3
     
-    # Generate the dataset using edge-first approach
-    dataset = generate_dataset_from_ttl_edge_first(
+    # Generate the dataset using improved approach
+    dataset = generate_improved_dataset(
         'final_result.ttl', 
         num_samples, 
-        max_properties,
+        max_hops,
         gemini_api_key
     )
     
@@ -1114,7 +1078,7 @@ if __name__ == "__main__":
         print(f"  {complexity}: {occurrences} samples ({occurrences/stats['total_samples']*100:.1f}%)")
     
     # Save the dataset to a JSON file
-    with open('question_sparql_pairs_course_kg.json', 'w', encoding='utf-8') as f:
+    with open('question_sparql_pairs_improved.json', 'w', encoding='utf-8') as f:
         json.dump(dataset, f, indent=2, ensure_ascii=False)
     
-    print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs_course_kg.json")
+    print(f"\nGenerated {len(dataset)} question-SPARQL pairs and saved to question_sparql_pairs_improved.json")

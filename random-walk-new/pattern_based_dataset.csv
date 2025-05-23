@@ -1,148 +1,140 @@
 id,sparql,pattern_type,complexity
-q1,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:data_structures_and_algorithms . },2_prop_branching_v4,intermediate
-q2,SELECT ?target WHERE { ns1:game_development ns1:has_research_group ?target . },1_prop_object_target,basic
-q3,SELECT ?target WHERE { ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q4,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ns1:data_structures_and_algorithms ns1:has_prerequisite_course ?hidden . },2_prop_branching_v2,intermediate
-q5,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q6,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:laboratory_assignment . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
-q7,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_computer_organization . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:has_credits ?target . },3_prop_star_v1,advanced
-q8,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:group_project . },2_prop_branching_v4,intermediate
-q9,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:calculus_2 . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
-q10,SELECT ?target WHERE { ns1:knowledge_graph ns1:has_research_group ?target . },1_prop_object_target,basic
-q11,SELECT ?target WHERE { ns1:advanced_programming ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q12,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ns1:operating_system ns1:has_prerequisite_course ?hidden . },2_prop_branching_v2,intermediate
-q13,SELECT ?target WHERE { ns1:natural_language_processing ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q14,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
-q15,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q16,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_research_group ?target . },3_prop_star_v1,advanced
-q17,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . },2_prop_branching_v4,intermediate
-q18,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . },1_prop_subject_target,basic
-q19,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . },2_prop_branching_v4,intermediate
-q20,SELECT ?target WHERE { ns1:natural_language_processing ns1:has_course_category ?target . },1_prop_object_target,basic
-q21,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:range ns1:course . },2_prop_branching_v4,intermediate
-q22,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . ?target ns1:has_course_category ns1:study_program_mandatory_course . },2_prop_middle_target_v4,intermediate
-q23,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_course_code ?hidden2 . ?hidden ns1:has_minimum_credits ?target . },3_prop_star_v1,advanced
-q24,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . },2_prop_branching_v4,intermediate
-q25,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
-q26,SELECT ?target WHERE { ns1:calculus_2 ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v2,advanced
-q27,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:project . },1_prop_subject_target,basic
-q28,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:calculus_2 . ?hidden ns1:has_research_group ?hidden2 . ?hidden ns1:has_credits ?target . },3_prop_star_v1,advanced
-q29,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_discussiontask . },1_prop_subject_target,basic
-q30,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:demo . },2_prop_branching_v4,intermediate
-q31,SELECT ?target WHERE { ns1:has_credits rdfs:domain ?hidden . ?target rdfs:range ?hidden . ?target rdfs:subPropertyOf ns1:has_prerequisite . },3_prop_linear_middle_v3,advanced
-q32,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:calculus_1 . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q33,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q34,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . },2_prop_branching_v4,intermediate
-q35,SELECT ?target WHERE { ?target rdfs:range ns1:course_category . },1_prop_subject_target,basic
-q36,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
-q37,SELECT ?target WHERE { ?hidden rdfs:domain ?target . ?hidden rdfs:subPropertyOf ns1:has_prerequisite . },2_prop_branching_v4,intermediate
-q38,SELECT ?target WHERE { ns1:data_structures_and_algorithms ns1:has_course_category ?target . },1_prop_object_target,basic
-q39,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_course_category ?target . },3_prop_star_v1,advanced
-q40,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:demo . },2_prop_branching_v4,intermediate
-q41,SELECT ?target WHERE { ?hidden rdfs:range ?target . ?hidden rdfs:domain ns1:course . },2_prop_branching_v4,intermediate
-q42,SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . },1_prop_object_target,basic
-q43,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_minimum_credits ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q44,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:group_project . },2_prop_branching_v1,intermediate
-q45,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:has_course_code ?hidden2 . ?hidden ns1:has_credits ?target . },3_prop_star_v1,advanced
-q46,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:group_project . },2_prop_branching_v4,intermediate
-q47,SELECT ?target WHERE { ns1:computer_vision ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q48,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:project_assignment . },2_prop_branching_v4,intermediate
-q49,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . },2_prop_branching_v1,intermediate
-q50,SELECT ?target WHERE { ns1:integrated_personality_development_skills ns1:has_course_category ?target . },1_prop_object_target,basic
-q51,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_minimum_credits ?target . },3_prop_star_v1,advanced
-q52,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:practicum . },2_prop_branching_v4,intermediate
-q53,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . },2_prop_branching_v4,intermediate
-q54,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q55,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:advanced_programming . },1_prop_subject_target,basic
-q56,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:domain ns1:course . },2_prop_branching_v4,intermediate
+q1,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
+q2,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q3,SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . },1_prop_subject_target,basic
+q4,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
+q5,SELECT ?target WHERE { ?target rdfs:range ns1:course_category . },1_prop_subject_target,basic
+q6,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
+q7,SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?hidden . ?target rdfs:range ?hidden . ?target rdfs:subPropertyOf ns1:has_prerequisite . },3_prop_linear_middle_v3,advanced
+q8,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ns1:statistics_and_probability ns1:has_prerequisite_course ?hidden . },2_prop_branching_v2,intermediate
+q9,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . },2_prop_branching_v4,intermediate
+q10,SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . },1_prop_subject_target,basic
+q11,SELECT ?target WHERE { ns1:computational_geometry ns1:has_course_category ?target . },1_prop_object_target,basic
+q12,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . },1_prop_subject_target,basic
+q13,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:range ?target . },1_prop_object_target,basic
+q14,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_course_category ?target . },3_prop_star_v1,advanced
+q15,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_minimum_credits ?target . },3_prop_star_v1,advanced
+q16,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:domain ?target . },1_prop_object_target,basic
+q17,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
+q18,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:project . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . },3_prop_star_v1,advanced
+q19,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:range ?target . },1_prop_object_target,basic
+q20,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:group_project . },2_prop_branching_v1,intermediate
+q21,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ns1:statistics_and_probability ns1:has_prerequisite_course ?hidden . },2_prop_branching_v2,intermediate
+q22,SELECT ?target WHERE { ns1:discrete_mathematics_2 ns1:has_course_category ?target . },1_prop_object_target,basic
+q23,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . },1_prop_subject_target,basic
+q24,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . },2_prop_branching_v4,intermediate
+q25,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . },1_prop_subject_target,basic
+q26,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . },2_prop_branching_v4,intermediate
+q27,SELECT ?target WHERE { ns1:computational_geometry ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
+q28,SELECT ?target WHERE { ?target rdfs:range ns1:course_category . },1_prop_subject_target,basic
+q29,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
+q30,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . },2_prop_branching_v4,intermediate
+q31,SELECT ?target WHERE { ns1:has_evaluation_method rdfs:domain ?target . },1_prop_object_target,basic
+q32,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:range ?target . },1_prop_object_target,basic
+q33,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . },2_prop_branching_v4,intermediate
+q34,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q35,SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_evaluation_method ?target . },1_prop_object_target,basic
+q36,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . },2_prop_branching_v4,intermediate
+q37,SELECT ?target WHERE { ?target rdfs:range ns1:course . },1_prop_subject_target,basic
+q38,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . },1_prop_subject_target,basic
+q39,SELECT ?target WHERE { ns1:advanced_database ns1:has_course_category ?target . },1_prop_object_target,basic
+q40,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:project_assignment . },2_prop_branching_v4,intermediate
+q41,SELECT ?target WHERE { ns1:integrated_personality_development_skills ns1:has_evaluation_method ?target . },1_prop_object_target,basic
+q42,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
+q43,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . },2_prop_branching_v4,intermediate
+q44,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . },2_prop_branching_v4,intermediate
+q45,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . },2_prop_branching_v4,intermediate
+q46,SELECT ?target WHERE { ns1:computer_network ns1:has_evaluation_method ?target . },1_prop_object_target,basic
+q47,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . },2_prop_branching_v4,intermediate
+q48,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:linear_algebra . },2_prop_branching_v4,intermediate
+q49,SELECT ?target WHERE { ?target rdfs:range xsd:integer . },1_prop_subject_target,basic
+q50,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:lab_assignment . },2_prop_branching_v4,intermediate
+q51,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . },1_prop_subject_target,basic
+q52,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:has_research_group ?target . },3_prop_star_v1,advanced
+q53,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . },2_prop_branching_v4,intermediate
+q54,SELECT ?target WHERE { ns1:has_research_group rdfs:range ?target . },1_prop_object_target,basic
+q55,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . },2_prop_branching_v4,intermediate
+q56,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . },2_prop_branching_v4,intermediate
 q57,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
-q58,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:task . },2_prop_branching_v4,intermediate
-q59,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_computer_organization . ?hidden ns1:has_research_group ?hidden2 . ?hidden ns1:has_evaluation_method ?target . },3_prop_star_v1,advanced
-q60,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . },2_prop_branching_v4,intermediate
-q61,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:domain ns1:course . },2_prop_branching_v4,intermediate
-q62,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
-q63,SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?target . },1_prop_object_target,basic
-q64,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:capture_the_flag . },1_prop_subject_target,basic
-q65,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:software_engineering . },1_prop_subject_target,basic
-q66,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . },2_prop_branching_v4,intermediate
-q67,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
-q68,SELECT ?target WHERE { ns1:religion ns1:has_course_category ?target . },1_prop_object_target,basic
-q69,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . },3_prop_star_v1,advanced
-q70,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:range ?target . },1_prop_object_target,basic
-q71,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:platform_based_programming . },1_prop_subject_target,basic
-q72,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:range xsd:integer . },2_prop_branching_v4,intermediate
-q73,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q74,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_projects_and_demos . },1_prop_subject_target,basic
-q75,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:programming_basics_2 . },2_prop_branching_v4,intermediate
-q76,SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q77,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . ?hidden ns1:has_course_code ?hidden2 . ?hidden ns1:has_research_group ?target . },3_prop_star_v1,advanced
-q78,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q79,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . },2_prop_branching_v4,intermediate
-q80,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . },2_prop_branching_v4,intermediate
-q81,SELECT ?target WHERE { ?target rdfs:range xsd:integer . },1_prop_subject_target,basic
-q82,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
-q83,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . },2_prop_branching_v4,intermediate
-q84,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_course_category ns1:study_program_mandatory_course . },2_prop_branching_v4,intermediate
-q85,SELECT ?target WHERE { ?hidden rdfs:domain ?target . ?hidden rdfs:range ns1:evaluation . },2_prop_branching_v4,intermediate
-q86,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . },2_prop_branching_v4,intermediate
-q87,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . },1_prop_subject_target,basic
-q88,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q89,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q90,SELECT ?target WHERE { ?target ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . },1_prop_subject_target,basic
-q91,SELECT ?target WHERE { ns1:database ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v2,advanced
-q92,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:programming_projects . },2_prop_branching_v4,intermediate
-q93,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ns1:platform_based_programming ns1:has_prerequisite_course ?hidden . },2_prop_branching_v2,intermediate
-q94,SELECT ?target WHERE { ns1:knowledge_representation_and_reasoning ns1:has_course_category ?target . },1_prop_object_target,basic
-q95,SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?target . },1_prop_object_target,basic
-q96,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q97,SELECT ?target WHERE { ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:has_credits ?target . },3_prop_star_v2,advanced
-q98,SELECT ?target WHERE { ns1:simulation_and_modeling ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q99,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q100,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . ?hidden ns1:has_minimum_credits ?hidden2 . ?hidden ns1:has_course_category ?target . },3_prop_star_v1,advanced
-q101,SELECT ?target WHERE { ns1:functional_programming ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q102,SELECT ?target WHERE { ns1:has_credits rdfs:domain ?target . },1_prop_object_target,basic
-q103,SELECT ?target WHERE { ns1:digital_forensics ns1:has_course_category ?target . },1_prop_object_target,basic
-q104,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . ?hidden ns1:also_known_as ?hidden2 . ?target ns1:has_prerequisite_course ?hidden . },3_prop_star_v5,advanced
-q105,SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . },1_prop_object_target,basic
-q106,SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . },1_prop_subject_target,basic
-q107,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_digital_systems . },2_prop_branching_v4,intermediate
-q108,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_evaluation_method ns1:final_project . },2_prop_branching_v4,intermediate
-q109,SELECT ?target WHERE { ?target ns1:has_research_group ns1:computer_system_laboratory . },1_prop_subject_target,basic
-q110,SELECT ?target WHERE { ns1:has_evaluation_method rdfs:domain ?target . },1_prop_object_target,basic
-q111,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:laboratory_assignment . ?hidden ns1:has_research_group ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
-q112,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_1 . },1_prop_subject_target,basic
-q113,SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . },1_prop_object_target,basic
-q114,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . },2_prop_branching_v4,intermediate
-q115,SELECT ?target WHERE { ?hidden rdfs:domain ?target . ?hidden rdfs:range ns1:course . },2_prop_branching_v4,intermediate
-q116,SELECT ?target WHERE { ns1:information_retrieval ns1:has_research_group ?target . },1_prop_object_target,basic
-q117,SELECT ?target WHERE { ns1:religion ns1:has_course_category ?target . },1_prop_object_target,basic
-q118,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:domain ?target . },1_prop_object_target,basic
-q119,SELECT ?target WHERE { ?target rdfs:range ns1:research_lab . },1_prop_subject_target,basic
-q120,SELECT ?target WHERE { ns1:religion ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q121,SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . },1_prop_subject_target,basic
-q122,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q123,SELECT ?target WHERE { ns1:embedded_systems ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q124,SELECT ?target WHERE { ns1:internet_of_things ns1:has_research_group ?target . },1_prop_object_target,basic
-q125,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:capture_the_flag . },1_prop_subject_target,basic
-q126,SELECT ?target WHERE { ns1:programming_basics_2 ns1:has_course_category ?target . },1_prop_object_target,basic
-q127,SELECT ?target WHERE { ns1:system_programming ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q128,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . },2_prop_branching_v4,intermediate
-q129,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:database . ?hidden ns1:has_course_category ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
-q130,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . ?hidden ns1:also_known_as ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . },3_prop_star_v1,advanced
-q131,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q132,SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . },1_prop_subject_target,basic
-q133,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
-q134,SELECT ?target WHERE { ns1:also_known_as rdfs:domain ?target . },1_prop_object_target,basic
-q135,SELECT ?target WHERE { ?target rdfs:range ns1:course . },1_prop_subject_target,basic
-q136,SELECT ?target WHERE { ns1:data_structures_and_algorithms ns1:has_evaluation_method ?target . },1_prop_object_target,basic
-q137,SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . },1_prop_subject_target,basic
-q138,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
-q139,SELECT ?target WHERE { ?target ns1:has_research_group ns1:computer_system_laboratory . },1_prop_subject_target,basic
-q140,SELECT ?target WHERE { ns1:knowledge_graph ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q141,SELECT ?target WHERE { ns1:data_mining ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . },2_prop_middle_target_v1,intermediate
-q142,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . },2_prop_branching_v4,intermediate
-q143,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
-q144,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:demo . },2_prop_branching_v1,intermediate
-q145,SELECT ?target WHERE { ns1:cryptography_and_information_security ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
-q146,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . },2_prop_branching_v1,intermediate
-q147,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:operating_system . },2_prop_branching_v4,intermediate
+q58,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q59,SELECT ?target WHERE { ?target ns1:has_research_group ns1:machine_learning_and_computer_vision . },1_prop_subject_target,basic
+q60,SELECT ?target WHERE { ?target ns1:has_research_group ns1:computer_system_laboratory . },1_prop_subject_target,basic
+q61,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:group_task . },2_prop_branching_v4,intermediate
+q62,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:also_known_as ?target . },3_prop_star_v1,advanced
+q63,SELECT ?target WHERE { ns1:digital_forensics ns1:has_evaluation_method ?target . },1_prop_object_target,basic
+q64,SELECT ?target WHERE { ns1:has_evaluation_method rdfs:range ?target . },1_prop_object_target,basic
+q65,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:individual_review . },2_prop_branching_v4,intermediate
+q66,SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . },1_prop_object_target,basic
+q67,SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_evaluation_method ?target . },3_prop_star_v2,advanced
+q68,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q69,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_research_group ns1:reliable_software_engineering . },2_prop_branching_v4,intermediate
+q70,SELECT ?target WHERE { ?target ns1:has_course_category ns1:university_mandatory_course . },1_prop_subject_target,basic
+q71,SELECT ?target WHERE { ns1:internet_of_things ns1:has_course_category ?target . },1_prop_object_target,basic
+q72,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v1,advanced
+q73,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . },2_prop_branching_v4,intermediate
+q74,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:test . },2_prop_branching_v1,intermediate
+q75,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . },2_prop_branching_v1,intermediate
+q76,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ?target . ?hidden rdfs:domain ns1:course . },2_prop_branching_v4,intermediate
+q77,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_evaluation_method ns1:practicum . },2_prop_branching_v4,intermediate
+q78,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:domain ?target . },1_prop_object_target,basic
+q79,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_presentation . },1_prop_subject_target,basic
+q80,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . },1_prop_subject_target,basic
+q81,SELECT ?target WHERE { ?target rdfs:domain ns1:course . },1_prop_subject_target,basic
+q82,SELECT ?target WHERE { ?hidden ns1:also_known_as ?target . ?hidden ns1:has_prerequisite_course ns1:introduction_to_digital_systems . },2_prop_branching_v4,intermediate
+q83,SELECT ?target WHERE { ns1:deep_learning ns1:has_research_group ?target . },1_prop_object_target,basic
+q84,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_evaluation_method ns1:task . },2_prop_branching_v4,intermediate
+q85,SELECT ?target WHERE { ns1:has_prerequisite_course rdfs:subPropertyOf ?target . },1_prop_object_target,basic
+q86,SELECT ?target WHERE { ns1:computer_vision ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
+q87,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:domain ?target . },1_prop_object_target,basic
+q88,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q89,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . },1_prop_subject_target,basic
+q90,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q91,SELECT ?target WHERE { ns1:web_application_architecture ns1:has_evaluation_method ?target . },1_prop_object_target,basic
+q92,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_evaluation_method ns1:task . },2_prop_branching_v4,intermediate
+q93,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:case_study . ?hidden ns1:has_prerequisite_course ?hidden2 . ?hidden ns1:has_research_group ?target . },3_prop_star_v1,advanced
+q94,SELECT ?target WHERE { ?hidden ns1:has_course_category ?target . ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . },2_prop_branching_v4,intermediate
+q95,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:computer_system_laboratory . },2_prop_branching_v4,intermediate
+q96,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . },2_prop_branching_v4,intermediate
+q97,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . },2_prop_branching_v4,intermediate
+q98,SELECT ?target WHERE { ?hidden rdfs:range ?target . ?hidden rdfs:subPropertyOf ns1:has_prerequisite . },2_prop_branching_v4,intermediate
+q99,SELECT ?target WHERE { ?hidden rdfs:range ?target . ?hidden rdfs:domain ns1:course . },2_prop_branching_v4,intermediate
+q100,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:group_project . },2_prop_branching_v4,intermediate
+q101,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
+q102,SELECT ?target WHERE { ?hidden rdfs:domain ?target . ?hidden rdfs:range ns1:evaluation . },2_prop_branching_v4,intermediate
+q103,SELECT ?target WHERE { ns1:advanced_database ns1:has_prerequisite_course ?target . },1_prop_object_target,basic
+q104,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q105,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . },3_prop_star_v1,advanced
+q106,SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ?hidden ns1:has_credits ?hidden2 . ?target ns1:has_prerequisite_course ?hidden . },3_prop_star_v5,advanced
+q107,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_digital_systems . },1_prop_subject_target,basic
+q108,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:ept_or_toefl_or_ielts_or_similar_exams . },1_prop_subject_target,basic
+q109,SELECT ?target WHERE { ?hidden ns1:has_credits ?target . ?hidden ns1:has_course_category ns1:study_program_elective_course . },2_prop_branching_v4,intermediate
+q110,SELECT ?target WHERE { ns1:advanced_database ns1:has_research_group ?target . },1_prop_object_target,basic
+q111,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q112,SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:supervisor_evaluation . },1_prop_subject_target,basic
+q113,SELECT ?target WHERE { ns1:has_course_category rdfs:domain ?target . },1_prop_object_target,basic
+q114,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:machine_learning_and_computer_vision . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_credits ?target . },3_prop_star_v1,advanced
+q115,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q116,SELECT ?target WHERE { ns1:has_evaluation_method rdfs:domain ?target . },1_prop_object_target,basic
+q117,SELECT ?target WHERE { ns1:computer_vision ns1:has_research_group ?target . },1_prop_object_target,basic
+q118,SELECT ?target WHERE { ns1:platform_based_programming ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_course_code ?target . },3_prop_star_v2,advanced
+q119,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_prerequisite_course ns1:statistics_and_probability . },2_prop_branching_v4,intermediate
+q120,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q121,SELECT ?target WHERE { ns1:has_research_group rdfs:domain ?target . },1_prop_object_target,basic
+q122,SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . },1_prop_subject_target,basic
+q123,SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . },2_prop_branching_v4,intermediate
+q124,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?hidden ns1:has_credits ?hidden2 . ?hidden ns1:has_evaluation_method ?target . },3_prop_star_v1,advanced
+q125,SELECT ?target WHERE { ?target rdfs:range ns1:course_category . },1_prop_subject_target,basic
+q126,SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:test . },2_prop_branching_v4,intermediate
+q127,SELECT ?target WHERE { ns1:computer_science_special_topics ns1:has_research_group ?target . },1_prop_object_target,basic
+q128,SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . },1_prop_subject_target,basic
+q129,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:domain ?target . },1_prop_object_target,basic
+q130,SELECT ?target WHERE { ?target rdfs:subPropertyOf ns1:has_prerequisite . },1_prop_subject_target,basic
+q131,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . },2_prop_branching_v4,intermediate
+q132,SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . },1_prop_subject_target,basic
+q133,SELECT ?target WHERE { ?hidden ns1:has_research_group ?target . ?hidden ns1:has_evaluation_method ns1:projects_and_presentations . },2_prop_branching_v4,intermediate
+q134,SELECT ?target WHERE { ?hidden ns1:has_course_code ?target . ?hidden ns1:has_course_category ns1:university_mandatory_course . },2_prop_branching_v4,intermediate
+q135,SELECT ?target WHERE { ns1:has_minimum_credits rdfs:subPropertyOf ?target . },1_prop_object_target,basic
+q136,SELECT ?target WHERE { ?hidden rdfs:subPropertyOf ns1:has_prerequisite . ?hidden rdfs:domain ?hidden2 . ?hidden rdfs:range ?target . },3_prop_star_v1,advanced
+q137,SELECT ?target WHERE { ?target rdfs:range ns1:course . },1_prop_subject_target,basic
+q138,SELECT ?target WHERE { ns1:has_course_code rdfs:domain ?target . },1_prop_object_target,basic
+q139,SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_evaluation_method ?hidden2 . ?hidden ns1:has_prerequisite_course ?target . },3_prop_star_v1,advanced

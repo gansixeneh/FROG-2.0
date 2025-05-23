@@ -86,7 +86,7 @@ class PatternBasedSPARQLGenerator:
         # Get all predicates that are not rdf:type or rdfs:label
         skip_props = {
             URIRef('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            URIRef('http://www.w3.org/2000/01/rdf-schema#label')
+            URIRef('http://www.w3.org/2000/01/rdf-schema#label'),
         }
         
         for s, p, o in self.graph:
