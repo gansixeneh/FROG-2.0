@@ -1,5 +1,5 @@
 """
-Pattern-based SPARQL Query Generator
+Pattern-based SPARQL Query Generator using Apache Jena SPARQL Endpoint
 
 This generator creates SPARQL queries based on graph patterns using a discovery-first approach.
 It first discovers valid property combinations through discovery queries, then selects from them.
@@ -20,20 +20,44 @@ import random
 import re
 import csv
 import os
-from rdflib import Graph, Namespace, URIRef, Literal
+import requests
 from collections import defaultdict, Counter
 
+class JenaSPARQLClient:
+    def __init__(self, endpoint_url="http://localhost:3030/modified-lex2kg/sparql"):
+        self.endpoint_url = endpoint_url
+        
+    def query(self, sparql_query):
+        """Execute SPARQL query against Jena endpoint"""
+        try:
+            response = requests.post(
+                self.endpoint_url,
+                data={
+                    'query': sparql_query,
+                    'format': 'json'
+                },
+                headers={
+                    'Accept': 'application/sparql-results+json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Error querying SPARQL endpoint: {e}")
+            return None
+
 class PatternBasedSPARQLGenerator:
-    def __init__(self, ttl_file_path, prefixes=None):
+    def __init__(self, endpoint_url="http://localhost:3030/modified-lex2kg/sparql", prefixes=None):
         """
         Initialize the pattern-based generator
         
         Args:
-            ttl_file_path (str): Path to TTL file
+            endpoint_url (str): SPARQL endpoint URL
             prefixes (dict): Namespace prefixes
         """
-        self.graph = Graph()
-        self.graph.parse(ttl_file_path, format='turtle')
+        self.client = JenaSPARQLClient(endpoint_url)
         
         if prefixes is None:
             self.prefixes = {
@@ -44,11 +68,7 @@ class PatternBasedSPARQLGenerator:
         else:
             self.prefixes = prefixes
             
-        # Bind namespaces
-        for prefix, uri in self.prefixes.items():
-            self.graph.bind(prefix, Namespace(uri))
-            
-        # Extract entities and properties from graph
+        # Extract entities and properties from endpoint
         self.entities = self._extract_entities()
         self.properties = self._extract_properties()
         
@@ -59,57 +79,60 @@ class PatternBasedSPARQLGenerator:
             3: 0.2   # 20% chance for 3-property patterns
         }
         
-        print(f"Loaded graph with {len(self.graph)} triples")
+        # Get total triple count
+        total_triples = self._get_total_triples()
+        print(f"Connected to SPARQL endpoint with {total_triples} triples")
         print(f"Found {len(self.entities)} entities and {len(self.properties)} properties")
         
-    def _extract_entities(self):
-        """Extract all entities from the graph"""
-        entities = set()
+    def _get_total_triples(self):
+        """Get total number of triples in the dataset"""
+        query = "SELECT (COUNT(*) AS ?count) WHERE { ?s ?p ?o . }"
+        result = self.client.query(query)
+        if result and result['results']['bindings']:
+            return int(result['results']['bindings'][0]['count']['value'])
+        return 0
         
-        # Get all subjects and objects that are URIs (excluding literals)
-        for s, p, o in self.graph:
-            if isinstance(s, URIRef) and str(s).startswith('https://example.org/'):
-                entities.add(s)
-            if isinstance(o, URIRef) and str(o).startswith('https://example.org/'):
-                entities.add(o)
-                
-        return list(entities)
+    def _extract_entities(self):
+        """Extract all entities from the endpoint"""
+        query = """
+        SELECT DISTINCT ?entity WHERE {
+            {
+                ?entity ?p ?o .
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+            }
+            UNION
+            {
+                ?s ?p ?entity .
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+            }
+        }
+        LIMIT 10000
+        """
+        
+        result = self.client.query(query)
+        entities = []
+        if result and result['results']['bindings']:
+            entities = [binding['entity']['value'] for binding in result['results']['bindings']]
+        
+        return entities
     
     def _extract_properties(self):
         """Extract meaningful properties, excluding low-quality ones"""
-        properties = set()
-        
-        # Properties to exclude for better quality
-        excluded_properties = {
-            # Universal properties (same value everywhere)
-            # 'https://example.org/lex2kg/ontology/jenisPeraturan',
-            # 'https://example.org/lex2kg/ontology/yurisdiksi', 
-            # 'https://example.org/lex2kg/ontology/disahkanDi',
-            # 'https://example.org/lex2kg/ontology/bahasa',
-            # 'https://example.org/lex2kg/ontology/jabatanPengesah',
-            # 'https://exampxle.org/lex2kg/ontology/jenisVersi',
-            
-            # Technical/internal properties  
-            # 'https://example.org/lex2kg/ontology/segmen',
-            # 'https://example.org/lex2kg/ontology/teks',
-            
-            # Over-granular properties
-            # 'https://example.org/lex2kg/ontology/huruf',
-            # 'https://example.org/lex2kg/ontology/nomor'
+        query = """
+        SELECT DISTINCT ?property WHERE {
+            ?s ?property ?o .
+            FILTER(STRSTARTS(STR(?property), "https://example.org/"))
+            FILTER(?property != <https://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
+            FILTER(!STRSTARTS(STR(?property), "https://www.w3.org/2000/01/rdf-schema#"))
         }
+        """
         
-        # Skip RDF type and RDFS properties
-        rdf_type = URIRef('https://www.w3.org/1999/02/22-rdf-syntax-ns#type')
-        rdfs_namespace = 'https://www.w3.org/2000/01/rdf-schema#'
-        
-        for s, p, o in self.graph:
-            if (isinstance(p, URIRef) and 
-                p != rdf_type and 
-                not str(p).startswith(rdfs_namespace) and
-                str(p) not in excluded_properties):
-                properties.add(p)
+        result = self.client.query(query)
+        properties = []
+        if result and result['results']['bindings']:
+            properties = [binding['property']['value'] for binding in result['results']['bindings']]
                 
-        return list(properties)
+        return properties
         
     def _shorten_uri(self, uri):
         """Convert full URI to prefixed form"""
@@ -135,10 +158,10 @@ class PatternBasedSPARQLGenerator:
         return sparql
         
     def _validate_pattern(self, sparql_query):
-        """Check if pattern has results in the graph"""
+        """Check if pattern has results in the endpoint"""
         try:
-            results = list(self.graph.query(sparql_query))
-            return len(results) > 0
+            result = self.client.query(sparql_query)
+            return result and result['results']['bindings'] and len(result['results']['bindings']) > 0
         except Exception as e:
             print(f"Error validating query: {e}")
             return False
@@ -162,16 +185,19 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?prop), "https://example.org/"))
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
             }
+            LIMIT 1000
         """
         
         print("Executing discovery query for 1-property patterns...")
         try:
-            results = list(self.graph.query(discovery_query))
-            print(f"Found {len(results)} valid property-entity combinations")
-            
-            if not results:
+            result = self.client.query(discovery_query)
+            if not result or not result['results']['bindings']:
                 return patterns
                 
+            results = [(binding['prop']['value'], binding['entity']['value']) 
+                      for binding in result['results']['bindings']]
+            print(f"Found {len(results)} valid property-entity combinations")
+            
             # Generate patterns by randomly selecting from valid combinations
             attempts = 0
             max_attempts = count * 3
@@ -197,14 +223,15 @@ class PatternBasedSPARQLGenerator:
                     # Need to find a valid subject for this property
                     subject_query = f"""
                         SELECT DISTINCT ?subj WHERE {{
-                            ?subj <{str(prop)}> <{str(entity)}> .
+                            ?subj <{prop}> <{entity}> .
                         }}
+                        LIMIT 1
                     """
-                    subject_results = list(self.graph.query(subject_query))
-                    if not subject_results:
+                    subject_result = self.client.query(subject_query)
+                    if not subject_result or not subject_result['results']['bindings']:
                         continue
                         
-                    subj = random.choice(subject_results)[0]
+                    subj = subject_result['results']['bindings'][0]['subj']['value']
                     subj_str = self._shorten_uri(subj)
                     sparql = f"SELECT ?target WHERE {{ {subj_str} {prop_str} ?target . }}"
                     pattern_id = f'1p_obj_{len(patterns)}'
@@ -249,6 +276,7 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity2), "https://example.org/"))
                 FILTER(?prop1 != ?prop2)
             }
+            LIMIT 500
         """
         
         # Discovery query for branching pattern: ?target prop1 ?hidden . ?hidden prop2 entity
@@ -261,35 +289,50 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
                 FILTER(?prop1 != ?prop2)
             }
+            LIMIT 500
         """
         
         print("Executing discovery queries for 2-property patterns...")
         
         try:
             # Get middle target combinations
-            middle_results = list(self.graph.query(middle_discovery_query))
+            middle_result = self.client.query(middle_discovery_query)
+            middle_results = []
+            if middle_result and middle_result['results']['bindings']:
+                middle_results = [(
+                    binding['prop1']['value'], 
+                    binding['prop2']['value'], 
+                    binding['entity1']['value'], 
+                    binding['entity2']['value'], 
+                    binding['middle']['value']
+                ) for binding in middle_result['results']['bindings']]
             print(f"Found {len(middle_results)} valid middle-target combinations")
             
             # Get branching combinations  
-            branching_results = list(self.graph.query(branching_discovery_query))
+            branching_result = self.client.query(branching_discovery_query)
+            branching_results = []
+            if branching_result and branching_result['results']['bindings']:
+                branching_results = [(
+                    binding['prop1']['value'], 
+                    binding['prop2']['value'], 
+                    binding['entity']['value']
+                ) for binding in branching_result['results']['bindings']]
             print(f"Found {len(branching_results)} valid branching combinations")
             
             all_combinations = []
             
             # Process middle target results
             for result in middle_results:
-                prop1, prop2, entity1, entity2, middle = result
                 all_combinations.append({
                     'type': 'middle_target',
-                    'data': (prop1, prop2, entity1, entity2, middle)
+                    'data': result
                 })
             
             # Process branching results
             for result in branching_results:
-                prop1, prop2, entity = result  
                 all_combinations.append({
                     'type': 'branching',
-                    'data': (prop1, prop2, entity)
+                    'data': result
                 })
             
             if not all_combinations:
@@ -404,6 +447,7 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
             }
+            LIMIT 200
         """
         
         # Discovery query for linear middle pattern: entity1 prop1 ?h . ?h prop2 ?target . ?target prop3 entity2
@@ -419,6 +463,7 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity2), "https://example.org/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
             }
+            LIMIT 200
         """
         
         # Discovery query for star pattern: ?hidden prop1 entity1 . ?hidden prop2 entity2 . ?hidden prop3 ?target
@@ -435,40 +480,61 @@ class PatternBasedSPARQLGenerator:
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER(?entity1 != ?entity2)
             }
+            LIMIT 200
         """
         
         print("Executing discovery queries for 3-property patterns...")
         
         try:
-            # Get all types of 3-property combinations
-            linear_end_results = list(self.graph.query(linear_end_query))
-            linear_middle_results = list(self.graph.query(linear_middle_query))
-            star_results = list(self.graph.query(star_query))
-            
-            print(f"Found {len(linear_end_results)} linear-end combinations")
-            print(f"Found {len(linear_middle_results)} linear-middle combinations")
-            print(f"Found {len(star_results)} star combinations")
-            
             all_combinations = []
             
-            # Process all result types
-            for result in linear_end_results:
-                all_combinations.append({
-                    'type': 'linear_end',
-                    'data': result
-                })
+            # Get linear end combinations
+            linear_end_result = self.client.query(linear_end_query)
+            if linear_end_result and linear_end_result['results']['bindings']:
+                for binding in linear_end_result['results']['bindings']:
+                    all_combinations.append({
+                        'type': 'linear_end',
+                        'data': (
+                            binding['prop1']['value'],
+                            binding['prop2']['value'], 
+                            binding['prop3']['value'],
+                            binding['entity']['value']
+                        )
+                    })
             
-            for result in linear_middle_results:
-                all_combinations.append({
-                    'type': 'linear_middle', 
-                    'data': result
-                })
-                
-            for result in star_results:
-                all_combinations.append({
-                    'type': 'star',
-                    'data': result
-                })
+            # Get linear middle combinations
+            linear_middle_result = self.client.query(linear_middle_query)
+            if linear_middle_result and linear_middle_result['results']['bindings']:
+                for binding in linear_middle_result['results']['bindings']:
+                    all_combinations.append({
+                        'type': 'linear_middle',
+                        'data': (
+                            binding['prop1']['value'],
+                            binding['prop2']['value'],
+                            binding['prop3']['value'],
+                            binding['entity1']['value'],
+                            binding['entity2']['value']
+                        )
+                    })
+            
+            # Get star combinations
+            star_result = self.client.query(star_query)
+            if star_result and star_result['results']['bindings']:
+                for binding in star_result['results']['bindings']:
+                    all_combinations.append({
+                        'type': 'star',
+                        'data': (
+                            binding['prop1']['value'],
+                            binding['prop2']['value'],
+                            binding['prop3']['value'],
+                            binding['entity1']['value'],
+                            binding['entity2']['value']
+                        )
+                    })
+            
+            print(f"Found {len([c for c in all_combinations if c['type'] == 'linear_end'])} linear-end combinations")
+            print(f"Found {len([c for c in all_combinations if c['type'] == 'linear_middle'])} linear-middle combinations")
+            print(f"Found {len([c for c in all_combinations if c['type'] == 'star'])} star combinations")
             
             if not all_combinations:
                 return patterns
@@ -655,13 +721,13 @@ class PatternBasedSPARQLGenerator:
             
         return dataset
         
-    def export_json(self, dataset, output_path='pattern_based_dataset.json'):
+    def export_json(self, dataset, output_path='pattern_based_dataset_jena.json'):
         """Export dataset to JSON"""
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
         
-    def export_csv(self, dataset, output_path='pattern_based_dataset.csv'):
+    def export_csv(self, dataset, output_path='pattern_based_dataset_jena.csv'):
         """Export dataset to CSV"""
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -679,16 +745,12 @@ class PatternBasedSPARQLGenerator:
 
 
 def main():
-    """Main function to generate pattern-based dataset"""
-    ttl_file = 'modified_data-lex2kg.ttl'
+    """Main function to generate pattern-based dataset using Jena endpoint"""
+    endpoint_url = 'http://localhost:3030/modified-lex2kg/sparql'
     
-    if not os.path.exists(ttl_file):
-        print(f"Error: {ttl_file} not found!")
-        return
-        
     # Initialize generator
-    print("Initializing pattern-based SPARQL generator...")
-    generator = PatternBasedSPARQLGenerator(ttl_file)
+    print("Initializing pattern-based SPARQL generator with Jena endpoint...")
+    generator = PatternBasedSPARQLGenerator(endpoint_url)
     
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
