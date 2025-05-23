@@ -1,5 +1,5 @@
 """
-Pattern-based SPARQL Query Generator using Apache Jena SPARQL Endpoint
+Pattern-based SPARQL Query Generator using SPARQLWrapper with Apache Jena Endpoint
 
 This generator creates SPARQL queries based on graph patterns using a discovery-first approach.
 It first discovers valid property combinations through discovery queries, then selects from them.
@@ -20,31 +20,62 @@ import random
 import re
 import csv
 import os
-import requests
 from collections import defaultdict, Counter
+from SPARQLWrapper import SPARQLWrapper, JSON  # Using SPARQLWrapper instead of requests
 
-class JenaSPARQLClient:
-    def __init__(self, endpoint_url="http://localhost:3030/modified-lex2kg/sparql"):
-        self.endpoint_url = endpoint_url
+class SPARQLWrapperClient:
+    def __init__(self, endpoint_url="http://localhost:3030/modified-lex2kg/sparql", prefixes=None):
+        """Initialize the SPARQLWrapper client with explicit prefixes
+        
+        Args:
+            endpoint_url (str): URL of the SPARQL endpoint
+            prefixes (dict): Dictionary of prefix-namespace mappings
+        """
+        from SPARQLWrapper import SPARQLWrapper, JSON
+        
+        self.sparql = SPARQLWrapper(endpoint_url)
+        self.sparql.setReturnFormat(JSON)
+        self.sparql.setTimeout(30)  # 30 second timeout
+        
+        # Set default prefixes if none provided
+        if prefixes is None:
+            self.prefixes = {
+                'lex2kg-o': '<https://example.org/lex2kg/ontology/>',
+                'lex2kg': '<https://example.org/lex2kg/>',
+                'rdfs': '<https://www.w3.org/2000/01/rdf-schema#>',
+                'xsd': '<http://www.w3.org/2001/XMLSchema#>'
+            }
+        else:
+            self.prefixes = prefixes
+    
+    def _format_prefixes(self):
+        """Format the prefixes for inclusion in SPARQL queries"""
+        prefix_str = ""
+        for prefix, uri in self.prefixes.items():
+            # Make sure the URI is properly wrapped in angle brackets
+            if not uri.startswith('<'):
+                uri = f'<{uri}>'
+            prefix_str += f"PREFIX {prefix}: {uri}\n"
+        return prefix_str
         
     def query(self, sparql_query):
-        """Execute SPARQL query against Jena endpoint"""
+        """Execute SPARQL query using SPARQLWrapper with explicit prefixes
+        
+        Args:
+            sparql_query (str): SPARQL query without prefixes
+            
+        Returns:
+            dict: Query results in JSON format
+        """
         try:
-            response = requests.post(
-                self.endpoint_url,
-                data={
-                    'query': sparql_query,
-                    'format': 'json'
-                },
-                headers={
-                    'Accept': 'application/sparql-results+json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                timeout=30
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
+            # Add prefixes to the query
+            full_query = f"{self._format_prefixes()}\n{sparql_query}"
+            print(f"Executing SPARQL query: {full_query}")
+            
+            self.sparql.setQuery(full_query)
+            results = self.sparql.query().convert()
+            return results  # Returns JSON format
+        except Exception as e:
             print(f"Error querying SPARQL endpoint: {e}")
             return None
 
@@ -57,13 +88,14 @@ class PatternBasedSPARQLGenerator:
             endpoint_url (str): SPARQL endpoint URL
             prefixes (dict): Namespace prefixes
         """
-        self.client = JenaSPARQLClient(endpoint_url)
+        self.client = SPARQLWrapperClient(endpoint_url)
         
         if prefixes is None:
             self.prefixes = {
-                'ns1': 'https://example.org/',
+                'lex2kg-o': 'https://example.org/lex2kg/ontology/',
+                'lex2kg': 'https://example.org/lex2kg/',
                 'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
-                'xsd': 'https://www.w3.org/2001/XMLSchema#'
+                'xsd': 'http://www.w3.org/2001/XMLSchema#'
             }
         else:
             self.prefixes = prefixes
@@ -98,12 +130,12 @@ class PatternBasedSPARQLGenerator:
         SELECT DISTINCT ?entity WHERE {
             {
                 ?entity ?p ?o .
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
             }
             UNION
             {
                 ?s ?p ?entity .
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
             }
         }
         LIMIT 10000
@@ -121,7 +153,7 @@ class PatternBasedSPARQLGenerator:
         query = """
         SELECT DISTINCT ?property WHERE {
             ?s ?property ?o .
-            FILTER(STRSTARTS(STR(?property), "https://example.org/"))
+            FILTER(STRSTARTS(STR(?property), "https://example.org/lex2kg/ontology/"))
             FILTER(?property != <https://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
             FILTER(!STRSTARTS(STR(?property), "https://www.w3.org/2000/01/rdf-schema#"))
         }
@@ -182,8 +214,8 @@ class PatternBasedSPARQLGenerator:
         discovery_query = """
             SELECT DISTINCT ?prop ?entity WHERE {
                 ?s ?prop ?entity .
-                FILTER(STRSTARTS(STR(?prop), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
             }
             LIMIT 1000
         """
@@ -270,10 +302,10 @@ class PatternBasedSPARQLGenerator:
             SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {
                 ?entity1 ?prop1 ?middle .
                 ?middle ?prop2 ?entity2 .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
+                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2)
             }
             LIMIT 500
@@ -284,9 +316,9 @@ class PatternBasedSPARQLGenerator:
             SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {
                 ?target ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2)
             }
             LIMIT 500
@@ -441,10 +473,10 @@ class PatternBasedSPARQLGenerator:
                 ?entity ?prop1 ?h1 .
                 ?h1 ?prop2 ?h2 .
                 ?h2 ?prop3 ?target .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
             }
             LIMIT 200
@@ -456,11 +488,11 @@ class PatternBasedSPARQLGenerator:
                 ?entity1 ?prop1 ?h .
                 ?h ?prop2 ?target .
                 ?target ?prop3 ?entity2 .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
+                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
             }
             LIMIT 200
@@ -472,11 +504,11 @@ class PatternBasedSPARQLGenerator:
                 ?hidden ?prop1 ?entity1 .
                 ?hidden ?prop2 ?entity2 .
                 ?hidden ?prop3 ?target .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/"))
+                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
+                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
+                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER(?entity1 != ?entity2)
             }
@@ -700,34 +732,42 @@ class PatternBasedSPARQLGenerator:
         
         print(f"Generating {num_1_prop} 1-property, {num_2_prop} 2-property, {num_3_prop} 3-property patterns...")
         
-        # Generate patterns using discovery-first approach
-        patterns_1 = self.generate_1_property_patterns(num_1_prop)
-        patterns_2 = self.generate_2_property_patterns(num_2_prop)  
-        patterns_3 = self.generate_3_property_patterns(num_3_prop)
-        
-        print(f"Generated {len(patterns_1)} 1-prop, {len(patterns_2)} 2-prop, {len(patterns_3)} 3-prop patterns")
-        
-        all_patterns = patterns_1 + patterns_2 + patterns_3
-        random.shuffle(all_patterns)
-        
-        # Convert to final format and assign sequential IDs
-        for i, pattern in enumerate(all_patterns[:size]):
-            dataset.append({
-                'id': f'q{i+1}',
-                'sparql': pattern['sparql'],
-                'pattern_type': pattern['pattern_type'],
-                'complexity': pattern['complexity']
-            })
+        try:
+            # Generate patterns using discovery-first approach
+            patterns_1 = self.generate_1_property_patterns(num_1_prop)
+            print(f"Generated {len(patterns_1)} 1-property patterns")
+            
+            patterns_2 = self.generate_2_property_patterns(num_2_prop)  
+            print(f"Generated {len(patterns_2)} 2-property patterns")
+            
+            patterns_3 = self.generate_3_property_patterns(num_3_prop)
+            print(f"Generated {len(patterns_3)} 3-property patterns")
+            
+            print(f"Generated {len(patterns_1)} 1-prop, {len(patterns_2)} 2-prop, {len(patterns_3)} 3-prop patterns")
+            
+            all_patterns = patterns_1 + patterns_2 + patterns_3
+            random.shuffle(all_patterns)
+            
+            # Convert to final format and assign sequential IDs
+            for i, pattern in enumerate(all_patterns[:size]):
+                dataset.append({
+                    'id': f'q{i+1}',
+                    'sparql': pattern['sparql'],
+                    'pattern_type': pattern['pattern_type'],
+                    'complexity': pattern['complexity']
+                })
+        except Exception as e:
+            print(f"Error in dataset generation: {e}")
             
         return dataset
         
-    def export_json(self, dataset, output_path='pattern_based_dataset_jena.json'):
+    def export_json(self, dataset, output_path='pattern_based_dataset_sparqlwrapper.json'):
         """Export dataset to JSON"""
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
         
-    def export_csv(self, dataset, output_path='pattern_based_dataset_jena.csv'):
+    def export_csv(self, dataset, output_path='pattern_based_dataset_sparqlwrapper.csv'):
         """Export dataset to CSV"""
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -745,20 +785,31 @@ class PatternBasedSPARQLGenerator:
 
 
 def main():
-    """Main function to generate pattern-based dataset using Jena endpoint"""
+    """Main function to generate pattern-based dataset using SPARQLWrapper with Jena endpoint"""
     endpoint_url = 'http://localhost:3030/modified-lex2kg/sparql'
     
-    # Initialize generator
-    print("Initializing pattern-based SPARQL generator with Jena endpoint...")
-    generator = PatternBasedSPARQLGenerator(endpoint_url)
+    # Define custom prefixes for the legal knowledge graph
+    custom_prefixes = {
+        'lex2kg-o': 'https://example.org/lex2kg/ontology/',
+        'lex2kg': 'https://example.org/lex2kg/',
+        'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
+        'xsd': 'http://www.w3.org/2001/XMLSchema#'
+    }
+    
+    # Initialize generator with custom prefixes
+    print("Initializing pattern-based SPARQL generator with SPARQLWrapper...")
+    generator = PatternBasedSPARQLGenerator(endpoint_url, custom_prefixes)
     
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
     dataset = generator.generate_dataset(size=200)
     
     # Export results
-    generator.export_json(dataset)
-    generator.export_csv(dataset)
+    try:
+        generator.export_json(dataset)
+        generator.export_csv(dataset)
+    except Exception as e:
+        print(f"Error exporting results: {e}")
     
     # Print statistics
     complexity_counts = Counter()
