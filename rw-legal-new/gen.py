@@ -86,20 +86,20 @@ class PatternBasedSPARQLGenerator:
         # Properties to exclude for better quality
         excluded_properties = {
             # Universal properties (same value everywhere)
-            'https://example.org/lex2kg/ontology/jenisPeraturan',
-            'https://example.org/lex2kg/ontology/yurisdiksi', 
+            # 'https://example.org/lex2kg/ontology/jenisPeraturan',
+            # 'https://example.org/lex2kg/ontology/yurisdiksi', 
             # 'https://example.org/lex2kg/ontology/disahkanDi',
-            'https://example.org/lex2kg/ontology/bahasa',
-            'https://example.org/lex2kg/ontology/jabatanPengesah',
-            # 'https://example.org/lex2kg/ontology/jenisVersi',
+            # 'https://example.org/lex2kg/ontology/bahasa',
+            # 'https://example.org/lex2kg/ontology/jabatanPengesah',
+            # 'https://exampxle.org/lex2kg/ontology/jenisVersi',
             
             # Technical/internal properties  
-            'https://example.org/lex2kg/ontology/segmen',
-            'https://example.org/lex2kg/ontology/teks',
+            # 'https://example.org/lex2kg/ontology/segmen',
+            # 'https://example.org/lex2kg/ontology/teks',
             
             # Over-granular properties
-            'https://example.org/lex2kg/ontology/huruf',
-            'https://example.org/lex2kg/ontology/nomor'
+            # 'https://example.org/lex2kg/ontology/huruf',
+            # 'https://example.org/lex2kg/ontology/nomor'
         }
         
         # Skip RDF type and RDFS properties
