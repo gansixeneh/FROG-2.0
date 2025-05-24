@@ -1,483 +1,447 @@
 [
   {
     "id": "q1",
-    "question": "Kategori peraturan apa UU tahun 1995 no 10?",
-    "englishQuestion": "What category of regulation is UU tahun 1995 no 10?",
-    "sparql": "select ?type where { <https://example.org/lex2kg/uu/1995/10> <https://example.org/lex2kg/ontology/jenisPeraturan> ?type . }",
+    "question": "Huruf apa saja yang ada di UU tahun 1999 no 8 pasal 8 versi 20 April 1999?",
+    "englishQuestion": "Which letters can be found in UU tahun 1999 no 8 pasal 8 versi 20 April 1999?",
+    "sparql": "select ?letter where { <https://example.org/lex2kg/uu/1999/8/pasal/0008/versi/19990420> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-type"
+    "templateId": "article-letters"
   },
   {
     "id": "q2",
-    "question": "Huruf apa saja yang ada di UU tahun 2008 no 19 pasal 1 versi 7 Mei 2008?",
-    "englishQuestion": "Which letters can be found in UU tahun 2008 no 19 pasal 1 versi 7 Mei 2008?",
-    "sparql": "select ?letter where { <https://example.org/lex2kg/uu/2008/19/pasal/0001/versi/20080507> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "question": "Di bawah yurisdiksi apa UU tahun 2006 no 7 berlaku?",
+    "englishQuestion": "Under which jurisdiction does UU tahun 2006 no 7 apply?",
+    "sparql": "select ?jurisdiction where { <https://example.org/lex2kg/uu/2006/7> <https://example.org/lex2kg/ontology/yurisdiksi> ?jurisdiction . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "article-letters"
+    "templateId": "law-jurisdiction"
   },
   {
     "id": "q3",
-    "question": "Undang-undang apa saja yang dihapus oleh UU tahun 2020 no 11 pasal 24 versi 2 November 2020 huruf 8?",
-    "englishQuestion": "Which laws were deleted by UU tahun 2020 no 11 pasal 24 versi 2 November 2020 huruf 8?",
-    "sparql": "select distinct ?deletedLaw where { <https://example.org/lex2kg/uu/2020/11/pasal/0024/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/menghapus> ?deletedLaw . }",
+    "question": "Bagaimana judul dari UU tahun 1995 no 7?",
+    "englishQuestion": "How is the title of UU tahun 1995 no 7?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/1995/7> <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "laws-deleted-what"
+    "templateId": "law-title"
   },
   {
     "id": "q4",
-    "question": "Apa dasar pertimbangan UU tahun 2012 no 18?",
-    "englishQuestion": "What is the basis of consideration for UU tahun 2012 no 18?",
-    "sparql": "select ?menimbang where { <https://example.org/lex2kg/uu/2012/18> <https://example.org/lex2kg/ontology/menimbang> ?menimbang . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-menimbang"
-  },
-  {
-    "id": "q5",
-    "question": "Nomor berapakah UU tahun 2019 no 22 pasal 41 versi 18 Oktober 2019 ayat 2 huruf d?",
-    "englishQuestion": "Which number is UU tahun 2019 no 22 pasal 41 versi 18 Oktober 2019 ayat 2 huruf d?",
-    "sparql": "select ?number where { <https://example.org/lex2kg/uu/2019/22/pasal/0041/versi/20191018/ayat/0002/huruf/d> <https://example.org/lex2kg/ontology/nomor> ?number . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-number"
-  },
-  {
-    "id": "q6",
-    "question": "Tanggal berapakah UU tahun 2020 no 9 disahkan?",
-    "englishQuestion": "What date was UU tahun 2020 no 9 enacted on?",
-    "sparql": "select ?date where { <https://example.org/lex2kg/uu/2020/9> <https://example.org/lex2kg/ontology/disahkanPada> ?date . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-date"
-  },
-  {
-    "id": "q7",
-    "question": "Apa rujukan hukum untuk UU tahun 1999 no 12?",
-    "englishQuestion": "What are the legal references for UU tahun 1999 no 12?",
-    "sparql": "select ?mengingat where { <https://example.org/lex2kg/uu/1999/12> <https://example.org/lex2kg/ontology/mengingat> ?mengingat . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-mengingat"
-  },
-  {
-    "id": "q8",
-    "question": "Apa bahasa penulisan UU tahun 2010 no 11?",
-    "englishQuestion": "What is the language of UU tahun 2010 no 11?",
-    "sparql": "select ?language where { <https://example.org/lex2kg/uu/2010/11> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-language"
-  },
-  {
-    "id": "q9",
-    "question": "Kategori peraturan apa UU tahun 2019 no 17?",
-    "englishQuestion": "What category of regulation is UU tahun 2019 no 17?",
-    "sparql": "select ?type where { <https://example.org/lex2kg/uu/2019/17> <https://example.org/lex2kg/ontology/jenisPeraturan> ?type . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-type"
-  },
-  {
-    "id": "q10",
-    "question": "Apa saja huruf yang terdapat dalam UU tahun 2007 no 17 menimbang?",
-    "englishQuestion": "What letters are in UU tahun 2007 no 17 menimbang?",
-    "sparql": "select ?letter where { <https://example.org/lex2kg/uu/2007/17/menimbang> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "article-letters"
-  },
-  {
-    "id": "q11",
-    "question": "Nomor berapakah UU tahun 1992 no 12 pasal 28 versi 30 April 1992 ayat 1 huruf c?",
-    "englishQuestion": "Which number is UU tahun 1992 no 12 pasal 28 versi 30 April 1992 ayat 1 huruf c?",
-    "sparql": "select ?number where { <https://example.org/lex2kg/uu/1992/12/pasal/0028/versi/19920430/ayat/0001/huruf/c> <https://example.org/lex2kg/ontology/nomor> ?number . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-number"
-  },
-  {
-    "id": "q12",
-    "question": "Apa bahasa penulisan UU tahun 1993 no 3?",
-    "englishQuestion": "What is the language of UU tahun 1993 no 3?",
-    "sparql": "select ?language where { <https://example.org/lex2kg/uu/1993/3> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-language"
-  },
-  {
-    "id": "q13",
-    "question": "Siapa yang mengesahkan UU tahun 1982 no 4?",
-    "englishQuestion": "Who enacted UU tahun 1982 no 4?",
-    "sparql": "select ?person where { <https://example.org/lex2kg/uu/1982/4> <https://example.org/lex2kg/ontology/disahkanOleh> ?person . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "law-enactment-person"
-  },
-  {
-    "id": "q14",
-    "question": "Apa isi dari UU tahun 2016 no 8 pasal 10 versi 15 April 2016 huruf description?",
-    "englishQuestion": "What is the content of UU tahun 2016 no 8 pasal 10 versi 15 April 2016 huruf description?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2016/8/pasal/0010/versi/20160415/huruf/description> <https://example.org/lex2kg/ontology/teks> ?text . }",
-    "category": "legal",
-    "complexity": "basic",
-    "templateId": "article-text"
-  },
-  {
-    "id": "q15",
-    "question": "Kapan tahun pengesahan UU tahun 2012 no 8?",
-    "englishQuestion": "When was the year of UU tahun 2012 no 8's enactment?",
-    "sparql": "select ?year where { <https://example.org/lex2kg/uu/2012/8> <https://example.org/lex2kg/ontology/tahun> ?year . }",
+    "question": "Kapan tahun pengesahan UU tahun 1999 no 40?",
+    "englishQuestion": "When was the year of UU tahun 1999 no 40's enactment?",
+    "sparql": "select ?year where { <https://example.org/lex2kg/uu/1999/40> <https://example.org/lex2kg/ontology/tahun> ?year . }",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-year"
   },
   {
-    "id": "q16",
-    "question": "Apa judul dari UU tahun 2007 no 12 bab 2?",
-    "englishQuestion": "What is the title of UU tahun 2007 no 12 bab 2?",
-    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2007/12/bab/0002> <https://example.org/lex2kg/ontology/judul> ?title . }",
+    "id": "q5",
+    "question": "Apa saja yang dirujuk oleh UU tahun 2008 no 35 mengingat huruf 1?",
+    "englishQuestion": "What does UU tahun 2008 no 35 mengingat huruf 1 reference?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2008/35/mengingat/huruf/0001> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "chapter-title"
+    "templateId": "law-references-what"
+  },
+  {
+    "id": "q6",
+    "question": "Apa yang menjadi pertimbangan dari UU tahun 2002 no 6?",
+    "englishQuestion": "What are the considerations of UU tahun 2002 no 6?",
+    "sparql": "select ?menimbang where { <https://example.org/lex2kg/uu/2002/6> <https://example.org/lex2kg/ontology/menimbang> ?menimbang . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-menimbang"
+  },
+  {
+    "id": "q7",
+    "question": "Apa rujukan dari UU tahun 2003 no 14 pasal 4 versi 31 Maret 2003 ayat 3?",
+    "englishQuestion": "What are the references from UU tahun 2003 no 14 pasal 4 versi 31 Maret 2003 ayat 3?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2003/14/pasal/0004/versi/20030331/ayat/0003> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-references-what"
+  },
+  {
+    "id": "q8",
+    "question": "Apa nama dari UU tahun 1997 no 26?",
+    "englishQuestion": "What is the name of UU tahun 1997 no 26?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/1997/26> <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-title"
+  },
+  {
+    "id": "q9",
+    "question": "Bagaimana bunyi UU tahun 2014 no 20 pasal 73 versi 17 September 2014 ayat 3 huruf b?",
+    "englishQuestion": "How does UU tahun 2014 no 20 pasal 73 versi 17 September 2014 ayat 3 huruf b read?",
+    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2014/20/pasal/0073/versi/20140917/ayat/0003/huruf/b> <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "article-text"
+  },
+  {
+    "id": "q10",
+    "question": "Apa nama dari UU tahun 1957 no 59?",
+    "englishQuestion": "What is the name of UU tahun 1957 no 59?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/1957/59> <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-title"
+  },
+  {
+    "id": "q11",
+    "question": "Siapa yang mengesahkan UU tahun 2014 no 34?",
+    "englishQuestion": "Who enacted UU tahun 2014 no 34?",
+    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2014/34> <https://example.org/lex2kg/ontology/disahkanOleh> ?person . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-person"
+  },
+  {
+    "id": "q12",
+    "question": "Nomor berapakah UU tahun 2004 no 29 pasal 45 versi 6 Oktober 2004 ayat 3 huruf a?",
+    "englishQuestion": "Which number is UU tahun 2004 no 29 pasal 45 versi 6 Oktober 2004 ayat 3 huruf a?",
+    "sparql": "select ?number where { <https://example.org/lex2kg/uu/2004/29/pasal/0045/versi/20041006/ayat/0003/huruf/a> <https://example.org/lex2kg/ontology/nomor> ?number . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-number"
+  },
+  {
+    "id": "q13",
+    "question": "Apa yang menjadi pertimbangan dari UU tahun 1978 no 2?",
+    "englishQuestion": "What are the considerations of UU tahun 1978 no 2?",
+    "sparql": "select ?menimbang where { <https://example.org/lex2kg/uu/1978/2> <https://example.org/lex2kg/ontology/menimbang> ?menimbang . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-menimbang"
+  },
+  {
+    "id": "q14",
+    "question": "Undang-undang apa saja yang menghapus UU tahun 2003 no 13 pasal 162 versi 2 November 2020?",
+    "englishQuestion": "Which laws deleted UU tahun 2003 no 13 pasal 162 versi 2 November 2020?",
+    "sparql": "select distinct ?deletingLaw where { ?deletingLaw <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2003/13/pasal/0162/versi/20201102> . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "what-deleted-law"
+  },
+  {
+    "id": "q15",
+    "question": "Apa posisi orang yang mengesahkan UU tahun 2009 no 30?",
+    "englishQuestion": "What role did the enactor of UU tahun 2009 no 30 hold?",
+    "sparql": "select ?position where { <https://example.org/lex2kg/uu/2009/30> <https://example.org/lex2kg/ontology/jabatanPengesah> ?position . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-enactment-position"
+  },
+  {
+    "id": "q16",
+    "question": "Nomor berapakah UU tahun 2018 no 6 pasal 77?",
+    "englishQuestion": "Which number is UU tahun 2018 no 6 pasal 77?",
+    "sparql": "select ?number where { <https://example.org/lex2kg/uu/2018/6/pasal/0077> <https://example.org/lex2kg/ontology/nomor> ?number . }",
+    "category": "legal",
+    "complexity": "basic",
+    "templateId": "law-number"
   },
   {
     "id": "q17",
-    "question": "Apa isi dari UU tahun 1997 no 22 pasal 32 versi 1 September 1997?",
-    "englishQuestion": "What is the content of UU tahun 1997 no 22 pasal 32 versi 1 September 1997?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/1997/22/pasal/0032/versi/19970901> <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "question": "Nomor berapakah UU tahun 2008 no 21 pasal 37 versi 16 Juli 2008 ayat 3 huruf b?",
+    "englishQuestion": "Which number is UU tahun 2008 no 21 pasal 37 versi 16 Juli 2008 ayat 3 huruf b?",
+    "sparql": "select ?number where { <https://example.org/lex2kg/uu/2008/21/pasal/0037/versi/20080716/ayat/0003/huruf/b> <https://example.org/lex2kg/ontology/nomor> ?number . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "article-text"
+    "templateId": "law-number"
   },
   {
     "id": "q18",
-    "question": "Undang-undang apa saja yang menghapus UU tahun 2007 no 27 pasal 8 versi 2 November 2020?",
-    "englishQuestion": "Which laws deleted UU tahun 2007 no 27 pasal 8 versi 2 November 2020?",
-    "sparql": "select distinct ?deletingLaw where { ?deletingLaw <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2007/27/pasal/0008/versi/20201102> . }",
+    "question": "Di mana UU tahun 1982 no 4 disahkan?",
+    "englishQuestion": "Where was UU tahun 1982 no 4 enacted?",
+    "sparql": "select ?location where { <https://example.org/lex2kg/uu/1982/4> <https://example.org/lex2kg/ontology/disahkanDi> ?location . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "what-deleted-law"
+    "templateId": "law-enactment-location"
   },
   {
     "id": "q19",
-    "question": "Apa bahasa penulisan UU tahun 1999 no 16?",
-    "englishQuestion": "What is the language of UU tahun 1999 no 16?",
-    "sparql": "select ?language where { <https://example.org/lex2kg/uu/1999/16> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
+    "question": "Dokumen apa yang direferensikan oleh UU tahun 2008 no 53 pasal 11 versi 26 November 2008?",
+    "englishQuestion": "Which documents are referenced by UU tahun 2008 no 53 pasal 11 versi 26 November 2008?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2008/53/pasal/0011/versi/20081126> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-language"
+    "templateId": "law-references-what"
   },
   {
     "id": "q20",
-    "question": "Apa saja peraturan yang memodifikasi UU tahun 1999 no 36 pasal 34 versi 2 November 2020?",
-    "englishQuestion": "Which regulations have modified UU tahun 1999 no 36 pasal 34 versi 2 November 2020?",
-    "sparql": "select distinct ?amendingLaw where { ?amendingLaw <https://example.org/lex2kg/ontology/mengubah> <https://example.org/lex2kg/uu/1999/36/pasal/0034/versi/20201102> . }",
+    "question": "Apa yang menjadi pertimbangan dari UU tahun 2016 no 19?",
+    "englishQuestion": "What are the considerations of UU tahun 2016 no 19?",
+    "sparql": "select ?menimbang where { <https://example.org/lex2kg/uu/2016/19> <https://example.org/lex2kg/ontology/menimbang> ?menimbang . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "what-amended-law"
+    "templateId": "law-menimbang"
   },
   {
     "id": "q21",
-    "question": "Apa konten dari UU tahun 2016 no 20 pasal 19 versi 25 November 2016 ayat 2?",
-    "englishQuestion": "What is the text of UU tahun 2016 no 20 pasal 19 versi 25 November 2016 ayat 2?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2016/20/pasal/0019/versi/20161125/ayat/0002> <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "question": "Apa dasar hukum UU tahun 2009 no 35?",
+    "englishQuestion": "What legal basis does UU tahun 2009 no 35 have?",
+    "sparql": "select ?mengingat where { <https://example.org/lex2kg/uu/2009/35> <https://example.org/lex2kg/ontology/mengingat> ?mengingat . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "article-text"
+    "templateId": "law-mengingat"
   },
   {
     "id": "q22",
-    "question": "Peraturan apa yang telah mencabut UU tahun 2017 no 6 pasal 37 versi 2 November 2020?",
-    "englishQuestion": "What regulations have revoked UU tahun 2017 no 6 pasal 37 versi 2 November 2020?",
-    "sparql": "select distinct ?deletingLaw where { ?deletingLaw <https://example.org/lex2kg/ontology/menghapus> <https://example.org/lex2kg/uu/2017/6/pasal/0037/versi/20201102> . }",
+    "question": "Di bawah yurisdiksi apa UU tahun 1992 no 8 berlaku?",
+    "englishQuestion": "Under which jurisdiction does UU tahun 1992 no 8 apply?",
+    "sparql": "select ?jurisdiction where { <https://example.org/lex2kg/uu/1992/8> <https://example.org/lex2kg/ontology/yurisdiksi> ?jurisdiction . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "what-deleted-law"
+    "templateId": "law-jurisdiction"
   },
   {
     "id": "q23",
-    "question": "Apa jabatan pengesah UU tahun 2006 no 6?",
-    "englishQuestion": "What is the position of the person who enacted UU tahun 2006 no 6?",
-    "sparql": "select ?position where { <https://example.org/lex2kg/uu/2006/6> <https://example.org/lex2kg/ontology/jabatanPengesah> ?position . }",
+    "question": "Apa posisi orang yang mengesahkan UU tahun 1971 no 12?",
+    "englishQuestion": "What role did the enactor of UU tahun 1971 no 12 hold?",
+    "sparql": "select ?position where { <https://example.org/lex2kg/uu/1971/12> <https://example.org/lex2kg/ontology/jabatanPengesah> ?position . }",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-enactment-position"
   },
   {
     "id": "q24",
-    "question": "Apa konten dari UU tahun 2012 no 12 pasal 1 versi 10 Agustus 2012 huruf 16?",
-    "englishQuestion": "What is the text of UU tahun 2012 no 12 pasal 1 versi 10 Agustus 2012 huruf 16?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2012/12/pasal/0001/versi/20120810/huruf/0016> <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "question": "Dokumen apa yang direferensikan oleh UU tahun 2013 no 12 pasal 14 versi 11 Mei 2013 ayat 4?",
+    "englishQuestion": "Which documents are referenced by UU tahun 2013 no 12 pasal 14 versi 11 Mei 2013 ayat 4?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2013/12/pasal/0014/versi/20130511/ayat/0004> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "article-text"
+    "templateId": "law-references-what"
   },
   {
     "id": "q25",
-    "question": "Apa yurisdiksi dari UU tahun 1953 no 30?",
-    "englishQuestion": "What is the jurisdiction of UU tahun 1953 no 30?",
-    "sparql": "select ?jurisdiction where { <https://example.org/lex2kg/uu/1953/30> <https://example.org/lex2kg/ontology/yurisdiksi> ?jurisdiction . }",
+    "question": "Apa posisi orang yang mengesahkan UU tahun 1957 no 37?",
+    "englishQuestion": "What role did the enactor of UU tahun 1957 no 37 hold?",
+    "sparql": "select ?position where { <https://example.org/lex2kg/uu/1957/37> <https://example.org/lex2kg/ontology/jabatanPengesah> ?position . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-jurisdiction"
+    "templateId": "law-enactment-position"
   },
   {
     "id": "q26",
-    "question": "Apa saja yang dirujuk oleh UU tahun 1974 no 2 pasal 2 versi 14 Maret 1974 ayat 7?",
-    "englishQuestion": "What does UU tahun 1974 no 2 pasal 2 versi 14 Maret 1974 ayat 7 reference?",
-    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/1974/2/pasal/0002/versi/19740314/ayat/0007> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
+    "question": "Apa rujukan dari UU tahun 2013 no 22 pasal 3 versi 30 September 2013 ayat 4?",
+    "englishQuestion": "What are the references from UU tahun 2013 no 22 pasal 3 versi 30 September 2013 ayat 4?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2013/22/pasal/0003/versi/20130930/ayat/0004> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-references-what"
   },
   {
     "id": "q27",
-    "question": "Dalam bahasa apa UU tahun 2013 no 18 ditulis?",
-    "englishQuestion": "In what language is UU tahun 2013 no 18 written?",
-    "sparql": "select ?language where { <https://example.org/lex2kg/uu/2013/18> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
+    "question": "Dalam bahasa apa UU tahun 2005 no 10 ditulis?",
+    "englishQuestion": "In what language is UU tahun 2005 no 10 written?",
+    "sparql": "select ?language where { <https://example.org/lex2kg/uu/2005/10> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-language"
   },
   {
     "id": "q28",
-    "question": "Jabatan apa yang dimiliki pengesah UU tahun 1954 no 45?",
-    "englishQuestion": "What was the official title of the person who enacted UU tahun 1954 no 45?",
-    "sparql": "select ?position where { <https://example.org/lex2kg/uu/1954/45> <https://example.org/lex2kg/ontology/jabatanPengesah> ?position . }",
+    "question": "Apa dasar hukum UU tahun 2012 no 3?",
+    "englishQuestion": "What legal basis does UU tahun 2012 no 3 have?",
+    "sparql": "select ?mengingat where { <https://example.org/lex2kg/uu/2012/3> <https://example.org/lex2kg/ontology/mengingat> ?mengingat . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-enactment-position"
+    "templateId": "law-mengingat"
   },
   {
     "id": "q29",
-    "question": "Apa saja yang dirujuk oleh UU tahun 2017 no 2 pasal 18 versi 12 Januari 2017?",
-    "englishQuestion": "What does UU tahun 2017 no 2 pasal 18 versi 12 Januari 2017 reference?",
-    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2017/2/pasal/0018/versi/20170112> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
+    "question": "Apa rujukan dari UU tahun 2007 no 14 pasal 4 versi 2 Januari 2007?",
+    "englishQuestion": "What are the references from UU tahun 2007 no 14 pasal 4 versi 2 Januari 2007?",
+    "sparql": "select distinct ?referenced where { <https://example.org/lex2kg/uu/2007/14/pasal/0004/versi/20070102> <https://example.org/lex2kg/ontology/merujuk> ?referenced . }",
     "category": "legal",
     "complexity": "basic",
     "templateId": "law-references-what"
   },
   {
     "id": "q30",
-    "question": "Apa isi dari UU tahun 2003 no 12 pasal 128 versi 11 Maret 2003 ayat 4?",
-    "englishQuestion": "What is the content of UU tahun 2003 no 12 pasal 128 versi 11 Maret 2003 ayat 4?",
-    "sparql": "select ?text where { <https://example.org/lex2kg/uu/2003/12/pasal/0128/versi/20030311/ayat/0004> <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "question": "Berapa nomor dari UU tahun 2019 no 8 pasal 43 versi 26 April 2019 ayat 2?",
+    "englishQuestion": "What is the number of UU tahun 2019 no 8 pasal 43 versi 26 April 2019 ayat 2?",
+    "sparql": "select ?number where { <https://example.org/lex2kg/uu/2019/8/pasal/0043/versi/20190426/ayat/0002> <https://example.org/lex2kg/ontology/nomor> ?number . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "article-text"
+    "templateId": "law-number"
   },
   {
     "id": "q31",
-    "question": "Berapa jumlah bab dalam UU tahun 1990 no 4?",
-    "englishQuestion": "How many chapters are in UU tahun 1990 no 4?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/1990/4> <https://example.org/lex2kg/ontology/bab> ?chapter . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-chapters"
-  },
-  {
-    "id": "q32",
-    "question": "Berapa jumlah bab dalam UU tahun 2007 no 11?",
-    "englishQuestion": "How many chapters are in UU tahun 2007 no 11?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2007/11> <https://example.org/lex2kg/ontology/bab> ?chapter . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-chapters"
-  },
-  {
-    "id": "q33",
-    "question": "Apa saja regulasi mengenai 'POKOK'?",
-    "englishQuestion": "What are the regulations concerning 'POKOK'?",
-    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"POKOK\"))) }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-by-keyword"
-  },
-  {
-    "id": "q34",
-    "question": "Apa saja ayat yang terdapat dalam UU tahun 2014 no 18 pasal 8?",
-    "englishQuestion": "What sections are in UU tahun 2014 no 18 pasal 8?",
-    "sparql": "select ?section where { <https://example.org/lex2kg/uu/2014/18/pasal/0008> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "article-subsections"
-  },
-  {
-    "id": "q35",
-    "question": "Ada berapa huruf di dalam UU tahun 2011 no 15 pasal 75 versi 16 Oktober 2011 ayat 1 a?",
-    "englishQuestion": "What is the number of letters in UU tahun 2011 no 15 pasal 75 versi 16 Oktober 2011 ayat 1 a?",
-    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2011/15/pasal/0075/versi/20111016/ayat/0001/a> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "question": "Ada berapa huruf di dalam UU tahun 2014 no 33 pasal 1 versi 17 Oktober 2014?",
+    "englishQuestion": "What is the number of letters in UU tahun 2014 no 33 pasal 1 versi 17 Oktober 2014?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2014/33/pasal/0001/versi/20141017> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "count-article-letters"
   },
   {
+    "id": "q32",
+    "question": "Pasal apa yang mengacu pada UU tahun 2004 no 7 pasal 80 versi 18 Maret 2004 ayat 1?",
+    "englishQuestion": "What articles refer to UU tahun 2004 no 7 pasal 80 versi 18 Maret 2004 ayat 1?",
+    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2004/7/pasal/0080/versi/20040318/ayat/0001> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "article-references"
+  },
+  {
+    "id": "q33",
+    "question": "Berapa banyak huruf yang terdapat dalam UU tahun 2008 no 54 menimbang?",
+    "englishQuestion": "How many letters does UU tahun 2008 no 54 menimbang contain?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2008/54/menimbang> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "count-article-letters"
+  },
+  {
+    "id": "q34",
+    "question": "Bagian apa saja yang terdapat dalam UU tahun 2004 no 16 bab 5?",
+    "englishQuestion": "Which components are contained in UU tahun 2004 no 16 bab 5?",
+    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/2004/16/bab/0005> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/2004/16/bab/0005> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/2004/16/bab/0005> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-parts"
+  },
+  {
+    "id": "q35",
+    "question": "Apa saja regulasi mengenai 'PENGEMBANGAN,'?",
+    "englishQuestion": "What are the regulations concerning 'PENGEMBANGAN,'?",
+    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"PENGEMBANGAN,\"))) }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-by-keyword"
+  },
+  {
     "id": "q36",
-    "question": "Apa saja regulasi mengenai 'PEMERIKSAAN'?",
-    "englishQuestion": "What are the regulations concerning 'PEMERIKSAAN'?",
-    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"PEMERIKSAAN\"))) }",
+    "question": "Peraturan apa yang terkait dengan 'SEMESTA'?",
+    "englishQuestion": "What regulations are associated with 'SEMESTA'?",
+    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"SEMESTA\"))) }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-by-keyword"
   },
   {
     "id": "q37",
-    "question": "Peraturan apa yang ditandatangani oleh Assaat?",
-    "englishQuestion": "Which regulations were signed by Assaat?",
-    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Assaat\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
+    "question": "Berapa jumlah pasal dalam UU tahun 1993 no 6 bab 1?",
+    "englishQuestion": "How many articles are in UU tahun 1993 no 6 bab 1?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/1993/6/bab/0001> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-by-enactor"
+    "templateId": "law-articles"
   },
   {
     "id": "q38",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 2007?",
-    "englishQuestion": "What laws were enacted in the year 2007?",
-    "sparql": "select ?law ?title where { ?law <https://example.org/lex2kg/ontology/tahun> 2007 . ?law <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang disahkan pada tahun 2016?",
+    "englishQuestion": "What laws were enacted in the year 2016?",
+    "sparql": "select ?law ?title where { ?law <https://example.org/lex2kg/ontology/tahun> 2016 . ?law <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "laws-enacted-in-year"
   },
   {
     "id": "q39",
-    "question": "Apa saja regulasi mengenai 'MENGELUARKAN'?",
-    "englishQuestion": "What are the regulations concerning 'MENGELUARKAN'?",
-    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"MENGELUARKAN\"))) }",
+    "question": "Berapa jumlah ayat dalam UU tahun 1981 no 8 pasal 78?",
+    "englishQuestion": "How many sections are in UU tahun 1981 no 8 pasal 78?",
+    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/1981/8/pasal/0078> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-by-keyword"
+    "templateId": "article-sections"
   },
   {
     "id": "q40",
-    "question": "Undang-undang apa saja yang disahkan pada tahun 1984?",
-    "englishQuestion": "What laws were enacted in the year 1984?",
-    "sparql": "select ?law ?title where { ?law <https://example.org/lex2kg/ontology/tahun> 1984 . ?law <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Berapa banyak pasal yang terdapat dalam UU tahun 1987 no 8 bab 3?",
+    "englishQuestion": "How many articles does UU tahun 1987 no 8 bab 3 contain?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/1987/8/bab/0003> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "laws-enacted-in-year"
+    "templateId": "law-articles"
   },
   {
     "id": "q41",
-    "question": "Berapa banyak huruf yang terdapat dalam UU tahun 2009 no 22 pasal 136 versi 22 Juni 2009 ayat 2?",
-    "englishQuestion": "How many letters does UU tahun 2009 no 22 pasal 136 versi 22 Juni 2009 ayat 2 contain?",
-    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2009/22/pasal/0136/versi/20090622/ayat/0002> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "question": "Pasal-pasal apa yang mereferensikan UU tahun 1976 no 9 pasal 34 versi 26 Juli 1976 ayat 1?",
+    "englishQuestion": "Which articles cite UU tahun 1976 no 9 pasal 34 versi 26 Juli 1976 ayat 1?",
+    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/1976/9/pasal/0034/versi/19760726/ayat/0001> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "count-article-letters"
+    "templateId": "article-references"
   },
   {
     "id": "q42",
-    "question": "Berapa jumlah bab dalam UU tahun 1997 no 29?",
-    "englishQuestion": "How many chapters are in UU tahun 1997 no 29?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/1997/29> <https://example.org/lex2kg/ontology/bab> ?chapter . }",
+    "question": "Sebutkan ayat-ayat dalam UU tahun 2007 no 8 pasal 9?",
+    "englishQuestion": "List the paragraphs in UU tahun 2007 no 8 pasal 9?",
+    "sparql": "select ?section where { <https://example.org/lex2kg/uu/2007/8/pasal/0009> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-chapters"
+    "templateId": "article-subsections"
   },
   {
     "id": "q43",
-    "question": "Sebutkan bagian-bagian dari UU tahun 2007 no 40 bab 3 bagian 5?",
-    "englishQuestion": "List the sections of UU tahun 2007 no 40 bab 3 bagian 5?",
-    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/2007/40/bab/0003/bagian/0005> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/2007/40/bab/0003/bagian/0005> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/2007/40/bab/0003/bagian/0005> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
+    "question": "Apa saja regulasi yang disahkan Soeharto?",
+    "englishQuestion": "What regulations did Soeharto enact?",
+    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Soeharto\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-parts"
+    "templateId": "law-by-enactor"
   },
   {
     "id": "q44",
-    "question": "Apa saja regulasi mengenai '2860);'?",
-    "englishQuestion": "What are the regulations concerning '2860);'?",
-    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"2860);\"))) }",
+    "question": "Pasal mana saja yang merujuk ke UU tahun 2007 no 26 pasal 57 versi 26 April 2007 ayat 2?",
+    "englishQuestion": "Which articles reference UU tahun 2007 no 26 pasal 57 versi 26 April 2007 ayat 2?",
+    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2007/26/pasal/0057/versi/20070426/ayat/0002> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-by-keyword"
+    "templateId": "article-references"
   },
   {
     "id": "q45",
-    "question": "Ada berapa bab di dalam UU tahun 1996 no 5?",
-    "englishQuestion": "What is the number of chapters in UU tahun 1996 no 5?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/1996/5> <https://example.org/lex2kg/ontology/bab> ?chapter . }",
+    "question": "Berapa banyak pasal yang terdapat dalam UU tahun 2019 no 22 bab 21?",
+    "englishQuestion": "How many articles does UU tahun 2019 no 22 bab 21 contain?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2019/22/bab/0021> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-chapters"
+    "templateId": "law-articles"
   },
   {
     "id": "q46",
-    "question": "Pasal apa yang mengacu pada UU tahun 2004 no 36 pasal 11 versi 18 Oktober 2004 ayat 1?",
-    "englishQuestion": "What articles refer to UU tahun 2004 no 36 pasal 11 versi 18 Oktober 2004 ayat 1?",
-    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2004/36/pasal/0011/versi/20041018/ayat/0001> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
+    "question": "Pasal mana saja yang merujuk ke UU tahun 2009 no 4 pasal 115 versi 12 Januari 2009 huruf a?",
+    "englishQuestion": "Which articles reference UU tahun 2009 no 4 pasal 115 versi 12 Januari 2009 huruf a?",
+    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2009/4/pasal/0115/versi/20090112/huruf/a> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "article-references"
   },
   {
     "id": "q47",
-    "question": "Peraturan apa yang ditandatangani oleh Mohammad Hatta?",
-    "englishQuestion": "Which regulations were signed by Mohammad Hatta?",
-    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Mohammad Hatta\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
+    "question": "Sebutkan bagian-bagian dari UU tahun 2019 no 8 bab 12?",
+    "englishQuestion": "List the sections of UU tahun 2019 no 8 bab 12?",
+    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/2019/8/bab/0012> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/2019/8/bab/0012> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/2019/8/bab/0012> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-by-enactor"
+    "templateId": "law-parts"
   },
   {
     "id": "q48",
-    "question": "Sebutkan ayat-ayat dalam UU tahun 1999 no 2 pasal 7?",
-    "englishQuestion": "List the paragraphs in UU tahun 1999 no 2 pasal 7?",
-    "sparql": "select ?section where { <https://example.org/lex2kg/uu/1999/2/pasal/0007> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
+    "question": "Bagian apa saja yang terdapat dalam UU tahun 2006 no 9 bab 5 bagian 2?",
+    "englishQuestion": "Which components are contained in UU tahun 2006 no 9 bab 5 bagian 2?",
+    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/2006/9/bab/0005/bagian/0002> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/2006/9/bab/0005/bagian/0002> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/2006/9/bab/0005/bagian/0002> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "article-subsections"
+    "templateId": "law-parts"
   },
   {
     "id": "q49",
-    "question": "Apa saja perundangan yang ditetapkan di tahun 1954?",
-    "englishQuestion": "What legislation was established in the year 1954?",
-    "sparql": "select ?law ?title where { ?law <https://example.org/lex2kg/ontology/tahun> 1954 . ?law <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "laws-enacted-in-year"
-  },
-  {
-    "id": "q50",
-    "question": "Pasal apa yang mengacu pada UU tahun 2014 no 22 pasal 46 versi 30 September 2014 ayat 1 huruf n?",
-    "englishQuestion": "What articles refer to UU tahun 2014 no 22 pasal 46 versi 30 September 2014 ayat 1 huruf n?",
-    "sparql": "select distinct ?referringArticle ?text where { ?referringArticle <https://example.org/lex2kg/ontology/merujuk> <https://example.org/lex2kg/uu/2014/22/pasal/0046/versi/20140930/ayat/0001/huruf/n> . ?referringArticle <https://example.org/lex2kg/ontology/teks> ?text . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "article-references"
-  },
-  {
-    "id": "q51",
-    "question": "Berapa banyak ayat yang terdapat dalam UU tahun 2018 no 6 pasal 56?",
-    "englishQuestion": "How many sections does UU tahun 2018 no 6 pasal 56 contain?",
-    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2018/6/pasal/0056> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "article-sections"
-  },
-  {
-    "id": "q52",
-    "question": "Berapa banyak pasal yang terdapat dalam UU tahun 2007 no 32 bab 2 bagian 2?",
-    "englishQuestion": "How many articles does UU tahun 2007 no 32 bab 2 bagian 2 contain?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2007/32/bab/0002/bagian/0002> <https://example.org/lex2kg/ontology/pasal> ?article . }",
+    "question": "Ada berapa pasal di dalam UU tahun 1992 no 15 bab 6?",
+    "englishQuestion": "What is the number of articles in UU tahun 1992 no 15 bab 6?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/1992/15/bab/0006> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-articles"
   },
   {
-    "id": "q53",
-    "question": "Berapa jumlah ayat dalam UU tahun 2001 no 8 pasal 14?",
-    "englishQuestion": "How many sections are in UU tahun 2001 no 8 pasal 14?",
-    "sparql": "select (count(?section) as ?count) where { <https://example.org/lex2kg/uu/2001/8/pasal/0014> <https://example.org/lex2kg/ontology/versi> ?version . ?version <https://example.org/lex2kg/ontology/ayat> ?section . }",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "article-sections"
-  },
-  {
-    "id": "q54",
+    "id": "q50",
     "question": "Undang-undang apa saja yang disahkan oleh Soeharto?",
     "englishQuestion": "What laws were enacted by Soeharto?",
     "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Soeharto\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
@@ -486,90 +450,126 @@
     "templateId": "law-by-enactor"
   },
   {
-    "id": "q55",
-    "question": "Berapa banyak bab yang terdapat dalam UU tahun 2002 no 25?",
-    "englishQuestion": "How many chapters does UU tahun 2002 no 25 contain?",
-    "sparql": "select (count(?chapter) as ?count) where { <https://example.org/lex2kg/uu/2002/25> <https://example.org/lex2kg/ontology/bab> ?chapter . }",
+    "id": "q51",
+    "question": "Bagian apa saja yang terdapat dalam UU tahun 2020 no 11 bab 10?",
+    "englishQuestion": "Which components are contained in UU tahun 2020 no 11 bab 10?",
+    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/2020/11/bab/0010> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/2020/11/bab/0010> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/2020/11/bab/0010> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-chapters"
+    "templateId": "law-parts"
   },
   {
-    "id": "q56",
-    "question": "Berapa banyak huruf yang terdapat dalam UU tahun 2007 no 22 pasal 1 versi 19 April 2007?",
-    "englishQuestion": "How many letters does UU tahun 2007 no 22 pasal 1 versi 19 April 2007 contain?",
-    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2007/22/pasal/0001/versi/20070419> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "id": "q52",
+    "question": "Berapa banyak huruf yang terdapat dalam UU tahun 1997 no 23 pasal 10 versi 19 September 1997?",
+    "englishQuestion": "How many letters does UU tahun 1997 no 23 pasal 10 versi 19 September 1997 contain?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/1997/23/pasal/0010/versi/19970919> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "count-article-letters"
   },
   {
+    "id": "q53",
+    "question": "Ada berapa huruf di dalam UU tahun 1996 no 2 menimbang?",
+    "englishQuestion": "What is the number of letters in UU tahun 1996 no 2 menimbang?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/1996/2/menimbang> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "count-article-letters"
+  },
+  {
+    "id": "q54",
+    "question": "Berapa jumlah huruf dalam UU tahun 2004 no 13 mengingat?",
+    "englishQuestion": "How many letters are in UU tahun 2004 no 13 mengingat?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2004/13/mengingat> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "count-article-letters"
+  },
+  {
+    "id": "q55",
+    "question": "Berapa jumlah huruf dalam UU tahun 2002 no 28 pasal 0036b versi 2 November 2020 ayat 4?",
+    "englishQuestion": "How many letters are in UU tahun 2002 no 28 pasal 0036b versi 2 November 2020 ayat 4?",
+    "sparql": "select (count(?letter) as ?count) where { <https://example.org/lex2kg/uu/2002/28/pasal/0036B/versi/20201102/ayat/0004> <https://example.org/lex2kg/ontology/huruf> ?letter . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "count-article-letters"
+  },
+  {
+    "id": "q56",
+    "question": "Peraturan apa yang terkait dengan 'PERALIHAN'?",
+    "englishQuestion": "What regulations are associated with 'PERALIHAN'?",
+    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"PERALIHAN\"))) }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-by-keyword"
+  },
+  {
     "id": "q57",
-    "question": "Peraturan apa yang ditandatangani oleh Soekarno?",
-    "englishQuestion": "Which regulations were signed by Soekarno?",
-    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Soekarno\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
+    "question": "Apa saja regulasi yang disahkan DR. H. Susilo Bambang Yudhoyono?",
+    "englishQuestion": "What regulations did DR. H. Susilo Bambang Yudhoyono enact?",
+    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"DR. H. Susilo Bambang Yudhoyono\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-by-enactor"
   },
   {
     "id": "q58",
-    "question": "Undang-undang apa saja yang disahkan oleh Assaat?",
-    "englishQuestion": "What laws were enacted by Assaat?",
-    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"Assaat\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
+    "question": "Peraturan apa saja yang dibuat pada tahun 1985?",
+    "englishQuestion": "Which regulations were created in 1985?",
+    "sparql": "select ?law ?title where { ?law <https://example.org/lex2kg/ontology/tahun> 1985 . ?law <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-by-enactor"
+    "templateId": "laws-enacted-in-year"
   },
   {
     "id": "q59",
-    "question": "Berapa banyak pasal yang terdapat dalam UU tahun 2008 no 27 bab 8?",
-    "englishQuestion": "How many articles does UU tahun 2008 no 27 bab 8 contain?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2008/27/bab/0008> <https://example.org/lex2kg/ontology/pasal> ?article . }",
+    "question": "Undang-undang apa saja yang berhubungan dengan 'TRAFFICKING'?",
+    "englishQuestion": "Which laws are related to 'TRAFFICKING'?",
+    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"TRAFFICKING\"))) }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-by-keyword"
+  },
+  {
+    "id": "q60",
+    "question": "Berapa banyak pasal yang terdapat dalam UU tahun 2007 no 15?",
+    "englishQuestion": "How many articles does UU tahun 2007 no 15 contain?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2007/15> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
     "templateId": "law-articles"
   },
   {
-    "id": "q60",
-    "question": "Apa saja bagian dari UU tahun 1991 no 5 bab 2?",
-    "englishQuestion": "What are the parts of UU tahun 1991 no 5 bab 2?",
-    "sparql": "select distinct ?part ?type where { { <https://example.org/lex2kg/uu/1991/5/bab/0002> <https://example.org/lex2kg/ontology/pasal> ?part . BIND(\"pasal\" as ?type) } UNION { <https://example.org/lex2kg/uu/1991/5/bab/0002> <https://example.org/lex2kg/ontology/bab> ?part . BIND(\"bab\" as ?type) } UNION { <https://example.org/lex2kg/uu/1991/5/bab/0002> <https://example.org/lex2kg/ontology/bagian> ?part . BIND(\"bagian\" as ?type) } }",
+    "id": "q61",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 20?",
+    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 20?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0022/versi/20201102/huruf/0020> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-parts"
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
   },
   {
-    "id": "q61",
-    "question": "UU mana dengan jumlah pasal terbesar?",
-    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "id": "q62",
+    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
+    "englishQuestion": "What regulation has the highest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-with-most-articles"
   },
   {
-    "id": "q62",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 12?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 12?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0081/versi/20201102/huruf/0012> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what"
-  },
-  {
     "id": "q63",
-    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 52 versi 2 November 2020 huruf 2?",
-    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 52 versi 2 November 2020 huruf 2?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0052/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 22?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 22?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0042/versi/20201102/huruf/0022> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q64",
-    "question": "UU mana dengan jumlah pasal terbesar?",
-    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
+    "englishQuestion": "What regulation has the highest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
@@ -577,18 +577,18 @@
   },
   {
     "id": "q65",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 20 versi 2 November 2020 huruf 8?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 20 versi 2 November 2020 huruf 8?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0020/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
+    "englishQuestion": "Which law has the most articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "laws-amended-what"
+    "templateId": "law-with-most-articles"
   },
   {
     "id": "q66",
-    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 2?",
-    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 2?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 60 versi 2 November 2020 huruf 10?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 60 versi 2 November 2020 huruf 10?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0060/versi/20201102/huruf/0010> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
@@ -604,8 +604,8 @@
   },
   {
     "id": "q68",
-    "question": "UU mana dengan jumlah pasal terbesar?",
-    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
+    "englishQuestion": "What regulation has the highest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
@@ -613,96 +613,87 @@
   },
   {
     "id": "q69",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 2?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 2?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 115 versi 2 November 2020 huruf 3?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 115 versi 2 November 2020 huruf 3?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0115/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q70",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 44 versi 2 November 2020 huruf 10?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 44 versi 2 November 2020 huruf 10?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0044/versi/20201102/huruf/0010> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "law-with-most-articles"
+    "templateId": "laws-amended-what"
   },
   {
     "id": "q71",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 62 versi 2 November 2020 huruf 1?",
+    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 62 versi 2 November 2020 huruf 1?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0062/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "law-with-most-articles"
+    "templateId": "laws-amended-what"
   },
   {
     "id": "q72",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 106 versi 2 November 2020 huruf 6?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 106 versi 2 November 2020 huruf 6?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0106/versi/20201102/huruf/0006> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 24 versi 2 November 2020 huruf 2?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 24 versi 2 November 2020 huruf 2?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0024/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q73",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 12?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 12?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0022/versi/20201102/huruf/0012> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "UU mana dengan jumlah pasal terbesar?",
+    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "laws-amended-what"
+    "templateId": "law-with-most-articles"
   },
   {
     "id": "q74",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 23?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 23?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0081/versi/20201102/huruf/0023> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "UU mana dengan jumlah pasal terbesar?",
+    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "laws-amended-what"
+    "templateId": "law-with-most-articles"
   },
   {
     "id": "q75",
-    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 47 versi 2 November 2020 huruf 3?",
-    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 47 versi 2 November 2020 huruf 3?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0047/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2011 no 8 pasal 1 versi 20 Juli 2011 huruf 1?",
+    "englishQuestion": "What regulations were modified by UU tahun 2011 no 8 pasal 1 versi 20 Juli 2011 huruf 1?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2011/8/pasal/0001/versi/20110720/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q76",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 83 versi 2 November 2020 huruf 3?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 83 versi 2 November 2020 huruf 3?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0083/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 109 versi 2 November 2020 huruf 2?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 109 versi 2 November 2020 huruf 2?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0109/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q77",
-    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
-    "englishQuestion": "What regulation has the highest number of articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles"
-  },
-  {
-    "id": "q78",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 1?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 22 versi 2 November 2020 huruf 1?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0022/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 46 versi 2 November 2020 huruf 6?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 46 versi 2 November 2020 huruf 6?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0046/versi/20201102/huruf/0006> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
-    "id": "q79",
+    "id": "q78",
     "question": "UU mana dengan jumlah pasal terbesar?",
     "englishQuestion": "Which legislation contains the greatest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
@@ -711,94 +702,103 @@
     "templateId": "law-with-most-articles"
   },
   {
+    "id": "q79",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 60 versi 2 November 2020 huruf 5?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 60 versi 2 November 2020 huruf 5?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0060/versi/20201102/huruf/0005> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
+  },
+  {
     "id": "q80",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 14?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 14?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0014> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 52 versi 2 November 2020 huruf 20?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 52 versi 2 November 2020 huruf 20?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0052/versi/20201102/huruf/0020> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q81",
-    "question": "UU mana dengan jumlah pasal terbesar?",
-    "englishQuestion": "Which legislation contains the greatest number of articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 72 versi 2 November 2020 huruf 3?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 72 versi 2 November 2020 huruf 3?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0072/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "law-with-most-articles"
+    "templateId": "laws-amended-what"
   },
   {
     "id": "q82",
-    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 3?",
-    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 3?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0042/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 8?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 8?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0048/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q83",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 68 versi 2 November 2020 huruf 8?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 68 versi 2 November 2020 huruf 8?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0068/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what"
-  },
-  {
-    "id": "q84",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 53 versi 2 November 2020 huruf 8?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 53 versi 2 November 2020 huruf 8?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0053/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what"
-  },
-  {
-    "id": "q85",
-    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
-    "englishQuestion": "What regulation has the highest number of articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles"
-  },
-  {
-    "id": "q86",
-    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
-    "englishQuestion": "What regulation has the highest number of articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles"
-  },
-  {
-    "id": "q87",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 1?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 1?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what"
-  },
-  {
-    "id": "q88",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles"
-  },
-  {
-    "id": "q89",
     "question": "UU mana dengan jumlah pasal terbesar?",
     "englishQuestion": "Which legislation contains the greatest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "law-with-most-articles"
+  },
+  {
+    "id": "q84",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 70 versi 2 November 2020 huruf 4?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 70 versi 2 November 2020 huruf 4?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0070/versi/20201102/huruf/0004> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
+  },
+  {
+    "id": "q85",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 17?",
+    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 42 versi 2 November 2020 huruf 17?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0042/versi/20201102/huruf/0017> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
+  },
+  {
+    "id": "q86",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 2?",
+    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 2?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0048/versi/20201102/huruf/0002> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
+  },
+  {
+    "id": "q87",
+    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
+    "englishQuestion": "What regulation has the highest number of articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-with-most-articles"
+  },
+  {
+    "id": "q88",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 55 versi 2 November 2020 huruf 16?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 55 versi 2 November 2020 huruf 16?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0055/versi/20201102/huruf/0016> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
+  },
+  {
+    "id": "q89",
+    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 19?",
+    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 19?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0019> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "laws-amended-what"
   },
   {
     "id": "q90",
@@ -811,24 +811,15 @@
   },
   {
     "id": "q91",
-    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
-    "englishQuestion": "What regulation has the highest number of articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 1?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 81 versi 2 November 2020 huruf 1?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0081/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "law-with-most-articles"
+    "templateId": "laws-amended-what"
   },
   {
     "id": "q92",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles"
-  },
-  {
-    "id": "q93",
     "question": "UU mana dengan jumlah pasal terbesar?",
     "englishQuestion": "Which legislation contains the greatest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
@@ -837,34 +828,52 @@
     "templateId": "law-with-most-articles"
   },
   {
+    "id": "q93",
+    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
+    "englishQuestion": "Which law has the most articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-with-most-articles"
+  },
+  {
     "id": "q94",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 24?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 48 versi 2 November 2020 huruf 24?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0048/versi/20201102/huruf/0024> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 123 versi 2 November 2020 huruf 8?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 123 versi 2 November 2020 huruf 8?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0123/versi/20201102/huruf/0008> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q95",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 37 versi 2 November 2020 huruf 7?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 37 versi 2 November 2020 huruf 7?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0037/versi/20201102/huruf/0007> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
+    "englishQuestion": "Which law has the most articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "laws-amended-what"
+    "templateId": "law-with-most-articles"
   },
   {
     "id": "q96",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 1?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 150 versi 2 November 2020 huruf 1?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0150/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 10?",
+    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 10?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0010> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
     "templateId": "laws-amended-what"
   },
   {
     "id": "q97",
+    "question": "UU mana dengan jumlah pasal terbesar?",
+    "englishQuestion": "Which legislation contains the greatest number of articles?",
+    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-with-most-articles"
+  },
+  {
+    "id": "q98",
     "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
     "englishQuestion": "What regulation has the highest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
@@ -873,18 +882,9 @@
     "templateId": "law-with-most-articles"
   },
   {
-    "id": "q98",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 46 versi 2 November 2020 huruf 21?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 46 versi 2 November 2020 huruf 21?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0046/versi/20201102/huruf/0021> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what"
-  },
-  {
     "id": "q99",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
+    "question": "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
+    "englishQuestion": "What regulation has the highest number of articles?",
     "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
     "category": "legal",
     "complexity": "advanced",
@@ -892,11 +892,11 @@
   },
   {
     "id": "q100",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
+    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 62 versi 2 November 2020 huruf 3?",
+    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 62 versi 2 November 2020 huruf 3?",
+    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0062/versi/20201102/huruf/0003> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "law-with-most-articles"
+    "templateId": "laws-amended-what"
   }
 ]

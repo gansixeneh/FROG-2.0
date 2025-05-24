@@ -1343,24 +1343,15 @@ class NL2SPARQLGenerator:
                     value_str = str(value)
 
                     # Handle different value types appropriately
-                    if (
-                        "year" in template["id"]
-                        or "year" in template["questionTemplate"].lower()
-                    ):
+                    if "year" in template["id"]:
                         replacement = {"value": value_str, "label": value_str}
-                    elif (
-                        "keyword" in template["id"]
-                        or "keyword" in template["questionTemplate"].lower()
-                    ):
+                    elif "keyword" in template["id"]:
                         replacement = {
                             "value": value_str,
                             "label": value_str,
                             "sparqlValue": f'"{value_str}"',  # Include quotes for string literal
                         }
-                    elif (
-                        "enactor" in template["id"]
-                        or "enactor" in template["questionTemplate"].lower()
-                    ):
+                    elif "enactor" in template["id"]:
                         replacement = {
                             "value": value_str,
                             "label": value_str,
