@@ -93,7 +93,7 @@ class KGSchemaExtractor:
             options (dict): Configuration options
         """
         self.options = {
-            "sparql_endpoint": "http://localhost:3030/legal",
+            "sparql_endpoint": "http://localhost:3030/modified-lex2kg/query",
             "sample_size": 1000,
             "debug": False,  # Debug flag
             "prefixes": {

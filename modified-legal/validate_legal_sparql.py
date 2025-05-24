@@ -28,7 +28,7 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
     if output_json_path is None:
         output_json_path = f"legal_sparql_results.json"
 
-    print(f"Connecting to Fuseki server at http://localhost:3030/legal...")
+    print(f"Connecting to Fuseki server at http://localhost:3030/modified-lex2kg...")
     # Initialize the SPARQL executor
     sparql_exec = SparqlExecutor()
 

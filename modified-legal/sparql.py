@@ -13,7 +13,7 @@ class SparqlExecutor:
 
     def __init__(self):
         """Initialize the SPARQL executor with the Fuseki endpoint."""
-        self.endpoint = SPARQLWrapper("http://localhost:3030/legal")
+        self.endpoint = SPARQLWrapper("http://localhost:3030/modified-lex2kg")
         self.endpoint.setReturnFormat(JSON)
 
     def execute_query(self, query, return_format="pandas"):

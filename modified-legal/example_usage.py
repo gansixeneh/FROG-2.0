@@ -12,7 +12,9 @@ from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
 
 
-def generate_legal_document_dataset(endpoint_url="http://localhost:3030/legal"):
+def generate_legal_document_dataset(
+    endpoint_url="http://localhost:3030/modified-lex2kg",
+):
     """
     Extract schema from the Fuseki server and generate question-SPARQL dataset
 
@@ -120,7 +122,7 @@ def main():
     """Main function to run the legal documents example"""
     try:
         # Define the Fuseki endpoint URL
-        endpoint_url = "http://localhost:3030/legal"
+        endpoint_url = "http://localhost:3030/modified-lex2kg"
 
         # Check if Fuseki server is accessible
         import requests
