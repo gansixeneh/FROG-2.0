@@ -68,7 +68,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
 
         print("\nGenerating question-SPARQL pairs for GESIS knowledge graph...")
         dataset = generator.generate_dataset(
-            size=100,  # Smaller size for debugging
+            size=200,  # Smaller size for debugging
             complexity_distribution={
                 "basic": 0.3,
                 "intermediate": 0.3,

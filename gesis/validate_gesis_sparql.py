@@ -77,12 +77,15 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
             if len(query_results) > 0:
                 success_count += 1
             else:
+                print(f"Error executing query {query_id}: {e}")
                 empty_results_count += 1
 
         except Exception as e:
             # Handle errors in SPARQL execution
             result_item["success"] = False
             result_item["error"] = str(e)
+            
+            print(f"Error executing query {query_id}: {e}")
             error_count += 1
 
         # Add to results list

@@ -377,32 +377,32 @@ class NL2SPARQLGenerator:
             },
             
             # Intermediate: Structure and relationships
-            {
-                "id": "publication-citations",
-                "category": "scholarly",
-                "questionTemplate": "Which publications cite {entity}?",
-                "englishQuestion": "Which publications cite {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?citing ?citingTitle WHERE {
-                      ?citing schema:citation {entity} .
-                      ?citing schema:name ?citingTitle .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
-            {
-                "id": "publication-cited-works",
-                "category": "scholarly",
-                "questionTemplate": "Which works are cited by {entity}?",
-                "englishQuestion": "Which works are cited by {entity}?",
-                "sparqlTemplate": """
-                    SELECT ?cited ?citedTitle WHERE {
-                      {entity} schema:citation ?cited .
-                      ?cited schema:name ?citedTitle .
-                    }
-                """,
-                "complexity": "intermediate"
-            },
+            # {
+            #     "id": "publication-citations",
+            #     "category": "scholarly",
+            #     "questionTemplate": "Which publications cite {entity}?",
+            #     "englishQuestion": "Which publications cite {entity}?",
+            #     "sparqlTemplate": """
+            #         SELECT ?citing ?citingTitle WHERE {
+            #           ?citing schema:citation {entity} .
+            #           ?citing schema:name ?citingTitle .
+            #         }
+            #     """,
+            #     "complexity": "intermediate"
+            # },
+            # {
+            #     "id": "publication-cited-works",
+            #     "category": "scholarly",
+            #     "questionTemplate": "Which works are cited by {entity}?",
+            #     "englishQuestion": "Which works are cited by {entity}?",
+            #     "sparqlTemplate": """
+            #         SELECT ?cited ?citedTitle WHERE {
+            #           {entity} schema:citation ?cited .
+            #           ?cited schema:name ?citedTitle .
+            #         }
+            #     """,
+            #     "complexity": "intermediate"
+            # },
             {
                 "id": "publication-collaborators",
                 "category": "scholarly",
@@ -435,20 +435,20 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "intermediate"
             },
-            {
-                "id": "publications-by-year",
-                "category": "scholarly",
-                "questionTemplate": "What publications were published in {value}?",
-                "englishQuestion": "What publications were published in {value}?",
-                "sparqlTemplate": """
-                    SELECT ?publication ?title WHERE {
-                      ?publication schema:datePublished ?date .
-                      ?publication schema:name ?title .
-                      FILTER(CONTAINS(STR(?date), {value}))
-                    }
-                """,
-                "complexity": "intermediate"
-            },
+            # {
+            #     "id": "publications-by-year",
+            #     "category": "scholarly",
+            #     "questionTemplate": "What publications were published in {value}?",
+            #     "englishQuestion": "What publications were published in {value}?",
+            #     "sparqlTemplate": """
+            #         SELECT ?publication ?title WHERE {
+            #           ?publication schema:datePublished ?date .
+            #           ?publication schema:name ?title .
+            #           FILTER(CONTAINS(STR(?date), {value}))
+            #         }
+            #     """,
+            #     "complexity": "intermediate"
+            # },
             
             # Advanced: Complex relationships and analytics
             {
