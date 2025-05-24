@@ -1,10 +1,3 @@
-"""
-NL2SPARQL - Natural Language to SPARQL Dataset Generator - Enhanced for University Course Data
-
-This version supports complex query patterns with multi-condition filters, multi-hop relationships,
-and advanced aggregation, while maintaining context-aware entity selection for meaningful queries.
-"""
-
 import json
 import random
 import re
@@ -49,12 +42,16 @@ class NL2SPARQLGenerator:
         Returns:
             list: Templates for different question types and complexity levels
         """
-        # Basic course information templates - retained from original
+        # Basic course information templates - with multiple question variations
         basic_templates = [
             {
                 "id": "course-credits",
                 "category": "university",
-                "questionTemplate": "How many credits does the {entity} course have?",
+                "questionTemplates": [
+                    "How many credits does the {entity} course have?",
+                    "What is the credit value for {entity}?",
+                    "Can you tell me the number of credits for the {entity} course?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?value WHERE {
                       {entity} ns1:has_credits ?value .
@@ -65,7 +62,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-code",
                 "category": "university",
-                "questionTemplate": "What is the course code for {entity}?",
+                "questionTemplates": [
+                    "What is the course code for {entity}?",
+                    "What's the identifier or course number for {entity}?",
+                    "Can you look up the course code assigned to {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?code WHERE {
                       {entity} ns1:has_course_code ?code .
@@ -76,7 +77,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-category",
                 "category": "university",
-                "questionTemplate": "What category does {entity} belong to?",
+                "questionTemplates": [
+                    "What category does {entity} belong to?",
+                    "Which subject area is {entity} classified under?",
+                    "Under which category is the {entity} course listed?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?category WHERE {
                       {entity} ns1:has_course_category ?category .
@@ -87,7 +92,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-prerequisites",
                 "category": "university",
-                "questionTemplate": "What are the prerequisites for {entity}?",
+                "questionTemplates": [
+                    "What are the prerequisites for {entity}?",
+                    "Which courses must be completed before taking {entity}?",
+                    "What prior coursework is required for enrolling in {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?prereq WHERE {
                       {entity} ns1:has_prerequisite_course ?prereq .
@@ -98,7 +107,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-evaluation",
                 "category": "university",
-                "questionTemplate": "What evaluation methods are used for {entity}?",
+                "questionTemplates": [
+                    "What evaluation methods are used for {entity}?",
+                    "How are students assessed in the {entity} course?",
+                    "Which assessment techniques are employed in {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?method WHERE {
                       {entity} ns1:has_evaluation_method ?method .
@@ -109,7 +122,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-research-group",
                 "category": "university",
-                "questionTemplate": "Which research group is associated with {entity}?",
+                "questionTemplates": [
+                    "Which research group is associated with {entity}?",
+                    "What research lab develops or maintains the {entity} course?",
+                    "Which academic research team is connected to {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?group WHERE {
                       {entity} ns1:has_research_group ?group .
@@ -120,7 +137,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "course-nickname",
                 "category": "university",
-                "questionTemplate": "What are the alternative names or abbreviations for {entity}?",
+                "questionTemplates": [
+                    "What are the alternative names or abbreviations for {entity}?",
+                    "How is {entity} informally known or abbreviated?",
+                    "What nicknames or short forms are used for {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?nickname WHERE {
                       {entity} ns1:also_known_as ?nickname .
@@ -130,12 +151,16 @@ class NL2SPARQLGenerator:
             },
         ]
         
-        # Intermediate templates - retained and expanded
+        # Intermediate templates - with multiple question variations
         intermediate_templates = [
             {
                 "id": "count-prerequisites",
                 "category": "university",
-                "questionTemplate": "How many prerequisites does {entity} have?",
+                "questionTemplates": [
+                    "How many prerequisites does {entity} have?",
+                    "What is the total number of prerequisite courses for {entity}?",
+                    "How many courses must be completed before taking {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?prereq) AS ?count) WHERE {
                       {entity} ns1:has_prerequisite_course ?prereq .
@@ -146,7 +171,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "count-evaluation-methods",
                 "category": "university",
-                "questionTemplate": "How many evaluation methods are associated with {entity}?",
+                "questionTemplates": [
+                    "How many evaluation methods are associated with {entity}?",
+                    "What is the count of assessment techniques used in {entity}?",
+                    "How many different ways are students evaluated in {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?method) AS ?count) WHERE {
                       {entity} ns1:has_evaluation_method ?method .
@@ -157,7 +186,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-credits",
                 "category": "university",
-                "questionTemplate": "Which courses have {value} credits?",
+                "questionTemplates": [
+                    "Which courses have {value} credits?",
+                    "List all courses worth {value} credit points.",
+                    "What courses are valued at {value} credits?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course a ns1:course .
@@ -169,7 +202,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-by-research-group",
                 "category": "university",
-                "questionTemplate": "Which courses are associated with the {entity} research group?",
+                "questionTemplates": [
+                    "Which courses are associated with the {entity} research group?",
+                    "What courses are developed by the {entity} research team?",
+                    "List all courses connected to the {entity} research lab."
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course a ns1:course .
@@ -181,7 +218,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-by-evaluation",
                 "category": "university",
-                "questionTemplate": "Which courses are evaluated using {entity}?",
+                "questionTemplates": [
+                    "Which courses are evaluated using {entity}?",
+                    "What courses use {entity} as an assessment method?",
+                    "List all courses that employ {entity} for student evaluation."
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course a ns1:course .
@@ -193,7 +234,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "count-courses-by-category",
                 "category": "university",
-                "questionTemplate": "How many courses are in the {entity} category?",
+                "questionTemplates": [
+                    "How many courses are in the {entity} category?",
+                    "What is the total number of courses in the {entity} subject area?",
+                    "Count all courses classified under {entity}."
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?course) AS ?count) WHERE {
                       ?course a ns1:course .
@@ -205,7 +250,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-by-prerequisite",
                 "category": "university",
-                "questionTemplate": "What courses have {entity} as a prerequisite course?",
+                "questionTemplates": [
+                    "What courses have {entity} as a prerequisite course?",
+                    "Which courses require {entity} to be completed first?",
+                    "List all courses that need {entity} as a prerequisite."
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course {entity} .
@@ -216,7 +265,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "count-courses-by-prerequisite",
                 "category": "university",
-                "questionTemplate": "How many courses have {entity} as a prerequisite course?",
+                "questionTemplates": [
+                    "How many courses have {entity} as a prerequisite course?",
+                    "What is the count of courses requiring {entity} as a prerequisite?",
+                    "How many courses need {entity} to be completed first?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?course) AS ?count) WHERE {
                       ?course ns1:has_prerequisite_course {entity} .
@@ -226,12 +279,16 @@ class NL2SPARQLGenerator:
             },
         ]
         
-        # Advanced templates - original ones
+        # Advanced templates - with multiple question variations
         original_advanced_templates = [
             {
                 "id": "courses-with-same-prerequisites",
                 "category": "university",
-                "questionTemplate": "Which courses have the same prerequisites as {entity}?",
+                "questionTemplates": [
+                    "Which courses have the same prerequisites as {entity}?",
+                    "What other courses require identical prerequisites to {entity}?",
+                    "Find courses sharing the same prerequisite requirements as {entity}."
+                ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?course WHERE {
                       {entity} ns1:has_prerequisite_course ?prereq .
@@ -244,7 +301,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-most-credits",
                 "category": "university",
-                "questionTemplate": "Which course have the highest number of credits?",
+                "questionTemplates": [
+                    "Which course has the highest number of credits?",
+                    "What is the course with the maximum credit value?",
+                    "Which course offers the most credits?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course ?credits WHERE {
                       ?course a ns1:course .
@@ -258,7 +319,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "research-group-most-courses",
                 "category": "university",
-                "questionTemplate": "Which research group is associated with the most courses?",
+                "questionTemplates": [
+                    "Which research group is associated with the most courses?",
+                    "What research lab develops the largest number of courses?",
+                    "Which research team has created the most courses?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?group (COUNT(?course) as ?count) WHERE {
                       ?course a ns1:course .
@@ -273,7 +338,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "common-prerequisites",
                 "category": "university",
-                "questionTemplate": "What are the 5 most common prerequisite courses?",
+                "questionTemplates": [
+                    "What are the 5 most common prerequisite courses?",
+                    "Which 5 courses are most frequently required as prerequisites?",
+                    "List the top 5 courses that appear as prerequisites."
+                ],
                 "sparqlTemplate": """
                     SELECT ?prereq (COUNT(?course) as ?count) WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -286,13 +355,16 @@ class NL2SPARQLGenerator:
             },
         ]
         
-        # NEW TEMPLATES - Enhanced advanced templates matching the test dataset patterns
+        # Enhanced advanced templates - with multiple question variations
         enhanced_advanced_templates = [
-            # Multi-condition queries (3+ properties)
             {
                 "id": "courses-with-triple-condition",
                 "category": "university",
-                "questionTemplate": "What courses have {entity1} as their research group, are categorized as {entity2}, and use {entity3} as their evaluation method?",
+                "questionTemplates": [
+                    "What courses have {entity1} as their research group, are categorized as {entity2}, and use {entity3} as their evaluation method?",
+                    "Find courses that belong to the {entity1} research team, fall under the {entity2} category, and use {entity3} for assessment.",
+                    "Which courses are simultaneously part of {entity1} research group, classified as {entity2}, and evaluated through {entity3}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_research_group {entity1} .
@@ -305,7 +377,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-triple-condition-code",
                 "category": "university",
-                "questionTemplate": "What course has the evaluation method of {entity1} and is a {entity2} with the course code '{value}'?",
+                "questionTemplates": [
+                    "What course has the evaluation method of {entity1} and is a {entity2} with the course code '{value}'?",
+                    "Find the course that uses {entity1} for assessment, belongs to {entity2} category, and has code '{value}'.",
+                    "Which course is evaluated using {entity1}, categorized as {entity2}, and identified by code '{value}'?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_evaluation_method {entity1} .
@@ -318,7 +394,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-double-evaluation-code",
                 "category": "university",
-                "questionTemplate": "What courses have '{entity1}' and '{entity2}' as evaluation methods and have the course code '{value}'?",
+                "questionTemplates": [
+                    "What courses have '{entity1}' and '{entity2}' as evaluation methods and have the course code '{value}'?",
+                    "Find courses that use both '{entity1}' and '{entity2}' for assessment and are coded as '{value}'.",
+                    "Which courses employ '{entity1}' and '{entity2}' for evaluation and have '{value}' as their code?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_evaluation_method {entity1} .
@@ -331,7 +411,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-research-eval-code",
                 "category": "university",
-                "questionTemplate": "What courses have the evaluation method '{entity1}' and are associated with the research group '{entity2}' and have the course code '{value}'?",
+                "questionTemplates": [
+                    "What courses have the evaluation method '{entity1}' and are associated with the research group '{entity2}' and have the course code '{value}'?",
+                    "Find courses that use '{entity1}' for assessment, belong to '{entity2}' research team, and have code '{value}'.",
+                    "Which courses are evaluated using '{entity1}', connected to '{entity2}' research group, and identified by '{value}'?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_evaluation_method {entity1} .
@@ -344,7 +428,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-prereq-eval-category",
                 "category": "university",
-                "questionTemplate": "What courses have {entity1} as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
+                "questionTemplates": [
+                    "What courses have {entity1} as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
+                    "Find courses that require {entity1} as prerequisite, use {entity2} for assessment, and belong to {entity3} category.",
+                    "Which courses need {entity1} completed first, employ {entity2} for evaluation, and are classified as {entity3}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course {entity1} .
@@ -354,12 +442,14 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "advanced"
             },
-            
-            # Multi-hop relationship queries
             {
                 "id": "courses-with-prerequisite-eval",
                 "category": "university",
-                "questionTemplate": "What courses have prerequisites that have {entity} as their evaluation method?",
+                "questionTemplates": [
+                    "What courses have prerequisites that have {entity} as their evaluation method?",
+                    "Find courses whose prerequisite courses use {entity} for assessment.",
+                    "Which courses require completion of courses that are evaluated using {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -371,7 +461,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-prerequisite-category",
                 "category": "university",
-                "questionTemplate": "What courses have prerequisites with {entity} as their category?",
+                "questionTemplates": [
+                    "What courses have prerequisites with {entity} as their category?",
+                    "Find courses that require completion of {entity} courses first.",
+                    "Which courses have prerequisites classified under the {entity} category?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -383,7 +477,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-prerequisite-credits",
                 "category": "university",
-                "questionTemplate": "What courses have prerequisites with {value} credits?",
+                "questionTemplates": [
+                    "What courses have prerequisites with {value} credits?",
+                    "Find courses that require completion of {value}-credit courses first.",
+                    "Which courses have prerequisites worth {value} credits?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -395,7 +493,11 @@ class NL2SPARQLGenerator:
             {
                 "id": "courses-with-prereq-of-prereq",
                 "category": "university", 
-                "questionTemplate": "What courses have prerequisites with {entity} as their prerequisites?",
+                "questionTemplates": [
+                    "What courses have prerequisites with {entity} as their prerequisites?",
+                    "Find courses where {entity} is a prerequisite of their prerequisites.",
+                    "Which courses require completion of courses that themselves require {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
                       ?course ns1:has_prerequisite_course ?prereq .
@@ -632,12 +734,12 @@ class NL2SPARQLGenerator:
                     value_str = str(value)
                     
                     # Handle different value types appropriately
-                    if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+                    if "credits" in template["id"] or "credits" in ' '.join(template["questionTemplates"]).lower():
                         replacement = {
                             "value": value_str,
                             "label": value_str
                         }
-                    elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+                    elif "code" in template["id"] or "code" in ' '.join(template["questionTemplates"]).lower():
                         replacement = {
                             "value": f'"{value_str}"',  # Include quotes for string literal
                             "label": value_str,
@@ -657,8 +759,9 @@ class NL2SPARQLGenerator:
                     
                 replacements[placeholder] = replacement
             
-            # Apply replacements to the question template
-            question = template["questionTemplate"].strip()
+            # Randomly select one of the question templates
+            question_template = random.choice(template["questionTemplates"]).strip()
+            question = question_template
             sparql = template["sparqlTemplate"].strip()
             
             # Replace placeholders in question and query
@@ -668,7 +771,7 @@ class NL2SPARQLGenerator:
                 
                 # Replace in question
                 replacement_text = replacement.get("label", replacement.get("value", ""))
-                question = re.sub(pattern, replacement_text, question)
+                question = re.sub(pattern, replacement_text, question_template)
                 
                 # Replace in SPARQL
                 if "uri" in replacement:
@@ -769,72 +872,6 @@ class NL2SPARQLGenerator:
         
         return discovery_query
 
-    def create_discovery_query(self, template, placeholders):
-        """
-        Create a discovery query that finds valid values for all placeholders
-        
-        Args:
-            template (dict): The template to convert
-            placeholders (set): Set of placeholders in the template
-            
-        Returns:
-            str: The discovery query
-        """
-        sparql_template = template["sparqlTemplate"].strip()
-        
-        # Extract the WHERE clause from the template
-        where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
-        if not where_match:
-            print(f"Error: Could not extract WHERE clause from template: {template['id']}")
-            return None
-            
-        where_clause = where_match.group(1).strip()
-        
-        # Replace placeholders with variables in the WHERE clause
-        for placeholder in placeholders:
-            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
-            var_name = placeholder
-            where_clause = re.sub(pattern, f"?{var_name}", where_clause)
-        
-        # Build SELECT clause with all placeholder variables
-        select_clause = "SELECT DISTINCT"
-        
-        # Add result variable from original query if it exists
-        # This helps with aggregation queries
-        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
-        if result_var_match:
-            result_var = result_var_match.group(1)
-            if "COUNT" not in result_var and "count" not in result_var:
-                select_clause += f" {result_var}"
-            else:
-                # For COUNT queries, add a dummy result variable
-                select_clause += " ?dummy_result"
-        
-        # Add all placeholder variables to SELECT clause
-        for placeholder in placeholders:
-            select_clause += f" ?{placeholder}"
-            # For entity placeholders, also select label if available
-            if placeholder.startswith('entity'):
-                select_clause += f" ?{placeholder}Label"
-        
-        # Construct the complete discovery query
-        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
-        
-        # Add OPTIONAL label patterns for entity placeholders
-        for placeholder in placeholders:
-            if placeholder.startswith('entity'):
-                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
-        
-        # Close the query
-        discovery_query += " }"
-        
-        # Replace all prefixed URIs with full URIs for consistency
-        for prefix, uri in self.prefixes.items():
-            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
-            discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
-        
-        return discovery_query
-
     def instantiate_template(self, template):
         """
         Original method to instantiate a template with specific entities and properties
@@ -853,11 +890,9 @@ class NL2SPARQLGenerator:
         if not replacements:
             return None
         
-        # Apply replacements to the question template
-        question = template["questionTemplate"].strip()
+        # Randomly select one of the question templates
+        question_template = random.choice(template["questionTemplates"]).strip()
         sparql = template["sparqlTemplate"].strip()
-        
-        # Skip adding prefixes to SPARQL query - we'll use full URIs instead
         
         # Replace placeholders in question and query
         for placeholder, replacement in replacements.items():
@@ -866,7 +901,7 @@ class NL2SPARQLGenerator:
             
             # Replace in question
             replacement_text = replacement.get("label", replacement.get("value", ""))
-            question = re.sub(pattern, replacement_text, question)
+            question = re.sub(pattern, replacement_text, question_template)
             
             # Replace in SPARQL
             if "uri" in replacement:
@@ -901,16 +936,18 @@ class NL2SPARQLGenerator:
         placeholders = set()
         
         # For Python triple-quoted strings, we need to handle whitespace
-        # First, normalize the templates by removing extra whitespace
-        question_template = template["questionTemplate"].strip()
+        # Check all question templates
+        for question_template in template["questionTemplates"]:
+            # Use a pattern that matches only text inside curly braces
+            pattern = r"{\s*([a-zA-Z0-9_]+)\s*}"
+            
+            # Search in question template
+            for match in re.finditer(pattern, question_template.strip()):
+                placeholders.add(match.group(1).strip())
+        
+        # Check the SPARQL template
         sparql_template = template["sparqlTemplate"].strip()
-        
-        # Use a pattern that matches only text inside curly braces
         pattern = r"{\s*([a-zA-Z0-9_]+)\s*}"
-        
-        # Search in question template
-        for match in re.finditer(pattern, question_template):
-            placeholders.add(match.group(1).strip())
         
         # Search in SPARQL template
         for match in re.finditer(pattern, sparql_template):
@@ -951,11 +988,13 @@ class NL2SPARQLGenerator:
                 
                 # If we didn't get a replacement from the graph, try pattern-based selection
                 if not replacement:
-                    if "research-group" in template["id"] or placeholder == "entity1" and "research" in template["questionTemplate"].lower():
+                    question_templates_text = ' '.join(template["questionTemplates"]).lower()
+                    
+                    if "research-group" in template["id"] or placeholder == "entity1" and "research" in question_templates_text:
                         replacement = self.select_entity_by_type("ns1:research_lab")
-                    elif "evaluation" in template["id"] or placeholder in ["entity1", "entity2", "entity3"] and "evaluation" in template["questionTemplate"].lower():
+                    elif "evaluation" in template["id"] or placeholder in ["entity1", "entity2", "entity3"] and "evaluation" in question_templates_text:
                         replacement = self.select_entity_by_type("ns1:evaluation")
-                    elif "category" in template["id"] or placeholder in ["entity2", "entity3"] and "categor" in template["questionTemplate"].lower():
+                    elif "category" in template["id"] or placeholder in ["entity2", "entity3"] and "categor" in question_templates_text:
                         replacement = self.select_entity_by_type("ns1:course_category")
                     else:
                         # Default to course entities
@@ -973,10 +1012,12 @@ class NL2SPARQLGenerator:
                 
                 # If we didn't get a replacement from the graph, use predefined values
                 if not replacement:
-                    if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+                    question_templates_text = ' '.join(template["questionTemplates"]).lower()
+                    
+                    if "credits" in template["id"] or "credits" in question_templates_text:
                         # For credit-related templates, use realistic credit values
                         replacement = self.select_credit_value()
-                    elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+                    elif "code" in template["id"] or "code" in question_templates_text:
                         # For course code, use realistic course code format
                         replacement = self.select_course_code_value()
                     else:
@@ -1161,12 +1202,13 @@ class NL2SPARQLGenerator:
             return None
             
         sparql_template = template["sparqlTemplate"]
+        question_templates_text = ' '.join(template["questionTemplates"]).lower()
         
         # Match the pattern where value is used in the SPARQL
         value_pattern = r'{' + placeholder + r'}'
         
         # University-specific value handling
-        if "credits" in template["id"] or "credits" in template["questionTemplate"].lower():
+        if "credits" in template["id"] or "credits" in question_templates_text:
             # For credit values, find actual credit values in the data
             query = """
                 SELECT DISTINCT ?credits
@@ -1188,7 +1230,7 @@ class NL2SPARQLGenerator:
             except Exception as e:
                 print(f"Error querying for credit values: {e}")
                 
-        elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+        elif "code" in template["id"] or "code" in question_templates_text:
             # For course codes, find actual course codes in the data
             query = """
                 SELECT DISTINCT ?code
@@ -1288,64 +1330,67 @@ class NL2SPARQLGenerator:
                         "uri": "http://example.org/also_known_as"},
         }
         
+        # Get the combined text of all question templates
+        question_templates_text = ' '.join(template["questionTemplates"]).lower()
+        
         # First check if our schema info has this property
         if "properties" in self.schema_info:
             # Try to find a matching property from the schema
-            if "credit" in template["id"] or "credit" in placeholder:
+            if "credit" in template["id"] or "credit" in placeholder or "credit" in question_templates_text:
                 prop = self.find_property_by_name("has_credits")
                 if prop:
                     return prop
                 
-            elif "prerequisite" in template["id"] or "prerequisite" in placeholder:
+            elif "prerequisite" in template["id"] or "prerequisite" in placeholder or "prerequisite" in question_templates_text:
                 prop = self.find_property_by_name("has_prerequisite_course")
                 if prop:
                     return prop
                 
-            elif "code" in template["id"] or "code" in placeholder:
+            elif "code" in template["id"] or "code" in placeholder or "code" in question_templates_text:
                 prop = self.find_property_by_name("has_course_code")
                 if prop:
                     return prop
                 
-            elif "evaluation" in template["id"] or "evaluation" in placeholder:
+            elif "evaluation" in template["id"] or "evaluation" in placeholder or "evaluation" in question_templates_text:
                 prop = self.find_property_by_name("has_evaluation_method")
                 if prop:
                     return prop
                 
-            elif "research" in template["id"] or "research" in placeholder:
+            elif "research" in template["id"] or "research" in placeholder or "research" in question_templates_text:
                 prop = self.find_property_by_name("has_research_group")
                 if prop:
                     return prop
                 
-            elif "category" in template["id"] or "category" in placeholder:
+            elif "category" in template["id"] or "category" in placeholder or "category" in question_templates_text:
                 prop = self.find_property_by_name("has_course_category")
                 if prop:
                     return prop
                 
-            elif "nickname" in template["id"] or "nickname" in placeholder:
+            elif "nickname" in template["id"] or "nickname" in placeholder or "nickname" in question_templates_text:
                 prop = self.find_property_by_name("also_known_as")
                 if prop:
                     return prop
         
         # If we don't have the property in schema info, use our predefined ones
-        if "credit" in template["id"] or "credit" in placeholder:
+        if "credit" in template["id"] or "credit" in placeholder or "credit" in question_templates_text:
             return university_properties["credits"]
             
-        elif "prerequisite" in template["id"] or "prerequisite" in placeholder:
+        elif "prerequisite" in template["id"] or "prerequisite" in placeholder or "prerequisite" in question_templates_text:
             return university_properties["prerequisite"]
             
-        elif "code" in template["id"] or "code" in placeholder:
+        elif "code" in template["id"] or "code" in placeholder or "code" in question_templates_text:
             return university_properties["code"]
             
-        elif "evaluation" in template["id"] or "evaluation" in placeholder:
+        elif "evaluation" in template["id"] or "evaluation" in placeholder or "evaluation" in question_templates_text:
             return university_properties["evaluation"]
             
-        elif "research" in template["id"] or "research" in placeholder:
+        elif "research" in template["id"] or "research" in placeholder or "research" in question_templates_text:
             return university_properties["research"]
             
-        elif "category" in template["id"] or "category" in placeholder:
+        elif "category" in template["id"] or "category" in placeholder or "category" in question_templates_text:
             return university_properties["category"]
             
-        elif "nickname" in template["id"] or "nickname" in placeholder:
+        elif "nickname" in template["id"] or "nickname" in placeholder or "nickname" in question_templates_text:
             return university_properties["nickname"]
             
         # Fallback to any property if we can't find a specific match
@@ -1392,11 +1437,13 @@ class NL2SPARQLGenerator:
         Returns:
             dict: Selected value
         """
+        question_templates_text = ' '.join(template["questionTemplates"]).lower()
+        
         # Special handling for university course data
         if template.get("category") == "university":
-            if "credit" in template["id"] or "credit" in template["questionTemplate"].lower():
+            if "credit" in template["id"] or "credit" in question_templates_text:
                 return self.select_credit_value()
-            elif "code" in template["id"] or "code" in template["questionTemplate"].lower():
+            elif "code" in template["id"] or "code" in question_templates_text:
                 return self.select_course_code_value()
             
         # Default to a generic value
