@@ -1650,64 +1650,6 @@ class NL2SPARQLGenerator:
             "englishQuestion": english_question,
             "sparql": sparql,
         }
-        """
-        Original method to instantiate a template with specific entities and properties
-        Kept as a fallback method
-        
-        Args:
-            template (dict): The template to instantiate
-            
-        Returns:
-            dict: The instantiated question and SPARQL query or None if failed
-        """
-        # Select entities and properties appropriate for this template
-        placeholders = self.extract_placeholders(template)
-        replacements = self.select_replacements(placeholders, template)
-
-        if not replacements:
-            return None
-
-        # Apply replacements to the question template
-        question = template["questionTemplate"].strip()
-        english_question = template["englishQuestion"].strip()
-        sparql = template["sparqlTemplate"].strip()
-
-        # Add prefixes to SPARQL query
-        prefix_string = ""
-        for prefix, uri in self.prefixes.items():
-            pattern = r"\b" + re.escape(prefix) + r":([a-zA-Z0-9_]+)\b"
-            sparql = re.sub(pattern, r"<" + uri + r"\1>", sparql)
-
-        sparql = prefix_string + sparql
-
-        # Replace placeholders in question and query
-        for placeholder, replacement in replacements.items():
-            # Create a pattern that can handle whitespace around the placeholder
-            pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
-
-            # Replace in question
-            replacement_text = replacement.get("label", replacement.get("value", ""))
-            question = re.sub(pattern, replacement_text, question)
-            english_question = re.sub(pattern, replacement_text, english_question)
-
-            # Replace in SPARQL
-            if "uri" in replacement:
-                sparql_value = f"<{replacement['uri']}>"
-            elif "sparqlValue" in replacement:
-                sparql_value = replacement["sparqlValue"]
-            else:
-                sparql_value = replacement["value"]
-
-            sparql = re.sub(pattern, sparql_value, sparql)
-
-        # Format the SPARQL query for readability
-        sparql = self.format_sparql(sparql)
-
-        return {
-            "question": question,
-            "englishQuestion": english_question,
-            "sparql": sparql,
-        }
 
     def extract_placeholders(self, template):
         """
