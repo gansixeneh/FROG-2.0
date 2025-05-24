@@ -94,8 +94,8 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
                     f"    SPARQL: {q['sparql'].replace('{', '{{').replace('}', '}}')[:80]}..."
                 )
         # Write to files
-        output_json_path = "gesis_documents_dataset.json"
-        output_csv_path = "gesis_documents_dataset.csv"
+        output_json_path = "gesis_dataset.json"
+        output_csv_path = "gesis_dataset.csv"
 
         with open(output_json_path, "w", encoding="utf-8") as f:
             f.write(generator.export_json(dataset))
@@ -103,7 +103,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
         with open(output_csv_path, "w", encoding="utf-8") as f:
             f.write(generator.export_csv(dataset))
 
-        print(f"\nLegal documents dataset exported to:")
+        print(f"\nLeGESIS dataset exported to:")
         print(f"  - JSON: {output_json_path}")
         print(f"  - CSV: {output_csv_path}")
 
@@ -111,7 +111,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
     except Exception as e:
         import traceback
 
-        print(f"Error processing legal documents data: {e}")
+        print(f"Error processing GESIS data: {e}")
         print(traceback.format_exc())
         raise e
 
@@ -144,9 +144,9 @@ def main():
 
         # Generate dataset from Fuseki endpoint
         dataset = generate_gesis_kg_dataset(endpoint_url)
-        print("\nLegal documents example completed successfully!")
+        print("\GESIS example completed successfully!")
     except Exception as e:
-        print(f"Error in legal documents example: {e}")
+        print(f"Error in GESIS example: {e}")
 
 
 if __name__ == "__main__":
