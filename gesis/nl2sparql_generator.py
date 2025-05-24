@@ -435,20 +435,20 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "intermediate"
             },
-            # {
-            #     "id": "publications-by-year",
-            #     "category": "scholarly",
-            #     "questionTemplate": "What publications were published in {value}?",
-            #     "englishQuestion": "What publications were published in {value}?",
-            #     "sparqlTemplate": """
-            #         SELECT ?publication ?title WHERE {
-            #           ?publication schema:datePublished ?date .
-            #           ?publication schema:name ?title .
-            #           FILTER(CONTAINS(STR(?date), {value}))
-            #         }
-            #     """,
-            #     "complexity": "intermediate"
-            # },
+            {
+                "id": "publications-by-year",
+                "category": "scholarly",
+                "questionTemplate": "What publications were published in {value}?",
+                "englishQuestion": "What publications were published in {value}?",
+                "sparqlTemplate": """
+                    SELECT ?publication ?title WHERE {
+                      ?publication schema:datePublished ?date .
+                      ?publication schema:name ?title .
+                      FILTER(CONTAINS(STR(?date), {value}))
+                    }
+                """,
+                "complexity": "intermediate"
+            },
             
             # Advanced: Complex relationships and analytics
             {
