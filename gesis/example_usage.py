@@ -121,27 +121,7 @@ def main():
     try:
         # Define the Fuseki endpoint URL
         endpoint_url = "http://localhost:3030/gesis"
-
-        # Check if Fuseki server is accessible
-        import requests
-
-        try:
-            response = requests.get(endpoint_url)
-            if response.status_code != 200:
-                print(
-                    f"Warning: Fuseki endpoint at {endpoint_url} returned status code {response.status_code}"
-                )
-                print("Make sure the Fuseki server is running.")
-                proceed = input("Do you want to proceed anyway? (y/n): ")
-                if proceed.lower() != "y":
-                    sys.exit(1)
-        except requests.exceptions.RequestException:
-            print(f"Warning: Could not connect to Fuseki endpoint at {endpoint_url}")
-            print("Make sure the Fuseki server is running.")
-            proceed = input("Do you want to proceed anyway? (y/n): ")
-            if proceed.lower() != "y":
-                sys.exit(1)
-
+        
         # Generate dataset from Fuseki endpoint
         dataset = generate_gesis_kg_dataset(endpoint_url)
         print("\GESIS example completed successfully!")

@@ -861,6 +861,7 @@ class NL2SPARQLGenerator:
             return {"question": question, "englishQuestion": english_question, "sparql": sparql}
                 
         except Exception as e:
+            print("Query: ", discovery_query)
             print(f"Error executing discovery query for template {template['id']}: {e}")
             # Fall back to the old method
             return self.instantiate_template(template)
