@@ -734,6 +734,12 @@ class NL2SPARQLGenerator:
             print(f"Could not create discovery query for template: {template['id']}")
             return self.instantiate_template(template)
         
+        # Quick validation of the discovery query
+        if "??" in discovery_query:
+            print(f"Error: Discovery query contains double question marks!")
+            print(f"Query: {discovery_query}")
+            return self.instantiate_template(template)
+        
         # Execute the discovery query
         try:
             print(f"Executing discovery query for template {template['id']}...")
@@ -929,33 +935,49 @@ class NL2SPARQLGenerator:
             # rather than trying to discover them from the SPARQL endpoint
             return None
         
-        # Extract the WHERE clause from the template
-        where_match = re.search(r'WHERE\s*{(.*)}', sparql_template, re.DOTALL | re.IGNORECASE)
-        if not where_match:
-            print(f"Error: Could not extract WHERE clause from template: {template['id']}")
+        # Extract the WHERE clause more carefully
+        # First normalize the template by removing extra whitespace
+        normalized_template = re.sub(r'\s+', ' ', sparql_template)
+        
+        # Find the WHERE clause - look for WHERE { ... } but be careful about nested braces
+        where_start = normalized_template.find('WHERE {')
+        if where_start == -1:
+            print(f"Error: Could not find WHERE clause in template: {template['id']}")
+            return None
+        
+        # Find the matching closing brace
+        brace_count = 0
+        where_content_start = where_start + len('WHERE {')
+        where_end = where_content_start
+        
+        for i, char in enumerate(normalized_template[where_content_start:], where_content_start):
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                if brace_count == 0:
+                    where_end = i
+                    break
+                brace_count -= 1
+        
+        if where_end == where_content_start:
+            print(f"Error: Could not find end of WHERE clause in template: {template['id']}")
             return None
             
-        where_clause = where_match.group(1).strip()
+        where_clause = normalized_template[where_content_start:where_end].strip()
         
-        # Replace placeholders with variables in the WHERE clause, handling quoted placeholders
+        # Replace placeholders with variables in the WHERE clause
+        modified_where = where_clause
         for placeholder in placeholders:
-            # First, handle quoted placeholders - replace "{placeholder}" with the variable without quotes
+            # Handle quoted placeholders first
             quoted_pattern = r'"{\s*' + re.escape(placeholder) + r'\s*}"'
-            where_clause = re.sub(quoted_pattern, f"?{placeholder}", where_clause)
+            modified_where = re.sub(quoted_pattern, f"?{placeholder}", modified_where)
             
             # Then handle regular placeholders
-            regular_pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
-            where_clause = re.sub(regular_pattern, f"?{placeholder}", where_clause)
+            regular_pattern = r'{\s*' + re.escape(placeholder) + r'\s*}'
+            modified_where = re.sub(regular_pattern, f"?{placeholder}", modified_where)
         
-        # Build SELECT clause with all placeholders
+        # Build SELECT clause with only the placeholder variables we need
         select_vars = []
-        
-        # Add the result variable from the original query
-        result_var_match = re.search(r'SELECT\s+(?:\(.*\)\s+AS\s+)?(\?\w+)', sparql_template, re.IGNORECASE)
-        if result_var_match:
-            result_var = result_var_match.group(1)
-            if "COUNT" not in result_var and "count" not in result_var:
-                select_vars.append(result_var)
         
         # Add all placeholder variables to SELECT clause
         for placeholder in placeholders:
@@ -964,25 +986,30 @@ class NL2SPARQLGenerator:
             if placeholder.startswith('entity'):
                 select_vars.append(f"?{placeholder}Label")
         
-        # Construct the SELECT clause with all variables
+        # Construct the discovery query step by step
         select_clause = "SELECT DISTINCT " + " ".join(select_vars)
-        
-        # Construct the complete discovery query
-        discovery_query = f"{select_clause} WHERE {{ {where_clause}"
+        where_clause_with_optionals = f"WHERE {{ {modified_where}"
         
         # Add OPTIONAL label patterns for entity placeholders
+        optional_clauses = []
         for placeholder in placeholders:
             if placeholder.startswith('entity'):
-                discovery_query += f" OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}"
-                discovery_query += f" OPTIONAL {{ ?{placeholder} schema:name ?{placeholder}Label . }}"
+                optional_clauses.append(f"OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label }}")
+                optional_clauses.append(f"OPTIONAL {{ ?{placeholder} <https://schema.org/name> ?{placeholder}Label }}")
         
-        # Close the query with LIMIT to ensure finding valid combinations
-        discovery_query += " } LIMIT 100"
+        # Combine all parts
+        if optional_clauses:
+            discovery_query = f"{select_clause} {where_clause_with_optionals} {' '.join(optional_clauses)} }} LIMIT 100"
+        else:
+            discovery_query = f"{select_clause} {where_clause_with_optionals} }} LIMIT 100"
         
         # Replace all prefixed URIs with full URIs for consistency
         for prefix, uri in self.prefixes.items():
             pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
             discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
+        
+        # Final cleanup - remove any double spaces and ensure proper formatting
+        discovery_query = re.sub(r'\s+', ' ', discovery_query).strip()
         
         return discovery_query
     
@@ -1060,8 +1087,9 @@ class NL2SPARQLGenerator:
         english_question = template["englishQuestion"].strip()
         sparql_template = template["sparqlTemplate"].strip()
         
-        # Use a pattern that can handle potential whitespace around the placeholders
-        pattern = r"{([^{}\n\r]+)}"
+        # Use a pattern that matches content between curly braces
+        # This pattern is more restrictive to avoid matching SPARQL syntax
+        pattern = r'{\s*([a-zA-Z][a-zA-Z0-9_]*)\s*}'
         
         # Search in question template
         for match in re.finditer(pattern, question_template):
@@ -1159,11 +1187,11 @@ class NL2SPARQLGenerator:
         
         # Extract the predicate pattern for the entity
         # Look for patterns like: {entity} predicate ?object
-        predicate_match = re.search(r'{entity}\s+([^\s.{}<>]+)\s+', sparql_template)
+        predicate_match = re.search(r'{\s*entity\s*}\s+([^\s.{}<>]+)\s+', sparql_template)
         
         if not predicate_match:
             # Try the inverse pattern: ?subject predicate {entity}
-            predicate_match = re.search(r'([^\s.{}<>]+)\s+{entity}', sparql_template)
+            predicate_match = re.search(r'([^\s.{}<>]+)\s+{\s*entity\s*}', sparql_template)
             if predicate_match:
                 # This is an inverse relationship
                 predicate = predicate_match.group(1)
@@ -1186,7 +1214,7 @@ class NL2SPARQLGenerator:
                     WHERE {{
                         ?subj <{predicate_uri}> ?entity .
                         OPTIONAL {{ ?entity rdfs:label ?label }}
-                        OPTIONAL {{ ?entity schema:name ?label }}
+                        OPTIONAL {{ ?entity <https://schema.org/name> ?label }}
                     }}
                     LIMIT 50
                 """
@@ -1241,7 +1269,7 @@ class NL2SPARQLGenerator:
             WHERE {{
                 ?entity <{predicate_uri}> ?obj .
                 OPTIONAL {{ ?entity rdfs:label ?label }}
-                OPTIONAL {{ ?entity schema:name ?label }}
+                OPTIONAL {{ ?entity <https://schema.org/name> ?label }}
             }}
             LIMIT 50
         """
@@ -1290,7 +1318,7 @@ class NL2SPARQLGenerator:
             query = """
                 SELECT DISTINCT ?year
                 WHERE {
-                    ?publication schema:datePublished ?date .
+                    ?publication <https://schema.org/datePublished> ?date .
                     BIND(SUBSTR(STR(?date), 0, 5) AS ?year)
                 }
                 ORDER BY ?year
