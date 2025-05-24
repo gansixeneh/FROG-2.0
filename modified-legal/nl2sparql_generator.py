@@ -1443,50 +1443,56 @@ class NL2SPARQLGenerator:
     def instantiate_keyword_template(self, template):
         """
         Special handler for law-by-keyword template using pre-extracted keywords
-
+        
         Args:
             template (dict): The template to instantiate
-
+            
         Returns:
             dict: The instantiated question and SPARQL query or None if failed
         """
         # Get a keyword from our pre-extracted list
         keyword = self.select_keyword_value()
-
+        
         # Apply the keyword to the template
         replacements = {"value": keyword}
-
+        
+        # Randomly select one of the question templates
+        if "questionTemplates" in template and template["questionTemplates"]:
+            idx = random.randrange(len(template["questionTemplates"]))
+            question_template = template["questionTemplates"][idx]
+            english_question_template = template["englishQuestions"][idx] if idx < len(template["englishQuestions"]) else template["englishQuestions"][0]
+        else:
+            # Fallback to single template for backward compatibility
+            question_template = template.get("questionTemplate", "")
+            english_question_template = template.get("englishQuestion", "")
+        
         # Apply replacements to the question template
-        question = template["questionTemplate"].strip()
-        english_question = template["englishQuestion"].strip()
+        question = question_template.strip()
+        english_question = english_question_template.strip()
         sparql = template["sparqlTemplate"].strip()
-
+        
         # Replace the placeholder in question and query
         pattern = r"{[\s]*value[\s]*}"
-
+        
         # Replace in question
         replacement_text = keyword.get("label", keyword.get("value", ""))
         question = re.sub(pattern, replacement_text, question)
         english_question = re.sub(pattern, replacement_text, english_question)
-
+        
         # Replace in SPARQL
         sparql_value = keyword.get("sparqlValue", f'"{keyword["value"]}"')
-
+        
         sparql = re.sub(pattern, sparql_value, sparql)
-
+        
         # Replace all prefixed URIs with full URIs
         for prefix, uri in self.prefixes.items():
-            pattern = r"\b" + re.escape(prefix) + r":([a-zA-Z0-9_]+)\b"
-            sparql = re.sub(pattern, r"<" + uri + r"\1>", sparql)
-
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+        
         # Format the SPARQL query for readability
         sparql = self.format_sparql(sparql)
-
-        return {
-            "question": question,
-            "englishQuestion": english_question,
-            "sparql": sparql,
-        }
+        
+        return {"question": question, "englishQuestion": english_question, "sparql": sparql}
 
     def create_discovery_query(self, template, placeholders):
         """
@@ -1901,26 +1907,24 @@ class NL2SPARQLGenerator:
     def select_value_from_endpoint(self, template, placeholder):
         """
         Select a value from the SPARQL endpoint that fits the template
-
+        
         Args:
             template (dict): The template containing the sparqlTemplate
             placeholder (str): The name of the placeholder
-
+            
         Returns:
             dict: Selected value info or None if not found
         """
         sparql_template = template["sparqlTemplate"]
-
+        
         # Extract the predicate pattern for the value
         # Look for patterns like: ?subject predicate {value}
-        predicate_match = re.search(
-            r"([^\s.{}<>]+)\s+" + re.escape("{" + placeholder + "}"), sparql_template
-        )
-
+        predicate_match = re.search(r'([^\s.{}<>]+)\s+' + re.escape('{' + placeholder + '}'), sparql_template)
+        
         if not predicate_match:
             # Try alternative pattern: FILTER(something({value}))
             # This is more complex and would need special handling for each case
-
+            
             # For year values in the laws-enacted-in-year template
             if "laws-enacted-in-year" in template["id"]:
                 # Extract a list of years from the endpoint
@@ -1931,16 +1935,19 @@ class NL2SPARQLGenerator:
                     }
                     ORDER BY ?year
                 """
-
+                
                 try:
                     results = self.sparql_exec.execute_query(query)
                     if results:
                         # Pick a random year from results
                         year_value = str(random.choice(results)["year"])
-                        return {"value": year_value, "label": year_value}
+                        return {
+                            "value": year_value,
+                            "label": year_value
+                        }
                 except Exception as e:
                     print(f"Error querying for years: {e}")
-
+            
             # For enactor names in law-by-enactor template
             elif "law-by-enactor" in template["id"]:
                 query = """
@@ -1949,7 +1956,7 @@ class NL2SPARQLGenerator:
                         ?law <https://example.org/lex2kg/ontology/disahkanOleh> ?enactor .
                     }
                 """
-
+                
                 try:
                     results = self.sparql_exec.execute_query(query)
                     if results:
@@ -1958,23 +1965,23 @@ class NL2SPARQLGenerator:
                         return {
                             "value": enactor,
                             "label": enactor,
-                            "sparqlValue": f'"{enactor}"',  # Add quotes for the SPARQL query
+                            "sparqlValue": f'"{enactor}"'  # Add quotes for the SPARQL query
                         }
                 except Exception as e:
                     print(f"Error querying for enactors: {e}")
-
+            
             # For keywords in law-by-keyword template
             elif "law-by-keyword" in template["id"]:
                 # Use our pre-extracted keywords
                 return self.select_keyword_value()
-
+            
             return None
-
+        
         predicate = predicate_match.group(1)
-
+        
         # Handle RDF/SPARQL prefixes
-        if ":" in predicate:
-            prefix, local_name = predicate.split(":", 1)
+        if ':' in predicate:
+            prefix, local_name = predicate.split(':', 1)
             if prefix in self.prefixes:
                 predicate_uri = f"{self.prefixes[prefix]}{local_name}"
             else:
@@ -1983,7 +1990,7 @@ class NL2SPARQLGenerator:
         else:
             # Not a prefixed name, use as is
             predicate_uri = predicate
-
+            
         # Create the query to find valid values for this predicate
         query = f"""
             SELECT DISTINCT ?value
@@ -1991,38 +1998,41 @@ class NL2SPARQLGenerator:
                 ?subject <{predicate_uri}> ?value .
             }}
         """
-
+        
         try:
             # Execute query against the endpoint
             results = self.sparql_exec.execute_query(query)
-
+            
             if not results:
                 return None
-
+                
             # Randomly select one value from the results
             selected_value = random.choice(results)["value"]
             value_str = str(selected_value)
-
+            
             # Check if the value looks like a URI
             if value_str.startswith("http"):
                 return {
                     "value": self.shorten_uri(value_str),
                     "label": self.extract_label_from_uri(value_str),
-                    "uri": value_str,
+                    "uri": value_str
                 }
-
+            
             # Check if the value looks like a number
             try:
                 float(value_str)  # Test if it can be converted to a number
-                return {"value": value_str, "label": value_str}
+                return {
+                    "value": value_str,
+                    "label": value_str
+                }
             except ValueError:
                 # It's a string value, add quotes for SPARQL
                 return {
                     "value": value_str,
                     "label": value_str,
-                    "sparqlValue": f'"{value_str}"',  # Add quotes for strings
+                    "sparqlValue": f'"{value_str}"'  # Add quotes for strings
                 }
-
+                
         except Exception as e:
             print(f"Error selecting value from endpoint: {e}")
             return None
