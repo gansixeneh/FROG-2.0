@@ -245,7 +245,7 @@ WHERE {
   ?run logex:startTime ?startTime .
   
   # Filter for specific entity (remove or change this filter as needed)
-  FILTER(CONTAINS(LCASE(?entityLabel), "germany"))
+  FILTER(CONTAINS(LCASE(?entityLabel), "ma huateng"))
 }
 ORDER BY DESC(?startTime)
 ```
