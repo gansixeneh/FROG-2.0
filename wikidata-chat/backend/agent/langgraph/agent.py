@@ -536,7 +536,7 @@ Wikidata methods did not provide sufficient results, so web search was used as a
             question=question,
             use_cot=True,
             verbose=verbose,
-            try_threshold=10,
+            try_threshold=5,
             visualizer=visualizer,
             boxology_verbose=boxology_verbose,
             debug_callback=self.debug_callback,

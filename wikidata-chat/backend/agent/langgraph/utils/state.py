@@ -22,7 +22,7 @@ class WikidataGraphRAGState(BaseModel):
     verbose: Optional[int] = 0
     use_cot: Optional[bool] = True
     output_uri: Optional[bool] = False
-    try_threshold: Optional[int] = 10
+    try_threshold: Optional[int] = 5
     approach_used: Optional[str] = None
     next: Optional[str] = None
     visualizer: Optional[Any] = None
