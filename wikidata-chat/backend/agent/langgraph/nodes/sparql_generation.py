@@ -668,17 +668,26 @@ Please generate a better query. Try using different properties or restructuring 
                 attempts_left -= 1
         
         # Failed after all attempts
-        state.context_str = "I couldn't generate a working query to answer this question."
+        use_google_search = getattr(state, 'use_google_search', True)
         
-        # Mark that SPARQL failed
-        state.approach_used = "sparql_failed"
+        if use_google_search:
+            state.context_str = "I couldn't generate a working query to answer this question."
+            # Mark that SPARQL failed
+            state.approach_used = "sparql_failed"
+        else:
+            # Google Search is disabled, provide a more informative message
+            state.context_str = "I couldn't generate a working SPARQL query to answer this question using Wikidata. Google Search fallback is disabled in settings."
+            state.approach_used = "sparql_failed_no_fallback"
         
         # Log failure after all attempts
         if hasattr(state, 'visualizer') and state.visualizer:
             state.visualizer.log_event(
                 "SPARQL Generation Node",
                 "all attempts failed",
-                {"total_attempts": state.try_threshold}
+                {
+                    "total_attempts": state.try_threshold,
+                    "google_search_enabled": use_google_search
+                }
             )
             
             # Log all query attempts

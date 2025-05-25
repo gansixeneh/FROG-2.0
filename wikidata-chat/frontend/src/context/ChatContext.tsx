@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Chat, ChatWithMessages, Message, VisualizationFiles } from "../types";
+import { Chat, ChatWithMessages, Message, VisualizationFiles, AgentSettings } from "../types";
 import { fetchChats, fetchChat, createChat } from "../utils/api";
 import { getWebSocketUrl } from "../config/api";
 
@@ -17,10 +17,12 @@ interface ChatContextType {
   isLoading: boolean;
   isProcessing: boolean; // Track if a message is being processed
   socket: WebSocket | null;
+  settings: AgentSettings;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
   toggleNav: () => void;
+  updateSettings: (newSettings: AgentSettings) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -38,6 +40,22 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  
+  // Initialize settings from localStorage or use defaults
+  const [settings, setSettings] = useState<AgentSettings>(() => {
+    try {
+      const savedSettings = localStorage.getItem('frog-settings');
+      if (savedSettings) {
+        return JSON.parse(savedSettings);
+      }
+    } catch (error) {
+      console.error('Error loading settings from localStorage:', error);
+    }
+    return {
+      useVerbalization: true,
+      useGoogleSearch: true,
+    };
+  });
 
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
@@ -353,6 +371,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     socketToUse.send(
       JSON.stringify({
         message: content,
+        settings: settings,
       })
     );
   };
@@ -360,6 +379,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Toggle side navigation
   const toggleNav = () => {
     setIsNavOpen((prev) => !prev);
+  };
+
+  // Update settings
+  const updateSettings = (newSettings: AgentSettings) => {
+    setSettings(newSettings);
+    try {
+      localStorage.setItem('frog-settings', JSON.stringify(newSettings));
+    } catch (error) {
+      console.error('Error saving settings to localStorage:', error);
+    }
   };
   
   // Helper function to get file extension based on file type (used for legacy file handling)
@@ -385,10 +414,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         isLoading,
         isProcessing,
         socket,
+        settings,
         loadChat,
         startNewChat,
         sendMessage,
         toggleNav,
+        updateSettings,
       }}
     >
       {children}

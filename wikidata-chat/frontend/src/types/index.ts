@@ -36,3 +36,8 @@ export interface VisualizationFiles {
   mermaid: boolean;
   ttl: boolean;
 }
+
+export interface AgentSettings {
+  useVerbalization: boolean;
+  useGoogleSearch: boolean;
+}

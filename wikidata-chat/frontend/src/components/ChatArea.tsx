@@ -11,7 +11,7 @@ type ProcessedMessageItem =
   | { type: "systemGroup"; messages: Message[] };
 
 const ChatArea: React.FC = () => {
-  const { currentChat, isLoading } = useChat();
+  const { currentChat, isLoading, settings } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when messages change
@@ -148,6 +148,23 @@ const ChatArea: React.FC = () => {
             <div className="flex items-center">
               <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
               <span>"What books did Isaac Asimov write?"</span>
+            </div>
+          </div>
+          
+          {/* Settings indicator */}
+          <div className="mt-4 pt-3 border-t border-frog-dark/20">
+            <div className="text-sm text-frog-dark/70 flex items-center justify-center">
+              <span className="mr-2">Current Settings:</span>
+              <span className={`inline-block px-2 py-1 rounded text-xs font-medium mr-2 ${
+                settings.useVerbalization ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+              }`}>
+                {settings.useVerbalization ? 'Verbalization ON' : 'SPARQL Only'}
+              </span>
+              <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                settings.useGoogleSearch ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {settings.useGoogleSearch ? 'Google Search ON' : 'Wikidata Only'}
+              </span>
             </div>
           </div>
         </div>

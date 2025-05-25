@@ -106,7 +106,6 @@ class WikidataGraphAgent:
     def __init__(
         self,
         gemini_api_key=None,
-        always_use_generate_sparql=False,
         print_output=False,
         debug_callback=None,
     ):
@@ -121,7 +120,6 @@ class WikidataGraphAgent:
         genai.configure(api_key=self.gemini_api_key)
 
         # Store configuration
-        self.always_use_generate_sparql = always_use_generate_sparql
         self.print_output = print_output
         self.debug_callback = debug_callback
         self.visualizer = (
@@ -200,7 +198,7 @@ class WikidataGraphAgent:
             )
             answer_generation_node = AnswerGenerationNode(self.gemini_model)
         
-        strategy_selection_node = StrategySelectionNode(self.always_use_generate_sparql)
+        strategy_selection_node = StrategySelectionNode()
         property_generation_node = PropertyGenerationNode(self.property_retrieval)
         google_search_node = GoogleSearchNode()
 
@@ -243,10 +241,13 @@ class WikidataGraphAgent:
             },
         )
         
-        # SPARQL can either succeed and go to answer generation, or fail and go to Google search
+        # SPARQL can either succeed and go to answer generation, or fail and go to Google search (if enabled)
         workflow.add_conditional_edges(
             "sparql_generation",
-            lambda x: "answer_generation" if x.approach_used == "sparql" else "google_search",
+            lambda x: (
+                "answer_generation" if x.approach_used == "sparql" 
+                else ("google_search" if getattr(x, 'use_google_search', True) else "answer_generation")
+            ),
             {
                 "answer_generation": "answer_generation",
                 "google_search": "google_search",
@@ -507,13 +508,14 @@ Wikidata methods did not provide sufficient results, so web search was used as a
 
         return explanation
 
-    def query(self, question, verbose=0, boxology_verbose=0):
+    def query(self, question, verbose=0, boxology_verbose=0, settings=None):
         """Process a question and return answer, explanation, and visualization data
 
         Args:
             question: The question to process
             verbose: Level of verbosity for process logging (0-2)
             boxology_verbose: Level of verbosity for boxology visualization (0-2)
+            settings: Runtime settings dict with useVerbalization and useGoogleSearch flags
 
         Returns:
             Tuple of (final_answer, explanation, visualization_data)
@@ -529,6 +531,7 @@ Wikidata methods did not provide sufficient results, so web search was used as a
             self.visualizer = visualizer
 
         # Initialize the state
+        settings = settings or {}
         initial_state = WikidataGraphRAGState(
             question=question,
             use_cot=True,
@@ -538,6 +541,8 @@ Wikidata methods did not provide sufficient results, so web search was used as a
             boxology_verbose=boxology_verbose,
             debug_callback=self.debug_callback,
             include_references=True,  # Enable references by default
+            use_verbalization=settings.get('useVerbalization', True),  # Default to True
+            use_google_search=settings.get('useGoogleSearch', True),   # Default to True
         )
 
         # Run the graph

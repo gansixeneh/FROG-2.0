@@ -17,8 +17,8 @@ def contains_multiple_entities(question):
 
 class StrategySelectionNode:
     """Node for deciding between SPARQL and verbalization strategies"""
-    def __init__(self, always_use_generate_sparql=False):
-        self.always_use_generate_sparql = always_use_generate_sparql
+    def __init__(self):
+        pass
         
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
@@ -35,7 +35,10 @@ class StrategySelectionNode:
         
         # Determine if we should use SPARQL or verbalization
         contains_multiple = contains_multiple_entities(state.translated_question)
-        state.use_sparql = self.always_use_generate_sparql or contains_multiple
+        
+        # Check runtime settings - if useVerbalization is False, skip verbalization
+        use_verbalization = getattr(state, 'use_verbalization', True)
+        state.use_sparql = (not use_verbalization) or contains_multiple
         
         # Log decision factors
         if hasattr(state, 'visualizer') and state.visualizer:
@@ -43,8 +46,8 @@ class StrategySelectionNode:
                 "Strategy Selection Node",
                 "decision factors",
                 {
-                    "always_use_sparql": self.always_use_generate_sparql,
                     "contains_multiple_entities": contains_multiple,
+                    "use_verbalization_setting": use_verbalization,
                     "final_decision": "sparql" if state.use_sparql else "verbalization"
                 }
             )

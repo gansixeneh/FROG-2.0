@@ -9,6 +9,9 @@ A full-stack web application that integrates a Wikidata Agent with a modern Reac
 - Chat history management with a side menu
 - Detailed traceability of the agent's reasoning process
 - WebSocket connection for real-time communication
+- **Runtime Settings Control**: Users can toggle between different reasoning strategies
+  - **Use Verbalization**: Enable/disable entity verbalization approach
+  - **Google Search Fallback**: Enable/disable Google Search when Wikidata fails
 
 ## Project Structure
 
@@ -76,12 +79,10 @@ Create a `.env` file in the backend directory and add your Google Gemini API key
 
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
-ALWAYS_USE_GENERATE_SPARQL=false
 ```
    
 Configuration options:
 - `GEMINI_API_KEY`: Required. Your Google Gemini API key.
-- `ALWAYS_USE_GENERATE_SPARQL`: Optional (default: false). When set to "true", the agent will always use SPARQL generation for all queries, bypassing the verbalization approach.
 
 Run the migrations to set up the database:
 
@@ -138,9 +139,12 @@ The React development server will start at http://localhost:3000.
 
 1. Open your browser and navigate to http://localhost:3000
 2. Click on "New Chat" to start a new conversation
-3. Type your question in the input field and press Enter
-4. View the agent's response and real-time tracing of its reasoning process
-5. Access previous chats from the side menu
+3. **Configure Settings**: Click the "Settings" button in the header to configure:
+   - **Use Verbalization**: When enabled, FrOG tries entity verbalization first for simple questions. When disabled, always uses SPARQL generation
+   - **Google Search Fallback**: When enabled, uses Google Search if Wikidata methods fail. When disabled, only uses Wikidata sources
+4. Type your question in the input field and press Enter
+5. View the agent's response and real-time tracing of its reasoning process
+6. Access previous chats from the side menu
 
 ## Example Questions
 

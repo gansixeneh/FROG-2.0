@@ -118,6 +118,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
             
         message = text_data_json['message']
+        settings = text_data_json.get('settings', {})  # Get settings from the message
         
         # Send message to room group to indicate typing
         await self.channel_layer.group_send(
@@ -137,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             # Create a task to run the agent query - now returns tuple (response, visualization_files_content)
             loop = asyncio.get_event_loop()
-            response, visualization_files_content = await loop.run_in_executor(None, self.agent.query, message)
+            response, visualization_files_content = await loop.run_in_executor(None, self.agent.query, message, settings)
             
             # Save assistant message
             assistant_message = await self.save_message(response, 'assistant')

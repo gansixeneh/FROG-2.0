@@ -129,16 +129,12 @@ class WikidataAgent:
                 "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
             )
         
-        # Get ALWAYS_USE_GENERATE_SPARQL config from environment (default to false if not specified)
-        always_use_generate_sparql = os.environ.get("ALWAYS_USE_GENERATE_SPARQL", "false").lower() == "true"
-        
         # Setup debug handler for legacy support
         self.debug_handler = DebugHandler(debug_callback)
         
         # Initialize the LangGraph agent
         self.langgraph_agent = WikidataGraphAgent(
             gemini_api_key=gemini_api_key,
-            always_use_generate_sparql=always_use_generate_sparql,
             print_output=False,
             debug_callback=debug_callback
         )
@@ -163,12 +159,13 @@ class WikidataAgent:
             if hasattr(self.langgraph_agent, 'visualizer') and self.langgraph_agent.visualizer:
                 self.langgraph_agent.visualizer.debug_callback = debug_callback
 
-    def query(self, user_question: str) -> tuple:
+    def query(self, user_question: str, settings: dict = None) -> tuple:
         """
         Process a user question and return an answer based on Wikidata or web search as fallback
 
         Args:
             user_question: The user's natural language question
+            settings: Runtime settings dict with useVerbalization and useGoogleSearch flags
 
         Returns:
             A tuple containing:
@@ -179,7 +176,8 @@ class WikidataAgent:
         answer, explanation, visualization_data = self.langgraph_agent.query(
             user_question, 
             verbose=0, 
-            boxology_verbose=2  # Enable visualization
+            boxology_verbose=2,  # Enable visualization
+            settings=settings or {}
         )
         
         # Store visualization files for later download and read contents

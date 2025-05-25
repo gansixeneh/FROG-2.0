@@ -49,7 +49,6 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
 
    ```
    GEMINI_API_KEY=your_gemini_api_key_here
-   ALWAYS_USE_GENERATE_SPARQL=false
 
    # Optional: For Kaggle provider
    KAGGLE_USERNAME=your_kaggle_username
@@ -59,7 +58,6 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
    **Configuration options:**
 
    - `GEMINI_API_KEY`: **Required**. Your Google Gemini API key.
-   - `ALWAYS_USE_GENERATE_SPARQL`: Optional (default: false). When set to "true", the agent will always use SPARQL generation for all queries, bypassing the verbalization approach.
    - `KAGGLE_USERNAME` & `KAGGLE_KEY`: Optional. Required only if using Kaggle models for SPARQL generation.
 6. Run database migrations:
 

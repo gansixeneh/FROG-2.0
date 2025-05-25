@@ -30,3 +30,5 @@ class WikidataGraphRAGState(BaseModel):
     debug_callback: Optional[Any] = None
     include_references: Optional[bool] = True  # Enable references by default
     google_search_result: Optional[Dict] = None  # Google search results
+    use_verbalization: Optional[bool] = True  # Runtime setting for verbalization
+    use_google_search: Optional[bool] = True  # Runtime setting for Google search
