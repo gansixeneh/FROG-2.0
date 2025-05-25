@@ -922,14 +922,11 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         
         # Upload to Apache Jena
         try:
-            # Create graph name using run ID
-            graph_name = f"http://example.org/logs/{run_id}"
-            
             # Upload to Apache Jena
-            upload_success = self.jena_uploader.upload_ttl(ttl_content, graph_name)
+            upload_success = self.jena_uploader.upload_ttl(ttl_content)
             
             if upload_success:
-                logger.info(f"Successfully uploaded TTL data to Apache Jena with graph: {graph_name}")
+                logger.info(f"Successfully uploaded TTL data to Apache Jena")
             else:
                 logger.error("Failed to upload TTL data to Apache Jena")
         except Exception as e:
