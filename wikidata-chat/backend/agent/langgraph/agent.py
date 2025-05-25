@@ -517,6 +517,11 @@ Wikidata methods did not provide sufficient results, so web search was used as a
         # Convert the AddableValuesDict back to our state type
         final_state = WikidataGraphRAGState(**dict(final_state_dict))
 
+        # Pass the approach information to the visualizer
+        if boxology_verbose > 0 and visualizer and final_state.approach_used:
+            visualizer.set_approach_used(final_state.approach_used)
+            logger.info(f"Set approach in visualizer: {final_state.approach_used}")
+
         # Generate explanation
         explanation = self.create_explanation(final_state)
 

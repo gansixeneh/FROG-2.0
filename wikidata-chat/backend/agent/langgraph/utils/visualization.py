@@ -145,7 +145,7 @@ class CustomEncoder(json.JSONEncoder):
 class LogToRDF:
     """Convert execution logs to RDF following SLOGERT approach with sophisticated patterns"""
     
-    def __init__(self, run_id=None):
+    def __init__(self, run_id=None, approach_used=None):
         # Define namespaces
         self.LOG = Namespace("https://w3id.org/sepses/ns/log#")
         self.LOGEX = Namespace("https://w3id.org/sepses/ns/logex#")
@@ -159,6 +159,17 @@ class LogToRDF:
         
         # Generate a random UUID for this run if not provided
         self.run_id = run_id if run_id else str(uuid.uuid4())
+        
+        # Normalize approach names to be more user-friendly
+        approach_mapping = {
+            "verbalization": "Verbalization",
+            "sparql": "SPARQL Generation", 
+            "google_search": "Google Search",
+            "sparql_failed": "SPARQL Generation (Failed)"
+        }
+        
+        # Store the approach used for this run
+        self.approach_used = approach_mapping.get(approach_used, approach_used) if approach_used else None
         
         # Initialize RDF graph
         self.graph = Graph()
@@ -491,6 +502,10 @@ class LogToRDF:
         # Add this run to the global collection
         self.graph.add((self.all_runs_uri, self.LOGEX.hasRun, self.metadata_uri))
         
+        # Add approach information if available
+        if self.approach_used:
+            self.graph.add((self.metadata_uri, self.LOG.approach, Literal(self.approach_used)))
+        
         # Extract start time and end time from logs
         start_time = None
         end_time = None
@@ -551,6 +566,7 @@ class BoxologyVisualizer:
         self.start_time = datetime.now()
         self.question = None  # Add this to store the question
         self.debug_callback = debug_callback
+        self.approach_used = None  # Track the approach used
         
         # Initialize Jena uploader
         self.jena_uploader = JenaUploader()
@@ -564,6 +580,7 @@ class BoxologyVisualizer:
             "Property Generation Node": "#ffd5d5",   # Light red for property related
             "SPARQL Generation Node": "#d5f5f5",     # Light teal for query related
             "Answer Generation Node": "#f5f5d5",     # Light yellow for inference
+            "Google Search Node": "#ffccff",         # Light pink for web search
             "default": "#f5f5f5"                     # Light gray for default
         }
         
@@ -576,6 +593,7 @@ class BoxologyVisualizer:
             "Property Generation Node": "rounded",   # Rounded rectangle for generation
             "SPARQL Generation Node": "rounded",     # Rounded rectangle for inference
             "Answer Generation Node": "rounded",     # Rounded rectangle for inference
+            "Google Search Node": "rounded",         # Rounded rectangle for web search
             "default": "box"                         # Rectangle for default
         }
     
@@ -586,6 +604,19 @@ class BoxologyVisualizer:
     def set_question(self, question):
         """Set the question for this visualization session"""
         self.question = question
+    
+    def set_approach_used(self, approach_used):
+        """Set the approach used for this session"""
+        # Normalize approach names to be more user-friendly
+        approach_mapping = {
+            "verbalization": "Verbalization",
+            "sparql": "SPARQL Generation",
+            "google_search": "Google Search",
+            "sparql_failed": "SPARQL Generation (Failed)"
+        }
+        
+        self.approach_used = approach_mapping.get(approach_used, approach_used)
+        logger.info(f"Approach set for visualization: {self.approach_used} (original: {approach_used})")
     
     def log_event(self, component, event_type, details=None, start_time=None, end_time=None):
         """Log a process event with timestamp"""
@@ -660,6 +691,7 @@ class BoxologyVisualizer:
         # Prepare data for saving
         log_data = {
             "question": self.question,
+            "approach_used": self.approach_used,
             "start_time": self.start_time.isoformat(),
             "end_time": datetime.now().isoformat(),
             "total_duration": (datetime.now() - self.start_time).total_seconds(),
@@ -756,8 +788,12 @@ class BoxologyVisualizer:
         # Create Mermaid diagram code
         mermaid_code = ["graph LR;"]
         
-        # Add title
-        mermaid_code.append("    title[\"WikidataGraphRAG Process Flow\"]")
+        # Add title with approach information
+        title_text = f"WikidataGraphRAG Process Flow"
+        if self.approach_used:
+            title_text += f" (Approach: {self.approach_used.title()})"
+        
+        mermaid_code.append(f'    title["{title_text}"]')
         mermaid_code.append("    style title fill:#f9f9f9,stroke:#333,stroke-width:2px,font-size:16px,font-weight:bold,color:#444")
         
         # Group logs by component
@@ -866,7 +902,11 @@ class BoxologyVisualizer:
         
         # Add overall execution info
         total_duration = (datetime.now() - self.start_time).total_seconds()
-        mermaid_code.append(f"    executionInfo[\"Total Duration: {total_duration:.3f} seconds\"]")
+        execution_info = f"Total Duration: {total_duration:.3f} seconds"
+        if self.approach_used:
+            execution_info += f" | Approach: {self.approach_used.title()}"
+        
+        mermaid_code.append(f'    executionInfo["{execution_info}"]')
         mermaid_code.append(f"    style executionInfo fill:#e8f7e8,stroke:#191,stroke-width:2px,font-weight:bold,color:#444")
         mermaid_code.append(f"    title --> executionInfo")
         mermaid_code.append(f"    linkStyle {node_counter['count']} stroke:#000,stroke-width:2px,fill:none")
@@ -878,7 +918,8 @@ class BoxologyVisualizer:
         temp_file = tempfile.NamedTemporaryFile(suffix='.mmd', delete=False)
         
         # Create markdown content with mermaid code
-        markdown_content = f"""# WikidataGraphRAG Process Flow
+        approach_info = f" (Approach: {self.approach_used.title()})" if self.approach_used else ""
+        markdown_content = f"""# WikidataGraphRAG Process Flow{approach_info}
 
 Question: {self.question}
 Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -898,7 +939,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
     def save_ttl(self):
         """Convert logs to RDF and save as TTL file locally and to Apache Jena"""
-        # Create a converter with run ID
+        # Create a converter with run ID and approach information
         import hashlib
         
         # Generate a consistent ID based on question and timestamp
@@ -906,7 +947,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         run_id = f"run_{timestamp}_{question_hash}"
         
-        converter = LogToRDF(run_id=run_id)
+        converter = LogToRDF(run_id=run_id, approach_used=self.approach_used)
         converter.convert_logs_to_rdf(self.logs)
         
         # Serialize to TTL
@@ -926,7 +967,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
             upload_success = self.jena_uploader.upload_ttl(ttl_content)
             
             if upload_success:
-                logger.info(f"Successfully uploaded TTL data to Apache Jena")
+                logger.info(f"Successfully uploaded TTL data to Apache Jena with approach: {self.approach_used}")
             else:
                 logger.error("Failed to upload TTL data to Apache Jena")
         except Exception as e:
