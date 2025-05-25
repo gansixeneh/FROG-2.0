@@ -74,7 +74,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={() => handleToggle('useVerbalization')}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-frog-DEFAULT focus:ring-offset-2 ${
-                  settings.useVerbalization ? 'bg-frog-DEFAULT' : 'bg-gray-300'
+                  settings.useVerbalization ? 'bg-frog-light' : 'bg-gray-300'
                 }`}
                 role="switch"
                 aria-checked={settings.useVerbalization}
@@ -107,7 +107,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={() => handleToggle('useGoogleSearch')}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-frog-DEFAULT focus:ring-offset-2 ${
-                  settings.useGoogleSearch ? 'bg-frog-DEFAULT' : 'bg-gray-300'
+                  settings.useGoogleSearch ? 'bg-frog-light' : 'bg-gray-300'
                 }`}
                 role="switch"
                 aria-checked={settings.useGoogleSearch}
