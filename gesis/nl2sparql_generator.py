@@ -1,4 +1,3 @@
-# gesis/nl2sparql_generator.py
 """
 NL2SPARQL - Natural Language to SPARQL Dataset Generator for GESIS Knowledge Graph
 
@@ -302,8 +301,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-author",
                 "category": "scholarly",
-                "questionTemplate": "Who is the author of {entity}?",
-                "englishQuestion": "Who is the author of {entity}?",
+                "questionTemplates": [
+                    "Who is the author of {entity}?",
+                    "Who wrote {entity}?", 
+                    "Who created {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Who is the author of {entity}?",
+                    "Who wrote {entity}?",
+                    "Who created {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?author ?authorName WHERE {
                       {entity} schema:author ?author .
@@ -315,8 +322,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-title",
                 "category": "scholarly",
-                "questionTemplate": "What is the title of {entity}?",
-                "englishQuestion": "What is the title of {entity}?",
+                "questionTemplates": [
+                    "What is the title of {entity}?",
+                    "What is the name of {entity}?",
+                    "What is {entity} called?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the title of {entity}?",
+                    "What is the name of {entity}?",
+                    "What is {entity} called?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
                       {entity} schema:name ?title .
@@ -327,8 +342,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-date",
                 "category": "scholarly",
-                "questionTemplate": "When was {entity} published?",
-                "englishQuestion": "When was {entity} published?",
+                "questionTemplates": [
+                    "When was {entity} published?",
+                    "What is the publication date of {entity}?",
+                    "In what year was {entity} published?"
+                ],
+                "englishQuestionTemplates": [
+                    "When was {entity} published?",
+                    "What is the publication date of {entity}?",
+                    "In what year was {entity} published?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
                       {entity} schema:datePublished ?date .
@@ -339,8 +362,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-publisher",
                 "category": "scholarly",
-                "questionTemplate": "Which organization published {entity}?",
-                "englishQuestion": "Which organization published {entity}?",
+                "questionTemplates": [
+                    "Which organization published {entity}?",
+                    "Who published {entity}?",
+                    "What is the publisher of {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which organization published {entity}?",
+                    "Who published {entity}?",
+                    "What is the publisher of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?publisher ?publisherName WHERE {
                       {entity} schema:publisher ?publisher .
@@ -352,8 +383,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-topic",
                 "category": "scholarly",
-                "questionTemplate": "What is the topic of {entity}?",
-                "englishQuestion": "What is the topic of {entity}?",
+                "questionTemplates": [
+                    "What is the topic of {entity}?",
+                    "What is the subject of {entity}?",
+                    "What is the main theme of {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the topic of {entity}?",
+                    "What is the subject of {entity}?",
+                    "What is the main theme of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?topic ?topicName WHERE {
                       {entity} schema:about ?topic .
@@ -365,8 +404,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "person-publications",
                 "category": "scholarly",
-                "questionTemplate": "What publications has {entity} authored?",
-                "englishQuestion": "What publications has {entity} authored?",
+                "questionTemplates": [
+                    "What publications has {entity} authored?",
+                    "What has {entity} written?",
+                    "Which works did {entity} create?"
+                ],
+                "englishQuestionTemplates": [
+                    "What publications has {entity} authored?",
+                    "What has {entity} written?",
+                    "Which works did {entity} create?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?publication ?title WHERE {
                       ?publication schema:author {entity} .
@@ -377,37 +424,19 @@ class NL2SPARQLGenerator:
             },
             
             # Intermediate: Structure and relationships
-            # {
-            #     "id": "publication-citations",
-            #     "category": "scholarly",
-            #     "questionTemplate": "Which publications cite {entity}?",
-            #     "englishQuestion": "Which publications cite {entity}?",
-            #     "sparqlTemplate": """
-            #         SELECT ?citing ?citingTitle WHERE {
-            #           ?citing schema:citation {entity} .
-            #           ?citing schema:name ?citingTitle .
-            #         }
-            #     """,
-            #     "complexity": "intermediate"
-            # },
-            # {
-            #     "id": "publication-cited-works",
-            #     "category": "scholarly",
-            #     "questionTemplate": "Which works are cited by {entity}?",
-            #     "englishQuestion": "Which works are cited by {entity}?",
-            #     "sparqlTemplate": """
-            #         SELECT ?cited ?citedTitle WHERE {
-            #           {entity} schema:citation ?cited .
-            #           ?cited schema:name ?citedTitle .
-            #         }
-            #     """,
-            #     "complexity": "intermediate"
-            # },
             {
                 "id": "publication-collaborators",
                 "category": "scholarly",
-                "questionTemplate": "Who has collaborated with {entity}?",
-                "englishQuestion": "Who has collaborated with {entity}?",
+                "questionTemplates": [
+                    "Who has collaborated with {entity}?",
+                    "Who are the research partners of {entity}?",
+                    "Which authors have worked with {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Who has collaborated with {entity}?",
+                    "Who are the research partners of {entity}?",
+                    "Which authors have worked with {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?collaborator ?collaboratorName WHERE {
                       ?publication schema:author {entity} .
@@ -421,8 +450,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "organization-publications",
                 "category": "scholarly",
-                "questionTemplate": "What publications are associated with {entity}?",
-                "englishQuestion": "What publications are associated with {entity}?",
+                "questionTemplates": [
+                    "What publications are associated with {entity}?",
+                    "What works has {entity} published?",
+                    "Which papers are from {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What publications are associated with {entity}?",
+                    "What works has {entity} published?",
+                    "Which papers are from {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?publication ?title WHERE {
                       {
@@ -438,8 +475,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publications-by-year",
                 "category": "scholarly",
-                "questionTemplate": "What publications were published in {value}?",
-                "englishQuestion": "What publications were published in {value}?",
+                "questionTemplates": [
+                    "What publications were published in {value}?",
+                    "Which works came out in {value}?",
+                    "What research was released in {value}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What publications were published in {value}?",
+                    "Which works came out in {value}?",
+                    "What research was released in {value}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?publication ?title WHERE {
                       ?publication schema:datePublished ?date .
@@ -454,8 +499,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "author-top-cited",
                 "category": "scholarly",
-                "questionTemplate": "What are the most cited works of {entity}?",
-                "englishQuestion": "What are the most cited works of {entity}?",
+                "questionTemplates": [
+                    "What are the most cited works of {entity}?",
+                    "Which publications by {entity} have the most citations?",
+                    "What are {entity}'s most influential papers?"
+                ],
+                "englishQuestionTemplates": [
+                    "What are the most cited works of {entity}?",
+                    "Which publications by {entity} have the most citations?",
+                    "What are {entity}'s most influential papers?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?publication ?title (COUNT(?citing) AS ?citationCount) WHERE {
                       ?publication schema:author {entity} .
@@ -471,8 +524,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-by-keyword",
                 "category": "scholarly",
-                "questionTemplate": "What publications are related to '{value}'?",
-                "englishQuestion": "What publications are related to '{value}'?",
+                "questionTemplates": [
+                    "What publications are related to '{value}'?",
+                    "Which papers discuss '{value}'?",
+                    "Find research about '{value}'."
+                ],
+                "englishQuestionTemplates": [
+                    "What publications are related to '{value}'?",
+                    "Which papers discuss '{value}'?",
+                    "Find research about '{value}'."
+                ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?publication ?title WHERE {
                       ?publication schema:name ?title .
@@ -494,8 +555,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "authors-by-topic",
                 "category": "scholarly",
-                "questionTemplate": "Who are the authors publishing about '{value}'?",
-                "englishQuestion": "Who are the authors publishing about '{value}'?",
+                "questionTemplates": [
+                    "Who are the authors publishing about '{value}'?",
+                    "Which researchers write about '{value}'?",
+                    "Find experts on '{value}'."
+                ],
+                "englishQuestionTemplates": [
+                    "Who are the authors publishing about '{value}'?",
+                    "Which researchers write about '{value}'?",
+                    "Find experts on '{value}'."
+                ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?author ?authorName (COUNT(?publication) AS ?publicationCount) WHERE {
                       ?publication schema:name ?title .
@@ -521,8 +590,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "organization-top-contributors",
                 "category": "scholarly",
-                "questionTemplate": "Who are the top contributors to {entity}?",
-                "englishQuestion": "Who are the top contributors to {entity}?",
+                "questionTemplates": [
+                    "Who are the top contributors to {entity}?",
+                    "Which authors publish most with {entity}?",
+                    "Who are the leading researchers at {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Who are the top contributors to {entity}?",
+                    "Which authors publish most with {entity}?",
+                    "Who are the leading researchers at {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?contributor ?contributorName (COUNT(?publication) AS ?contributionCount) WHERE {
                       ?publication schema:publisher {entity} .
@@ -538,8 +615,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "publication-with-most-authors",
                 "category": "scholarly",
-                "questionTemplate": "What publications have the most authors?",
-                "englishQuestion": "What publications have the most authors?",
+                "questionTemplates": [
+                    "What publications have the most authors?",
+                    "Which papers have the largest research teams?",
+                    "Find publications with many collaborators."
+                ],
+                "englishQuestionTemplates": [
+                    "What publications have the most authors?",
+                    "Which papers have the largest research teams?",
+                    "Find publications with many collaborators."
+                ],
                 "sparqlTemplate": """
                     SELECT ?publication ?title (COUNT(?author) AS ?authorCount) WHERE {
                       ?publication schema:name ?title .
@@ -794,18 +879,18 @@ class NL2SPARQLGenerator:
                     value_str = str(value)
                     
                     # Handle different value types appropriately
-                    if "year" in template["id"] or "year" in template["questionTemplate"].lower():
+                    if "year" in template["id"] or "year" in template["questionTemplates"][0].lower():
                         replacement = {
                             "value": value_str,
                             "label": value_str
                         }
-                    elif "keyword" in template["id"] or "keyword" in template["questionTemplate"].lower():
+                    elif "keyword" in template["id"] or "keyword" in template["questionTemplates"][0].lower():
                         replacement = {
                             "value": value_str,
                             "label": value_str,
                             "sparqlValue": f'"{value_str}"'  # Include quotes for string literal
                         }
-                    elif "topic" in template["id"] or "topic" in template["questionTemplate"].lower():
+                    elif "topic" in template["id"] or "topic" in template["questionTemplates"][0].lower():
                         replacement = {
                             "value": value_str,
                             "label": value_str,
@@ -831,9 +916,14 @@ class NL2SPARQLGenerator:
                 print(f"Missing valid values for placeholders: {missing}")
                 return self.instantiate_template(template)
                 
+            # Randomly select one of the question templates
+            question_idx = random.randrange(len(template["questionTemplates"]))
+            question_template = template["questionTemplates"][question_idx]
+            english_question_template = template["englishQuestionTemplates"][question_idx]
+            
             # Apply replacements to the question template
-            question = template["questionTemplate"].strip()
-            english_question = template["englishQuestion"].strip()
+            question = question_template.strip()
+            english_question = english_question_template.strip()
             sparql = template["sparqlTemplate"].strip()
             
             # Replace placeholders in question and query
@@ -888,9 +978,14 @@ class NL2SPARQLGenerator:
         # Apply the keyword to the template
         replacements = {"value": keyword}
         
+        # Randomly select one of the question templates
+        question_idx = random.randrange(len(template["questionTemplates"]))
+        question_template = template["questionTemplates"][question_idx]
+        english_question_template = template["englishQuestionTemplates"][question_idx]
+        
         # Apply replacements to the question template
-        question = template["questionTemplate"].strip()
-        english_question = template["englishQuestion"].strip()
+        question = question_template.strip()
+        english_question = english_question_template.strip()
         sparql = template["sparqlTemplate"].strip()
         
         # Replace the placeholder in question and query
@@ -1031,9 +1126,14 @@ class NL2SPARQLGenerator:
         if not replacements:
             return None
         
+        # Randomly select one of the question templates
+        question_idx = random.randrange(len(template["questionTemplates"]))
+        question_template = template["questionTemplates"][question_idx]
+        english_question_template = template["englishQuestionTemplates"][question_idx]
+        
         # Apply replacements to the question template
-        question = template["questionTemplate"].strip()
-        english_question = template["englishQuestion"].strip()
+        question = question_template.strip()
+        english_question = english_question_template.strip()
         sparql = template["sparqlTemplate"].strip()
         
         # Add prefixes to SPARQL query
@@ -1083,8 +1183,9 @@ class NL2SPARQLGenerator:
         
         # For Python triple-quoted strings, we need to handle whitespace
         # First, normalize the templates by removing extra whitespace
-        question_template = template["questionTemplate"].strip()
-        english_question = template["englishQuestion"].strip()
+        # Check first question template - all should have the same placeholders
+        question_template = template["questionTemplates"][0].strip()
+        english_question = template["englishQuestionTemplates"][0].strip()
         sparql_template = template["sparqlTemplate"].strip()
         
         # Use a pattern that matches content between curly braces
