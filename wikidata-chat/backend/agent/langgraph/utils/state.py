@@ -12,6 +12,7 @@ class WikidataGraphRAGState(BaseModel):
     entity_uri: Optional[str] = None
     verbalization_result: Optional[List[Dict]] = Field(default_factory=list)
     verbalization_similarity: Optional[float] = None
+    verbalization_references: Optional[List[Dict]] = Field(default_factory=list)  # New field for references
     related_properties: Optional[List[str]] = Field(default_factory=list)
     sparql_query: Optional[str] = None
     query_result: Optional[List[Dict]] = Field(default_factory=list)
@@ -26,5 +27,5 @@ class WikidataGraphRAGState(BaseModel):
     visualizer: Optional[Any] = None
     boxology_verbose: Optional[int] = 0
     debug_callback: Optional[Any] = None
-    include_references: Optional[bool] = True  # New field for reference enhancement
-    google_search_result: Optional[Dict] = None  # New field for Google search results
+    include_references: Optional[bool] = True  # Enable references by default
+    google_search_result: Optional[Dict] = None  # Google search results

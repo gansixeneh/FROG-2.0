@@ -284,6 +284,30 @@ Using entity: {entity_label}
                     similarity = state.verbalization_similarity
                 explanation += f"\n**Similarity Score**: {similarity:.2f}\n\n"
 
+            # Add reference information if available
+            if hasattr(state, 'verbalization_references') and state.verbalization_references:
+                explanation += "#### Reference Sources\n"
+                unique_urls = set()
+                unique_dates = set()
+                
+                for ref in state.verbalization_references:
+                    if ref.get('refUrl'):
+                        unique_urls.add(ref['refUrl'])
+                    if ref.get('refDate'):
+                        unique_dates.add(ref['refDate'])
+                
+                if unique_urls:
+                    explanation += "**Sources:**\n"
+                    for url in unique_urls:
+                        explanation += f"- {url}\n"
+                
+                if unique_dates:
+                    explanation += "\n**Retrieved on:**\n"
+                    for date in unique_dates:
+                        explanation += f"- {date}\n"
+                
+                explanation += f"\n**Total references found**: {len(state.verbalization_references)}\n\n"
+
         elif approach == "sparql":
             # Add property information if available
             if state.related_properties:

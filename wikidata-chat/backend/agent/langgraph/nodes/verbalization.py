@@ -51,6 +51,42 @@ WHERE {{
 }}
 """
 
+    # Template for fetching references
+    REFERENCES_TEMPLATE = """
+SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
+  BIND(wd:{entity} AS ?s) .
+  BIND({property_uri} AS ?p) .
+  
+  # Get the full statement, not just direct property
+  ?s ?statement_prop ?statement .
+  ?statement ?value_prop ?o .
+  
+  # Get property for labeling
+  ?prop wikibase:directClaim ?p .
+  
+  # Get reference information
+  OPTIONAL {{
+    ?statement prov:wasDerivedFrom ?reference .
+    OPTIONAL {{ ?reference pr:P854 ?refUrl }}
+    OPTIONAL {{ ?reference pr:P813 ?refDate }}
+  }}
+  
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  
+  # Filter to get the right property relationships
+  FILTER(?statement_prop = ?prop_statement && ?value_prop = ?prop_value)
+  
+  # Build the property relationships dynamically
+  {{
+    SELECT ?prop_statement ?prop_value WHERE {{
+      ?prop wikibase:claim ?prop_statement .
+      ?prop wikibase:statementProperty ?prop_value .
+      FILTER(?prop = {property_uri})
+    }}
+  }}
+}}
+"""
+
     def __init__(
         self,
         model_name="jinaai/jina-embeddings-v3",
@@ -85,6 +121,7 @@ WHERE {{
         except Exception as e:
             logger.error(f"Error executing SPARQL query: {e}")
             return [], e
+
     def get_po(self, entity: str):
         """Get predicate-object pairs for entity"""
         query = self.PO_TEMPLATE.format(entity=entity)
@@ -156,13 +193,70 @@ WHERE {{
 
         return candidates, po, sp
 
-    def run(self, question: str, entity: str, output_uri=False):
+    def extract_property_id(self, property_uri):
+        """Extract property ID (e.g., P27) from full property URI"""
+        if not property_uri:
+            return None
+        
+        # Extract property ID from URI like http://www.wikidata.org/prop/direct/P27
+        match = re.search(r'/(P\d+)$', property_uri)
+        if match:
+            return match.group(1)
+        return None
+
+    def get_references_for_property(self, entity: str, property_uri: str):
+        """Get reference information for a specific entity and property"""
+        try:
+            # Extract property ID
+            prop_id = self.extract_property_id(property_uri)
+            if not prop_id:
+                logger.warning(f"Could not extract property ID from URI: {property_uri}")
+                return []
+
+            # Build a simpler reference query
+            reference_query = f"""
+SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
+  BIND(wd:{entity} AS ?s) .
+  BIND(wdt:{prop_id} AS ?p) .
+  
+  # Get the full statement, not just direct property
+  ?s p:{prop_id} ?statement .
+  ?statement ps:{prop_id} ?o .
+  
+  # Get property for labeling
+  ?prop wikibase:directClaim ?p .
+  
+  # Get reference information
+  OPTIONAL {{
+    ?statement prov:wasDerivedFrom ?reference .
+    OPTIONAL {{ ?reference pr:P854 ?refUrl }}
+    OPTIONAL {{ ?reference pr:P813 ?refDate }}
+  }}
+  
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+"""
+            
+            logger.info(f"Executing reference query for entity {entity} and property {prop_id}")
+            results, err = self.execute_sparql(reference_query)
+            
+            if err:
+                logger.error(f"Error executing reference query: {err}")
+                return []
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error getting references for property {property_uri}: {e}")
+            return []
+
+    def run(self, question: str, entity: str, output_uri=False, include_references=False):
         """Run the verbalization process"""
         # Get candidate sentences
         candidates, po, sp = self.get_list_of_candidates(entity)
         cands = list(candidates.values())
         if not cands:  # Handle empty candidates
-            return [], 0.0
+            return [], 0.0, []
             
         # Encode question and candidates
         question_embed = self.model.encode(question, **self.query_model_encode_kwargs)
@@ -202,8 +296,14 @@ WHERE {{
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
                 label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
                 result.append({label_p: s if output_uri else label_s})
+
+        # Get references if requested and similarity is high enough
+        references = []
+        if include_references and similar_score >= 0.6 and result:
+            logger.info(f"Fetching references for property {property_used} with similarity {similar_score}")
+            references = self.get_references_for_property(entity, property_used)
             
-        return result, similar_score
+        return result, similar_score, references
 
 class VerbalizationNode:
     """Node for retrieving entity information through verbalization"""
@@ -227,6 +327,7 @@ class VerbalizationNode:
             }
         )
         logger.info("Initialized VerbalizationNode with WikidataVerbalization")        
+    
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
         self.api.setQuery(q)
@@ -270,6 +371,7 @@ class VerbalizationNode:
         except Exception as e:
             logger.error(f"Error searching for entities: {e}")
             return [], e        
+
     def get_most_appropriate_entity_uri(self, entity, question, retrieved_entities):
         """Get the most appropriate Wikidata entity ID from retrieved entities"""
         if not retrieved_entities:
@@ -311,6 +413,7 @@ class VerbalizationNode:
             return retrieved_entities[0]["uri"]
             
         return None        
+
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
         start_time = datetime.now()
@@ -436,15 +539,30 @@ class VerbalizationNode:
                             [f"{i+1}. Property: {p.split('/')[-1]}, Sentence: {s}, Similarity: {sim:.4f}" 
                              for i, (p, s, sim) in enumerate(top_cands)]
                         )                
-                # Run verbalization
-                result, similarity = self.verbalization.run(
+
+                # Run verbalization with references support
+                result, similarity, references = self.verbalization.run(
                     state.translated_question, 
                     entity_uri, 
-                    output_uri=state.output_uri
+                    output_uri=state.output_uri,
+                    include_references=getattr(state, 'include_references', True)
                 )
                 
                 state.verbalization_result = result
                 state.verbalization_similarity = similarity
+                
+                # Store references in state
+                if references:
+                    state.verbalization_references = references
+                    if hasattr(state, 'visualizer') and state.visualizer:
+                        state.visualizer.log_event(
+                            "Verbalization Node",
+                            "references fetched",
+                            {
+                                "reference_count": len(references),
+                                "sample_references": references[:3] if len(references) > 3 else references
+                            }
+                        )
                 
                 # End verbalization timing
                 verb_end_time = datetime.now()
@@ -456,7 +574,8 @@ class VerbalizationNode:
                         "verbalization result",
                         {
                             "similarity": similarity,
-                            "result": result[0] if result else None
+                            "result": result[0] if result else None,
+                            "references_available": len(references) > 0 if references else False
                         },
                         start_time=verb_start_time,
                         end_time=verb_end_time
@@ -464,17 +583,33 @@ class VerbalizationNode:
                     
                 if state.verbose > 0:
                     print(f"Verbalization Result: {result}\nSimilarity: {similarity}")
+                    if references:
+                        print(f"References found: {len(references)}")
                     
                 # Determine if verbalization is successful
                 if similarity >= 0.6 and result:
                     state.query_result = result
                     
-                    # Process the results for the answer
+                    # Process the results for the answer, including references
                     context_str = f'The answer to "{state.question}" is: '
                     for c in result[:50]:
                         for k, v in c.items():
                             context_str += f"{k}={v}, "
                     context_str = context_str[:-2] + "."
+                    
+                    # Add reference information to context if available
+                    if references:
+                        context_str += "\n\nReference sources:"
+                        unique_refs = set()
+                        for ref in references:
+                            if ref.get('refUrl'):
+                                unique_refs.add(ref['refUrl'])
+                            if ref.get('refDate'):
+                                context_str += f"\n- Retrieved on: {ref['refDate']}"
+                        
+                        for ref_url in unique_refs:
+                            context_str += f"\n- Source: {ref_url}"
+                    
                     state.context_str = context_str
                     state.next = "answer_generation"
                     
