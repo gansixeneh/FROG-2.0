@@ -321,6 +321,7 @@ LIMIT 20
 
 ```sparql
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX log: <https://w3id.org/sepses/ns/log#>
 
 SELECT ?propertyId (COUNT(?property) as ?count)
@@ -336,21 +337,23 @@ LIMIT 20
 ### 8. Track Failed vs Successful SPARQL Queries
 
 ```sparql
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX log: <https://w3id.org/sepses/ns/log#>
 PREFIX logex: <https://w3id.org/sepses/ns/logex#>
 
 SELECT ?status (COUNT(?run) as ?count)
 WHERE {
-  ?run logex:hasEventType ?eventType .
-  ?eventType rdfs:label "all attempts failed" .
-  BIND("failed" as ?status)
-  
+  {
+    ?run logex:hasEventType ?eventType .
+    ?eventType rdfs:label "all attempts failed" .
+    BIND("failed" as ?status)
+  }
   UNION
-  
-  ?run logex:hasEventType ?eventType .
-  ?eventType rdfs:label "successful query execution" .
-  BIND("successful" as ?status)
+  {
+    ?run logex:hasEventType ?eventType .
+    ?eventType rdfs:label "successful query execution" .
+    BIND("successful" as ?status)
+  }
 }
 GROUP BY ?status
 ```
