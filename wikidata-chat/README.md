@@ -76,7 +76,12 @@ Create a `.env` file in the backend directory and add your Google Gemini API key
 
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
+ALWAYS_USE_GENERATE_SPARQL=false
 ```
+   
+Configuration options:
+- `GEMINI_API_KEY`: Required. Your Google Gemini API key.
+- `ALWAYS_USE_GENERATE_SPARQL`: Optional (default: false). When set to "true", the agent will always use SPARQL generation for all queries, bypassing the verbalization approach.
 
 Run the migrations to set up the database:
 

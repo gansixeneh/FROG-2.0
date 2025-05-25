@@ -45,10 +45,14 @@ This is the Django backend for the Wikidata Agent chat application.
 4. Create a `.env` file in the project root with your Google Gemini API key:
 
    ```
-
    GEMINI_API_KEY=your_gemini_api_key_here
-
+   ALWAYS_USE_GENERATE_SPARQL=false
    ```
+   
+   Configuration options:
+   - `GEMINI_API_KEY`: Required. Your Google Gemini API key.
+   - `ALWAYS_USE_GENERATE_SPARQL`: Optional (default: false). When set to "true", the agent will always use SPARQL generation for all queries, bypassing the verbalization approach.
+
 5. Run database migrations:
 
    ```

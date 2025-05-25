@@ -129,13 +129,16 @@ class WikidataAgent:
                 "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
             )
         
+        # Get ALWAYS_USE_GENERATE_SPARQL config from environment (default to false if not specified)
+        always_use_generate_sparql = os.environ.get("ALWAYS_USE_GENERATE_SPARQL", "false").lower() == "true"
+        
         # Setup debug handler for legacy support
         self.debug_handler = DebugHandler(debug_callback)
         
         # Initialize the LangGraph agent
         self.langgraph_agent = WikidataGraphAgent(
             gemini_api_key=gemini_api_key,
-            always_use_generate_sparql=False,
+            always_use_generate_sparql=always_use_generate_sparql,
             print_output=False,
             debug_callback=debug_callback
         )
