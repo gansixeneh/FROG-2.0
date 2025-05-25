@@ -2,6 +2,7 @@
 import os
 import json
 import tempfile
+import logging
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Callable, Tuple
 
@@ -26,6 +27,9 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 
+# Import LLM factory
+from ..llm_factory import LLMFactory
+
 # Import visualization classes
 from .utils.visualization import BoxologyVisualizer
 from .utils.property_retrieval import WikidataPropertyRetrieval
@@ -40,6 +44,9 @@ from .nodes import (
     AnswerGenerationNode,
     GoogleSearchNode,
 )
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 # WikidataAPI helper class
@@ -120,10 +127,20 @@ class WikidataGraphAgent:
             None  # Will be set when running a query with boxology_verbose > 0
         )
 
+        # Initialize LLM Factory
+        try:
+            self.llm_factory = LLMFactory()
+            logger.info("Initialized LLM Factory with configuration")
+        except Exception as e:
+            logger.error(f"Failed to initialize LLM Factory: {e}")
+            # Fallback to legacy Gemini-only mode
+            self.llm_factory = None
+            logger.warning("Falling back to legacy Gemini-only mode")
+
         # Initialize Wikidata API
         self.api = WikidataAPI()
 
-        # Initialize LLM
+        # Initialize LLM - keep for backward compatibility
         self.gemini_model = genai.GenerativeModel(model_name="gemini-2.0-flash")
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
@@ -160,16 +177,30 @@ class WikidataGraphAgent:
 
     def build_graph(self):
         """Build the LangGraph workflow"""
-        # Create nodes
+        # Create nodes with LLM factory support
         translation_node = TranslationNode()
-        entity_extraction_node = EntityExtractionNode(self.gemini_model)
+        
+        # Use LLM factory if available, otherwise fallback to hardcoded models
+        if self.llm_factory:
+            entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
+            verbalization_node = VerbalizationNode(llm_factory=self.llm_factory)
+            sparql_generation_node = SparqlGenerationNode(
+                llm_factory=self.llm_factory, 
+                property_retrieval=self.property_retrieval
+            )
+            answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
+        else:
+            # Fallback to legacy initialization
+            logger.warning("Using legacy node initialization without LLM factory")
+            entity_extraction_node = EntityExtractionNode(self.gemini_model)
+            verbalization_node = VerbalizationNode(self.gemini_model)
+            sparql_generation_node = SparqlGenerationNode(
+                self.gemini_model, self.property_retrieval
+            )
+            answer_generation_node = AnswerGenerationNode(self.gemini_model)
+        
         strategy_selection_node = StrategySelectionNode(self.always_use_generate_sparql)
-        verbalization_node = VerbalizationNode(self.gemini_model)
         property_generation_node = PropertyGenerationNode(self.property_retrieval)
-        sparql_generation_node = SparqlGenerationNode(
-            self.gemini_model, self.property_retrieval
-        )
-        answer_generation_node = AnswerGenerationNode(self.gemini_model)
         google_search_node = GoogleSearchNode()
 
         # Create the graph

@@ -1,0 +1,87 @@
+{
+  "default": {
+    "provider": "gemini",
+    "model": "gemini-2.0-flash",
+    "config": {
+      "temperature": 0.2
+    }
+  },
+  "nodes": {
+    "EntityExtractionNode": {
+      "provider": "unsloth",
+      "model": "unsloth/Qwen2.5-3B-Instruct-bnb-4bit",
+      "config": {
+        "max_seq_length": 2048,
+        "dtype": null,
+        "load_in_4bit": true,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "do_sample": false,
+        "repetition_penalty": 1.1
+      }
+    },
+    "VerbalizationNode": {
+      "provider": "gemini",
+      "model": "gemini-2.0-flash",
+      "config": {
+        "temperature": 0.3
+      }
+    },
+    "SparqlGenerationNode": {
+      "provider": "kaggle",
+      "model": "muflihaufalmaxi/ft-model",
+      "config": {
+        "dataset": "muflihaufalmaxi/ft-model",
+        "model_files": "ft_model_extract_entity_property/ft_model_extract_entity_property",
+        "cache_dir": "./kaggle_models",
+        "max_seq_length": 2048,
+        "dtype": null,
+        "load_in_4bit": true,
+        "temperature": 0.1,
+        "max_new_tokens": 512,
+        "do_sample": false,
+        "repetition_penalty": 1.1
+      }
+    },
+    "AnswerGenerationNode": {
+      "provider": "gemini",
+      "model": "gemini-1.5-pro",
+      "config": {
+        "temperature": 0.3,
+        "top_p": 0.8,
+        "max_output_tokens": 1024
+      }
+    }
+  },
+  "providers": {
+    "gemini": {
+      "default_config": {
+        "temperature": 0.2
+      }
+    },
+    "unsloth": {
+      "default_config": {
+        "max_seq_length": 2048,
+        "dtype": null,
+        "load_in_4bit": true,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "do_sample": false,
+        "repetition_penalty": 1.1
+      }
+    },
+    "kaggle": {
+      "default_config": {
+        "cache_dir": "./kaggle_models",
+        "max_seq_length": 2048,
+        "dtype": null,
+        "load_in_4bit": true,
+        "force_download": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "do_sample": false,
+        "repetition_penalty": 1.1
+      }
+    }
+  }
+}

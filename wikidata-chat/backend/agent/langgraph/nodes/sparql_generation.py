@@ -1,20 +1,47 @@
 # backend/agent/langgraph/nodes/sparql_generation.py
 import re
 import json
+import logging
 from datetime import datetime
+from typing import Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
 from ..utils.state import WikidataGraphRAGState
 import google.generativeai as genai
 
+logger = logging.getLogger(__name__)
+
 class SparqlGenerationNode:
     """Node for generating and executing SPARQL queries"""
-    def __init__(self, genai_model, property_retrieval):
+    def __init__(self, genai_model=None, property_retrieval=None, llm_factory=None):
+        """
+        Initialize SparqlGenerationNode
+        
+        Args:
+            genai_model: Legacy Gemini model (for backward compatibility)
+            property_retrieval: Property retrieval system
+            llm_factory: LLM factory instance for multi-provider support
+        """
         self.genai_model = genai_model
         self.property_retrieval = property_retrieval
+        self.llm_factory = llm_factory
         self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        
+        # Initialize the LLM provider
+        self._llm_provider = None
+        if self.llm_factory:
+            try:
+                self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
+                logger.info("Initialized SparqlGenerationNode with LLM factory")
+            except Exception as e:
+                logger.error(f"Failed to get model from factory: {e}")
+                logger.warning("Falling back to legacy Gemini model")
+                self._llm_provider = None
+        
+        if not self._llm_provider and not self.genai_model:
+            raise ValueError("Either llm_factory or genai_model must be provided")
         
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
@@ -255,12 +282,28 @@ SPARQL:"""
                 )
                 
             try:
-                # Create combined prompt for Gemini - avoid using system role
+                # Create combined prompt for generation
                 combined_prompt = f"{system_prompt}\n\n{user_prompt_template}"
                 
-                # Generate SPARQL query
-                response = self.genai_model.generate_content(combined_prompt)
-                completion = response.text
+                # Generate SPARQL query using configured model
+                if self._llm_provider:
+                    # Use LLM factory provider
+                    if self._llm_provider.is_chat_template_supported():
+                        # Use chat template
+                        messages = [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt_template}
+                        ]
+                        prompt = self._llm_provider.apply_chat_template(messages)
+                    else:
+                        # Fallback to simple concatenation
+                        prompt = combined_prompt
+                    
+                    completion = self._llm_provider.generate_response(prompt)
+                else:
+                    # Legacy Gemini model
+                    response = self.genai_model.generate_content(combined_prompt)
+                    completion = response.text
                 
                 # Log raw completion
                 if hasattr(state, 'visualizer') and state.visualizer:

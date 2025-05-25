@@ -307,11 +307,33 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
 
 class VerbalizationNode:
     """Node for retrieving entity information through verbalization"""
-    def __init__(self, genai_model):
+    def __init__(self, genai_model=None, llm_factory=None):
+        """
+        Initialize VerbalizationNode
+        
+        Args:
+            genai_model: Legacy Gemini model (for backward compatibility)
+            llm_factory: LLM factory instance for multi-provider support
+        """
         self.genai_model = genai_model
+        self.llm_factory = llm_factory
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        
+        # Initialize the LLM provider
+        self._llm_provider = None
+        if self.llm_factory:
+            try:
+                self._llm_provider = self.llm_factory.get_model_for_verbalization()
+                logger.info("Initialized VerbalizationNode with LLM factory")
+            except Exception as e:
+                logger.error(f"Failed to get model from factory: {e}")
+                logger.warning("Falling back to legacy Gemini model")
+                self._llm_provider = None
+        
+        if not self._llm_provider and not self.genai_model:
+            raise ValueError("Either llm_factory or genai_model must be provided")
         
         # Create WikidataVerbalization with optimized parameters
         # Uses singleton model under the hood
