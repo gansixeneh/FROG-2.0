@@ -14,11 +14,6 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from pydantic import BaseModel, Field
 
-# Import tools
-from agent.tools.search_tool import SearchWikidataTool
-from agent.tools.sparql_tool import ExecuteSPARQLTool
-from agent.tools.google_search_tool import GoogleSearchTool
-
 # Import helper modules
 from SPARQLWrapper import SPARQLWrapper, JSON
 import requests
@@ -43,6 +38,7 @@ from .nodes import (
     PropertyGenerationNode,
     SparqlGenerationNode,
     AnswerGenerationNode,
+    GoogleSearchNode,
 )
 
 
@@ -174,6 +170,7 @@ class WikidataGraphAgent:
             self.gemini_model, self.property_retrieval
         )
         answer_generation_node = AnswerGenerationNode(self.gemini_model)
+        google_search_node = GoogleSearchNode()
 
         # Create the graph
         workflow = StateGraph(WikidataGraphRAGState)
@@ -186,6 +183,7 @@ class WikidataGraphAgent:
         workflow.add_node("property_generation", property_generation_node)
         workflow.add_node("sparql_generation", sparql_generation_node)
         workflow.add_node("answer_generation", answer_generation_node)
+        workflow.add_node("google_search", google_search_node)
 
         # Define the flow
         workflow.set_entry_point("translation")
@@ -212,7 +210,19 @@ class WikidataGraphAgent:
                 "sparql_generation": "property_generation",
             },
         )
-        workflow.add_edge("sparql_generation", "answer_generation")
+        
+        # SPARQL can either succeed and go to answer generation, or fail and go to Google search
+        workflow.add_conditional_edges(
+            "sparql_generation",
+            lambda x: "answer_generation" if x.approach_used == "sparql" else "google_search",
+            {
+                "answer_generation": "answer_generation",
+                "google_search": "google_search",
+            },
+        )
+        
+        # Google search always goes to answer generation
+        workflow.add_edge("google_search", "answer_generation")
         workflow.add_edge("answer_generation", END)
 
         # Compile the graph
@@ -358,8 +368,27 @@ Using entity: {entity_label}
 
                     explanation += "\n"
 
+        elif approach == "google_search":
+            explanation += """### Approach: Google Web Search
+Wikidata methods did not provide sufficient results, so web search was used as a fallback.
+
+"""
+            if state.google_search_result:
+                if state.google_search_result.get("content"):
+                    explanation += "#### Search Result\n"
+                    explanation += state.google_search_result["content"][:500]
+                    if len(state.google_search_result["content"]) > 500:
+                        explanation += "..."
+                    explanation += "\n\n"
+                    
+                if state.google_search_result.get("citations"):
+                    explanation += "#### Sources\n"
+                    for citation in state.google_search_result["citations"]:
+                        explanation += f"- [{citation.get('title', 'Unknown')}]({citation.get('url', '')})\n"
+                    explanation += "\n"
+
         # Add query results if available
-        if state.query_result and approach != "sparql_failed":
+        if state.query_result and approach not in ["sparql_failed", "google_search"]:
             explanation += "### Query Results\n"
 
             # Format the query results as a markdown table
@@ -424,6 +453,7 @@ Using entity: {entity_label}
             visualizer=visualizer,
             boxology_verbose=boxology_verbose,
             debug_callback=self.debug_callback,
+            include_references=True,  # Enable references by default
         )
 
         # Run the graph

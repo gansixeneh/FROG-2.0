@@ -119,11 +119,6 @@ class DebugHandler(BaseCallbackHandler):
         if hasattr(self, 'processing_thread') and self.processing_thread.is_alive():
             self.processing_thread.join(timeout=1.0)
 
-# Import tools from the correct location
-from agent.tools.search_tool import SearchWikidataTool
-from agent.tools.sparql_tool import ExecuteSPARQLTool
-from agent.tools.google_search_tool import GoogleSearchTool
-
 class WikidataAgent:
     def __init__(self, gemini_api_key: str = None, debug_callback=None):
         # Set API key
@@ -144,12 +139,6 @@ class WikidataAgent:
             print_output=False,
             debug_callback=debug_callback
         )
-        
-        # For backward compatibility, keep the old tools references
-        self.search_tool = SearchWikidataTool()
-        self.sparql_tool = ExecuteSPARQLTool()
-        self.google_search_tool = GoogleSearchTool()
-        self.tools = [self.search_tool, self.sparql_tool, self.google_search_tool]
         
         # Store visualization files
         self.visualization_files = {}

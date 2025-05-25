@@ -1,4 +1,3 @@
-
 # backend/agent/langgraph/utils/state.py
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -27,3 +26,5 @@ class WikidataGraphRAGState(BaseModel):
     visualizer: Optional[Any] = None
     boxology_verbose: Optional[int] = 0
     debug_callback: Optional[Any] = None
+    include_references: Optional[bool] = True  # New field for reference enhancement
+    google_search_result: Optional[Dict] = None  # New field for Google search results

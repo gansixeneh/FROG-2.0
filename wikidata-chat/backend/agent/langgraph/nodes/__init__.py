@@ -1,4 +1,3 @@
-
 # backend/agent/langgraph/nodes/__init__.py
 from .translation import TranslationNode
 from .entity_extraction import EntityExtractionNode
@@ -7,6 +6,7 @@ from .verbalization import VerbalizationNode
 from .property_generation import PropertyGenerationNode
 from .sparql_generation import SparqlGenerationNode
 from .answer_generation import AnswerGenerationNode
+from .google_search import GoogleSearchNode
 
 __all__ = [
     "TranslationNode",
@@ -15,5 +15,6 @@ __all__ = [
     "VerbalizationNode",
     "PropertyGenerationNode",
     "SparqlGenerationNode",
-    "AnswerGenerationNode"
+    "AnswerGenerationNode",
+    "GoogleSearchNode"
 ]

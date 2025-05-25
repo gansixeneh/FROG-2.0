@@ -1,4 +1,3 @@
-
 # backend/agent/langgraph/nodes/sparql_generation.py
 import re
 import json
@@ -12,7 +11,7 @@ class SparqlGenerationNode:
     def __init__(self, genai_model, property_retrieval):
         self.genai_model = genai_model
         self.property_retrieval = property_retrieval
-        self.sparql_pattern = r"```(?:sparql)?\\s*([\\s\\S]*?)```"
+        self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
@@ -32,6 +31,92 @@ class SparqlGenerationNode:
             return results_cleaned, None
         except Exception as e:
             return [], e
+            
+    def _enhance_query_with_references(self, query: str, state: WikidataGraphRAGState):
+        """
+        Enhance a SPARQL query to include reference information if requested
+        
+        Args:
+            query: The original SPARQL query
+            state: The current state containing include_references flag
+            
+        Returns:
+            An enhanced query that includes reference information
+        """
+        # Check if we should include references
+        if not state.include_references:
+            return query
+            
+        # Parse the query to find wdt: patterns
+        # Pattern to find triple patterns like: wd:Q142 wdt:P35 ?president
+        wdt_patterns = re.findall(r'(\w+:[\w\d]+)\s+(wdt:P\d+)\s+(\?\w+)', query)
+        
+        if not wdt_patterns:
+            return query  # No patterns to enhance
+            
+        # Build the enhanced query
+        enhanced_parts = []
+        counter = 1
+        new_select_vars = []
+        
+        # Extract the SELECT clause variables
+        select_match = re.search(r'SELECT\s+(.*?)\s+WHERE', query, re.IGNORECASE | re.DOTALL)
+        if select_match:
+            select_vars = select_match.group(1).strip()
+        else:
+            return query  # Not a standard SELECT query
+            
+        # Process each wdt: pattern
+        for subject, predicate, obj in wdt_patterns:
+            # Extract property ID from predicate (remove the 'wdt:' prefix)
+            property_id = predicate[4:]
+            
+            statement_var = f"?statement{counter}"
+            ref_url_var = f"?refUrl{counter}"
+            ref_date_var = f"?refDate{counter}"
+            
+            # Create reference patterns
+            ref_patterns = [
+                f"  OPTIONAL {{",
+                f"    {subject} p:{property_id} {statement_var} .",
+                f"    {statement_var} ps:{property_id} {obj} .",
+                f"    OPTIONAL {{",
+                f"      {statement_var} prov:wasDerivedFrom ?reference{counter} .",
+                f"      OPTIONAL {{ ?reference{counter} pr:P854 {ref_url_var} }}",
+                f"      OPTIONAL {{ ?reference{counter} pr:P813 {ref_date_var} }}",
+                f"    }}",
+                f"  }}"
+            ]
+            
+            enhanced_parts.extend(ref_patterns)
+            new_select_vars.extend([ref_url_var, ref_date_var])
+            counter += 1
+            
+        # Add new variables to SELECT clause
+        if new_select_vars:
+            for var in new_select_vars:
+                if var not in select_vars:
+                    select_vars += f" {var}"
+                    
+        # Rebuild the query
+        # Find the WHERE clause
+        where_match = re.search(r'(WHERE\s*\{)(.*?)(\})', query, re.IGNORECASE | re.DOTALL)
+        if where_match:
+            before_where = query[:where_match.start()]
+            where_content = where_match.group(2)
+            after_where = query[where_match.end():]
+            
+            # Update the SELECT clause
+            before_select = before_where[:select_match.start()]
+            enhanced_query = before_select + f"SELECT {select_vars} WHERE {{\n{where_content}\n"
+            
+            # Add the reference patterns
+            enhanced_query += "\n".join(enhanced_parts)
+            enhanced_query += "\n}" + after_where
+            
+            return enhanced_query
+            
+        return query
         
     def get_entities(self, entity: str, k: int = 5):
         """Search for entities in Wikidata"""
@@ -95,7 +180,7 @@ Guidelines:
         for entity in state.extracted_entities:
             entity_resources, _ = self.get_entities(entity, k=5)
             for resource in entity_resources:
-                entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\\n"
+                entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
             
             # Log entity resources
             if hasattr(state, 'visualizer') and state.visualizer:
@@ -122,7 +207,7 @@ Guidelines:
                     prop_row = self.property_retrieval.df_properties[self.property_retrieval.df_properties["propertyId"] == prop_id]
                     if not prop_row.empty:
                         prop_desc = prop_row.iloc[0].get("description", "")
-                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}, description: {prop_desc}\\n"
+                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}, description: {prop_desc}\n"
         
         # Log ontology
         if hasattr(state, 'visualizer') and state.visualizer:
@@ -192,6 +277,18 @@ SPARQL:"""
                 else:
                     sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
                 
+                # Enhance the query with references if requested
+                if sparql_query and state.include_references:
+                    original_query = sparql_query
+                    sparql_query = self._enhance_query_with_references(sparql_query, state)
+                    
+                    if hasattr(state, 'visualizer') and state.visualizer and original_query != sparql_query:
+                        state.visualizer.log_event(
+                            "SPARQL Generation Node",
+                            f"query enhanced with references",
+                            {"original": original_query, "enhanced": sparql_query}
+                        )
+                
                 # Record query attempt
                 attempt = {
                     "attempt_number": attempt_num,
@@ -217,7 +314,7 @@ SPARQL:"""
                 
                 # Log the results if verbose
                 if state.verbose > 0:
-                    print(f"\\nGenerated SPARQL:\\n{sparql_query}")
+                    print(f"\nGenerated SPARQL:\n{sparql_query}")
                     
                 # Execute the query
                 exec_start_time = datetime.now()
@@ -424,7 +521,7 @@ SPARQL:"""
                     )
                     
                 if state.verbose > 0:
-                    print(f"\\nQuery returned no results. Retrying... ({attempts_left} attempts left)")
+                    print(f"\nQuery returned no results. Retrying... ({attempts_left} attempts left)")
                     
                 # Update the question to improve the query
                 curr_question = f"""The SPARQL query you generated to answer '{state.translated_question}' produced empty results. 
