@@ -1,16 +1,111 @@
 # backend/agent/langgraph/utils/visualization.py
+import os
 import re
 import html
 import json
+import requests
 import numpy as np
 from datetime import datetime
 import uuid
 import tempfile
-import os
-import hashlib
+import logging
+from urllib.parse import urljoin
 from rdflib import Graph, Namespace, RDF, RDFS, Literal
 from rdflib.namespace import XSD
 import asyncio
+import hashlib
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+class JenaUploader:
+    """
+    Class for uploading TTL data to Apache Jena Fuseki server
+    """
+    def __init__(self, base_url=None, dataset_name="visualization-logs"):
+        # Get the base URL from environment variable or use default
+        self.base_url = base_url or os.environ.get("APACHE_JENA_URL", "http://localhost:3030")
+        self.dataset_name = dataset_name
+        
+        # Ensure base_url has no trailing slash
+        if self.base_url.endswith('/'):
+            self.base_url = self.base_url[:-1]
+            
+        logger.info(f"Initialized JenaUploader with base URL: {self.base_url}")
+    
+    def create_dataset_if_not_exists(self):
+        """Check if dataset exists, create it if not"""
+        try:
+            # First check if the dataset already exists
+            response = requests.get(f"{self.base_url}/$/datasets")
+            if response.status_code == 200:
+                datasets = response.json().get("datasets", [])
+                dataset_uris = [d.get("ds.name") for d in datasets]
+                
+                # Check if our dataset is in the list
+                if f"/{self.dataset_name}" in dataset_uris:
+                    logger.info(f"Dataset {self.dataset_name} already exists")
+                    return True
+            
+            # Dataset doesn't exist, create it
+            logger.info(f"Creating dataset {self.dataset_name}")
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            response = requests.post(
+                f"{self.base_url}/$/datasets",
+                headers=headers,
+                data=f"dbName={self.dataset_name}&dbType=tdb2"
+            )
+            
+            if response.status_code in [200, 201, 204]:
+                logger.info(f"Successfully created dataset {self.dataset_name}")
+                return True
+            else:
+                logger.error(f"Failed to create dataset: {response.status_code} {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error creating dataset: {e}")
+            return False
+    
+    def upload_ttl(self, ttl_content, graph_name=None):
+        """
+        Upload TTL content to Jena Fuseki server
+        
+        Args:
+            ttl_content: TTL content as string
+            graph_name: Optional named graph to upload to
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            # Ensure dataset exists
+            if not self.create_dataset_if_not_exists():
+                return False
+            
+            # Prepare the endpoint URL
+            if graph_name:
+                # Upload to specific named graph
+                encoded_graph = requests.utils.quote(graph_name)
+                url = f"{self.base_url}/{self.dataset_name}/data?graph={encoded_graph}"
+            else:
+                # Upload to default graph
+                url = f"{self.base_url}/{self.dataset_name}/data"
+            
+            # Upload the TTL content
+            headers = {"Content-Type": "text/turtle"}
+            response = requests.post(url, headers=headers, data=ttl_content.encode('utf-8'))
+            
+            if response.status_code in [200, 201, 204]:
+                logger.info(f"Successfully uploaded TTL data to {url}")
+                return True
+            else:
+                logger.error(f"Failed to upload TTL data: {response.status_code} {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error uploading TTL data: {e}")
+            return False
 
 class CustomEncoder(json.JSONEncoder):
     """Custom JSON encoder that handles NumPy data types and objects"""
@@ -267,6 +362,7 @@ class LogToRDF:
     
     def _add_template_pattern(self, event_uri, template, event_id):
         """Add template pattern information"""
+        import hashlib
         template_hash = hashlib.md5(template.encode()).hexdigest()[:8]
         
         # Use LXID for template pattern (shared vocabulary)
@@ -455,6 +551,9 @@ class BoxologyVisualizer:
         self.start_time = datetime.now()
         self.question = None  # Add this to store the question
         self.debug_callback = debug_callback
+        
+        # Initialize Jena uploader
+        self.jena_uploader = JenaUploader()
         
         # Define color scheme based on boxology notation
         self.colors = {
@@ -798,21 +897,43 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return temp_file.name
 
     def save_ttl(self):
-        """Convert logs to RDF and save as TTL file"""
+        """Convert logs to RDF and save as TTL file locally and to Apache Jena"""
         # Create a converter with run ID
-        converter = LogToRDF()
+        import hashlib
+        
+        # Generate a consistent ID based on question and timestamp
+        question_hash = hashlib.md5(str(self.question).encode()).hexdigest()[:8]
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        run_id = f"run_{timestamp}_{question_hash}"
+        
+        converter = LogToRDF(run_id=run_id)
         converter.convert_logs_to_rdf(self.logs)
         
         # Serialize to TTL
         ttl_content = converter.serialize_to_ttl()
         
-        # Create a temp file and save the TTL content
+        # Create a temp file and save the TTL content locally
         temp_file = tempfile.NamedTemporaryFile(suffix='.ttl', delete=False)
         with open(temp_file.name, 'w', encoding='utf-8') as f:
             f.write(ttl_content)
         
         if self.verbose > 0:
             print(f"TTL saved to: {temp_file.name}")
+        
+        # Upload to Apache Jena
+        try:
+            # Create graph name using run ID
+            graph_name = f"http://example.org/logs/{run_id}"
+            
+            # Upload to Apache Jena
+            upload_success = self.jena_uploader.upload_ttl(ttl_content, graph_name)
+            
+            if upload_success:
+                logger.info(f"Successfully uploaded TTL data to Apache Jena with graph: {graph_name}")
+            else:
+                logger.error("Failed to upload TTL data to Apache Jena")
+        except Exception as e:
+            logger.error(f"Error uploading TTL data to Apache Jena: {e}")
         
         return temp_file.name
     
