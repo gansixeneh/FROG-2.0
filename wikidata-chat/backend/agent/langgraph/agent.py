@@ -34,6 +34,7 @@ from ..llm_factory import LLMFactory
 from .utils.visualization import BoxologyVisualizer
 from .utils.property_retrieval import WikidataPropertyRetrieval
 from .utils.state import WikidataGraphRAGState
+from .utils.date_utils import format_reference_date
 from .nodes import (
     TranslationNode,
     EntityExtractionNode,
@@ -319,22 +320,23 @@ Using entity: {entity_label}
             if hasattr(state, 'verbalization_references') and state.verbalization_references:
                 explanation += "#### Reference Sources\n"
                 unique_urls = set()
-                unique_dates = set()
+                formatted_dates = set()
                 
                 for ref in state.verbalization_references:
                     if ref.get('refUrl'):
                         unique_urls.add(ref['refUrl'])
                     if ref.get('refDate'):
-                        unique_dates.add(ref['refDate'])
+                        formatted_date = format_reference_date(ref['refDate'])
+                        formatted_dates.add(formatted_date)
                 
                 if unique_urls:
                     explanation += "**Sources:**\n"
                     for url in unique_urls:
                         explanation += f"- {url}\n"
                 
-                if unique_dates:
+                if formatted_dates:
                     explanation += "\n**Retrieved on:**\n"
-                    for date in unique_dates:
+                    for date in formatted_dates:
                         explanation += f"- {date}\n"
                 
                 explanation += f"\n**Total references found**: {len(state.verbalization_references)}\n\n"
@@ -422,6 +424,33 @@ Using entity: {entity_label}
                             explanation += f"- {prop_id}: {label}\n"
 
                     explanation += "\n"
+
+            # Add reference information for SPARQL if available
+            if hasattr(state, 'sparql_references') and state.sparql_references:
+                explanation += "#### Reference Sources\n"
+                unique_urls = set()
+                formatted_dates = set()
+                
+                for ref in state.sparql_references:
+                    if ref.get('refUrl'):
+                        unique_urls.add(ref['refUrl'])
+                    if ref.get('formattedRefDate'):
+                        formatted_dates.add(ref['formattedRefDate'])
+                    elif ref.get('refDate'):
+                        formatted_date = format_reference_date(ref['refDate'])
+                        formatted_dates.add(formatted_date)
+                
+                if unique_urls:
+                    explanation += "**Sources:**\n"
+                    for url in unique_urls:
+                        explanation += f"- {url}\n"
+                
+                if formatted_dates:
+                    explanation += "\n**Retrieved on:**\n"
+                    for date in formatted_dates:
+                        explanation += f"- {date}\n"
+                
+                explanation += f"\n**Total references found**: {len(state.sparql_references)}\n\n"
 
         elif approach == "google_search":
             explanation += """### Approach: Google Web Search

@@ -1,4 +1,4 @@
-# backend/agent/langgraph/utils/state.py
+# backend/agent/langgraph/utils/state.py (Updated version)
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
@@ -12,7 +12,8 @@ class WikidataGraphRAGState(BaseModel):
     entity_uri: Optional[str] = None
     verbalization_result: Optional[List[Dict]] = Field(default_factory=list)
     verbalization_similarity: Optional[float] = None
-    verbalization_references: Optional[List[Dict]] = Field(default_factory=list)  # New field for references
+    verbalization_references: Optional[List[Dict]] = Field(default_factory=list)  # References from verbalization
+    sparql_references: Optional[List[Dict]] = Field(default_factory=list)  # New field for SPARQL references
     related_properties: Optional[List[str]] = Field(default_factory=list)
     sparql_query: Optional[str] = None
     query_result: Optional[List[Dict]] = Field(default_factory=list)

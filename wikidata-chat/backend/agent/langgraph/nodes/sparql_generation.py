@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
 from ..utils.state import WikidataGraphRAGState
+from ..utils.date_utils import format_reference_date
 import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
@@ -170,6 +171,46 @@ class SparqlGenerationNode:
             return parsed_data, None
         except Exception as e:
             return [], e
+    
+    def _extract_references_from_results(self, results):
+        """
+        Extract reference information from SPARQL query results
+        
+        Args:
+            results: List of SPARQL query result dictionaries
+            
+        Returns:
+            List of reference dictionaries with formatted dates
+        """
+        references = []
+        seen_refs = set()  # To avoid duplicates
+        
+        for result in results:
+            # Look for reference URL and date fields
+            ref_url = None
+            ref_date = None
+            
+            # Check for various reference field names that might be in the results
+            for key, value in result.items():
+                if key.lower().startswith('refurl') and value:
+                    ref_url = value
+                elif key.lower().startswith('refdate') and value:
+                    ref_date = value
+            
+            # If we found reference information, add it to our list
+            if ref_url or ref_date:
+                ref_key = f"{ref_url}_{ref_date}"  # Create unique key
+                if ref_key not in seen_refs:
+                    seen_refs.add(ref_key)
+                    ref_dict = {}
+                    if ref_url:
+                        ref_dict['refUrl'] = ref_url
+                    if ref_date:
+                        ref_dict['refDate'] = ref_date
+                        ref_dict['formattedRefDate'] = format_reference_date(ref_date)
+                    references.append(ref_dict)
+        
+        return references
         
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
@@ -410,6 +451,24 @@ SPARQL:"""
                     # Mark that SPARQL was successfully used
                     state.approach_used = "sparql"
                     
+                    # Extract references if the query included reference fields
+                    references = []
+                    if state.include_references and result:
+                        references = self._extract_references_from_results(result)
+                        if references:
+                            state.sparql_references = references
+                            
+                            # Log references found
+                            if hasattr(state, 'visualizer') and state.visualizer:
+                                state.visualizer.log_event(
+                                    "SPARQL Generation Node",
+                                    "references extracted",
+                                    {
+                                        "reference_count": len(references),
+                                        "sample_references": references[:3] if len(references) > 3 else references
+                                    }
+                                )
+                    
                     # Log success
                     if hasattr(state, 'visualizer') and state.visualizer:
                         state.visualizer.log_event(
@@ -418,7 +477,8 @@ SPARQL:"""
                             {
                                 "query": sparql_query,
                                 "result_count": len(result),
-                                "attempt": attempt_num
+                                "attempt": attempt_num,
+                                "references_found": len(references) if references else 0
                             }
                         )
                     
@@ -509,6 +569,25 @@ SPARQL:"""
                             for k, v in c.items():
                                 context_str += f"{k}={v}, "
                         context_str = context_str[:-2] + "."
+                        
+                        # Add reference information to context if available
+                        if hasattr(state, 'sparql_references') and state.sparql_references:
+                            context_str += "\n\n**Reference sources:**"
+                            unique_refs = set()
+                            formatted_dates = set()
+                            
+                            for ref in state.sparql_references:
+                                if ref.get('refUrl'):
+                                    unique_refs.add(ref['refUrl'])
+                                if ref.get('formattedRefDate'):
+                                    formatted_dates.add(ref['formattedRefDate'])
+                            
+                            for ref_url in unique_refs:
+                                context_str += f"\n- Source: {ref_url}"
+                            
+                            for date in formatted_dates:
+                                context_str += f"\n- Retrieved on: {date}"
+                        
                         state.context_str = context_str
                     
                     # End attempt timing

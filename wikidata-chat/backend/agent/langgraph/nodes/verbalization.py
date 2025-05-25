@@ -7,6 +7,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from ..utils.state import WikidataGraphRAGState
+from ..utils.date_utils import format_reference_date
 import google.generativeai as genai
 
 # Import our model singleton
@@ -301,7 +302,19 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
         references = []
         if include_references and similar_score >= 0.6 and result:
             logger.info(f"Fetching references for property {property_used} with similarity {similar_score}")
-            references = self.get_references_for_property(entity, property_used)
+            raw_references = self.get_references_for_property(entity, property_used)
+            
+            # Format the references with proper date formatting
+            for ref in raw_references:
+                formatted_ref = {}
+                if ref.get('refUrl'):
+                    formatted_ref['refUrl'] = ref['refUrl']
+                if ref.get('refDate'):
+                    formatted_ref['refDate'] = ref['refDate']
+                    formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
+                
+                if formatted_ref:  # Only add if we have some reference data
+                    references.append(formatted_ref)
             
         return result, similar_score, references
 
@@ -621,16 +634,21 @@ class VerbalizationNode:
                     
                     # Add reference information to context if available
                     if references:
-                        context_str += "\n\nReference sources:"
+                        context_str += "\n\n**Reference sources:**"
                         unique_refs = set()
+                        formatted_dates = set()
+                        
                         for ref in references:
                             if ref.get('refUrl'):
                                 unique_refs.add(ref['refUrl'])
-                            if ref.get('refDate'):
-                                context_str += f"\n- Retrieved on: {ref['refDate']}"
+                            if ref.get('formattedRefDate'):
+                                formatted_dates.add(ref['formattedRefDate'])
                         
                         for ref_url in unique_refs:
                             context_str += f"\n- Source: {ref_url}"
+                        
+                        for date in formatted_dates:
+                            context_str += f"\n- Retrieved on: {date}"
                     
                     state.context_str = context_str
                     state.next = "answer_generation"
