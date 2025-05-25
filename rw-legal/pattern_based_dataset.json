@@ -1,974 +1,968 @@
 [
   {
     "id": "q1",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1971/12> lex2kg-o:mengingat ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0026/versi/19531218/ayat/0002> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
   },
   {
     "id": "q2",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/50> lex2kg-o:menimbang ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0009/versi/19500720/ayat/0005> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
   },
   {
     "id": "q3",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0059> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0002> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:huruf ?hidden2 . ?hidden2 lex2kg-o:teks ?target . }",
+    "pattern_type": "3_prop_linear_end_v1",
+    "complexity": "advanced"
   },
   {
     "id": "q4",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0031/versi/19570408> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:bab <https://example.org/lex2kg/uu/1953/35/bab/0013> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q5",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0032/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q6",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/41> lex2kg-o:menimbang ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q7",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0060/versi/19500506/ayat/0001> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q8",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1972/2/pasal/0004> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q9",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/15> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/15/pasal/0006/versi/19500808> . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0046/versi/19531218> . }",
     "pattern_type": "2_prop_middle_target_v1",
     "complexity": "intermediate"
   },
   {
+    "id": "q6",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1965/16/menimbang> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q7",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/6> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/6/pasal/0003/versi/19500720/ayat/0002> . }",
+    "pattern_type": "3_prop_linear_middle_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q8",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0001/versi/19500720> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q9",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:bab ?hidden . ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0029> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q10",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0042> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0009/versi/19500720> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q11",
-    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/15/pasal/0006> . ?hidden lex2kg-o:mengingat <https://example.org/lex2kg/uu/1950/15/mengingat> . ?hidden lex2kg-o:tahun ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0013/versi/19500720> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
   },
   {
     "id": "q12",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0046> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/26/pasal/0002> lex2kg-o:versi ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q13",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/15/pasal/0006> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q14",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0055/versi/19531218> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:merujuk <https://example.org/lex2kg/uu/1953/25/pasal/0039> . }",
     "pattern_type": "2_prop_branching_v1",
     "complexity": "intermediate"
   },
   {
+    "id": "q14",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/52> lex2kg-o:mengingat ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q15",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1954/30/pasal/0012> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0038/versi/19531218> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q16",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0023/versi/19500720/ayat/0001> . }",
-    "pattern_type": "3_prop_linear_middle_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q17",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/3/pasal/0006/versi/19500701/ayat/0004> . }",
-    "pattern_type": "3_prop_linear_middle_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q18",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/2/pasal/0003/versi/19500515> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1954/18/menimbang> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
+    "id": "q17",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0020/versi/19531218/ayat/0003> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q18",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/27/pasal/0009> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q19",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/50/pasal/0001> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0001/versi/19531218/ayat/0001/c> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q20",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1957/31/pasal/0001/versi/19571026/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q21",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0010> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0010/versi/19500720/ayat/0003> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0054> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q22",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/23/pasal/0003/versi/19570325> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/30> lex2kg-o:mengingat ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q23",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0021/versi/19500506> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0022> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:huruf ?hidden2 . ?hidden2 lex2kg-o:merujuk ?target . }",
+    "pattern_type": "3_prop_linear_end_v1",
+    "complexity": "advanced"
   },
   {
     "id": "q24",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:mengingat <https://example.org/lex2kg/uu/1957/58/mengingat> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q25",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0014/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q26",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:bab <https://example.org/lex2kg/uu/1953/25/bab/0012> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q27",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0026/versi/19531218> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q28",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1957/37/menimbang> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q29",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q30",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0024/versi/19500720/ayat/0002> . }",
-    "pattern_type": "3_prop_linear_middle_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q31",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0044/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q32",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/2/pasal/0012> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q33",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q34",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/9/pasal/0001> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q35",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/42> lex2kg-o:menimbang ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q36",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/18> lex2kg-o:mengingat ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q37",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0041> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0041/versi/19500506/ayat/0002> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q38",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0020/versi/19500506> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q39",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0003/versi/19500720> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q40",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0051/versi/19531218> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q41",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0020> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q42",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0021/versi/19531218> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q43",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0027/versi/19500720> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q44",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0021/versi/19570408> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q45",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/31/pasal/0001> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q46",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/36> lex2kg-o:menimbang ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q47",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0028/versi/19570408> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q48",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/10/pasal/0002/versi/19530509> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q49",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/1/pasal/0034> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q50",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0053/versi/19531218> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q51",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q52",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q53",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0047/versi/19500506> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q54",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0062/versi/19500506/ayat/0001> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q55",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0001/versi/19531218> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q56",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0003/versi/19500506> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q57",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/44/pasal/0001> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q58",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0017/versi/19500720> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q59",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/2/pasal/0005> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q60",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:bab ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q61",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/1/pasal/0034> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q62",
-    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:menimbang <https://example.org/lex2kg/uu/1950/15/menimbang> . ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/15/pasal/0005> . ?hidden lex2kg-o:tahun ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q63",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0035> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q64",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0018> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q65",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0041/versi/19500506> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q66",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0024/versi/19500720/ayat/0001> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q67",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q68",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1954/12/pasal/0002> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q69",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0040> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q70",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/27/pasal/0001> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q71",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:mengingat <https://example.org/lex2kg/uu/1957/38/mengingat> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q72",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0026> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0026/versi/19500720/ayat/0003> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q73",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/1/pasal/0046> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q74",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/34/pasal/0002> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q75",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0029/versi/19500506> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q76",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q77",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0047/versi/19500506> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q78",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/30/pasal/0015> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q79",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q80",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q81",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q82",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0017> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0017/versi/19500720/ayat/0002> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q83",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1972/2/pasal/0003> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q84",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0010/versi/19500720> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q85",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1972/2/pasal/0001> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q86",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q87",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0016/versi/19500720> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q88",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q89",
     "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/42/pasal/0001/versi/19571026> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q90",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0021/versi/19500720> . }",
+    "id": "q26",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/29> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q27",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0032/versi/19531218/ayat/0002> . }",
     "pattern_type": "2_prop_branching_v1",
     "complexity": "intermediate"
   },
   {
-    "id": "q91",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0006> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:ayat ?target . }",
+    "id": "q28",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/22/pasal/0017> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q29",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/15> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q30",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0037/versi/19531218/ayat/0001> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q31",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/49> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q32",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0019/versi/19531218> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q33",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0017> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0017/versi/19531218/ayat/0001> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q34",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/31/pasal/0001/versi/19571026/0001/0001/0001/0001/0001/0001> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q35",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/2/pasal/0005> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q36",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/56/pasal/0001/versi/19571026> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q37",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/23/pasal/0002/versi/19570325> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q38",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/10/pasal/0001> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q39",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0045/versi/19531218/ayat/0003> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q40",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0011> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:ayat ?hidden2 . ?target lex2kg-o:merujuk ?hidden2 . }",
+    "pattern_type": "3_prop_linear_end_v5",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q41",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:bab ?target . ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0017> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q42",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/41/pasal/0002/versi/19571026> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q43",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/2/pasal/0011> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q44",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0035/versi/19531218> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q45",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0036/versi/19531218> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q46",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1964/35/pasal/0002> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q47",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0008> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:tanggal ?target . }",
     "pattern_type": "3_prop_linear_end_v1",
     "complexity": "advanced"
   },
   {
-    "id": "q92",
+    "id": "q48",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/10> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/10/pasal/0001/versi/19530509/ayat/0003> . }",
+    "pattern_type": "3_prop_linear_middle_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q49",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/51> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q50",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0012/versi/19531218/ayat/0001> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q51",
+    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:bab ?target . ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0013> . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q52",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0003/versi/19570408> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q53",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0009/versi/19570408> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q54",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0052/versi/19531218> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q55",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1971/12/menimbang/huruf/b> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q56",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0007/versi/19531218> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q57",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/50/pasal/0002/versi/19571026> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q58",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/2/pasal/0010/versi/19500515> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q59",
     "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/22/pasal/0025> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q93",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/2> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/2/pasal/0004/versi/19500515> . }",
+    "id": "q60",
+    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:bab ?target . ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0048> . }",
+    "pattern_type": "2_prop_branching_v4",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q61",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/22/pasal/0030> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q62",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0032/versi/19531218> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q63",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001> lex2kg-o:versi ?target . ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/huruf/0004> . }",
     "pattern_type": "2_prop_middle_target_v1",
     "complexity": "intermediate"
   },
   {
+    "id": "q64",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/29/pasal/0002> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q65",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1972/2/pasal/0004> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q66",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/29/pasal/0002> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q67",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0059/versi/19531218> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q68",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0016> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0016/versi/19500720/ayat/0004> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q69",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1954/46/pasal/0001/versi/19541229/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001/huruf/0001> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q70",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q71",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0053/versi/19531218> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q72",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:mengingat <https://example.org/lex2kg/uu/1953/35/mengingat> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q73",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/18> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/18/pasal/0006/versi/19530603> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q74",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/27/pasal/0008> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q75",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/5/pasal/0012> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q76",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0018> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:ayat ?hidden2 . ?hidden2 lex2kg-o:teks ?target . }",
+    "pattern_type": "3_prop_linear_end_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q77",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:bab ?hidden . ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0036> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q78",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1957/46/menimbang> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q79",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/21/pasal/0023> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q80",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/33> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q81",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0019/versi/19500720> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q82",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q83",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q84",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/0007/0004> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q85",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/49/pasal/0001> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q86",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/5/pasal/0009> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q87",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/31/pasal/0001/versi/19571026/0001/0001/0001/0001/0001/0001/0001/0001/0001/0001/0001/0001/0001/0001> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q88",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:bab ?target . ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0043> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q89",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1971/11/pasal/0002> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q90",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/22/pasal/0018> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q91",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0027> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0027/versi/19531218/ayat/0004> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q92",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:huruf ?hidden2 . ?hidden2 lex2kg-o:teks ?target . }",
+    "pattern_type": "3_prop_linear_end_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q93",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0044/versi/19531218> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q94",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/35/pasal/0001/versi/19531218> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0012/versi/19531218/ayat/0002> . }",
     "pattern_type": "2_prop_branching_v1",
     "complexity": "intermediate"
   },
   {
     "id": "q95",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0025/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/27> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q96",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0053/versi/19500506/ayat/0001> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/27> lex2kg-o:mengingat ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q97",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/2/pasal/0009/versi/19500515/ayat/0003> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1954/21/pasal/0015/versi/19540528> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
   },
   {
     "id": "q98",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/26/pasal/0002/versi/19570727> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q99",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/33/pasal/0002> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1972/2> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q100",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0001> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:jenisVersi ?target . }",
-    "pattern_type": "3_prop_linear_end_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q101",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0061/versi/19500506/ayat/0002> . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/huruf/0002> . }",
     "pattern_type": "3_prop_linear_middle_v1",
     "complexity": "advanced"
   },
   {
+    "id": "q101",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0036/versi/19531218/ayat/0002> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q102",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/18/pasal/0004> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0031> lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat ?target . ?target lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/5/pasal/0052> . }",
+    "pattern_type": "3_prop_linear_middle_v1",
+    "complexity": "advanced"
   },
   {
     "id": "q103",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/42/pasal/0002/versi/19571026> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q104",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/9/pasal/0004/versi/19530504> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/29> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q105",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0053/versi/19531218> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q106",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0026/versi/19531218> . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003/0002/0002/0002> lex2kg-o:huruf ?target . ?target lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/ayat/0001> . }",
     "pattern_type": "2_prop_middle_target_v1",
     "complexity": "intermediate"
   },
   {
-    "id": "q107",
-    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:mengingat <https://example.org/lex2kg/uu/1950/15/mengingat> . ?hidden lex2kg-o:menimbang <https://example.org/lex2kg/uu/1950/15/menimbang> . ?hidden lex2kg-o:disahkanPada ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q108",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "id": "q106",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0023/versi/19570408> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
+    "id": "q107",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/37/pasal/0001/versi/19571026> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q108",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:bab ?target . ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0016> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q109",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/35> lex2kg-o:bab ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:huruf <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/huruf/0004/huruf/0003/huruf/0002/huruf/0002/huruf/0002/huruf/0001> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q110",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q111",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0013> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:jenisVersi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0004> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:ayat ?target . }",
     "pattern_type": "3_prop_linear_end_v1",
     "complexity": "advanced"
   },
   {
+    "id": "q111",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/27/pasal/0001> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q112",
-    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/2/pasal/0001> . ?hidden lex2kg-o:menimbang <https://example.org/lex2kg/uu/1950/2/menimbang> . ?hidden lex2kg-o:tentang ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0016> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0016/versi/19531218/ayat/0005> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
   },
   {
     "id": "q113",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1971/10/menimbang> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/26> lex2kg-o:mengingat ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q114",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0012/versi/19500720> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1964/35> lex2kg-o:mengingat ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q115",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0017> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/13/pasal/0001/versi/19540312/a> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q116",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0007> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/5/pasal/0033> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q117",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0019/versi/19500720> . }",
+    "pattern_type": "2_prop_middle_target_v1",
     "complexity": "intermediate"
   },
   {
     "id": "q118",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0015> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0015/versi/19500720/ayat/0004> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q119",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0045> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q120",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0055/versi/19531218> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q121",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0033/versi/19500720> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q122",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/39> lex2kg-o:mengingat ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/21/pasal/0008> lex2kg-o:versi ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q123",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1954/76/pasal/0001> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q124",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0011/versi/19500720/ayat/0002> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q125",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0007/versi/19500720> . }",
+    "id": "q119",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/6/pasal/0008> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/6/pasal/0008/versi/19500720/ayat/0001> . }",
     "pattern_type": "2_prop_middle_target_v1",
     "complexity": "intermediate"
   },
   {
+    "id": "q120",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/21> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q121",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/34> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q122",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/0007/0007/0005> lex2kg-o:huruf ?target . ?target lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/4/pasal/0007> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q123",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/2> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q124",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001> lex2kg-o:versi ?hidden1 . ?hidden1 lex2kg-o:huruf ?hidden2 . ?hidden2 lex2kg-o:teks ?target . }",
+    "pattern_type": "3_prop_linear_end_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q125",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0010/versi/19500720/ayat/0005> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q126",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0001> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/50> lex2kg-o:mengingat ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q127",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/18/pasal/0005> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q128",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0009/versi/19531218/ayat/0002> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q129",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/12> lex2kg-o:menimbang ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/22> lex2kg-o:pasal ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
+    "id": "q129",
+    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/15/pasal/0001> . ?hidden lex2kg-o:mengingat <https://example.org/lex2kg/uu/1950/15/mengingat> . ?hidden lex2kg-o:disahkanDi ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
     "id": "q130",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:menimbang <https://example.org/lex2kg/uu/1957/59/menimbang> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/35/pasal/0001> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q131",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0016> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0016/versi/19500720/ayat/0005> . }",
-    "pattern_type": "2_prop_middle_target_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q132",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/5/pasal/0003/versi/19500720> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
-    "id": "q133",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0064/versi/19500506/ayat/0002> . }",
-    "pattern_type": "3_prop_linear_middle_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q134",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/46/pasal/0001> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/10/pasal/0001> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
+    "id": "q132",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1972/2> lex2kg-o:pasal ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q133",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0044/versi/19531218> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q134",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0044/versi/19531218> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
     "id": "q135",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/22/pasal/0006> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5> lex2kg-o:pasal ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q136",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0061> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/13/pasal/0001/versi/19540312/d> lex2kg-o:huruf ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q137",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0020/versi/19500506> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:mengingat <https://example.org/lex2kg/uu/1957/26/mengingat> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
   },
   {
     "id": "q138",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1954/21/pasal/0018> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1962/12/pasal/0001/versi/19620816> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q139",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954> lex2kg-o:pasal ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/42/pasal/0001> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q140",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0070> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/39/pasal/0002> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q141",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953> lex2kg-o:pasal ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0004> lex2kg-o:pasal ?target . ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0014/versi/19531218> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q142",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1950/6/pasal/0007/versi/19500720> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q143",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/0007> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q142",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/bab/0013> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:merujuk ?target . }",
-    "pattern_type": "3_prop_linear_end_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q143",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/13> lex2kg-o:pasal ?hidden1 . ?hidden1 lex2kg-o:versi ?hidden2 . ?hidden2 lex2kg-o:jenisVersi ?target . }",
-    "pattern_type": "3_prop_linear_end_v1",
-    "complexity": "advanced"
-  },
-  {
     "id": "q144",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1962/7/pasal/0001/versi/19620618> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/9/pasal/0001> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q145",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0004> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1957/59/pasal/0001> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q146",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1962/8/pasal/0001> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/22/pasal/0017/versi/19570408> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q147",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/42/pasal/0001> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0003/0002> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q148",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1971/11/pasal/0001> lex2kg-o:versi ?target . }",
-    "pattern_type": "1_prop_object_target",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1964/35/pasal/0002/versi/19641231> . }",
+    "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q149",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/35> lex2kg-o:menimbang ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/10/pasal/0001> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/10/pasal/0001/versi/19530509/ayat/0005> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
   },
   {
     "id": "q150",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/46/pasal/0001> lex2kg-o:versi ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/40/pasal/0001/versi/19571026/0001/0001/0001/0001/0001/0001/0001/0001> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q151",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/5/pasal/0007> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal <https://example.org/lex2kg/uu/1953/25/pasal/0056> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q152",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1950/1/pasal/0016/versi/19500506> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q153",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0038/versi/19500506/ayat/0002> . }",
-    "pattern_type": "3_prop_linear_middle_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q154",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5/pasal/0023> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0023/versi/19500720/ayat/0003> . }",
-    "pattern_type": "2_prop_middle_target_v1",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0048/versi/19531218> . }",
+    "pattern_type": "2_prop_branching_v1",
     "complexity": "intermediate"
   },
   {
-    "id": "q155",
-    "sparql": "SELECT ?target WHERE { ?hidden lex2kg-o:pasal <https://example.org/lex2kg/uu/1950/15/pasal/0005> . ?hidden lex2kg-o:menimbang <https://example.org/lex2kg/uu/1950/15/menimbang> . ?hidden lex2kg-o:disahkanDi ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q156",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/1/pasal/0040> lex2kg-o:versi ?target . }",
+    "id": "q153",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1954/13/pasal/0001/versi/19540312/d> lex2kg-o:huruf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
+    "id": "q154",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/2/pasal/0004> lex2kg-o:versi ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q155",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25/pasal/0007> lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1953/25/pasal/0007/versi/19531218/ayat/0001> . }",
+    "pattern_type": "2_prop_middle_target_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q156",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/15> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/15/pasal/0004/versi/19500808/ayat/0004> . }",
+    "pattern_type": "3_prop_linear_middle_v1",
+    "complexity": "advanced"
+  },
+  {
     "id": "q157",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1954/30/pasal/0009/versi/19540914> . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:mengingat <https://example.org/lex2kg/uu/1965/16/mengingat> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q158",
-    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/40> lex2kg-o:mengingat ?target . }",
+    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:huruf <https://example.org/lex2kg/uu/1950/4/pasal/0001/versi/19500720/huruf/0007> . }",
+    "pattern_type": "2_prop_branching_v1",
+    "complexity": "intermediate"
+  },
+  {
+    "id": "q159",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1957/39> lex2kg-o:mengingat ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q159",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi <https://example.org/lex2kg/uu/1953/27/pasal/0009/versi/19531218> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
-  },
-  {
     "id": "q160",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi ?hidden . ?hidden lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/1/pasal/0042/versi/19500506/ayat/0004> . }",
-    "pattern_type": "2_prop_branching_v1",
-    "complexity": "intermediate"
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1950/5> lex2kg-o:pasal ?hidden . ?hidden lex2kg-o:versi ?target . ?target lex2kg-o:ayat <https://example.org/lex2kg/uu/1950/5/pasal/0023/versi/19500720/ayat/0003> . }",
+    "pattern_type": "3_prop_linear_middle_v1",
+    "complexity": "advanced"
   },
   {
     "id": "q161",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1957/27/pasal/0003/versi/19570814> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q162",
-    "sparql": "SELECT ?target WHERE { ?target lex2kg-o:versi <https://example.org/lex2kg/uu/1954/30/pasal/0007/versi/19540914> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://example.org/lex2kg/uu/1953/25> lex2kg-o:bab ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   }
 ]
