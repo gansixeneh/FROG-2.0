@@ -1,9 +1,11 @@
 """
-Pattern-based SPARQL Query Generator using SPARQLWrapper with Apache Jena Endpoint
+Pattern-based SPARQL Query Generator using SPARQLWrapper for GESIS Knowledge Graph
 
 This generator creates SPARQL queries based on graph patterns using a discovery-first approach.
 It first discovers valid property combinations through discovery queries, then selects from them.
 This ensures that generated queries always have at least 1 result.
+
+Modified for GESIS Knowledge Graph with schema.org vocabulary.
 
 Patterns:
 - O = Fixed entity (known)
@@ -26,7 +28,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON  # Using SPARQLWrapper instead of 
 
 class SPARQLWrapperClient:
     def __init__(
-        self, endpoint_url="http://localhost:3030/modified-lex2kg/query", prefixes=None
+        self, endpoint_url="http://localhost:3030/gesis/query", prefixes=None
     ):
         """Initialize the SPARQLWrapper client with explicit prefixes
 
@@ -40,12 +42,14 @@ class SPARQLWrapperClient:
         self.sparql.setReturnFormat(JSON)
         self.sparql.setTimeout(30)  # 30 second timeout
 
-        # Set default prefixes if none provided
+        # Set default prefixes for GESIS knowledge graph
         if prefixes is None:
             self.prefixes = {
-                "lex2kg-o": "<https://example.org/lex2kg/ontology/>",
-                "rdfs": "<https://www.w3.org/2000/01/rdf-schema#>",
+                "gesiskg": "<https://data.gesis.org/gesiskg/schema/>",
+                "schema": "<https://schema.org/>",
                 "xsd": "<http://www.w3.org/2001/XMLSchema#>",
+                "rdfs": "<https://www.w3.org/2000/01/rdf-schema#>",
+                "rdf": "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
             }
         else:
             self.prefixes = prefixes
@@ -83,39 +87,34 @@ class SPARQLWrapperClient:
 
 class PatternBasedSPARQLGenerator:
     def __init__(
-        self, endpoint_url="http://localhost:3030/modified-lex2kg/query", prefixes=None
+        self, endpoint_url="http://localhost:3030/gesis/query", prefixes=None
     ):
         """
-        Initialize the pattern-based generator
+        Initialize the pattern-based generator for GESIS Knowledge Graph
 
         Args:
             endpoint_url (str): SPARQL endpoint URL
             prefixes (dict): Namespace prefixes
         """
-        self.client = SPARQLWrapperClient(endpoint_url)
+        self.client = SPARQLWrapperClient(endpoint_url, prefixes)
 
         if prefixes is None:
             self.prefixes = {
-                "lex2kg-o": "https://example.org/lex2kg/ontology/",
-                "rdfs": "https://www.w3.org/2000/01/rdf-schema#",
+                "gesiskg": "https://data.gesis.org/gesiskg/schema/",
+                "schema": "https://schema.org/",
                 "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "rdfs": "https://www.w3.org/2000/01/rdf-schema#",
+                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             }
         else:
             self.prefixes = prefixes
 
-        # Properties to exclude for better quality
+        # Properties to exclude for better quality (adapted for GESIS/schema.org)
         self.excluded_properties = {
-            # Universal properties (same value everywhere)
-            "https://example.org/lex2kg/ontology/jenisPeraturan",
-            # "https://example.org/lex2kg/ontology/yurisdiksi",
-            "https://example.org/lex2kg/ontology/bahasa",
-            # "https://example.org/lex2kg/ontology/jabatanPengesah",
-            # Technical/internal properties
-            "https://example.org/lex2kg/ontology/segmen",
-            # "https://example.org/lex2kg/ontology/teks",
-            # Over-granular properties
-            # "https://example.org/lex2kg/ontology/huruf",
-            "https://example.org/lex2kg/ontology/nomor",
+            # Very common properties that might not be interesting for queries
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            "https://schema.org/url",  # URLs are usually not interesting targets
+            # Add other properties that might be too generic or technical
         }
 
         # Extract entities and properties from endpoint
@@ -131,7 +130,7 @@ class PatternBasedSPARQLGenerator:
 
         # Get total triple count
         total_triples = self._get_total_triples()
-        print(f"Connected to SPARQL endpoint with {total_triples} triples")
+        print(f"Connected to GESIS SPARQL endpoint with {total_triples} triples")
         print(
             f"Found {len(self.entities)} entities and {len(self.properties)} properties"
         )
@@ -155,17 +154,17 @@ class PatternBasedSPARQLGenerator:
         return 0
 
     def _extract_entities(self):
-        """Extract all entities from the endpoint"""
+        """Extract all entities from the GESIS endpoint"""
         query = """
         SELECT DISTINCT ?entity WHERE {
             {
                 ?entity ?p ?o .
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
             }
             UNION
             {
                 ?s ?p ?entity .
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
             }
         }
         LIMIT 10000
@@ -181,20 +180,21 @@ class PatternBasedSPARQLGenerator:
         return entities
 
     def _extract_properties(self):
-        """Extract meaningful properties, excluding low-quality ones"""
+        """Extract meaningful properties from schema.org and GESIS vocabularies"""
         # Build exclusion filters for the query
         exclusion_filters = []
         for prop in self.excluded_properties:
             exclusion_filters.append(f"?property != <{prop}>")
 
-        exclusion_filter_str = " && ".join(exclusion_filters)
+        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
         query = f"""
         SELECT DISTINCT ?property WHERE {{
             ?s ?property ?o .
-            FILTER(STRSTARTS(STR(?property), "https://example.org/lex2kg/ontology/"))
-            FILTER(?property != <https://www.w3.org/1999/02/22-rdf-syntax-ns#type>)
-            FILTER(!STRSTARTS(STR(?property), "https://www.w3.org/2000/01/rdf-schema#"))
+            FILTER(
+                STRSTARTS(STR(?property), "https://schema.org/") ||
+                STRSTARTS(STR(?property), "https://data.gesis.org/gesiskg/schema/")
+            )
             FILTER({exclusion_filter_str})
         }}
         """
@@ -210,19 +210,23 @@ class PatternBasedSPARQLGenerator:
         return properties
 
     def _shorten_uri(self, uri):
-        """Convert full URI to prefixed form - only for ontology properties, keep entities as full URIs"""
+        """Convert full URI to prefixed form"""
         uri_str = str(uri)
 
-        # Only use lex2kg-o prefix for ontology properties (they don't contain forward slashes after the ontology part)
-        if uri_str.startswith("https://example.org/lex2kg/ontology/"):
-            return f"lex2kg-o:{uri_str[len('https://example.org/lex2kg/ontology/'):]}"
+        # Check for schema.org properties
+        if uri_str.startswith("https://schema.org/"):
+            return f"schema:{uri_str[len('https://schema.org/'):]}"
+        
+        # Check for GESIS schema properties
+        if uri_str.startswith("https://data.gesis.org/gesiskg/schema/"):
+            return f"gesiskg:{uri_str[len('https://data.gesis.org/gesiskg/schema/'):]}"
 
-        # For other prefixes like rdfs, xsd
+        # For other prefixes
         for prefix, namespace in self.prefixes.items():
-            if prefix != "lex2kg-o" and uri_str.startswith(namespace):
+            if prefix not in ["schema", "gesiskg"] and uri_str.startswith(namespace):
                 return f"{prefix}:{uri_str[len(namespace):]}"
 
-        # For entities (which contain forward slashes), keep as full URI in angle brackets
+        # For entities (keep as full URI in angle brackets)
         return f"<{uri_str}>"
 
     def _format_sparql(self, sparql):
@@ -255,7 +259,7 @@ class PatternBasedSPARQLGenerator:
 
     def generate_1_property_patterns(self, count=100):
         """
-        Generate 1-property patterns using discovery-first approach
+        Generate 1-property patterns using discovery-first approach for GESIS KG
 
         Args:
             count (int): Number of patterns to generate
@@ -270,14 +274,17 @@ class PatternBasedSPARQLGenerator:
         for prop in self.excluded_properties:
             exclusion_filters.append(f"?prop != <{prop}>")
 
-        exclusion_filter_str = " && ".join(exclusion_filters)
+        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
-        # Discovery query to find all valid property-entity combinations
+        # Discovery query to find all valid property-entity combinations for GESIS
         discovery_query = f"""
             SELECT DISTINCT ?prop ?entity WHERE {{
                 ?s ?prop ?entity .
-                FILTER(STRSTARTS(STR(?prop), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
+                FILTER(
+                    STRSTARTS(STR(?prop), "https://schema.org/") ||
+                    STRSTARTS(STR(?prop), "https://data.gesis.org/gesiskg/schema/")
+                )
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER({exclusion_filter_str})
             }}
             LIMIT 1000
@@ -362,7 +369,7 @@ class PatternBasedSPARQLGenerator:
 
     def generate_2_property_patterns(self, count=100):
         """
-        Generate 2-property patterns using discovery-first approach
+        Generate 2-property patterns using discovery-first approach for GESIS KG
 
         Args:
             count (int): Number of patterns to generate
@@ -377,17 +384,21 @@ class PatternBasedSPARQLGenerator:
         for prop in self.excluded_properties:
             exclusion_filters.extend([f"?prop1 != <{prop}>", f"?prop2 != <{prop}>"])
 
-        exclusion_filter_str = " && ".join(exclusion_filters)
+        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
         # Discovery query for middle target pattern: entity1 prop1 ?target . ?target prop2 entity2
         middle_discovery_query = f"""
             SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {{
                 ?entity1 ?prop1 ?middle .
                 ?middle ?prop2 ?entity2 .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
+                FILTER(
+                    (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
+                    (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/"))
+                )
+                FILTER(
+                    STRSTARTS(STR(?entity1), "https://data.gesis.org/gesiskg/resource/") &&
+                    STRSTARTS(STR(?entity2), "https://data.gesis.org/gesiskg/resource/")
+                )
                 FILTER(?prop1 != ?prop2)
                 FILTER({exclusion_filter_str})
             }}
@@ -399,9 +410,11 @@ class PatternBasedSPARQLGenerator:
             SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {{
                 ?target ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
+                FILTER(
+                    (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
+                    (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/"))
+                )
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER(?prop1 != ?prop2)
                 FILTER({exclusion_filter_str})
             }}
@@ -545,7 +558,7 @@ class PatternBasedSPARQLGenerator:
 
     def generate_3_property_patterns(self, count=100):
         """
-        Generate 3-property patterns using discovery-first approach
+        Generate 3-property patterns using discovery-first approach for GESIS KG
 
         Args:
             count (int): Number of patterns to generate
@@ -562,7 +575,14 @@ class PatternBasedSPARQLGenerator:
                 [f"?prop1 != <{prop}>", f"?prop2 != <{prop}>", f"?prop3 != <{prop}>"]
             )
 
-        exclusion_filter_str = " && ".join(exclusion_filters)
+        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
+
+        # Simplified property filter for readability
+        prop_filter = """
+            (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
+            (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/")) &&
+            (STRSTARTS(STR(?prop3), "https://schema.org/") || STRSTARTS(STR(?prop3), "https://data.gesis.org/gesiskg/schema/"))
+        """
 
         # Discovery query for linear end pattern: entity prop1 ?h1 . ?h1 prop2 ?h2 . ?h2 prop3 ?target
         linear_end_query = f"""
@@ -570,10 +590,8 @@ class PatternBasedSPARQLGenerator:
                 ?entity ?prop1 ?h1 .
                 ?h1 ?prop2 ?h2 .
                 ?h2 ?prop3 ?target .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity), "https://example.org/lex2kg/"))
+                FILTER({prop_filter})
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER({exclusion_filter_str})
             }}
@@ -586,11 +604,11 @@ class PatternBasedSPARQLGenerator:
                 ?entity1 ?prop1 ?h .
                 ?h ?prop2 ?target .
                 ?target ?prop3 ?entity2 .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
+                FILTER({prop_filter})
+                FILTER(
+                    STRSTARTS(STR(?entity1), "https://data.gesis.org/gesiskg/resource/") &&
+                    STRSTARTS(STR(?entity2), "https://data.gesis.org/gesiskg/resource/")
+                )
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER({exclusion_filter_str})
             }}
@@ -603,11 +621,11 @@ class PatternBasedSPARQLGenerator:
                 ?hidden ?prop1 ?entity1 .
                 ?hidden ?prop2 ?entity2 .
                 ?hidden ?prop3 ?target .
-                FILTER(STRSTARTS(STR(?prop1), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop2), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?prop3), "https://example.org/lex2kg/ontology/"))
-                FILTER(STRSTARTS(STR(?entity1), "https://example.org/lex2kg/"))
-                FILTER(STRSTARTS(STR(?entity2), "https://example.org/lex2kg/"))
+                FILTER({prop_filter})
+                FILTER(
+                    STRSTARTS(STR(?entity1), "https://data.gesis.org/gesiskg/resource/") &&
+                    STRSTARTS(STR(?entity2), "https://data.gesis.org/gesiskg/resource/")
+                )
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER(?entity1 != ?entity2)
                 FILTER({exclusion_filter_str})
@@ -885,13 +903,13 @@ class PatternBasedSPARQLGenerator:
 
         return dataset
 
-    def export_json(self, dataset, output_path="pattern_based_dataset.json"):
+    def export_json(self, dataset, output_path="gesis_pattern_based_dataset.json"):
         """Export dataset to JSON"""
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
 
-    def export_csv(self, dataset, output_path="pattern_based_dataset.csv"):
+    def export_csv(self, dataset, output_path="gesis_pattern_based_dataset.csv"):
         """Export dataset to CSV"""
         with open(output_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
@@ -911,18 +929,20 @@ class PatternBasedSPARQLGenerator:
 
 
 def main():
-    """Main function to generate pattern-based dataset using SPARQLWrapper with Jena endpoint"""
-    endpoint_url = "http://localhost:3030/modified-lex2kg/query"
+    """Main function to generate pattern-based dataset using SPARQLWrapper with GESIS Knowledge Graph"""
+    endpoint_url = "http://localhost:3030/gesis/query"
 
-    # Define custom prefixes for the legal knowledge graph - removed lex2kg prefix to avoid forward slash issues
+    # Define custom prefixes for the GESIS knowledge graph
     custom_prefixes = {
-        "lex2kg-o": "https://example.org/lex2kg/ontology/",
-        "rdfs": "https://www.w3.org/2000/01/rdf-schema#",
+        "gesiskg": "https://data.gesis.org/gesiskg/schema/",
+        "schema": "https://schema.org/",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "rdfs": "https://www.w3.org/2000/01/rdf-schema#",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
     # Initialize generator with custom prefixes
-    print("Initializing pattern-based SPARQL generator with SPARQLWrapper...")
+    print("Initializing pattern-based SPARQL generator for GESIS Knowledge Graph...")
     generator = PatternBasedSPARQLGenerator(endpoint_url, custom_prefixes)
 
     # Generate dataset using discovery-first approach
