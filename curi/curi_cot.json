@@ -1,0 +1,4238 @@
+[
+    {
+      "id": "q1",
+      "question": "What prior coursework is required for enrolling in Ethical Hacking?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Ethical Hacking.",
+        "2. Need to identify the Ethical Hacking course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Logic Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/logic_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q2",
+      "question": "Which academic research team is connected to Technopreneurship?",
+      "thoughts": [
+        "1. The question asks for the research group associated with Technopreneurship course.",
+        "2. Need to identify the Technopreneurship course entity.",
+        "3. Use the has_research_group property to find associated research teams.",
+        "4. Return the research group(s) connected to this course."
+      ],
+      "entities": [
+        "Technopreneurship"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/technopreneurship> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q3",
+      "question": "What nicknames or short forms are used for Cloud Computing?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Cloud Computing course.",
+        "2. Need to identify the Cloud Computing course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Cloud Computing"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/cloud_computing> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q4",
+      "question": "What research lab develops or maintains the Game Development course?",
+      "thoughts": [
+        "1. The question asks for the research group responsible for Game Development course.",
+        "2. Need to identify the Game Development course entity.",
+        "3. Use the has_research_group property to find the associated lab.",
+        "4. Return the research group that develops this course."
+      ],
+      "entities": [
+        "Game Development"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/game_development> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q5",
+      "question": "Which assessment techniques are employed in Parallel Programming?",
+      "thoughts": [
+        "1. The question asks for evaluation methods used in Parallel Programming course.",
+        "2. Need to identify the Parallel Programming course entity.",
+        "3. Use the has_evaluation_method property to find assessment techniques.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Parallel Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/parallel_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q6",
+      "question": "Which assessment techniques are employed in Platform Based Programming?",
+      "thoughts": [
+        "1. The question asks for evaluation methods used in Platform Based Programming course.",
+        "2. Need to identify the Platform Based Programming course entity.",
+        "3. Use the has_evaluation_method property to find assessment techniques.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Platform Based Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/platform_based_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q7",
+      "question": "Under which category is the Competitive Programming course listed?",
+      "thoughts": [
+        "1. The question asks for the course category of Competitive Programming.",
+        "2. Need to identify the Competitive Programming course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Competitive Programming"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/competitive_programming> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q8",
+      "question": "Can you look up the course code assigned to Algorithm Design and Analysis?",
+      "thoughts": [
+        "1. The question asks for the course code of Algorithm Design and Analysis.",
+        "2. Need to identify the Algorithm Design and Analysis course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Algorithm Design and Analysis"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/algorithm_design_and_analysis> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q9",
+      "question": "How is Data Structures and Algorithms informally known or abbreviated?",
+      "thoughts": [
+        "1. The question asks for nicknames or abbreviations of Data Structures and Algorithms.",
+        "2. Need to identify the Data Structures and Algorithms course entity.",
+        "3. Use the also_known_as property to find informal names.",
+        "4. Return all alternative names and abbreviations for this course."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/data_structures_and_algorithms> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q10",
+      "question": "How are students assessed in the Natural Language Processing course?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Natural Language Processing course.",
+        "2. Need to identify the Natural Language Processing course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Natural Language Processing"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/natural_language_processing> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q11",
+      "question": "Which academic research team is connected to Technopreneurship?",
+      "thoughts": [
+        "1. The question asks for the research group associated with Technopreneurship course.",
+        "2. Need to identify the Technopreneurship course entity.",
+        "3. Use the has_research_group property to find associated research teams.",
+        "4. Return the research group(s) connected to this course."
+      ],
+      "entities": [
+        "Technopreneurship"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/technopreneurship> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q12",
+      "question": "What's the identifier or course number for Knowledge Graph?",
+      "thoughts": [
+        "1. The question asks for the course code of Knowledge Graph course.",
+        "2. Need to identify the Knowledge Graph course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Knowledge Graph"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/knowledge_graph> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q13",
+      "question": "Can you tell me the number of credits for the Introduction to Digital Systems course?",
+      "thoughts": [
+        "1. The question asks for the credit value of Introduction to Digital Systems course.",
+        "2. Need to identify the Introduction to Digital Systems course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Introduction to Digital Systems"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/introduction_to_digital_systems> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q14",
+      "question": "How many credits does the English course have?",
+      "thoughts": [
+        "1. The question asks for the credit value of English course.",
+        "2. Need to identify the English course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "English"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/english> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q15",
+      "question": "Which academic research team is connected to Internet of Things?",
+      "thoughts": [
+        "1. The question asks for the research group associated with Internet of Things course.",
+        "2. Need to identify the Internet of Things course entity.",
+        "3. Use the has_research_group property to find associated research teams.",
+        "4. Return the research group(s) connected to this course."
+      ],
+      "entities": [
+        "Internet of Things"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/internet_of_things> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q16",
+      "question": "Can you tell me the number of credits for the Programming Basics 2 course?",
+      "thoughts": [
+        "1. The question asks for the credit value of Programming Basics 2 course.",
+        "2. Need to identify the Programming Basics 2 course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Programming Basics 2"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/programming_basics_2> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q17",
+      "question": "How many credits does the English course have?",
+      "thoughts": [
+        "1. The question asks for the credit value of English course.",
+        "2. Need to identify the English course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "English"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/english> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q18",
+      "question": "What's the identifier or course number for Differential Equations?",
+      "thoughts": [
+        "1. The question asks for the course code of Differential Equations course.",
+        "2. Need to identify the Differential Equations course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Differential Equations"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/differential_equations> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q19",
+      "question": "How many credits does the Functional Programming course have?",
+      "thoughts": [
+        "1. The question asks for the credit value of Functional Programming course.",
+        "2. Need to identify the Functional Programming course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Functional Programming"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/functional_programming> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q20",
+      "question": "Can you look up the course code assigned to Computer Assisted Teaching?",
+      "thoughts": [
+        "1. The question asks for the course code of Computer Assisted Teaching course.",
+        "2. Need to identify the Computer Assisted Teaching course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Computer Assisted Teaching"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/computer_assisted_teaching> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q21",
+      "question": "Under which category is the Numerical Analysis course listed?",
+      "thoughts": [
+        "1. The question asks for the course category of Numerical Analysis.",
+        "2. Need to identify the Numerical Analysis course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Numerical Analysis"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/numerical_analysis> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q22",
+      "question": "What is the credit value for Operating system?",
+      "thoughts": [
+        "1. The question asks for the credit value of Operating system course.",
+        "2. Need to identify the Operating system course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Operating system"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/operating_system> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q23",
+      "question": "What is the credit value for Programming Basics 1?",
+      "thoughts": [
+        "1. The question asks for the credit value of Programming Basics 1 course.",
+        "2. Need to identify the Programming Basics 1 course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Programming Basics 1"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/programming_basics_1> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q24",
+      "question": "What nicknames or short forms are used for Information Retrieval?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Information Retrieval course.",
+        "2. Need to identify the Information Retrieval course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Information Retrieval"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/information_retrieval> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q25",
+      "question": "Under which category is the Competitive Programming Practicum course listed?",
+      "thoughts": [
+        "1. The question asks for the course category of Competitive Programming Practicum.",
+        "2. Need to identify the Competitive Programming Practicum course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Competitive Programming Practicum"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/competitive_programming_practicum> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q26",
+      "question": "Under which category is the Data Mining course listed?",
+      "thoughts": [
+        "1. The question asks for the course category of Data Mining.",
+        "2. Need to identify the Data Mining course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Data Mining"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/data_mining> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q27",
+      "question": "What is the course code for Integrated Personality Development Skills?",
+      "thoughts": [
+        "1. The question asks for the course code of Integrated Personality Development Skills course.",
+        "2. Need to identify the Integrated Personality Development Skills course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Integrated Personality Development Skills"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/integrated_personality_development_skills> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q28",
+      "question": "Can you look up the course code assigned to Introduction to Software Security?",
+      "thoughts": [
+        "1. The question asks for the course code of Introduction to Software Security course.",
+        "2. Need to identify the Introduction to Software Security course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Introduction to Software Security"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/introduction_to_software_security> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q29",
+      "question": "What research lab develops or maintains the Advanced Database course?",
+      "thoughts": [
+        "1. The question asks for the research group responsible for Advanced Database course.",
+        "2. Need to identify the Advanced Database course entity.",
+        "3. Use the has_research_group property to find the associated lab.",
+        "4. Return the research group that develops this course."
+      ],
+      "entities": [
+        "Advanced Database"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/advanced_database> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q30",
+      "question": "What is the credit value for Simulation and Modeling?",
+      "thoughts": [
+        "1. The question asks for the credit value of Simulation and Modeling course.",
+        "2. Need to identify the Simulation and Modeling course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Simulation and Modeling"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/simulation_and_modeling> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q31",
+      "question": "What evaluation methods are used for Operating system?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Operating system course.",
+        "2. Need to identify the Operating system course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Operating system"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/operating_system> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q32",
+      "question": "How are students assessed in the Compiler Techniques course?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Compiler Techniques course.",
+        "2. Need to identify the Compiler Techniques course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Compiler Techniques"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/compiler_techniques> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q33",
+      "question": "What is the credit value for Differential Equations?",
+      "thoughts": [
+        "1. The question asks for the credit value of Differential Equations course.",
+        "2. Need to identify the Differential Equations course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Differential Equations"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/differential_equations> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q34",
+      "question": "What prior coursework is required for enrolling in Knowledge Representation and Reasoning?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Knowledge Representation and Reasoning.",
+        "2. Need to identify the Knowledge Representation and Reasoning course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Knowledge Representation and Reasoning"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q35",
+      "question": "What evaluation methods are used for Functional Programming?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Functional Programming course.",
+        "2. Need to identify the Functional Programming course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Functional Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/functional_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q36",
+      "question": "What category does Game Development belong to?",
+      "thoughts": [
+        "1. The question asks for the course category of Game Development.",
+        "2. Need to identify the Game Development course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Game Development"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/game_development> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q37",
+      "question": "What are the alternative names or abbreviations for Digital Forensics?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Digital Forensics course.",
+        "2. Need to identify the Digital Forensics course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Digital Forensics"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/digital_forensics> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q38",
+      "question": "What's the identifier or course number for Technopreneurship?",
+      "thoughts": [
+        "1. The question asks for the course code of Technopreneurship course.",
+        "2. Need to identify the Technopreneurship course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Technopreneurship"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/technopreneurship> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q39",
+      "question": "Can you tell me the number of credits for the Research Methodology and Scientific Writing course?",
+      "thoughts": [
+        "1. The question asks for the credit value of Research Methodology and Scientific Writing course.",
+        "2. Need to identify the Research Methodology and Scientific Writing course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Research Methodology and Scientific Writing"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/research_methodology_and_scientific_writing> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q40",
+      "question": "Which academic research team is connected to Compiler Techniques?",
+      "thoughts": [
+        "1. The question asks for the research group associated with Compiler Techniques course.",
+        "2. Need to identify the Compiler Techniques course entity.",
+        "3. Use the has_research_group property to find associated research teams.",
+        "4. Return the research group(s) connected to this course."
+      ],
+      "entities": [
+        "Compiler Techniques"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/compiler_techniques> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q41",
+      "question": "What are the alternative names or abbreviations for Linear Algebra?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Linear Algebra course.",
+        "2. Need to identify the Linear Algebra course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Linear Algebra"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/linear_algebra> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q42",
+      "question": "What are the prerequisites for Introduction to Computer Organization?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Introduction to Computer Organization.",
+        "2. Need to identify the Introduction to Computer Organization course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/introduction_to_computer_organization> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q43",
+      "question": "How are students assessed in the Digital Forensics course?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Digital Forensics course.",
+        "2. Need to identify the Digital Forensics course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Digital Forensics"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/digital_forensics> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q44",
+      "question": "What is the course code for Natural Language Processing?",
+      "thoughts": [
+        "1. The question asks for the course code of Natural Language Processing course.",
+        "2. Need to identify the Natural Language Processing course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Natural Language Processing"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/natural_language_processing> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q45",
+      "question": "What category does Knowledge Graph belong to?",
+      "thoughts": [
+        "1. The question asks for the course category of Knowledge Graph.",
+        "2. Need to identify the Knowledge Graph course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Knowledge Graph"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/knowledge_graph> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q46",
+      "question": "What are the prerequisites for Internet of Things?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Internet of Things.",
+        "2. Need to identify the Internet of Things course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Internet of Things"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/internet_of_things> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q47",
+      "question": "What nicknames or short forms are used for Introduction to Computer Organization?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Introduction to Computer Organization course.",
+        "2. Need to identify the Introduction to Computer Organization course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/introduction_to_computer_organization> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q48",
+      "question": "What's the identifier or course number for Cloud Computing?",
+      "thoughts": [
+        "1. The question asks for the course code of Cloud Computing course.",
+        "2. Need to identify the Cloud Computing course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Cloud Computing"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/cloud_computing> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q49",
+      "question": "Which courses must be completed before taking Introduction to Artificial Intelligence and Data Science?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Introduction to Artificial Intelligence and Data Science.",
+        "2. Need to identify the Introduction to Artificial Intelligence and Data Science course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Introduction to Artificial Intelligence and Data Science"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/introduction_to_artificial_intelligence_and_data_science> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q50",
+      "question": "Which subject area is Embedded Systems classified under?",
+      "thoughts": [
+        "1. The question asks for the course category of Embedded Systems.",
+        "2. Need to identify the Embedded Systems course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Embedded Systems"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/embedded_systems> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q51",
+      "question": "Under which category is the Data Structures and Algorithms course listed?",
+      "thoughts": [
+        "1. The question asks for the course category of Data Structures and Algorithms.",
+        "2. Need to identify the Data Structures and Algorithms course entity.",
+        "3. Use the has_course_category property to find its classification.",
+        "4. Return the category this course belongs to."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_course_category"
+      ],
+      "sparql": "select ?category where { <http://example.org/data_structures_and_algorithms> <http://example.org/has_course_category> ?category.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-category"
+    },
+    {
+      "id": "q52",
+      "question": "Can you look up the course code assigned to Programming Basics 2?",
+      "thoughts": [
+        "1. The question asks for the course code of Programming Basics 2 course.",
+        "2. Need to identify the Programming Basics 2 course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Programming Basics 2"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/programming_basics_2> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q53",
+      "question": "Which courses must be completed before taking Software Project?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking Software Project.",
+        "2. Need to identify the Software Project course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "Software Project"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/software_project> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q54",
+      "question": "What evaluation methods are used for Knowledge Representation and Reasoning?",
+      "thoughts": [
+        "1. The question asks for evaluation methods in Knowledge Representation and Reasoning course.",
+        "2. Need to identify the Knowledge Representation and Reasoning course entity.",
+        "3. Use the has_evaluation_method property to find assessment methods.",
+        "4. Return all evaluation methods used for this course."
+      ],
+      "entities": [
+        "Knowledge Representation and Reasoning"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?method where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-evaluation"
+    },
+    {
+      "id": "q55",
+      "question": "What research lab develops or maintains the Ethical Hacking course?",
+      "thoughts": [
+        "1. The question asks for the research group responsible for Ethical Hacking course.",
+        "2. Need to identify the Ethical Hacking course entity.",
+        "3. Use the has_research_group property to find the associated lab.",
+        "4. Return the research group that develops this course."
+      ],
+      "entities": [
+        "Ethical Hacking"
+      ],
+      "properties": [
+        "has_research_group"
+      ],
+      "sparql": "select ?group where { <http://example.org/ethical_hacking> <http://example.org/has_research_group> ?group.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-research-group"
+    },
+    {
+      "id": "q56",
+      "question": "What is the credit value for Game Development?",
+      "thoughts": [
+        "1. The question asks for the credit value of Game Development course.",
+        "2. Need to identify the Game Development course entity.",
+        "3. Use the has_credits property to find the credit value.",
+        "4. Return the number of credits for this course."
+      ],
+      "entities": [
+        "Game Development"
+      ],
+      "properties": [
+        "has_credits"
+      ],
+      "sparql": "select ?value where { <http://example.org/game_development> <http://example.org/has_credits> ?value.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-credits"
+    },
+    {
+      "id": "q57",
+      "question": "What nicknames or short forms are used for Introduction to Computer Organization?",
+      "thoughts": [
+        "1. The question asks for alternative names or abbreviations for Introduction to Computer Organization course.",
+        "2. Need to identify the Introduction to Computer Organization course entity.",
+        "3. Use the also_known_as property to find nicknames and abbreviations.",
+        "4. Return all alternative names for this course."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "also_known_as"
+      ],
+      "sparql": "select ?nickname where { <http://example.org/introduction_to_computer_organization> <http://example.org/also_known_as> ?nickname.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-nickname"
+    },
+    {
+      "id": "q58",
+      "question": "Can you look up the course code assigned to Software engineering?",
+      "thoughts": [
+        "1. The question asks for the course code of Software engineering course.",
+        "2. Need to identify the Software engineering course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Software engineering"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/software_engineering> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q59",
+      "question": "What's the identifier or course number for Final Project Group Assignment?",
+      "thoughts": [
+        "1. The question asks for the course code of Final Project Group Assignment course.",
+        "2. Need to identify the Final Project Group Assignment course entity.",
+        "3. Use the has_course_code property to find its identifier.",
+        "4. Return the course code for this course."
+      ],
+      "entities": [
+        "Final Project Group Assignment"
+      ],
+      "properties": [
+        "has_course_code"
+      ],
+      "sparql": "select ?code where { <http://example.org/final_project_group_assignment> <http://example.org/has_course_code> ?code.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-code"
+    },
+    {
+      "id": "q60",
+      "question": "What are the prerequisites for System Programming?",
+      "thoughts": [
+        "1. The question asks for prerequisite courses needed before taking System Programming.",
+        "2. Need to identify the System Programming course entity.",
+        "3. Use the has_prerequisite_course property to find required courses.",
+        "4. Return all courses that must be completed first."
+      ],
+      "entities": [
+        "System Programming"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq where { <http://example.org/system_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "basic",
+      "templateId": "course-prerequisites"
+    },
+    {
+      "id": "q61",
+      "question": "How many prerequisites does Knowledge Representation and Reasoning have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Knowledge Representation and Reasoning.",
+        "2. Need to identify the Knowledge Representation and Reasoning course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Knowledge Representation and Reasoning"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/knowledge_representation_and_reasoning> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q62",
+      "question": "List all courses that employ Group Project for student evaluation.",
+      "thoughts": [
+        "1. The question asks for courses that use Group Project as an evaluation method.",
+        "2. Need to find all course entities that use Group Project evaluation.",
+        "3. Use has_evaluation_method property to filter courses by evaluation type.",
+        "4. Also need instance of property to ensure we're looking at course entities.",
+        "5. Return all courses that have Group Project as an evaluation method."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q63",
+      "question": "How many prerequisites does Computer Assisted Teaching have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Computer Assisted Teaching.",
+        "2. Need to identify the Computer Assisted Teaching course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Computer Assisted Teaching"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/computer_assisted_teaching> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q64",
+      "question": "How many courses are in the Faculty Mandatory Course category?",
+      "thoughts": [
+        "1. The question asks for the total count of courses in Faculty Mandatory Course category.",
+        "2. Need to find all course entities with Faculty Mandatory Course category.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_course_category property to filter by Faculty Mandatory Course.",
+        "5. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_course_category",
+        "instance of"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-category"
+    },
+    {
+      "id": "q65",
+      "question": "Which courses require Computer network to be completed first?",
+      "thoughts": [
+        "1. The question asks for courses that have Computer network as a prerequisite.",
+        "2. Need to find all courses that require Computer network before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Computer network.",
+        "4. Return all courses that have Computer network as a prerequisite."
+      ],
+      "entities": [
+        "Computer network"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q66",
+      "question": "How many courses are in the University Mandatory Course category?",
+      "thoughts": [
+        "1. The question asks for the total count of courses in University Mandatory Course category.",
+        "2. Need to find all course entities with University Mandatory Course category.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_course_category property to filter by University Mandatory Course.",
+        "5. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "University Mandatory Course"
+      ],
+      "properties": [
+        "has_course_category",
+        "instance of"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/university_mandatory_course>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-category"
+    },
+    {
+      "id": "q67",
+      "question": "How many evaluation methods are associated with Platform Based Programming?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Platform Based Programming.",
+        "2. Need to identify the Platform Based Programming course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Platform Based Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/platform_based_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q68",
+      "question": "How many courses need Operating system to be completed first?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Operating system as a prerequisite.",
+        "2. Need to find all courses that require Operating system before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Operating system.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Operating system"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/operating_system>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q69",
+      "question": "Which courses are associated with the Machine Learning and Computer Vision research group?",
+      "thoughts": [
+        "1. The question asks for courses developed by Machine Learning and Computer Vision research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Machine Learning and Computer Vision.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Machine Learning and Computer Vision"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q70",
+      "question": "Which courses require Discrete Mathematics 2 to be completed first?",
+      "thoughts": [
+        "1. The question asks for courses that have Discrete Mathematics 2 as a prerequisite.",
+        "2. Need to find all courses that require Discrete Mathematics 2 before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Discrete Mathematics 2.",
+        "4. Return all courses that have Discrete Mathematics 2 as a prerequisite."
+      ],
+      "entities": [
+        "Discrete Mathematics 2"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_2>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q71",
+      "question": "List all courses that need Database as a prerequisite.",
+      "thoughts": [
+        "1. The question asks for courses that have Database as a prerequisite.",
+        "2. Need to find all courses that require Database before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Database.",
+        "4. Return all courses that have Database as a prerequisite."
+      ],
+      "entities": [
+        "Database"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/database>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q72",
+      "question": "How many courses need Introduction to Computer Organization to be completed first?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Introduction to Computer Organization as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Computer Organization before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Computer Organization.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q73",
+      "question": "How many prerequisites does Language Theory & Automata have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Language Theory & Automata.",
+        "2. Need to identify the Language Theory & Automata course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Language Theory & Automata"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/language_theory_and_automata> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q74",
+      "question": "How many prerequisites does Logic Programming have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Logic Programming.",
+        "2. Need to identify the Logic Programming course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Logic Programming"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/logic_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q75",
+      "question": "Which courses are associated with the Reliable Software Engineering research group?",
+      "thoughts": [
+        "1. The question asks for courses developed by Reliable Software Engineering research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Reliable Software Engineering.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Reliable Software Engineering"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q76",
+      "question": "How many prerequisites does Ethical Hacking have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Ethical Hacking.",
+        "2. Need to identify the Ethical Hacking course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Ethical Hacking"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/ethical_hacking> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q77",
+      "question": "How many evaluation methods are associated with Software Product Line Engineering?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Software Product Line Engineering.",
+        "2. Need to identify the Software Product Line Engineering course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Software Product Line Engineering"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/software_product_line_engineering> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q78",
+      "question": "How many prerequisites does Advanced Programming have?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Advanced Programming.",
+        "2. Need to identify the Advanced Programming course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Advanced Programming"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/advanced_programming> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q79",
+      "question": "What is the count of courses requiring Introduction to Computer Organization as a prerequisite?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Introduction to Computer Organization as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Computer Organization before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Computer Organization.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q80",
+      "question": "How many courses are in the Study Program Mandatory Course category?",
+      "thoughts": [
+        "1. The question asks for the total count of courses in Study Program Mandatory Course category.",
+        "2. Need to find all course entities with Study Program Mandatory Course category.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_course_category property to filter by Study Program Mandatory Course.",
+        "5. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Study Program Mandatory Course"
+      ],
+      "properties": [
+        "has_course_category",
+        "instance of"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-category"
+    },
+    {
+      "id": "q81",
+      "question": "What is the total number of courses in the Study Program Elective Course subject area?",
+      "thoughts": [
+        "1. The question asks for the total count of courses in Study Program Elective Course category.",
+        "2. Need to find all course entities with Study Program Elective Course category.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_course_category property to filter by Study Program Elective Course.",
+        "5. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Study Program Elective Course"
+      ],
+      "properties": [
+        "has_course_category",
+        "instance of"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-category"
+    },
+    {
+      "id": "q82",
+      "question": "What is the count of assessment techniques used in Mobile Technology?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Mobile Technology.",
+        "2. Need to identify the Mobile Technology course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Mobile Technology"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/mobile_technology> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q83",
+      "question": "List all courses connected to the Center for Cyber Security and Cryptography research lab.",
+      "thoughts": [
+        "1. The question asks for courses developed by Center for Cyber Security and Cryptography research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Center for Cyber Security and Cryptography.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Center for Cyber Security and Cryptography"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q84",
+      "question": "What is the count of courses requiring Introduction to Digital Systems as a prerequisite?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Introduction to Digital Systems as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Digital Systems before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Digital Systems.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Introduction to Digital Systems"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_digital_systems>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q85",
+      "question": "What courses are valued at 4 credits?",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 4 credits.",
+        "2. Need to find all course entities with 4 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 4 credits.",
+        "5. Return all courses that have 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q86",
+      "question": "What courses have Introduction to Computer Organization as a prerequisite course?",
+      "thoughts": [
+        "1. The question asks for courses that have Introduction to Computer Organization as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Computer Organization before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Computer Organization.",
+        "4. Return all courses that have Introduction to Computer Organization as a prerequisite."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q87",
+      "question": "What is the count of courses requiring Computer network as a prerequisite?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Computer network as a prerequisite.",
+        "2. Need to find all courses that require Computer network before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Computer network.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Computer network"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q88",
+      "question": "What courses are developed by the Machine Learning and Computer Vision research team?",
+      "thoughts": [
+        "1. The question asks for courses developed by Machine Learning and Computer Vision research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Machine Learning and Computer Vision.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Machine Learning and Computer Vision"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q89",
+      "question": "What is the count of assessment techniques used in Computer Assisted Teaching?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Computer Assisted Teaching.",
+        "2. Need to identify the Computer Assisted Teaching course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Computer Assisted Teaching"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/computer_assisted_teaching> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q90",
+      "question": "How many courses must be completed before taking Simulation and Modeling?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Simulation and Modeling.",
+        "2. Need to identify the Simulation and Modeling course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Simulation and Modeling"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/simulation_and_modeling> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q91",
+      "question": "What courses have Introduction to Artificial Intelligence and Data Science as a prerequisite course?",
+      "thoughts": [
+        "1. The question asks for courses that have Introduction to Artificial Intelligence and Data Science as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Artificial Intelligence and Data Science before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Artificial Intelligence and Data Science.",
+        "4. Return all courses that have Introduction to Artificial Intelligence and Data Science as a prerequisite."
+      ],
+      "entities": [
+        "Introduction to Artificial Intelligence and Data Science"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_artificial_intelligence_and_data_science>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q92",
+      "question": "Which courses require Research Methodology and Scientific Writing to be completed first?",
+      "thoughts": [
+        "1. The question asks for courses that have Research Methodology and Scientific Writing as a prerequisite.",
+        "2. Need to find all courses that require Research Methodology and Scientific Writing before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Research Methodology and Scientific Writing.",
+        "4. Return all courses that have Research Methodology and Scientific Writing as a prerequisite."
+      ],
+      "entities": [
+        "Research Methodology and Scientific Writing"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/research_methodology_and_scientific_writing>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q93",
+      "question": "What courses are valued at 4 credits?",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 4 credits.",
+        "2. Need to find all course entities with 4 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 4 credits.",
+        "5. Return all courses that have 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q94",
+      "question": "Which courses have 4 credits?",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 4 credits.",
+        "2. Need to find all course entities with 4 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 4 credits.",
+        "5. Return all courses that have 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q95",
+      "question": "Which courses are evaluated using Lab assignment?",
+      "thoughts": [
+        "1. The question asks for courses that use Lab assignment as an evaluation method.",
+        "2. Need to find all course entities that use Lab assignment evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Lab assignment.",
+        "5. Return all courses that have Lab assignment as an evaluation method."
+      ],
+      "entities": [
+        "Lab assignment"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q96",
+      "question": "What courses use Projects & Presentations as an assessment method?",
+      "thoughts": [
+        "1. The question asks for courses that use Projects & Presentations as an evaluation method.",
+        "2. Need to find all course entities that use Projects & Presentations evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Projects & Presentations.",
+        "5. Return all courses that have Projects & Presentations as an evaluation method."
+      ],
+      "entities": [
+        "Projects & Presentations"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/projects_and_presentations>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q97",
+      "question": "What courses are valued at 3 credits?",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 3 credits.",
+        "2. Need to find all course entities with 3 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 3 credits.",
+        "5. Return all courses that have 3 credits."
+      ],
+      "entities": [
+        "3 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q98",
+      "question": "List all courses that need Data Structures and Algorithms as a prerequisite.",
+      "thoughts": [
+        "1. The question asks for courses that have Data Structures and Algorithms as a prerequisite.",
+        "2. Need to find all courses that require Data Structures and Algorithms before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Data Structures and Algorithms.",
+        "4. Return all courses that have Data Structures and Algorithms as a prerequisite."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q99",
+      "question": "Which courses are evaluated using Test?",
+      "thoughts": [
+        "1. The question asks for courses that use Test as an evaluation method.",
+        "2. Need to find all course entities that use Test evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Test.",
+        "5. Return all courses that have Test as an evaluation method."
+      ],
+      "entities": [
+        "Test"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q100",
+      "question": "What is the total number of prerequisite courses for Deep Learning?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Deep Learning.",
+        "2. Need to identify the Deep Learning course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Deep Learning"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/deep_learning> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q101",
+      "question": "List all courses that employ Group Project for student evaluation.",
+      "thoughts": [
+        "1. The question asks for courses that use Group Project as an evaluation method.",
+        "2. Need to find all course entities that use Group Project evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Group Project.",
+        "5. Return all courses that have Group Project as an evaluation method."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q102",
+      "question": "Which courses require Data Structures and Algorithms to be completed first?",
+      "thoughts": [
+        "1. The question asks for courses that have Data Structures and Algorithms as a prerequisite.",
+        "2. Need to find all courses that require Data Structures and Algorithms before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Data Structures and Algorithms.",
+        "4. Return all courses that have Data Structures and Algorithms as a prerequisite."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q103",
+      "question": "What courses are developed by the Information Retrieval and Natural Language Processing research team?",
+      "thoughts": [
+        "1. The question asks for courses developed by Information Retrieval and Natural Language Processing research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Information Retrieval and Natural Language Processing.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Information Retrieval and Natural Language Processing"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q104",
+      "question": "List all courses that employ Group Project for student evaluation.",
+      "thoughts": [
+        "1. The question asks for courses that use Group Project as an evaluation method.",
+        "2. Need to find all course entities that use Group Project evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Group Project.",
+        "5. Return all courses that have Group Project as an evaluation method."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q105",
+      "question": "How many different ways are students evaluated in Logic Programming?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Logic Programming course.",
+        "2. Need to identify the Logic Programming course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Logic Programming"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/logic_programming> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q106",
+      "question": "Which courses have 3 credits?",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 3 credits.",
+        "2. Need to find all course entities with 3 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 3 credits.",
+        "5. Return all courses that have 3 credits."
+      ],
+      "entities": [
+        "3 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 3.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q107",
+      "question": "How many evaluation methods are associated with Computer Science Special Topics?",
+      "thoughts": [
+        "1. The question asks for the count of evaluation methods for Computer Science Special Topics.",
+        "2. Need to identify the Computer Science Special Topics course entity.",
+        "3. Use the has_evaluation_method property to find all evaluation methods.",
+        "4. Count the number of evaluation methods and return the count."
+      ],
+      "entities": [
+        "Computer Science Special Topics"
+      ],
+      "properties": [
+        "has_evaluation_method"
+      ],
+      "sparql": "select (count(?method) as ?count) where { <http://example.org/computer_science_special_topics> <http://example.org/has_evaluation_method> ?method.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-evaluation-methods"
+    },
+    {
+      "id": "q108",
+      "question": "What courses have Computer network as a prerequisite course?",
+      "thoughts": [
+        "1. The question asks for courses that have Computer network as a prerequisite.",
+        "2. Need to find all courses that require Computer network before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Computer network.",
+        "4. Return all courses that have Computer network as a prerequisite."
+      ],
+      "entities": [
+        "Computer network"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q109",
+      "question": "Which courses require Computer network to be completed first?",
+      "thoughts": [
+        "1. The question asks for courses that have Computer network as a prerequisite.",
+        "2. Need to find all courses that require Computer network before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Computer network.",
+        "4. Return all courses that have Computer network as a prerequisite."
+      ],
+      "entities": [
+        "Computer network"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/computer_network>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q110",
+      "question": "What is the total number of prerequisite courses for Deep Learning?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Deep Learning.",
+        "2. Need to identify the Deep Learning course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Deep Learning"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/deep_learning> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q111",
+      "question": "What is the total number of prerequisite courses for Numerical Analysis?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Numerical Analysis.",
+        "2. Need to identify the Numerical Analysis course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Numerical Analysis"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/numerical_analysis> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q112",
+      "question": "How many courses must be completed before taking Calculus 2?",
+      "thoughts": [
+        "1. The question asks for the count of prerequisite courses for Calculus 2.",
+        "2. Need to identify the Calculus 2 course entity.",
+        "3. Use the has_prerequisite_course property to find all prerequisites.",
+        "4. Count the number of prerequisite courses and return the count."
+      ],
+      "entities": [
+        "Calculus 2"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?prereq) as ?count) where { <http://example.org/calculus_2> <http://example.org/has_prerequisite_course> ?prereq.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-prerequisites"
+    },
+    {
+      "id": "q113",
+      "question": "What is the total number of courses in the Faculty Mandatory Course subject area?",
+      "thoughts": [
+        "1. The question asks for the total count of courses in Faculty Mandatory Course category.",
+        "2. Need to find all course entities with Faculty Mandatory Course category.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_course_category property to filter by Faculty Mandatory Course.",
+        "5. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_course_category",
+        "instance of"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-category"
+    },
+    {
+      "id": "q114",
+      "question": "List all courses worth 6 credit points.",
+      "thoughts": [
+        "1. The question asks for courses that have exactly 6 credits.",
+        "2. Need to find all course entities with 6 credits.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to filter courses with 6 credits.",
+        "5. Return all courses that have 6 credits."
+      ],
+      "entities": [
+        "6 credits"
+      ],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 6.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-with-credits"
+    },
+    {
+      "id": "q115",
+      "question": "List all courses that need Data Structures and Algorithms as a prerequisite.",
+      "thoughts": [
+        "1. The question asks for courses that have Data Structures and Algorithms as a prerequisite.",
+        "2. Need to find all courses that require Data Structures and Algorithms before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Data Structures and Algorithms.",
+        "4. Return all courses that have Data Structures and Algorithms as a prerequisite."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-prerequisite"
+    },
+    {
+      "id": "q116",
+      "question": "Which courses are evaluated using Task?",
+      "thoughts": [
+        "1. The question asks for courses that use Task as an evaluation method.",
+        "2. Need to find all course entities that use Task evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Task.",
+        "5. Return all courses that have Task as an evaluation method."
+      ],
+      "entities": [
+        "Task"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q117",
+      "question": "List all courses that employ Group Project for student evaluation.",
+      "thoughts": [
+        "1. The question asks for courses that use Group Project as an evaluation method.",
+        "2. Need to find all course entities that use Group Project evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Group Project.",
+        "5. Return all courses that have Group Project as an evaluation method."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q118",
+      "question": "How many courses have Introduction to Computer Organization as a prerequisite course?",
+      "thoughts": [
+        "1. The question asks for the count of courses that have Introduction to Computer Organization as a prerequisite.",
+        "2. Need to find all courses that require Introduction to Computer Organization before enrollment.",
+        "3. Use the has_prerequisite_course property to find courses requiring Introduction to Computer Organization.",
+        "4. Count the total number of courses and return the count."
+      ],
+      "entities": [
+        "Introduction to Computer Organization"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "count-courses-by-prerequisite"
+    },
+    {
+      "id": "q119",
+      "question": "Which courses are evaluated using Test?",
+      "thoughts": [
+        "1. The question asks for courses that use Test as an evaluation method.",
+        "2. Need to find all course entities that use Test evaluation.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_evaluation_method property to filter courses by Test.",
+        "5. Return all courses that have Test as an evaluation method."
+      ],
+      "entities": [
+        "Test"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-evaluation"
+    },
+    {
+      "id": "q120",
+      "question": "What courses are developed by the Intelligent Systems & Robotics research team?",
+      "thoughts": [
+        "1. The question asks for courses developed by Intelligent Systems & Robotics research group.",
+        "2. Need to find all course entities associated with this research group.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_research_group property to filter by Intelligent Systems & Robotics.",
+        "5. Return all courses associated with this research group."
+      ],
+      "entities": [
+        "Intelligent Systems & Robotics"
+      ],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/intelligent_systems_and_robotics>.}",
+      "category": "university",
+      "complexity": "intermediate",
+      "templateId": "courses-by-research-group"
+    },
+    {
+      "id": "q121",
+      "question": "What courses have {entity1} as their research group, are categorized as Study Program Elective Course, and use {entity3} as their evaluation method?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses associated with Machine Learning and Computer Vision research group.",
+        "3. Filter courses that are categorized as Study Program Elective Course.",
+        "4. Further filter courses that use Lab Assignment as evaluation method.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Machine Learning and Computer Vision",
+        "Study Program Elective Course",
+        "Lab Assignment"
+      ],
+      "properties": [
+        "has_research_group",
+        "has_course_category",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition"
+    },
+    {
+      "id": "q122",
+      "question": "Find courses where Discrete Mathematics 1 is a prerequisite of their prerequisites.",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Discrete Mathematics 1.",
+        "4. This creates a chain: target course -> prerequisite course -> Discrete Mathematics 1.",
+        "5. Return courses that are indirectly dependent on Discrete Mathematics 1."
+      ],
+      "entities": [
+        "Discrete Mathematics 1"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_1>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q123",
+      "question": "Which 5 courses are most frequently required as prerequisites?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q124",
+      "question": "Which 5 courses are most frequently required as prerequisites?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q125",
+      "question": "What are the 5 most common prerequisite courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q126",
+      "question": "Which research team has created the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q127",
+      "question": "Find courses sharing the same prerequisite requirements as Computer Assisted Teaching.",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Computer Assisted Teaching.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Computer Assisted Teaching itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Computer Assisted Teaching"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/computer_assisted_teaching> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/computer_assisted_teaching>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q128",
+      "question": "Which courses require completion of courses that themselves require Data Structures and Algorithms?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Data Structures and Algorithms.",
+        "4. This creates a chain: target course -> prerequisite course -> Data Structures and Algorithms.",
+        "5. Return courses that are indirectly dependent on Data Structures and Algorithms."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q129",
+      "question": "Which courses have the same prerequisites as System Programming?",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of System Programming.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude System Programming itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "System Programming"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/system_programming> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/system_programming>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q130",
+      "question": "What courses have '{entity1}' and 'Practicum' as evaluation methods and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Practicum and Practicum as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604028.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Practicum",
+        "CSCE604028"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/practicum>.?course <http://example.org/has_evaluation_method> <http://example.org/practicum>.?course <http://example.org/has_course_code> \"CSCE604028\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q131",
+      "question": "Which courses require completion of courses that themselves require Linear Algebra?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Linear Algebra.",
+        "4. This creates a chain: target course -> prerequisite course -> Linear Algebra.",
+        "5. Return courses that are indirectly dependent on Linear Algebra."
+      ],
+      "entities": [
+        "Linear Algebra"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q132",
+      "question": "What courses have {entity1} as a prerequisite and Lab assignment as an evaluation method, and are {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Data Structures and Algorithms as prerequisite.",
+        "3. Filter courses that use Lab assignment as evaluation method.",
+        "4. Further filter courses categorized as Study Program Elective Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Data Structures and Algorithms",
+        "Lab assignment",
+        "Study Program Elective Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q133",
+      "question": "Which courses have the same prerequisites as Differential Equations?",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Differential Equations.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Differential Equations itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Differential Equations"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/differential_equations> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/differential_equations>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q134",
+      "question": "Find courses that require completion of 4-credit courses first.",
+      "thoughts": [
+        "1. This query involves checking properties of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the credit value of those prerequisite courses.",
+        "4. Filter for prerequisites that have exactly 4 credits.",
+        "5. Return courses whose prerequisites are worth 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_credits"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-credits"
+    },
+    {
+      "id": "q135",
+      "question": "Find courses that use '{entity1}' for assessment, belong to 'Computer System Laboratory' research team, and have code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Group Project as evaluation method.",
+        "3. Filter courses associated with Computer System Laboratory research group.",
+        "4. Further filter courses with specific course code CSCE604271.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Group Project",
+        "Computer System Laboratory",
+        "CSCE604271"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_code> \"CSCE604271\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q136",
+      "question": "Which courses require completion of courses that are evaluated using Programming Assignment?",
+      "thoughts": [
+        "1. This query involves checking evaluation methods of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the evaluation methods of those prerequisite courses.",
+        "4. Filter for prerequisites that use Programming Assignment evaluation.",
+        "5. Return courses whose prerequisites are evaluated using Programming Assignment."
+      ],
+      "entities": [
+        "Programming Assignment"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-eval"
+    },
+    {
+      "id": "q137",
+      "question": "Find the course that uses {entity1} for assessment, belongs to Study Program Elective Course category, and has code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Lab Assignment as evaluation method.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses with specific course code CSCE604123.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "Study Program Elective Course",
+        "CSCE604123"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_category",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604123\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition-code"
+    },
+    {
+      "id": "q138",
+      "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
+      "thoughts": [
+        "1. This query involves checking categories of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the category of those prerequisite courses.",
+        "4. Filter for prerequisites that are categorized as Study Program Mandatory Course.",
+        "5. Return courses whose prerequisites are Study Program Mandatory Course."
+      ],
+      "entities": [
+        "Study Program Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-category"
+    },
+    {
+      "id": "q139",
+      "question": "Which course is evaluated using {entity1}, categorized as Study Program Elective Course, and identified by code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Lab Assignment as evaluation method.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses with specific course code CSCE604271.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "Study Program Elective Course",
+        "CSCE604271"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_category",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604271\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition-code"
+    },
+    {
+      "id": "q140",
+      "question": "Which course is evaluated using {entity1}, categorized as Study Program Elective Course, and identified by code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Test as evaluation method.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses with specific course code CSCE604151.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Test",
+        "Study Program Elective Course",
+        "CSCE604151"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_category",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604151\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition-code"
+    },
+    {
+      "id": "q141",
+      "question": "Find courses that use both '{entity1}' and 'Group task' for assessment and are coded as '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Test and Group task as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604126.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Test",
+        "Group task",
+        "CSCE604126"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_evaluation_method> <http://example.org/group_task>.?course <http://example.org/has_course_code> \"CSCE604126\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q142",
+      "question": "Which courses require completion of courses that themselves require Programming Basics 1?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Programming Basics 1.",
+        "4. This creates a chain: target course -> prerequisite course -> Programming Basics 1.",
+        "5. Return courses that are indirectly dependent on Programming Basics 1."
+      ],
+      "entities": [
+        "Programming Basics 1"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q143",
+      "question": "What courses have prerequisites with 4 credits?",
+      "thoughts": [
+        "1. This query involves checking properties of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the credit value of those prerequisite courses.",
+        "4. Filter for prerequisites that have exactly 4 credits.",
+        "5. Return courses whose prerequisites are worth 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_credits"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-credits"
+    },
+    {
+      "id": "q144",
+      "question": "Which courses need {entity1} completed first, employ Test for evaluation, and are classified as {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Programming Basics 1 as prerequisite.",
+        "3. Filter courses that use Test as evaluation method.",
+        "4. Further filter courses categorized as Study Program Mandatory Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Programming Basics 1",
+        "Test",
+        "Study Program Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q145",
+      "question": "Which courses are evaluated using '{entity1}', connected to 'Information Retrieval and Natural Language Processing' research group, and identified by '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Test as evaluation method.",
+        "3. Filter courses associated with Information Retrieval and Natural Language Processing research group.",
+        "4. Further filter courses with specific course code CSCE604029.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Test",
+        "Information Retrieval and Natural Language Processing",
+        "CSCE604029"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_code> \"CSCE604029\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q146",
+      "question": "What courses have '{entity1}' and 'Test' as evaluation methods and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Test and Test as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604229.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Test",
+        "CSCE604229"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_code> \"CSCE604229\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q147",
+      "question": "Which courses have the same prerequisites as Introduction to Artificial Intelligence and Data Science?",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Introduction to Artificial Intelligence and Data Science.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Introduction to Artificial Intelligence and Data Science itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Introduction to Artificial Intelligence and Data Science"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/introduction_to_artificial_intelligence_and_data_science> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/introduction_to_artificial_intelligence_and_data_science>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q148",
+      "question": "Which courses have prerequisites classified under the Faculty Mandatory Course category?",
+      "thoughts": [
+        "1. This query involves checking categories of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the category of those prerequisite courses.",
+        "4. Filter for prerequisites that are categorized as Faculty Mandatory Course.",
+        "5. Return courses whose prerequisites are Faculty Mandatory Course."
+      ],
+      "entities": [
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-category"
+    },
+    {
+      "id": "q149",
+      "question": "Which courses have the same prerequisites as Bioinformatics?",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Bioinformatics.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Bioinformatics itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Bioinformatics"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/bioinformatics> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/bioinformatics>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q150",
+      "question": "Which course offers the most credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q152",
+      "question": "What research lab develops the largest number of courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q153",
+      "question": "What courses have prerequisites with 3 credits?",
+      "thoughts": [
+        "1. This query involves checking properties of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the credit value of those prerequisite courses.",
+        "4. Filter for prerequisites that have exactly 3 credits.",
+        "5. Return courses whose prerequisites are worth 3 credits."
+      ],
+      "entities": [
+        "3 credits"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_credits"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-credits"
+    },
+    {
+      "id": "q154",
+      "question": "Which research group is associated with the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q155",
+      "question": "Find courses that use '{entity1}' for assessment, belong to 'Reliable Software Engineering' research team, and have code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Programming Assignment as evaluation method.",
+        "3. Filter courses associated with Reliable Software Engineering research group.",
+        "4. Further filter courses with specific course code CSCE604045.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Programming Assignment",
+        "Reliable Software Engineering",
+        "CSCE604045"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_code> \"CSCE604045\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q156",
+      "question": "Which research group is associated with the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q157",
+      "question": "What courses have '{entity1}' and 'Lab Assignment' as evaluation methods and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Lab Assignment and Lab Assignment as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604032.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "CSCE604032"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_code> \"CSCE604032\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q158",
+      "question": "What courses have prerequisites with Data Structures and Algorithms as their prerequisites?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Data Structures and Algorithms.",
+        "4. This creates a chain: target course -> prerequisite course -> Data Structures and Algorithms.",
+        "5. Return courses that are indirectly dependent on Data Structures and Algorithms."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q159",
+      "question": "Which course has the highest number of credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q160",
+      "question": "Which course has the highest number of credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q161",
+      "question": "Find courses sharing the same prerequisite requirements as Introduction to Software Security.",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Introduction to Software Security.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Introduction to Software Security itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Introduction to Software Security"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/introduction_to_software_security> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/introduction_to_software_security>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q162",
+      "question": "What courses have prerequisites that have Group Project as their evaluation method?",
+      "thoughts": [
+        "1. This query involves checking evaluation methods of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the evaluation methods of those prerequisite courses.",
+        "4. Filter for prerequisites that use Group Project evaluation.",
+        "5. Return courses whose prerequisites are evaluated using Group Project."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-eval"
+    },
+    {
+      "id": "q163",
+      "question": "Which courses require completion of courses that are evaluated using Test?",
+      "thoughts": [
+        "1. This query involves checking evaluation methods of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the evaluation methods of those prerequisite courses.",
+        "4. Filter for prerequisites that use Test evaluation.",
+        "5. Return courses whose prerequisites are evaluated using Test."
+      ],
+      "entities": [
+        "Test"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-eval"
+    },
+    {
+      "id": "q164",
+      "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
+      "thoughts": [
+        "1. This query involves checking categories of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the category of those prerequisite courses.",
+        "4. Filter for prerequisites that are categorized as Study Program Mandatory Course.",
+        "5. Return courses whose prerequisites are Study Program Mandatory Course."
+      ],
+      "entities": [
+        "Study Program Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-category"
+    },
+    {
+      "id": "q165",
+      "question": "What courses have {entity1} as a prerequisite and Test as an evaluation method, and are {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Linear Algebra as prerequisite.",
+        "3. Filter courses that use Test as evaluation method.",
+        "4. Further filter courses categorized as Faculty Mandatory Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Linear Algebra",
+        "Test",
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q166",
+      "question": "What courses have '{entity1}' and 'Task' as evaluation methods and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Task and Task as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604078.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Task",
+        "CSCE604078"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_course_code> \"CSCE604078\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q167",
+      "question": "Which 5 courses are most frequently required as prerequisites?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q168",
+      "question": "What courses have '{entity1}' and 'Lab assignment' as evaluation methods and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with multiple conditions on evaluation methods and course code.",
+        "2. Need to find courses that use both Lab assignment and Lab assignment as evaluation methods.",
+        "3. Additionally filter by specific course code CSCE604036.",
+        "4. All three conditions must be satisfied simultaneously.",
+        "5. Return courses that match all criteria."
+      ],
+      "entities": [
+        "Lab assignment",
+        "CSCE604036"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_course_code> \"CSCE604036\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-double-evaluation-code"
+    },
+    {
+      "id": "q169",
+      "question": "Which courses have prerequisites classified under the Faculty Mandatory Course category?",
+      "thoughts": [
+        "1. This query involves checking categories of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the category of those prerequisite courses.",
+        "4. Filter for prerequisites that are categorized as Faculty Mandatory Course.",
+        "5. Return courses whose prerequisites are Faculty Mandatory Course."
+      ],
+      "entities": [
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-category"
+    },
+    {
+      "id": "q170",
+      "question": "Which research team has created the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q171",
+      "question": "Find courses whose prerequisite courses use Group Project for assessment.",
+      "thoughts": [
+        "1. This query involves checking evaluation methods of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the evaluation methods of those prerequisite courses.",
+        "4. Filter for prerequisites that use Group Project evaluation.",
+        "5. Return courses whose prerequisites are evaluated using Group Project."
+      ],
+      "entities": [
+        "Group Project"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-eval"
+    },
+    {
+      "id": "q172",
+      "question": "Which courses require completion of courses that themselves require Linear Algebra?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Linear Algebra.",
+        "4. This creates a chain: target course -> prerequisite course -> Linear Algebra.",
+        "5. Return courses that are indirectly dependent on Linear Algebra."
+      ],
+      "entities": [
+        "Linear Algebra"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/linear_algebra>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q173",
+      "question": "What courses have the evaluation method '{entity1}' and are associated with the research group 'Center for Cyber Security and Cryptography' and have the course code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Task as evaluation method.",
+        "3. Filter courses associated with Center for Cyber Security and Cryptography research group.",
+        "4. Further filter courses with specific course code CSCE604156.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Task",
+        "Center for Cyber Security and Cryptography",
+        "CSCE604156"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/task>.?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.?course <http://example.org/has_course_code> \"CSCE604156\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q174",
+      "question": "Which course offers the most credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q175",
+      "question": "What are the 5 most common prerequisite courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q176",
+      "question": "Find courses that belong to the {entity1} research team, fall under the Study Program Elective Course category, and use {entity3} for assessment.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses associated with Information Retrieval and Natural Language Processing research group.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses that use Test as evaluation method.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Information Retrieval and Natural Language Processing",
+        "Study Program Elective Course",
+        "Test"
+      ],
+      "properties": [
+        "has_research_group",
+        "has_course_category",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition"
+    },
+    {
+      "id": "q177",
+      "question": "Which courses require completion of courses that themselves require Data Structures and Algorithms?",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Data Structures and Algorithms.",
+        "4. This creates a chain: target course -> prerequisite course -> Data Structures and Algorithms.",
+        "5. Return courses that are indirectly dependent on Data Structures and Algorithms."
+      ],
+      "entities": [
+        "Data Structures and Algorithms"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/data_structures_and_algorithms>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q178",
+      "question": "Find courses that use '{entity1}' for assessment, belong to 'Reliable Software Engineering' research team, and have code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Lab Assignment as evaluation method.",
+        "3. Filter courses associated with Reliable Software Engineering research group.",
+        "4. Further filter courses with specific course code CSCE604174.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "Reliable Software Engineering",
+        "CSCE604174"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_code> \"CSCE604174\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q179",
+      "question": "Find courses where Introduction to Digital Systems is a prerequisite of their prerequisites.",
+      "thoughts": [
+        "1. This is a complex query requiring two levels of prerequisite relationships.",
+        "2. First find courses that have some prerequisite course.",
+        "3. Then check if those prerequisite courses themselves require Introduction to Digital Systems.",
+        "4. This creates a chain: target course -> prerequisite course -> Introduction to Digital Systems.",
+        "5. Return courses that are indirectly dependent on Introduction to Digital Systems."
+      ],
+      "entities": [
+        "Introduction to Digital Systems"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_digital_systems>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-of-prereq"
+    },
+    {
+      "id": "q180",
+      "question": "Find the course that uses {entity1} for assessment, belongs to Faculty Mandatory Course category, and has code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Demo as evaluation method.",
+        "3. Filter courses categorized as Faculty Mandatory Course.",
+        "4. Further filter courses with specific course code CSGE601021.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Demo",
+        "Faculty Mandatory Course",
+        "CSGE601021"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_category",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/demo>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.?course <http://example.org/has_course_code> \"CSGE601021\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition-code"
+    },
+    {
+      "id": "q181",
+      "question": "What courses have {entity1} as their research group, are categorized as Study Program Elective Course, and use {entity3} as their evaluation method?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses associated with Computer System Laboratory research group.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses that use Group Project as evaluation method.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Computer System Laboratory",
+        "Study Program Elective Course",
+        "Group Project"
+      ],
+      "properties": [
+        "has_research_group",
+        "has_course_category",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition"
+    },
+    {
+      "id": "q182",
+      "question": "Find courses that use '{entity1}' for assessment, belong to 'Reliable Software Engineering' research team, and have code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Lab Assignment as evaluation method.",
+        "3. Filter courses associated with Reliable Software Engineering research group.",
+        "4. Further filter courses with specific course code CSCE604123.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "Reliable Software Engineering",
+        "CSCE604123"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_code> \"CSCE604123\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q183",
+      "question": "Which course has the highest number of credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q184",
+      "question": "What are the 5 most common prerequisite courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the most common prerequisites.",
+        "2. Group all prerequisite relationships by the prerequisite course.",
+        "3. Count how many times each course appears as a prerequisite.",
+        "4. Sort by count in descending order to find most frequent.",
+        "5. Limit results to top 5 most commonly required courses."
+      ],
+      "entities": [],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "common-prerequisites"
+    },
+    {
+      "id": "q185",
+      "question": "Which research group is associated with the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q186",
+      "question": "Find courses that require {entity1} as prerequisite, use Test for assessment, and belong to {entity3} category.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Software Engineering as prerequisite.",
+        "3. Filter courses that use Test as evaluation method.",
+        "4. Further filter courses categorized as Study Program Elective Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Software Engineering",
+        "Test",
+        "Study Program Elective Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/software_engineering>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q187",
+      "question": "Which courses are evaluated using '{entity1}', connected to 'Machine Learning and Computer Vision' research group, and identified by '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Lab Assignment as evaluation method.",
+        "3. Filter courses associated with Machine Learning and Computer Vision research group.",
+        "4. Further filter courses with specific course code CSCE604133.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Lab Assignment",
+        "Machine Learning and Computer Vision",
+        "CSCE604133"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/lab_assignment>.?course <http://example.org/has_research_group> <http://example.org/machine_learning_and_computer_vision>.?course <http://example.org/has_course_code> \"CSCE604133\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q188",
+      "question": "Which courses require completion of courses that are evaluated using Task?",
+      "thoughts": [
+        "1. This query involves checking evaluation methods of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the evaluation methods of those prerequisite courses.",
+        "4. Filter for prerequisites that use Task evaluation.",
+        "5. Return courses whose prerequisites are evaluated using Task."
+      ],
+      "entities": [
+        "Task"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/task>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-eval"
+    },
+    {
+      "id": "q189",
+      "question": "Which courses are evaluated using '{entity1}', connected to 'Information Retrieval and Natural Language Processing' research group, and identified by '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Project as evaluation method.",
+        "3. Filter courses associated with Information Retrieval and Natural Language Processing research group.",
+        "4. Further filter courses with specific course code CSCE604230.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Project",
+        "Information Retrieval and Natural Language Processing",
+        "CSCE604230"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/project>.?course <http://example.org/has_research_group> <http://example.org/information_retrieval_and_natural_language_processing>.?course <http://example.org/has_course_code> \"CSCE604230\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q190",
+      "question": "Find courses that use '{entity1}' for assessment, belong to 'Computer System Laboratory' research team, and have code '{value}'.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Group Project as evaluation method.",
+        "3. Filter courses associated with Computer System Laboratory research group.",
+        "4. Further filter courses with specific course code CSCE604078.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Group Project",
+        "Computer System Laboratory",
+        "CSCE604078"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_research_group",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_research_group> <http://example.org/computer_system_laboratory>.?course <http://example.org/has_course_code> \"CSCE604078\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-research-eval-code"
+    },
+    {
+      "id": "q191",
+      "question": "Find courses that require {entity1} as prerequisite, use Individual Review for assessment, and belong to {entity3} category.",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Advanced Programming as prerequisite.",
+        "3. Filter courses that use Individual Review as evaluation method.",
+        "4. Further filter courses categorized as Study Program Mandatory Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Advanced Programming",
+        "Individual Review",
+        "Study Program Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/advanced_programming>.?course <http://example.org/has_evaluation_method> <http://example.org/individual_review>.?course <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q192",
+      "question": "Which course offers the most credits?",
+      "thoughts": [
+        "1. This query requires finding the maximum credit value among all courses.",
+        "2. Need to find all course entities and their credit values.",
+        "3. Use instance of property to identify course entities.",
+        "4. Use has_credits property to get credit values.",
+        "5. Sort by credits in descending order and return the top course."
+      ],
+      "entities": [],
+      "properties": [
+        "has_credits",
+        "instance of"
+      ],
+      "sparql": "select ?course ?credits where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> ?credits.} order by DESC(?credits) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-most-credits"
+    },
+    {
+      "id": "q193",
+      "question": "Which research team has created the most courses?",
+      "thoughts": [
+        "1. This query requires aggregation to find the research group with most courses.",
+        "2. Group all courses by their research group.",
+        "3. Count how many courses each research group has.",
+        "4. Sort by count in descending order to find the most productive.",
+        "5. Limit results to the top research group."
+      ],
+      "entities": [],
+      "properties": [
+        "has_research_group",
+        "instance of"
+      ],
+      "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "research-group-most-courses"
+    },
+    {
+      "id": "q194",
+      "question": "Which courses are simultaneously part of {entity1} research group, classified as Study Program Elective Course, and evaluated through {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses associated with Reliable Software Engineering research group.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses that use Group Project as evaluation method.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Reliable Software Engineering",
+        "Study Program Elective Course",
+        "Group Project"
+      ],
+      "properties": [
+        "has_research_group",
+        "has_course_category",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition"
+    },
+    {
+      "id": "q195",
+      "question": "Which courses are simultaneously part of {entity1} research group, classified as Study Program Elective Course, and evaluated through {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses associated with Center for Cyber Security and Cryptography research group.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses that use Test as evaluation method.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Center for Cyber Security and Cryptography",
+        "Study Program Elective Course",
+        "Test"
+      ],
+      "properties": [
+        "has_research_group",
+        "has_course_category",
+        "has_evaluation_method"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition"
+    },
+    {
+      "id": "q196",
+      "question": "Which course is evaluated using {entity1}, categorized as Study Program Elective Course, and identified by code '{value}'?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that use Programming Assignment as evaluation method.",
+        "3. Filter courses categorized as Study Program Elective Course.",
+        "4. Further filter courses with specific course code CSCE604128.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Programming Assignment",
+        "Study Program Elective Course",
+        "CSCE604128"
+      ],
+      "properties": [
+        "has_evaluation_method",
+        "has_course_category",
+        "has_course_code"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.?course <http://example.org/has_course_code> \"CSCE604128\".}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-triple-condition-code"
+    },
+    {
+      "id": "q197",
+      "question": "Find courses sharing the same prerequisite requirements as Web Application Architecture.",
+      "thoughts": [
+        "1. This query finds courses with identical prerequisite requirements.",
+        "2. First identify all prerequisites of Web Application Architecture.",
+        "3. Find other courses that have the same prerequisites.",
+        "4. Use filter to exclude Web Application Architecture itself from results.",
+        "5. Return courses with matching prerequisite patterns."
+      ],
+      "entities": [
+        "Web Application Architecture"
+      ],
+      "properties": [
+        "has_prerequisite_course"
+      ],
+      "sparql": "select distinct ?course where { <http://example.org/web_application_architecture> <http://example.org/has_prerequisite_course> ?prereq.?course <http://example.org/has_prerequisite_course> ?prereq.filter (?course != <http://example.org/web_application_architecture>) }",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-same-prerequisites"
+    },
+    {
+      "id": "q198",
+      "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
+      "thoughts": [
+        "1. This query involves checking categories of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the category of those prerequisite courses.",
+        "4. Filter for prerequisites that are categorized as Faculty Mandatory Course.",
+        "5. Return courses whose prerequisites are Faculty Mandatory Course."
+      ],
+      "entities": [
+        "Faculty Mandatory Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-category"
+    },
+    {
+      "id": "q199",
+      "question": "Which courses need {entity1} completed first, employ Group Project for evaluation, and are classified as {entity3}?",
+      "thoughts": [
+        "1. This is a complex query with three conditions that must all be satisfied.",
+        "2. Need to find courses that require Database as prerequisite.",
+        "3. Filter courses that use Group Project as evaluation method.",
+        "4. Further filter courses categorized as Study Program Elective Course.",
+        "5. Return courses that satisfy all three conditions simultaneously."
+      ],
+      "entities": [
+        "Database",
+        "Group Project",
+        "Study Program Elective Course"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_evaluation_method",
+        "has_course_category"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/database>.?course <http://example.org/has_evaluation_method> <http://example.org/group_project>.?course <http://example.org/has_course_category> <http://example.org/study_program_elective_course>.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prereq-eval-category"
+    },
+    {
+      "id": "q200",
+      "question": "Which courses have prerequisites worth 4 credits?",
+      "thoughts": [
+        "1. This query involves checking properties of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the credit value of those prerequisite courses.",
+        "4. Filter for prerequisites that have exactly 4 credits.",
+        "5. Return courses whose prerequisites are worth 4 credits."
+      ],
+      "entities": [
+        "4 credits"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_credits"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-credits"
+    },
+    {
+      "id": "q151",
+      "question": "Find courses that require completion of 3-credit courses first.",
+      "thoughts": [
+        "1. This query involves checking properties of prerequisite courses.",
+        "2. First find courses that have prerequisites.",
+        "3. Check the credit value of those prerequisite courses.",
+        "4. Filter for prerequisites that have exactly 3 credits.",
+        "5. Return courses whose prerequisites are worth 3 credits."
+      ],
+      "entities": [
+        "3 credits"
+      ],
+      "properties": [
+        "has_prerequisite_course",
+        "has_credits"
+      ],
+      "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
+      "category": "university",
+      "complexity": "advanced",
+      "templateId": "courses-with-prerequisite-credits"
+    }
+  ]
+    
