@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',  # For WebSockets
+    'channels',  # For WebSockets (keeping for potential future use)
     'rest_framework',
     'corsheaders',  # For cross-origin support
     'chat',
@@ -61,7 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wikidata_web.wsgi.application'
 ASGI_APPLICATION = 'wikidata_web.asgi.application'
 
-# Enhanced logging configuration to debug WebSocket issues
+# Enhanced logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -99,6 +99,12 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
+
+# Pusher configuration
+PUSHER_APP_ID = '1998736'
+PUSHER_KEY = '0379edb726d89ea8c1e9'
+PUSHER_SECRET = 'f463c5ed7feecb491a7c'
+PUSHER_CLUSTER = 'ap1'
 
 # Database
 DATABASES = {
@@ -140,7 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True  # For development - restrict in production
 CORS_ALLOW_CREDENTIALS = True
 
-# Add this line to allow the ngrok header
+# Add this line to allow headers
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -151,7 +157,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    'ngrok-skip-browser-warning',  # Add this for ngrok support
+    'ngrok-skip-browser-warning',
 ]
 
 # REST Framework settings
@@ -160,9 +166,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(BASE_DIR, '.env'))

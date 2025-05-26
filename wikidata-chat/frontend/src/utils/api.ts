@@ -1,5 +1,5 @@
 // frontend/src/utils/api.ts
-import { Chat, ChatWithMessages } from '../types';
+import { Chat, ChatWithMessages, AgentSettings } from '../types';
 import { API_BASE_URL, API_HOST } from '../config/api';
 
 // Helper function to get headers with ngrok support
@@ -57,4 +57,19 @@ export const deleteChat = async (chatId: string): Promise<void> => {
   if (!response.ok) {
     throw new Error(`Failed to delete chat: ${response.status} ${response.statusText}`);
   }
+};
+
+export const sendMessage = async (chatId: string, message: string, settings: AgentSettings): Promise<{ status: string }> => {
+  const response = await fetch(`${API_BASE_URL}/chats/${chatId}/send_message/`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({
+      message,
+      settings
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
 };

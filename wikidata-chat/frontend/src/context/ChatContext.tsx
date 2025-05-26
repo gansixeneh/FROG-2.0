@@ -10,20 +10,20 @@ import {
   Chat,
   ChatWithMessages,
   Message,
-  VisualizationFiles,
   AgentSettings,
 } from "../types";
-import { fetchChats, fetchChat, createChat } from "../utils/api";
-import { getWebSocketUrl, API_HOST } from "../config/api";
+import { fetchChats, fetchChat, createChat, sendMessage as apiSendMessage } from "../utils/api";
+import { pusherService, PusherMessage } from "../services/pusherService";
+import { API_HOST } from "../config/api";
 
 interface ChatContextType {
   chats: Chat[];
   currentChat: ChatWithMessages | null;
   isNavOpen: boolean;
   isLoading: boolean;
-  isProcessing: boolean; // Track if a message is being processed
-  socket: WebSocket | null;
+  isProcessing: boolean;
   settings: AgentSettings;
+  pusherStatus: any;
   loadChat: (chatId: string) => Promise<void>;
   startNewChat: () => Promise<void>;
   sendMessage: (content: string) => void;
@@ -44,8 +44,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [socketConnected, setSocketConnected] = useState(false);
+  const [pusherStatus, setPusherStatus] = useState(() => pusherService.getConnectionStatus());
 
   // Initialize settings from localStorage or use defaults
   const [settings, setSettings] = useState<AgentSettings>(() => {
@@ -63,11 +62,21 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     };
   });
 
+  // Monitor Pusher connection status
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const status = pusherService.getConnectionStatus();
+      setPusherStatus(status);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
     processedMessageIds.clear();
+    console.log("🧹 Cleared processed message IDs");
   };
-
   // Fetch all chats on initial load
   useEffect(() => {
     const loadChats = async () => {
@@ -93,182 +102,140 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     loadChats();
   }, []);
 
-  // Create a separate effect for WebSocket connection
-  useEffect(() => {
-    // Clean up function to close the socket when component unmounts
-    // or when currentChat changes
-    return () => {
-      if (socket) {
-        console.log("Closing WebSocket connection due to effect cleanup");
-        socket.close();
-        setSocketConnected(false);
-      }
-    };
-  }, [currentChat?.id]);
+  // Handle Pusher message processing
+  const handlePusherMessage = (data: PusherMessage) => {
+    console.log("🎯 Processing Pusher message:", data);
+    
+    const messageId = data.message_id || `fallback-${Date.now()}-${Math.random()}`;
 
-  const setupWebSocket = (chatId: string) => {
-    // Close existing socket if open
-    if (socket) {
-      console.log("Closing existing WebSocket connection");
-      socket.close();
-      setSocketConnected(false);
+    // Skip if we've already processed this message
+    if (processedMessageIds.has(messageId)) {
+      console.log(`⏭️ Skipping duplicate message with ID: ${messageId}`);
+      return;
     }
 
-    // Clear the set of processed message IDs when setting up a new WebSocket
-    clearProcessedMessageIds();
+    // Add to processed message set
+    processedMessageIds.add(messageId);
+    console.log(`✅ Processing new message with ID: ${messageId}`);
 
-    // Create new WebSocket connection
-    const wsUrl = getWebSocketUrl(chatId);
-    console.log("Connecting to WebSocket:", wsUrl);
+    // Handle debug message (system message with debug content)
+    if (data.debug) {
+      console.log("🐛 Processing debug message:", data.debug);
+      const newMessage: Message = {
+        id: messageId,
+        role: "system",
+        content: data.debug,
+        created_at: new Date().toISOString(),
+      };
 
-    // Create WebSocket with specific options for better real-time performance
-    const newSocket = new WebSocket(wsUrl);
+      setCurrentChat((prev) => {
+        if (!prev) {
+          console.log("⚠️ No current chat to add debug message to");
+          return null;
+        }
+        console.log("📝 Adding debug message to chat:", newMessage.content.substring(0, 50) + "...");
+        const updatedChat = {
+          ...prev,
+          messages: [...prev.messages, newMessage],
+        };
 
-    // Force immediate connection for ngrok
-    if (API_HOST.includes("ngrok")) {
-      console.log("Configuring WebSocket for ngrok real-time streaming");
+        // Force immediate scroll for real-time feedback
+        setTimeout(() => {
+          const messagesEndElement = document.getElementById("messages-end");
+          if (messagesEndElement) {
+            messagesEndElement.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 0);
+
+        return updatedChat;
+      });
+      return;
+    }
+    // Handle regular message with possible visualization files
+    if (data.role && data.message) {
+      console.log(`💬 Processing ${data.role} message:`, data.message.substring(0, 50) + "...");
+      const newMessage: Message = {
+        id: messageId,
+        role: data.role,
+        content: data.message,
+        created_at: new Date().toISOString(),
+        visualization_files: data.visualization_files || undefined,
+      };
+
+      setCurrentChat((prev) => {
+        if (!prev) {
+          console.log("⚠️ No current chat to add message to");
+          return null;
+        }
+        console.log(`📝 Adding ${data.role} message to chat`);
+        return {
+          ...prev,
+          messages: [...prev.messages, newMessage],
+        };
+      });
+
+      if (data.role === "assistant") {
+        console.log("🤖 Assistant message received, stopping processing state");
+        setIsProcessing(false);
+        refreshChatsList();
+      }
+      return;
     }
 
-    setSocket(newSocket);
-
-    // Set up WebSocket event handlers with immediate processing
-    newSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const messageId =
-        data.message_id || `fallback-${Date.now()}-${Math.random()}`;
-
-      // Skip if we've already processed this message
-      if (processedMessageIds.has(messageId)) {
-        console.log(`Skipping duplicate message with ID: ${messageId}`);
-        return;
-      }
-
-      // Add to processed message set
-      processedMessageIds.add(messageId);
-
-      // Handle debug message (system message with debug content) - IMMEDIATE PROCESSING
-      if (data.debug) {
-        const newMessage: Message = {
-          id: messageId,
-          role: "system",
-          content: data.debug,
-          created_at: new Date().toISOString(),
-        };
-
-        // Use functional update to ensure immediate state update
-        setCurrentChat((prev) => {
-          if (!prev) return null;
-          const updatedChat = {
-            ...prev,
-            messages: [...prev.messages, newMessage],
-          };
-
-          // Force immediate scroll for real-time feedback
-          setTimeout(() => {
-            const messagesEndElement = document.getElementById("messages-end");
-            if (messagesEndElement) {
-              messagesEndElement.scrollIntoView({ behavior: "smooth" });
-            }
-          }, 0);
-
-          return updatedChat;
-        });
-
-        return; // Stop processing after handling debug message
-      }
-
-      // Handle file content/error responses (legacy support)
-      if (data.file_content || data.file_error) {
-        console.log(
-          `Received file ${data.file_error ? "error" : "content"} for type:`,
-          data.file_type
-        );
-        if (data.file_content) {
-          // Create and download the file
-          const blob = new Blob([data.file_content], { type: "text/plain" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download =
-            data.file_name ||
-            `${data.file_type}-${Date.now()}.${getFileExtension(
-              data.file_type
-            )}`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-        } else if (data.file_error) {
-          alert(`Error downloading file: ${data.file_error}`);
-        }
-        return;
-      }
-
-      // Handle regular message with possible visualization files
-      if (data.role && data.message) {
-        const newMessage: Message = {
-          id: messageId,
-          role: data.role,
-          content: data.message,
-          created_at: new Date().toISOString(),
-          visualization_files: data.visualization_files || undefined,
-        };
-
-        setCurrentChat((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            messages: [...prev.messages, newMessage],
-          };
-        });
-
-        if (data.role === "assistant") {
-          setIsProcessing(false);
-          refreshChatsList();
-        }
-        return;
-      }
-
-      // Log unhandled message type
-      console.warn("Unhandled WebSocket message type:", data);
-    };
-
-    newSocket.onopen = () => {
-      console.log("WebSocket connection established for real-time streaming");
-      setSocketConnected(true);
-
-      // Send a ping to ensure connection is active
-      if (API_HOST.includes("ngrok")) {
-        console.log("WebSocket connected through ngrok tunnel");
-      }
-    };
-
-    newSocket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setSocketConnected(false);
-      setIsProcessing(false);
-    };
-
-    newSocket.onclose = (event) => {
-      console.log("WebSocket connection closed", event.code, event.reason);
-      setSocketConnected(false);
-      setIsProcessing(false);
-
-      // If the socket closed unexpectedly (not by our code), attempt to reconnect
-      if (event.code !== 1000 && currentChat?.id === chatId) {
-        console.log(
-          "Attempting to reconnect WebSocket for real-time streaming..."
-        );
-        setTimeout(() => setupWebSocket(chatId), 1000); // Faster reconnection
-      }
-    };
-
-    return newSocket;
+    // Log unhandled message type
+    console.warn("⚠️ Unhandled Pusher message type:", data);
   };
 
+  // Setup Pusher for current chat with retry logic
+  const setupPusher = (chatId: string) => {
+    // Clear the set of processed message IDs when setting up a new channel
+    clearProcessedMessageIds();
+
+    console.log("🔗 Setting up Pusher for chat:", chatId);
+
+    const callbacks = {
+      onDebugMessage: (data: PusherMessage) => {
+        console.log("🐛 Debug message callback triggered:", data);
+        handlePusherMessage(data);
+      },
+      onSystemMessage: (data: PusherMessage) => {
+        console.log("🔧 System message callback triggered:", data);
+        handlePusherMessage(data);
+      },
+      onChatMessage: (data: PusherMessage) => {
+        console.log("💬 Chat message callback triggered:", data);
+        handlePusherMessage(data);
+      },
+      onMessage: (data: PusherMessage) => {
+        console.log("📨 Generic message callback triggered:", data);
+        handlePusherMessage(data);
+      },
+    };
+
+    // Try to subscribe, with retry if connection isn't ready
+    const attemptSubscription = () => {
+      pusherService.subscribeToChat(chatId, callbacks);
+    };
+
+    attemptSubscription();
+
+    // If connection isn't ready, retry after a delay
+    const status = pusherService.getConnectionStatus();
+    if (!status.isConnected) {
+      console.log("⏳ Pusher not connected, will retry subscription");
+      setTimeout(() => {
+        const newStatus = pusherService.getConnectionStatus();
+        if (newStatus.isConnected) {
+          console.log("🔄 Retrying Pusher subscription after connection");
+          attemptSubscription();
+        }
+      }, 2000);
+    }
+  };
   // Load a specific chat
   const loadChat = async (chatId: string) => {
     try {
+      console.log("📖 Loading chat:", chatId);
       setIsLoading(true);
       const chatData = await fetchChat(chatId);
       setCurrentChat(chatData);
@@ -280,32 +247,36 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       chatData.messages.forEach((msg) => {
         processedMessageIds.add(msg.id);
       });
+      console.log(`📝 Added ${chatData.messages.length} existing message IDs to processed set`);
 
-      // Connect to WebSocket for this chat
-      setupWebSocket(chatId);
+      // Setup Pusher for this chat
+      setupPusher(chatId);
 
       // Close sidebar on mobile after selecting a chat
       setIsNavOpen(false);
       setIsLoading(false);
+      console.log("✅ Chat loaded successfully");
     } catch (error) {
-      console.error("Error loading chat:", error);
+      console.error("❌ Error loading chat:", error);
       setIsLoading(false);
     }
   };
 
-  // Refresh just the chats list without affecting the websocket
+  // Refresh just the chats list without affecting the connection
   const refreshChatsList = async () => {
     try {
       const chatList = await fetchChats();
       setChats(chatList);
+      console.log("🔄 Refreshed chats list");
     } catch (error) {
-      console.error("Error refreshing chats list:", error);
+      console.error("❌ Error refreshing chats list:", error);
     }
   };
 
   // Start a new chat
   const startNewChat = async () => {
     try {
+      console.log("🆕 Creating new chat");
       setIsLoading(true);
       const newChat = await createChat();
 
@@ -317,8 +288,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
       setIsNavOpen(false);
       setIsLoading(false);
+      console.log("✅ New chat created and loaded");
     } catch (error) {
-      console.error("Error creating new chat:", error);
+      console.error("❌ Error creating new chat:", error);
       setIsLoading(false);
     }
   };
@@ -326,51 +298,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Send a message
   const sendMessage = (content: string) => {
     // Don't allow sending if already processing a message
-    if (isProcessing) {
-      console.log("Message already being processed, ignoring new message");
+    if (isProcessing || !currentChat) {
+      console.log("⚠️ Message already being processed or no chat selected");
       return;
     }
 
-    if (!socket || socket.readyState !== WebSocket.OPEN || !currentChat) {
-      console.error("WebSocket is not connected, attempting to reconnect...");
-      // Try to reconnect if socket is not open
-      if (currentChat) {
-        const newSocket = setupWebSocket(currentChat.id);
-
-        // Wait a short time for the connection to establish, then send the message
-        setTimeout(() => {
-          if (newSocket.readyState === WebSocket.OPEN) {
-            sendMessageToSocket(newSocket, content, currentChat);
-          } else {
-            // Give it one more chance after a longer delay
-            setTimeout(() => {
-              if (newSocket.readyState === WebSocket.OPEN) {
-                sendMessageToSocket(newSocket, content, currentChat);
-              } else {
-                console.error("Failed to reconnect WebSocket");
-                alert(
-                  "Connection error. Please refresh the page and try again."
-                );
-                setIsProcessing(false); // Reset processing state on error
-              }
-            }, 1000);
-          }
-        }, 300);
-      }
-      return;
-    }
-
-    // Socket is open, send message directly
-    sendMessageToSocket(socket, content, currentChat);
-  };
-
-  // Helper to send message to a socket
-  const sendMessageToSocket = (
-    socketToUse: WebSocket,
-    content: string,
-    chat: ChatWithMessages
-  ) => {
-    // Set processing state to true
+    console.log("📤 Sending message:", content.substring(0, 50) + "...");
     setIsProcessing(true);
 
     // Create a temporary message ID
@@ -389,21 +322,24 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
     setCurrentChat((prev) => {
       if (!prev) return null;
+      console.log("📝 Adding user message to UI immediately");
       return {
         ...prev,
         messages: [...prev.messages, newMessage],
       };
     });
 
-    // Send message to WebSocket
-    socketToUse.send(
-      JSON.stringify({
-        message: content,
-        settings: settings,
+    // Send message via API
+    apiSendMessage(currentChat.id, content, settings)
+      .then((response) => {
+        console.log("✅ Message sent successfully:", response);
       })
-    );
+      .catch((error) => {
+        console.error("❌ Error sending message:", error);
+        setIsProcessing(false);
+        alert("Error sending message. Please try again.");
+      });
   };
-
   // Toggle side navigation
   const toggleNav = () => {
     setIsNavOpen((prev) => !prev);
@@ -414,24 +350,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     setSettings(newSettings);
     try {
       localStorage.setItem("frog-settings", JSON.stringify(newSettings));
+      console.log("💾 Settings saved:", newSettings);
     } catch (error) {
-      console.error("Error saving settings to localStorage:", error);
+      console.error("❌ Error saving settings to localStorage:", error);
     }
   };
 
-  // Helper function to get file extension based on file type (used for legacy file handling)
-  const getFileExtension = (fileType: string): string => {
-    switch (fileType) {
-      case "json":
-        return "json";
-      case "mermaid":
-        return "mmd";
-      case "ttl":
-        return "ttl";
-      default:
-        return "txt";
-    }
-  };
+  // Cleanup Pusher connection on unmount
+  useEffect(() => {
+    return () => {
+      console.log("🧹 Cleaning up Pusher connection");
+      pusherService.disconnect();
+    };
+  }, []);
 
   return (
     <ChatContext.Provider
@@ -441,8 +372,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         isNavOpen,
         isLoading,
         isProcessing,
-        socket,
         settings,
+        pusherStatus,
         loadChat,
         startNewChat,
         sendMessage,
