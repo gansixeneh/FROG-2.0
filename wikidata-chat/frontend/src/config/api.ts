@@ -6,6 +6,7 @@ const DEFAULT_HOST = 'boss-amoeba-flying.ngrok-free.app';
 
 // Check if the environment has a custom API host
 export const API_HOST = process.env.REACT_APP_API_HOST || DEFAULT_HOST;
+console.log('Using API host: %s', API_HOST);
 
 // Determine API protocol (use HTTPS for production/ngrok, HTTP for localhost)
 export const API_PROTOCOL = API_HOST.includes('localhost') ? 'http' : 'https';

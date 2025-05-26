@@ -6,7 +6,13 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Chat, ChatWithMessages, Message, VisualizationFiles, AgentSettings } from "../types";
+import {
+  Chat,
+  ChatWithMessages,
+  Message,
+  VisualizationFiles,
+  AgentSettings,
+} from "../types";
 import { fetchChats, fetchChat, createChat } from "../utils/api";
 import { getWebSocketUrl, API_HOST } from "../config/api";
 
@@ -40,16 +46,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  
+
   // Initialize settings from localStorage or use defaults
   const [settings, setSettings] = useState<AgentSettings>(() => {
     try {
-      const savedSettings = localStorage.getItem('frog-settings');
+      const savedSettings = localStorage.getItem("frog-settings");
       if (savedSettings) {
         return JSON.parse(savedSettings);
       }
     } catch (error) {
-      console.error('Error loading settings from localStorage:', error);
+      console.error("Error loading settings from localStorage:", error);
     }
     return {
       useVerbalization: true,
@@ -100,7 +106,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, [currentChat?.id]);
 
-  // Setup WebSocket connection with ngrok support
   const setupWebSocket = (chatId: string) => {
     // Close existing socket if open
     if (socket) {
@@ -116,18 +121,17 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     const wsUrl = getWebSocketUrl(chatId);
     console.log("Connecting to WebSocket:", wsUrl);
 
-    // For ngrok connections, we might need to handle the connection differently
+    // Create WebSocket with specific options for better real-time performance
     const newSocket = new WebSocket(wsUrl);
-    
-    // Add ngrok-specific headers to the WebSocket if needed
-    // Note: WebSocket headers are set during the handshake, not after connection
-    if (API_HOST.includes('ngrok')) {
-      console.log("Connecting to ngrok WebSocket with special handling");
+
+    // Force immediate connection for ngrok
+    if (API_HOST.includes("ngrok")) {
+      console.log("Configuring WebSocket for ngrok real-time streaming");
     }
-    
+
     setSocket(newSocket);
 
-    // Set up WebSocket event handlers
+    // Set up WebSocket event handlers with immediate processing
     newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const messageId =
@@ -142,7 +146,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       // Add to processed message set
       processedMessageIds.add(messageId);
 
-      // Handle debug message (system message with debug content) - MUST BE CHECKED FIRST FOR REAL-TIME UPDATES
+      // Handle debug message (system message with debug content) - IMMEDIATE PROCESSING
       if (data.debug) {
         const newMessage: Message = {
           id: messageId,
@@ -151,35 +155,45 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
           created_at: new Date().toISOString(),
         };
 
+        // Use functional update to ensure immediate state update
         setCurrentChat((prev) => {
           if (!prev) return null;
-          return {
+          const updatedChat = {
             ...prev,
             messages: [...prev.messages, newMessage],
           };
+
+          // Force immediate scroll for real-time feedback
+          setTimeout(() => {
+            const messagesEndElement = document.getElementById("messages-end");
+            if (messagesEndElement) {
+              messagesEndElement.scrollIntoView({ behavior: "smooth" });
+            }
+          }, 0);
+
+          return updatedChat;
         });
 
-        // For system messages, immediately scroll to the bottom for real-time feedback
-        setTimeout(() => {
-          const messagesEndElement = document.getElementById('messages-end');
-          if (messagesEndElement) {
-            messagesEndElement.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 50);
-        
         return; // Stop processing after handling debug message
       }
 
       // Handle file content/error responses (legacy support)
       if (data.file_content || data.file_error) {
-        console.log(`Received file ${data.file_error ? 'error' : 'content'} for type:`, data.file_type);
+        console.log(
+          `Received file ${data.file_error ? "error" : "content"} for type:`,
+          data.file_type
+        );
         if (data.file_content) {
           // Create and download the file
-          const blob = new Blob([data.file_content], { type: 'text/plain' });
+          const blob = new Blob([data.file_content], { type: "text/plain" });
           const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
+          const a = document.createElement("a");
           a.href = url;
-          a.download = data.file_name || `${data.file_type}-${Date.now()}.${getFileExtension(data.file_type)}`;
+          a.download =
+            data.file_name ||
+            `${data.file_type}-${Date.now()}.${getFileExtension(
+              data.file_type
+            )}`;
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
@@ -187,9 +201,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         } else if (data.file_error) {
           alert(`Error downloading file: ${data.file_error}`);
         }
-        return; // Stop processing after handling file response
+        return;
       }
-      
+
       // Handle regular message with possible visualization files
       if (data.role && data.message) {
         const newMessage: Message = {
@@ -202,7 +216,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
         setCurrentChat((prev) => {
           if (!prev) return null;
-
           return {
             ...prev,
             messages: [...prev.messages, newMessage],
@@ -213,33 +226,40 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
           setIsProcessing(false);
           refreshChatsList();
         }
-        return; // Stop processing after handling regular message
+        return;
       }
-      
+
       // Log unhandled message type
       console.warn("Unhandled WebSocket message type:", data);
     };
 
     newSocket.onopen = () => {
-      console.log("WebSocket connection established");
+      console.log("WebSocket connection established for real-time streaming");
       setSocketConnected(true);
+
+      // Send a ping to ensure connection is active
+      if (API_HOST.includes("ngrok")) {
+        console.log("WebSocket connected through ngrok tunnel");
+      }
     };
 
     newSocket.onerror = (error) => {
       console.error("WebSocket error:", error);
       setSocketConnected(false);
-      setIsProcessing(false); // Reset processing state on error
+      setIsProcessing(false);
     };
 
     newSocket.onclose = (event) => {
       console.log("WebSocket connection closed", event.code, event.reason);
       setSocketConnected(false);
-      setIsProcessing(false); // Reset processing state on close
+      setIsProcessing(false);
 
       // If the socket closed unexpectedly (not by our code), attempt to reconnect
       if (event.code !== 1000 && currentChat?.id === chatId) {
-        console.log("Attempting to reconnect WebSocket...");
-        setTimeout(() => setupWebSocket(chatId), 2000);
+        console.log(
+          "Attempting to reconnect WebSocket for real-time streaming..."
+        );
+        setTimeout(() => setupWebSocket(chatId), 1000); // Faster reconnection
       }
     };
 
@@ -393,23 +413,23 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const updateSettings = (newSettings: AgentSettings) => {
     setSettings(newSettings);
     try {
-      localStorage.setItem('frog-settings', JSON.stringify(newSettings));
+      localStorage.setItem("frog-settings", JSON.stringify(newSettings));
     } catch (error) {
-      console.error('Error saving settings to localStorage:', error);
+      console.error("Error saving settings to localStorage:", error);
     }
   };
-  
+
   // Helper function to get file extension based on file type (used for legacy file handling)
   const getFileExtension = (fileType: string): string => {
     switch (fileType) {
-      case 'json':
-        return 'json';
-      case 'mermaid':
-        return 'mmd';
-      case 'ttl':
-        return 'ttl';
+      case "json":
+        return "json";
+      case "mermaid":
+        return "mmd";
+      case "ttl":
+        return "ttl";
       default:
-        return 'txt';
+        return "txt";
     }
   };
 

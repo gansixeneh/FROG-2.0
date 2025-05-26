@@ -8,6 +8,7 @@ from .models import Chat, Message
 import asyncio
 import os
 import uuid
+import time
 
 # Import the agent singleton instead of the WikidataAgent directly
 from agent.singletons import get_agent
@@ -71,17 +72,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.error(f"Error creating chat: {e}")
             return None    
+    # backend/chat/consumers.py - Updated debug_callback method
+
     async def debug_callback(self, output):
-        """Callback function for agent debugging output"""
+        """Callback function for agent debugging output with real-time streaming"""
         # Fun emojis for each node type
         node_emojis = {
             "Translation Node": "🌍",
             "Entity Extraction Node": "🕵️",
             "Strategy Selection Node": "🔀",
-            "Verbalization Node": "🗣️",
+            "Verbalization Node": "🗣️", 
             "Property Generation Node": "🧩",
             "SPARQL Generation Node": "⚙️",
             "Answer Generation Node": "🎁",
+            "Google Search Node": "🔍",
             # Default emoji for any unrecognized nodes
             "default": "🐸"
         }
@@ -99,15 +103,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Format the message with the emoji
         decorated_output = f"{emoji} {output}"
         
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'debug_message',
-                'message': decorated_output,
-                'message_id': f"debug_{self.message_counter}"
-            }
-        )
-        self.message_counter += 1
+        # Send immediately without buffering
+        try:
+            await self.send(text_data=json.dumps({
+                'debug': decorated_output,
+                'role': 'system',
+                'message_id': f"debug_{self.message_counter}",
+                'timestamp': time.time()  # Add timestamp for debugging
+            }))
+            
+            # Also send to the group for consistency
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'debug_message',
+                    'message': decorated_output,
+                    'message_id': f"debug_{self.message_counter}",
+                    'immediate': True  # Flag for immediate processing
+                }
+            )
+            self.message_counter += 1
+            
+            # Force flush any potential buffers
+            await asyncio.sleep(0)  # Yield control to ensure message is sent
+            
+        except Exception as e:
+            logger.error(f"Error sending debug message: {e}")
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
