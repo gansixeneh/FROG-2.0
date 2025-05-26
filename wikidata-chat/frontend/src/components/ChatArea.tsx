@@ -61,70 +61,72 @@ const ChatArea: React.FC = () => {
   };
 
   const renderWelcomeScreen = () => (
-  <div className="flex flex-col items-center justify-center h-full">
-    <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-4xl w-full mx-auto px-6 py-4 text-center">
-      <div className="flex justify-center">
-        <FrogLogo width={120} height={120} />
-      </div>
-      
-      <h2 className="text-2xl font-bold text-frog-dark mb-2">
-        Welcome to FrOG
-      </h2>
-      
-      <div className="text-lg text-frog-dark/80 font-semibold mb-2">
-        Framework of Open GraphRAG
-      </div>
-      
-      <p className="text-gray-700 mx-auto max-w-2xl mb-4">
-        Ask questions and get answers based on our knowledge graph. FrOG searches for entities,
-        constructs SPARQL queries, and provides detailed explanations of its reasoning process.
-      </p>
-      
-      <div className="bg-frog-light/50 p-4 rounded-lg max-w-3xl mx-auto border-2 border-frog-DEFAULT lily-pad">
-        <h3 className="font-semibold text-frog-dark mb-2">Try asking:</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left">
-          <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
-            <span>"Who is the current president of France?"</span>
-          </div>
-          <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
-            <span>"What is the capital of Japan and what is its population?"</span>
-          </div>
-          <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
-            <span>"List the spouses of Albert Einstein"</span>
-          </div>
-          <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
-            <span>"Which mountains in the Himalayas are higher than 8000 meters?"</span>
-          </div>
-          <div className="flex items-center">
-            <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0"></span>
-            <span>"What books did Isaac Asimov write?"</span>
-          </div>
+    <div className="flex flex-col items-center justify-start min-h-0 py-4 sm:py-8 max-h-full overflow-y-auto">
+      <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-4xl w-full mx-auto px-4 py-4 sm:px-6 sm:py-6 text-center mb-8">
+        <div className="flex justify-center">
+          <FrogLogo width={120} height={120} />
         </div>
         
-        {/* Settings indicator */}
-        <div className="mt-4 pt-3 border-t border-frog-dark/20">
-          <div className="text-sm text-frog-dark/70 flex items-center justify-center">
-            <span className="mr-2">Current Settings:</span>
-            <span className={`inline-block px-2 py-1 rounded text-xs font-medium mr-2 ${
-              settings.useVerbalization ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
-            }`}>
-              {settings.useVerbalization ? 'Verbalization ON' : 'SPARQL Only'}
-            </span>
-            <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-              settings.useGoogleSearch ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`}>
-              {settings.useGoogleSearch ? 'Google Search ON' : 'Wikidata Only'}
-            </span>
+        <h2 className="text-xl sm:text-2xl font-bold text-frog-dark mb-2">
+          Welcome to FrOG
+        </h2>
+        
+        <div className="text-base sm:text-lg text-frog-dark/80 font-semibold mb-2">
+          Framework of Open GraphRAG
+        </div>
+        
+        <p className="text-sm sm:text-base text-gray-700 mx-auto max-w-2xl mb-4">
+          Ask questions and get answers based on our knowledge graph. FrOG searches for entities,
+          constructs SPARQL queries, and provides detailed explanations of its reasoning process.
+        </p>
+        
+        <div className="bg-frog-light/50 p-3 sm:p-4 rounded-lg max-w-3xl mx-auto border-2 border-frog-DEFAULT lily-pad">
+          <h3 className="font-semibold text-frog-dark mb-2 text-sm sm:text-base">Try asking:</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 text-left text-xs sm:text-sm">
+            <div className="flex items-start">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0 mt-1"></span>
+              <span>"Who is the current president of France?"</span>
+            </div>
+            <div className="flex items-start">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0 mt-1"></span>
+              <span>"What is the capital of Japan and what is its population?"</span>
+            </div>
+            <div className="flex items-start">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0 mt-1"></span>
+              <span>"List the spouses of Albert Einstein"</span>
+            </div>
+            <div className="flex items-start">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0 mt-1"></span>
+              <span>"Which mountains in the Himalayas are higher than 8000 meters?"</span>
+            </div>
+            <div className="flex items-start lg:col-span-2 lg:justify-center">
+              <span className="inline-block w-2 h-2 bg-frog-dark rounded-full mr-2 flex-shrink-0 mt-1"></span>
+              <span>"What books did Isaac Asimov write?"</span>
+            </div>
+          </div>
+          
+          {/* Settings indicator */}
+          <div className="mt-3 sm:mt-4 pt-3 border-t border-frog-dark/20">
+            <div className="text-xs sm:text-sm text-frog-dark/70 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+              <span className="font-medium">Current Settings:</span>
+              <div className="flex flex-wrap gap-1 sm:gap-2 justify-center">
+                <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                  settings.useVerbalization ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                }`}>
+                  {settings.useVerbalization ? 'Verbalization ON' : 'SPARQL Only'}
+                </span>
+                <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                  settings.useGoogleSearch ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {settings.useGoogleSearch ? 'Google Search ON' : 'Wikidata Only'}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 
   if (isLoading) {
     return (
