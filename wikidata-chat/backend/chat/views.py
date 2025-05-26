@@ -50,19 +50,6 @@ class ChatViewSet(viewsets.ViewSet):
             return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=True, methods=['post'])
-    def test_pusher(self, request, pk=None):
-        """Test Pusher connection by sending a test message"""
-        try:
-            chat = Chat.objects.get(pk=pk)
-            pusher_service.send_debug_message(pk, "🧪 Test message from backend - Pusher is working!")
-            return Response({"status": "Test message sent"}, status=status.HTTP_200_OK)
-        except Chat.DoesNotExist:
-            return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            logger.error(f"Error sending test message: {e}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    @action(detail=True, methods=['post'])
     def send_message(self, request, pk=None):
         """Send a message to a chat via HTTP API"""
         try:

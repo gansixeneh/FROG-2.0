@@ -75,7 +75,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Clear processed message IDs when switching chats
   const clearProcessedMessageIds = () => {
     processedMessageIds.clear();
-    console.log("🧹 Cleared processed message IDs");
   };
   // Fetch all chats on initial load
   useEffect(() => {
@@ -104,23 +103,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
   // Handle Pusher message processing
   const handlePusherMessage = (data: PusherMessage) => {
-    console.log("🎯 Processing Pusher message:", data);
-    
     const messageId = data.message_id || `fallback-${Date.now()}-${Math.random()}`;
 
     // Skip if we've already processed this message
     if (processedMessageIds.has(messageId)) {
-      console.log(`⏭️ Skipping duplicate message with ID: ${messageId}`);
       return;
     }
 
     // Add to processed message set
     processedMessageIds.add(messageId);
-    console.log(`✅ Processing new message with ID: ${messageId}`);
 
     // Handle debug message (system message with debug content)
     if (data.debug) {
-      console.log("🐛 Processing debug message:", data.debug);
       const newMessage: Message = {
         id: messageId,
         role: "system",
@@ -130,10 +124,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
       setCurrentChat((prev) => {
         if (!prev) {
-          console.log("⚠️ No current chat to add debug message to");
           return null;
         }
-        console.log("📝 Adding debug message to chat:", newMessage.content.substring(0, 50) + "...");
         const updatedChat = {
           ...prev,
           messages: [...prev.messages, newMessage],
@@ -153,7 +145,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     }
     // Handle regular message with possible visualization files
     if (data.role && data.message) {
-      console.log(`💬 Processing ${data.role} message:`, data.message.substring(0, 50) + "...");
       const newMessage: Message = {
         id: messageId,
         role: data.role,
@@ -164,10 +155,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
       setCurrentChat((prev) => {
         if (!prev) {
-          console.log("⚠️ No current chat to add message to");
           return null;
         }
-        console.log(`📝 Adding ${data.role} message to chat`);
         return {
           ...prev,
           messages: [...prev.messages, newMessage],
@@ -175,15 +164,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       });
 
       if (data.role === "assistant") {
-        console.log("🤖 Assistant message received, stopping processing state");
         setIsProcessing(false);
         refreshChatsList();
       }
       return;
     }
 
-    // Log unhandled message type
-    console.warn("⚠️ Unhandled Pusher message type:", data);
+    // Log unhandled message type for debugging purposes
+    if (process.env.NODE_ENV === 'development') {
+      console.warn("Unhandled Pusher message type:", data);
+    }
   };
 
   // Setup Pusher for current chat with retry logic
@@ -191,23 +181,17 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     // Clear the set of processed message IDs when setting up a new channel
     clearProcessedMessageIds();
 
-    console.log("🔗 Setting up Pusher for chat:", chatId);
-
     const callbacks = {
       onDebugMessage: (data: PusherMessage) => {
-        console.log("🐛 Debug message callback triggered:", data);
         handlePusherMessage(data);
       },
       onSystemMessage: (data: PusherMessage) => {
-        console.log("🔧 System message callback triggered:", data);
         handlePusherMessage(data);
       },
       onChatMessage: (data: PusherMessage) => {
-        console.log("💬 Chat message callback triggered:", data);
         handlePusherMessage(data);
       },
       onMessage: (data: PusherMessage) => {
-        console.log("📨 Generic message callback triggered:", data);
         handlePusherMessage(data);
       },
     };
@@ -222,11 +206,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     // If connection isn't ready, retry after a delay
     const status = pusherService.getConnectionStatus();
     if (!status.isConnected) {
-      console.log("⏳ Pusher not connected, will retry subscription");
       setTimeout(() => {
         const newStatus = pusherService.getConnectionStatus();
         if (newStatus.isConnected) {
-          console.log("🔄 Retrying Pusher subscription after connection");
           attemptSubscription();
         }
       }, 2000);
@@ -235,7 +217,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Load a specific chat
   const loadChat = async (chatId: string) => {
     try {
-      console.log("📖 Loading chat:", chatId);
       setIsLoading(true);
       const chatData = await fetchChat(chatId);
       setCurrentChat(chatData);
@@ -247,7 +228,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       chatData.messages.forEach((msg) => {
         processedMessageIds.add(msg.id);
       });
-      console.log(`📝 Added ${chatData.messages.length} existing message IDs to processed set`);
 
       // Setup Pusher for this chat
       setupPusher(chatId);
@@ -255,9 +235,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       // Close sidebar on mobile after selecting a chat
       setIsNavOpen(false);
       setIsLoading(false);
-      console.log("✅ Chat loaded successfully");
     } catch (error) {
-      console.error("❌ Error loading chat:", error);
+      console.error("Error loading chat:", error);
       setIsLoading(false);
     }
   };
@@ -267,16 +246,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const chatList = await fetchChats();
       setChats(chatList);
-      console.log("🔄 Refreshed chats list");
     } catch (error) {
-      console.error("❌ Error refreshing chats list:", error);
+      console.error("Error refreshing chats list:", error);
     }
   };
 
   // Start a new chat
   const startNewChat = async () => {
     try {
-      console.log("🆕 Creating new chat");
       setIsLoading(true);
       const newChat = await createChat();
 
@@ -288,9 +265,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
       setIsNavOpen(false);
       setIsLoading(false);
-      console.log("✅ New chat created and loaded");
     } catch (error) {
-      console.error("❌ Error creating new chat:", error);
+      console.error("Error creating new chat:", error);
       setIsLoading(false);
     }
   };
@@ -299,11 +275,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const sendMessage = (content: string) => {
     // Don't allow sending if already processing a message
     if (isProcessing || !currentChat) {
-      console.log("⚠️ Message already being processed or no chat selected");
       return;
     }
 
-    console.log("📤 Sending message:", content.substring(0, 50) + "...");
     setIsProcessing(true);
 
     // Create a temporary message ID
@@ -322,7 +296,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
     setCurrentChat((prev) => {
       if (!prev) return null;
-      console.log("📝 Adding user message to UI immediately");
       return {
         ...prev,
         messages: [...prev.messages, newMessage],
@@ -332,10 +305,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     // Send message via API
     apiSendMessage(currentChat.id, content, settings)
       .then((response) => {
-        console.log("✅ Message sent successfully:", response);
+        // Message sent successfully
       })
       .catch((error) => {
-        console.error("❌ Error sending message:", error);
+        console.error("Error sending message:", error);
         setIsProcessing(false);
         alert("Error sending message. Please try again.");
       });
@@ -350,16 +323,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     setSettings(newSettings);
     try {
       localStorage.setItem("frog-settings", JSON.stringify(newSettings));
-      console.log("💾 Settings saved:", newSettings);
     } catch (error) {
-      console.error("❌ Error saving settings to localStorage:", error);
+      console.error("Error saving settings to localStorage:", error);
     }
   };
 
   // Cleanup Pusher connection on unmount
   useEffect(() => {
     return () => {
-      console.log("🧹 Cleaning up Pusher connection");
       pusherService.disconnect();
     };
   }, []);

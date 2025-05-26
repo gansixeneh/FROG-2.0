@@ -18,14 +18,8 @@ export class PusherService {
   private pendingSubscription: string | null = null;
 
   constructor() {
-    // Enable Pusher logging for debugging
-    Pusher.logToConsole = true;
-    
-    console.log('🚀 Initializing Pusher with config:', {
-      key: PUSHER_CONFIG.key,
-      cluster: PUSHER_CONFIG.cluster,
-      forceTLS: PUSHER_CONFIG.forceTLS
-    });
+    // Disable Pusher logging for production
+    Pusher.logToConsole = false;
 
     this.pusher = new Pusher(PUSHER_CONFIG.key, {
       cluster: PUSHER_CONFIG.cluster,
@@ -33,44 +27,38 @@ export class PusherService {
       enabledTransports: ['ws', 'wss'],
     });
 
-    // Log connection state changes
+    // Connection state handlers
     this.pusher.connection.bind('connected', () => {
-      console.log('✅ Pusher connected successfully');
       this.isConnected = true;
       
-      // If there was a pending subscription, handle it now
+      // Handle pending subscription if exists
       if (this.pendingSubscription) {
-        console.log('🔄 Processing pending subscription:', this.pendingSubscription);
         const pendingChatId = this.pendingSubscription;
         this.pendingSubscription = null;
-        // Re-trigger subscription now that we're connected
         setTimeout(() => this.handleDelayedSubscription(pendingChatId), 100);
       }
     });
 
     this.pusher.connection.bind('connecting', () => {
-      console.log('🔄 Pusher connecting...');
+      // Connection in progress
     });
 
     this.pusher.connection.bind('disconnected', () => {
-      console.log('❌ Pusher disconnected');
       this.isConnected = false;
     });
 
     this.pusher.connection.bind('error', (error: any) => {
-      console.error('❌ Pusher connection error:', error);
+      console.error('Pusher connection error:', error);
       this.isConnected = false;
     });
 
     this.pusher.connection.bind('unavailable', () => {
-      console.error('❌ Pusher connection unavailable');
       this.isConnected = false;
     });
   }
 
   private handleDelayedSubscription(chatId: string) {
-    console.log('🔄 Retrying subscription for chat:', chatId);
-    // This will be called by the component again
+    // Retry subscription after connection is established
   }
 
   subscribeToChat(chatId: string, callbacks: {
@@ -79,17 +67,13 @@ export class PusherService {
     onSystemMessage?: (data: PusherMessage) => void;
     onChatMessage?: (data: PusherMessage) => void;
   }) {
-    console.log('📡 Subscribe request for chat:', chatId, 'Connected:', this.isConnected);
-
     // If not connected, store the subscription for later
     if (!this.isConnected) {
-      console.log('⏳ Pusher not connected yet, storing subscription for later');
       this.pendingSubscription = chatId;
       
       // Try again after a delay
       setTimeout(() => {
         if (this.isConnected && this.pendingSubscription === chatId) {
-          console.log('🔄 Retrying subscription after connection established');
           this.subscribeToChat(chatId, callbacks);
         }
       }, 1000);
@@ -98,64 +82,53 @@ export class PusherService {
 
     // Unsubscribe from previous channel if exists
     if (this.currentChannel) {
-      console.log('🔄 Unsubscribing from previous channel:', this.currentChannel.name);
       this.currentChannel.unbind_all();
       this.pusher.unsubscribe(this.currentChannel.name);
     }
 
     const channelName = getChatChannelName(chatId);
-    console.log('📡 Subscribing to Pusher channel:', channelName);
-    
     this.currentChannel = this.pusher.subscribe(channelName);
 
-    // Log subscription success/error
+    // Subscription handlers (removed detailed logging)
     this.currentChannel.bind('pusher:subscription_succeeded', () => {
-      console.log('✅ Successfully subscribed to channel:', channelName);
+      // Successfully subscribed
     });
 
     this.currentChannel.bind('pusher:subscription_error', (error: any) => {
-      console.error('❌ Subscription error for channel:', channelName, error);
+      console.error('Subscription error:', error);
     });
 
-    // Bind event handlers with detailed logging
+    // Bind event handlers
     if (callbacks.onMessage) {
       this.currentChannel.bind('message', (data: any) => {
-        console.log('📨 Received message event:', data);
         callbacks.onMessage!(data);
       });
     }
 
     if (callbacks.onDebugMessage) {
       this.currentChannel.bind('debug_message', (data: any) => {
-        console.log('🐛 Received debug_message event:', data);
         callbacks.onDebugMessage!(data);
       });
     }
 
     if (callbacks.onSystemMessage) {
       this.currentChannel.bind('system_message', (data: any) => {
-        console.log('🔧 Received system_message event:', data);
         callbacks.onSystemMessage!(data);
       });
     }
 
     if (callbacks.onChatMessage) {
       this.currentChannel.bind('chat_message', (data: any) => {
-        console.log('💬 Received chat_message event:', data);
         callbacks.onChatMessage!(data);
       });
     }
-
-    console.log(`✅ Event handlers bound for channel: ${channelName}`);
   }
 
   unsubscribeFromChat() {
     if (this.currentChannel) {
-      console.log('🔄 Unsubscribing from channel:', this.currentChannel.name);
       this.currentChannel.unbind_all();
       this.pusher.unsubscribe(this.currentChannel.name);
       this.currentChannel = null;
-      console.log('✅ Unsubscribed from Pusher channel');
     }
     this.pendingSubscription = null;
   }
@@ -164,7 +137,6 @@ export class PusherService {
     this.unsubscribeFromChat();
     this.pusher.disconnect();
     this.isConnected = false;
-    console.log('🔌 Pusher disconnected');
   }
 
   // Method to check connection status

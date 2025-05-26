@@ -5,7 +5,6 @@ import Header from './components/Header';
 import SideNav from './components/SideNav';
 import ChatArea from './components/ChatArea';
 import MessageInput from './components/MessageInput';
-import PusherDebug from './components/PusherDebug';
 import { useChat } from './context/ChatContext';
 
 // Create a wrapper component to access the context
@@ -42,8 +41,6 @@ const AppContent: React.FC = () => {
         <ChatArea />
         <MessageInput />
       </main>
-      {/* Add Pusher Debug component */}
-      <PusherDebug />
     </div>
   );
 };

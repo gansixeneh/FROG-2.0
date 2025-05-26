@@ -6,8 +6,22 @@ import Settings from './Settings';
 import FrogLogo from './FrogLogo'; // Add this import
 
 const Header: React.FC = () => {
-  const { toggleNav, isNavOpen, startNewChat } = useChat();
+  const { toggleNav, isNavOpen, startNewChat, pusherStatus } = useChat();
   const [showSettings, setShowSettings] = useState(false);
+  
+  const getStatusColor = (isConnected: boolean) => {
+    return isConnected ? 'bg-green-400' : 'bg-red-400';
+  };
+
+  const getConnectionStateText = (state: string) => {
+    switch (state) {
+      case 'connected': return 'Connected';
+      case 'connecting': return 'Connecting';
+      case 'disconnected': return 'Disconnected';
+      case 'unavailable': return 'Unavailable';
+      default: return state;
+    }
+  };
   
   return (
     <header className="bg-gradient-to-r from-frog-dark via-frog-DEFAULT to-frog-dark shadow-md border-b border-frog-dark fixed top-0 left-0 right-0 z-10">
@@ -57,6 +71,14 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center space-x-3">
+          {/* Connection Status Indicator */}
+          <div className="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
+            <div className={`w-2 h-2 rounded-full ${getStatusColor(pusherStatus.isConnected)} animate-pulse`}></div>
+            <span className="text-white text-xs font-medium">
+              {getConnectionStateText(pusherStatus.connectionState)}
+            </span>
+          </div>
+          
           <button
             onClick={() => setShowSettings(true)}
             className="px-4 py-2 bg-frog-DEFAULT/20 text-white rounded-full hover:bg-frog-DEFAULT/30 focus:outline-none font-semibold transition-colors shadow-md flex items-center"
