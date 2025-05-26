@@ -44,7 +44,7 @@ const Header: React.FC = () => {
           </button>
           
           <div className="flex items-center ml-2">
-            <FrogLogo width={45} height={36} />
+            <FrogLogo width={36} height={36} simple={true} />
             <div className="ml-3">
               <h1 className="text-xl font-bold text-white">
                 FrOG

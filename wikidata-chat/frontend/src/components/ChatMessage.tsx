@@ -6,6 +6,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { formatSparqlQuery } from "../utils/sparqlFormatter";
 import VisualizationFiles from "./VisualizationFiles";
+import FrogLogo from "./FrogLogo"; // ADD THIS IMPORT
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
@@ -71,17 +72,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     return processedContent;
   };
   
-  // Simple frog icon for the assistant's messages
   const FrogIcon = () => (
-    <div className="w-8 h-8 rounded-full bg-frog-DEFAULT flex items-center justify-center mr-2 shadow-md">
-      <svg width="20" height="20" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="#4ade80" stroke="#166534" strokeWidth="3" />
-        <circle cx="35" cy="40" r="8" fill="white" />
-        <circle cx="35" cy="40" r="4" fill="#166534" />
-        <circle cx="65" cy="40" r="8" fill="white" />
-        <circle cx="65" cy="40" r="4" fill="#166534" />
-        <path d="M40,65 Q50,75 60,65" stroke="#166534" strokeWidth="3" fill="none" />
-      </svg>
+    <div className="w-8 h-8 rounded-full bg-frog-DEFAULT flex items-center justify-center mr-2 shadow-md overflow-hidden">
+      <FrogLogo width={24} height={24} simple={true} />
     </div>
   );
   
