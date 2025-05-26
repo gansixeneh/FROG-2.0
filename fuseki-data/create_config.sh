@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DATA_DIR="$(pwd)"
+
 # Start the config.ttl file with prefix definitions
 cat > config.ttl << 'EOF'
 @prefix :      <#> .
@@ -25,7 +27,7 @@ cat >> config.ttl << EOF
     fuseki:serviceUpdate               "update" ;
     fuseki:serviceUpload               "upload" .
 :dataset_visualization_logs  a        tdb2:DatasetTDB2 ;
-    tdb2:location      "/Users/$current_user/fuseki-data/visualization-logs" ;
+    tdb2:location      "$DATA_DIR/visualization-logs" ;
 .
 EOF
 
@@ -61,7 +63,7 @@ for dir in */; do
     fuseki:serviceUpdate              "update" ;
     fuseki:serviceUpload              "upload" .
 :dataset_$dir_basename  a        tdb2:DatasetTDB2 ;
-    tdb2:location      "/Users/$current_user/fuseki-data/$dir_basename" ;
+    tdb2:location      "$DATA_DIR/$dir_basename" ;
 .
 EOF
 done
@@ -73,4 +75,4 @@ mkdir -p visualization-logs
 
 # Optionally restart Fuseki server
 echo "To start Fuseki server with this configuration, run:"
-echo "fuseki-server --config=/Users/$current_user/fuseki-data/config.ttl"
+echo "fuseki-server --config=$DATA_DIR/config.ttl"
