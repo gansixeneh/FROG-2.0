@@ -73,8 +73,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   };
   
   const FrogIcon = () => (
-    <div className="w-8 h-8 rounded-full bg-frog-DEFAULT flex items-center justify-center mr-2 shadow-md overflow-hidden">
-      <FrogLogo width={24} height={24} simple={true} />
+    <div className="w-8 h-8 rounded-full bg-frog-accent flex items-center justify-center mr-2 shadow-md">
+      <FrogLogo width={24} height={24} simple={true} className="frog-logo-static" />
     </div>
   );
   
