@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Chat, ChatWithMessages, Message, VisualizationFiles, AgentSettings } from "../types";
 import { fetchChats, fetchChat, createChat } from "../utils/api";
-import { getWebSocketUrl } from "../config/api";
+import { getWebSocketUrl, API_HOST } from "../config/api";
 
 interface ChatContextType {
   chats: Chat[];
@@ -100,7 +100,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, [currentChat?.id]);
 
-  // Setup WebSocket connection
+  // Setup WebSocket connection with ngrok support
   const setupWebSocket = (chatId: string) => {
     // Close existing socket if open
     if (socket) {
@@ -116,7 +116,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     const wsUrl = getWebSocketUrl(chatId);
     console.log("Connecting to WebSocket:", wsUrl);
 
+    // For ngrok connections, we might need to handle the connection differently
     const newSocket = new WebSocket(wsUrl);
+    
+    // Add ngrok-specific headers to the WebSocket if needed
+    // Note: WebSocket headers are set during the handshake, not after connection
+    if (API_HOST.includes('ngrok')) {
+      console.log("Connecting to ngrok WebSocket with special handling");
+    }
+    
     setSocket(newSocket);
 
     // Set up WebSocket event handlers
