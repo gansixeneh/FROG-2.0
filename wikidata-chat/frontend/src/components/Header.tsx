@@ -3,30 +3,11 @@ import React, { useState } from 'react';
 import { useChat } from '../context/ChatContext';
 import { API_HOST } from '../config/api';
 import Settings from './Settings';
+import FrogLogo from './FrogLogo'; // Add this import
 
 const Header: React.FC = () => {
   const { toggleNav, isNavOpen, startNewChat } = useChat();
   const [showSettings, setShowSettings] = useState(false);
-  
-  // Frog logo SVG - simplified version for the header
-  const FrogLogo = () => (
-    <svg 
-      width="36" 
-      height="36" 
-      viewBox="0 0 200 200" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      className="frog-logo"
-    >
-      {/* Stylized frog head */}
-      <circle cx="100" cy="100" r="80" fill="#4ade80" />
-      <circle cx="70" cy="80" r="20" fill="white" />
-      <circle cx="70" cy="80" r="10" fill="#166534" />
-      <circle cx="130" cy="80" r="20" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="#166534" />
-      <path d="M80 120 Q100 140 120 120" stroke="#166534" strokeWidth="6" fill="none" />
-    </svg>
-  );
   
   return (
     <header className="bg-gradient-to-r from-frog-dark via-frog-DEFAULT to-frog-dark shadow-md border-b border-frog-dark fixed top-0 left-0 right-0 z-10">
@@ -63,7 +44,7 @@ const Header: React.FC = () => {
           </button>
           
           <div className="flex items-center ml-2">
-            <FrogLogo />
+            <FrogLogo width={36} height={36} />
             <div className="ml-3">
               <h1 className="text-xl font-bold text-white">
                 FrOG
