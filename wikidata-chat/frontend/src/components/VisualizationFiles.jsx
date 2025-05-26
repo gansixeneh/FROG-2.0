@@ -1,4 +1,5 @@
 import React from 'react';
+import { API_BASE_URL } from '../config/api';
 import '../styles/VisualizationFiles.css';
 
 const VisualizationFiles = ({ message }) => {
@@ -13,17 +14,15 @@ const VisualizationFiles = ({ message }) => {
 
   const handleDownload = (fileType) => {
     const fileData = visualizationFiles[fileType];
-    if (!fileData || !fileData.content) return;
+    if (!fileData || !fileData.download_url) return;
 
-    // Create a blob and download it
-    const blob = new Blob([fileData.content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
+    // Create a temporary anchor element and trigger download
     const a = document.createElement('a');
-    a.href = url;
+    a.href = `${API_BASE_URL.replace('/api', '')}${fileData.download_url}`;
     a.download = fileData.file_name || `${fileType}-${Date.now()}.${getFileExtension(fileType)}`;
+    a.target = '_blank'; // Open in new tab as fallback
     document.body.appendChild(a);
     a.click();
-    window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   };
 

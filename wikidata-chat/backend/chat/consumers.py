@@ -2,11 +2,11 @@
 import json
 import traceback
 import logging
+import os
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Chat, Message
 import asyncio
-import os
 import uuid
 import time
 
@@ -133,11 +133,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         
-        # Check if this is a file request (keep for backward compatibility)
-        if 'file_request' in text_data_json:
-            await self.handle_file_request(text_data_json['file_request'])
-            return
-            
         message = text_data_json['message']
         settings = text_data_json.get('settings', {})  # Get settings from the message
         
@@ -157,14 +152,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Process the message with the agent
         try:
-            # Create a task to run the agent query - now returns tuple (response, visualization_files_content)
+            # Create a task to run the agent query - now returns tuple (response, visualization_files_paths)
             loop = asyncio.get_event_loop()
-            response, visualization_files_content = await loop.run_in_executor(None, self.agent.query, message, settings)
+            response, visualization_files_paths = await loop.run_in_executor(None, self.agent.query, message, settings)
             
             # Save assistant message
             assistant_message = await self.save_message(response, 'assistant')
             
-            # Send message to room group with visualization files content included
+            # Create visualization file URLs if files exist
+            visualization_files = None
+            if visualization_files_paths:
+                visualization_files = {}
+                for file_type, file_path in visualization_files_paths.items():
+                    if file_path and os.path.exists(file_path):
+                        # Create download URL for each file type
+                        download_url = f"/api/chats/{self.chat_id}/download_visualization/?type={file_type}"
+                        visualization_files[file_type] = {
+                            'download_url': download_url,
+                            'file_name': os.path.basename(file_path)
+                        }
+            
+            # Send message to room group with visualization files URLs included
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -172,7 +180,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': response,
                     'role': 'assistant',
                     'message_id': str(assistant_message.id),
-                    'visualization_files': visualization_files_content if visualization_files_content else None
+                    'visualization_files': visualization_files if visualization_files else None
                 }
             )
                 
@@ -190,40 +198,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
             
-    async def handle_file_request(self, file_type):
-        """Handle requests for visualization files"""
-        if not hasattr(self.agent, 'visualization_files') or not self.agent.visualization_files:
-            await self.send(text_data=json.dumps({
-                'file_error': 'No visualization files available',
-                'file_type': file_type
-            }))
-            return
-            
-        file_path = self.agent.visualization_files.get(file_type)
-        if not file_path or not os.path.exists(file_path):
-            await self.send(text_data=json.dumps({
-                'file_error': f'File of type {file_type} not found',
-                'file_type': file_type
-            }))
-            return            
-        # Read file content
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                file_content = f.read()
-                
-            # Send file content to client
-            await self.send(text_data=json.dumps({
-                'file_content': file_content,
-                'file_type': file_type,
-                'file_name': os.path.basename(file_path)
-            }))
-        except Exception as e:
-            logger.error(f"Error reading file: {e}")
-            await self.send(text_data=json.dumps({
-                'file_error': f'Error reading file: {str(e)}',
-                'file_type': file_type
-            }))
-    
     async def chat_message(self, event):
         message = event['message']
         role = event['role']

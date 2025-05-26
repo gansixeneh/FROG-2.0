@@ -2,6 +2,8 @@
 import json
 import traceback
 import logging
+import os
+from django.http import HttpResponse, Http404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -108,10 +110,24 @@ class ChatViewSet(viewsets.ViewSet):
                 agent = get_agent(api_key=gemini_api_key, debug_callback=debug_callback)
                 
                 # Process the message
-                response, visualization_files_content = agent.query(message_content, settings_data)
+                response, visualization_files_paths = agent.query(message_content, settings_data)
                 
                 # Save assistant message
                 assistant_message = self.save_message(chat, response, 'assistant')
+                
+                # Create visualization file URLs if files exist
+                visualization_files = None
+                if visualization_files_paths:
+                    from django.urls import reverse
+                    visualization_files = {}
+                    for file_type, file_path in visualization_files_paths.items():
+                        if file_path and os.path.exists(file_path):
+                            # Create download URL for each file type
+                            download_url = f"/api/chats/{pk}/download_visualization/?type={file_type}"
+                            visualization_files[file_type] = {
+                                'download_url': download_url,
+                                'file_name': os.path.basename(file_path)
+                            }
                 
                 # Send response via Pusher
                 pusher_service.send_chat_message(
@@ -119,7 +135,7 @@ class ChatViewSet(viewsets.ViewSet):
                     'assistant', 
                     response, 
                     str(assistant_message.id),
-                    visualization_files_content
+                    visualization_files
                 )
                 
             except Exception as e:
@@ -136,6 +152,55 @@ class ChatViewSet(viewsets.ViewSet):
         
         return Response({"status": "processing"}, status=status.HTTP_202_ACCEPTED)
     
+    @action(detail=True, methods=['get'])
+    def download_visualization(self, request, pk=None):
+        """Download visualization files"""
+        try:
+            chat = Chat.objects.get(pk=pk)
+        except Chat.DoesNotExist:
+            return Response({"error": "Chat not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        file_type = request.GET.get('type')
+        if not file_type or file_type not in ['json', 'mermaid', 'ttl']:
+            return Response({"error": "Invalid file type"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get agent instance to access visualization files
+        gemini_api_key = os.environ.get('GEMINI_API_KEY')
+        agent = get_agent(api_key=gemini_api_key)
+        
+        if not hasattr(agent, 'visualization_files') or not agent.visualization_files:
+            return Response({"error": "No visualization files available"}, status=status.HTTP_404_NOT_FOUND)
+        
+        file_path = agent.visualization_files.get(file_type)
+        if not file_path or not os.path.exists(file_path):
+            return Response({"error": f"File of type {file_type} not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                file_content = f.read()
+            
+            # Set appropriate content type
+            content_types = {
+                'json': 'application/json',
+                'mermaid': 'text/plain',
+                'ttl': 'text/turtle'
+            }
+            
+            # Set appropriate file extension
+            extensions = {
+                'json': 'json',
+                'mermaid': 'mmd',
+                'ttl': 'ttl'
+            }
+            
+            response = HttpResponse(file_content, content_type=content_types.get(file_type, 'text/plain'))
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error reading file: {e}")
+            return Response({"error": f"Error reading file: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def save_message(self, chat, content, role):
         """Save a message to the database"""
         # Update chat title based on first user message if it's a new chat

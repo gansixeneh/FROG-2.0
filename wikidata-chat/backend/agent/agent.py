@@ -181,7 +181,6 @@ class WikidataAgent:
         )
         
         # Store visualization files for later download and read contents
-        visualization_files_content = {}
         if visualization_data:
             # Store paths for backward compatibility
             self.visualization_files = {
@@ -189,19 +188,6 @@ class WikidataAgent:
                 'mermaid': visualization_data.get('mermaid_path'),
                 'ttl': visualization_data.get('ttl_path')
             }
-            
-        # Read file contents
-            for file_type, file_path in self.visualization_files.items():
-                if file_path and os.path.exists(file_path):
-                    try:
-                        with open(file_path, 'r', encoding='utf-8') as f:
-                            visualization_files_content[file_type] = {
-                                'content': f.read(),
-                                'file_name': os.path.basename(file_path)
-                            }
-                        logger.info(f"Read visualization file: {file_type} ({os.path.basename(file_path)})")
-                    except Exception as e:
-                        logger.error(f"Error reading {file_type} visualization file: {e}")
         
-        # Return the explanation as the response, and visualization files content
-        return explanation, visualization_files_content
+        # Return the explanation as the response, and visualization file paths
+        return explanation, self.visualization_files

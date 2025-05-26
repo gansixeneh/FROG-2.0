@@ -6,4 +6,5 @@ urlpatterns = [
     path('chats/', ChatViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('chats/<uuid:pk>/', ChatViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'})),
     path('chats/<uuid:pk>/send_message/', ChatViewSet.as_view({'post': 'send_message'})),
+    path('chats/<uuid:pk>/download_visualization/', ChatViewSet.as_view({'get': 'download_visualization'})),
 ]

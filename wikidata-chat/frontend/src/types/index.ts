@@ -8,7 +8,7 @@ export interface Chat {
 }
 
 export interface VisualizationFile {
-  content: string;
+  download_url: string;
   file_name: string;
 }
 
