@@ -1,11 +1,35 @@
 // frontend/src/components/MessageInput.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useChat } from '../context/ChatContext';
 import { API_HOST } from '../config/api';
 
 const MessageInput: React.FC = () => {
   const [message, setMessage] = useState('');
+  const [dots, setDots] = useState(1);
   const { sendMessage, currentChat, isProcessing } = useChat();
+  
+  // Animate dots when processing
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isProcessing) {
+      interval = setInterval(() => {
+        setDots(prevDots => {
+          // Cycle from 1 to 3 dots
+          return prevDots >= 3 ? 1 : prevDots + 1;
+        });
+      }, 500); // Change dots every 500ms
+    } else {
+      // Reset to 1 dot when not processing
+      setDots(1);
+    }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isProcessing]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,6 +37,11 @@ const MessageInput: React.FC = () => {
     
     sendMessage(message);
     setMessage('');
+  };
+  
+  // Generate the animated thinking text
+  const getThinkingText = () => {
+    return `FrOG is thinking${'.'.repeat(dots)}`;
   };
   
   // Frog lily pad
@@ -32,7 +61,7 @@ const MessageInput: React.FC = () => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isProcessing ? "FrOG is thinking..." : "Ask FrOG a question..."}
+          placeholder={isProcessing ? getThinkingText() : "Ask FrOG a question..."}
           className="flex-grow h-12 px-4 border-2 border-frog-DEFAULT rounded-full focus:outline-none focus:ring-2 focus:ring-frog-dark focus:border-transparent shadow-md"
           disabled={!currentChat || isProcessing}
         />
