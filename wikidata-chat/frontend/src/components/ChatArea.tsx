@@ -63,7 +63,7 @@ const ChatArea: React.FC = () => {
   const renderWelcomeScreen = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <div className="bg-white/70 backdrop-blur-sm rounded-lg shadow-lg max-w-4xl w-full mx-auto px-6 py-4 text-center">
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center">
         <FrogLogo width={120} height={120} />
       </div>
       
