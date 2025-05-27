@@ -27,6 +27,16 @@ class WikidataPropertyRetrieval:
         self.model_embed = get_sentence_transformer(embedding_model_name, trust_remote_code=True)
         self.stopwords = set(stopwords.words("english"))
         
+        # Create a dictionary for fast property ID to label lookups
+        self.property_id_to_label = {}
+        for _, row in df_properties.iterrows():
+            prop_id = row.get('propertyId', '')
+            label = row.get('label', '')
+            if prop_id and label:
+                self.property_id_to_label[prop_id] = label
+        
+        logger.info(f"Created property ID to label mapping with {len(self.property_id_to_label)} properties")
+        
         # Connect to local Weaviate or use provided client
         if weaviate_client:
             self.client = weaviate_client

@@ -182,7 +182,7 @@ class WikidataGraphAgent:
         # Use LLM factory if available, otherwise fallback to hardcoded models
         if self.llm_factory:
             entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
-            verbalization_node = VerbalizationNode(llm_factory=self.llm_factory)
+            verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
             sparql_generation_node = SparqlGenerationNode(
                 llm_factory=self.llm_factory, 
                 property_retrieval=self.property_retrieval
@@ -192,7 +192,7 @@ class WikidataGraphAgent:
             # Fallback to legacy initialization
             logger.warning("Using legacy node initialization without LLM factory")
             entity_extraction_node = EntityExtractionNode(self.gemini_model)
-            verbalization_node = VerbalizationNode(self.gemini_model)
+            verbalization_node = VerbalizationNode(self.gemini_model, property_retrieval=self.property_retrieval)
             sparql_generation_node = SparqlGenerationNode(
                 self.gemini_model, self.property_retrieval
             )

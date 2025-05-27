@@ -31,25 +31,33 @@ class WikidataVerbalization:
     SENTENCE_TEMPLATE = "{s}'s {p} is {o}"
     MANUAL_MAPPING_DICT = {"_": " "}
     PO_TEMPLATE = """
-SELECT distinct ?p ?o ?sLabel ?propLabel ?oLabel
+SELECT distinct ?p ?o ?oLabel
 WHERE {{
   BIND(wd:{entity} AS ?s) .
   
   ?s ?p ?o .
   FILTER(?p != wd:P18)
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}
   ?prop wikibase:directClaim ?p .
-}}
+  OPTIONAL {{
+    ?o rdfs:label ?oLabel .
+    FILTER (LANG(?oLabel) = "en")
+  }}
+}} LIMIT 1000
 """
     SP_TEMPLATE = """
-SELECT ?s ?p ?sLabel ?propLabel ?oLabel
+SELECT ?s ?sLabel ?p
 WHERE {{
   BIND(wd:{entity} AS ?o) .
   
   ?s ?p ?o .
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}
   ?prop wikibase:directClaim ?p .
-}}
+  OPTIONAL {{
+    ?s rdfs:label ?sLabel .
+    FILTER (LANG(?sLabel) = "en")
+  }}
+}} LIMIT 1000
 """
 
     # Template for fetching references
@@ -123,10 +131,35 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             logger.error(f"Error executing SPARQL query: {e}")
             return [], e
 
-    def get_po(self, entity: str):
+    def get_po(self, entity: str, visualizer=None):
         """Get predicate-object pairs for entity"""
         query = self.PO_TEMPLATE.format(entity=entity)
+        
+        # Log before executing SPARQL
+        if visualizer:
+            visualizer.log_event(
+                "Verbalization Node",
+                "get_po SPARQL execution start",
+                {"entity": entity, "query_preview": query[:200] + "..."}
+            )
+            
+        start_time = datetime.now()
         results, err = self.execute_sparql(query)
+        end_time = datetime.now()
+        
+        # Log after executing SPARQL
+        if visualizer:
+            visualizer.log_event(
+                "Verbalization Node",
+                "get_po SPARQL execution complete",
+                {
+                    "entity": entity,
+                    "result_count": len(results) if results else 0,
+                    "error": str(err) if err else None,
+                    "duration_seconds": (end_time - start_time).total_seconds()
+                }
+            )
+            
         if not results or err:
             return []
         
@@ -135,10 +168,35 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             df.append(result)
         return df
 
-    def get_sp(self, entity: str):
+    def get_sp(self, entity: str, visualizer=None):
         """Get subject-predicate pairs for entity"""
         query = self.SP_TEMPLATE.format(entity=entity)
+        
+        # Log before executing SPARQL
+        if visualizer:
+            visualizer.log_event(
+                "Verbalization Node",
+                "get_sp SPARQL execution start",
+                {"entity": entity, "query_preview": query[:200] + "..."}
+            )
+            
+        start_time = datetime.now()
         results, err = self.execute_sparql(query)
+        end_time = datetime.now()
+        
+        # Log after executing SPARQL
+        if visualizer:
+            visualizer.log_event(
+                "Verbalization Node",
+                "get_sp SPARQL execution complete",
+                {
+                    "entity": entity,
+                    "result_count": len(results) if results else 0,
+                    "error": str(err) if err else None,
+                    "duration_seconds": (end_time - start_time).total_seconds()
+                }
+            )
+            
         if not results or err:
             return []
         
@@ -147,9 +205,9 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             df.append(result)
         return df
 
-    def get_list_of_candidates(self, entity: str):
+    def get_list_of_candidates(self, entity: str, property_retrieval=None, visualizer=None):
         """Get candidates for verbalization"""
-        po, sp = self.get_po(entity), self.get_sp(entity)
+        po, sp = self.get_po(entity, visualizer), self.get_sp(entity, visualizer)
         candidates = dict()
 
         # Process predicate-object pairs
@@ -157,12 +215,21 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
         for result in po:
             p = result.get('p', '')
             o = result.get('o', '')
-            sLabel = result.get('sLabel', '')
-            pLabel = result.get('propLabel', '')
+            sLabel = entity  # We know the subject is the entity
+            pLabel = None
             oLabel = result.get('oLabel', '')
             
+            # Get property label from property_retrieval if available
+            if property_retrieval:
+                prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
+                pLabel = property_retrieval.property_id_to_label.get(prop_id)
+            
+            # Fallback to camelCase separation if no label found
+            if not pLabel:
+                pLabel = separate_camel_case(p.split("/")[-1])
+            
             label_s = sLabel if sLabel else replace_using_dict(entity.split("/")[-1], self.MANUAL_MAPPING_DICT)
-            label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
+            label_p = pLabel
 
             if label_p != curr_p:
                 curr_p = label_p
@@ -179,11 +246,20 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             s = result.get('s', '')
             p = result.get('p', '')
             sLabel = result.get('sLabel', '')
-            pLabel = result.get('propLabel', '')
-            oLabel = result.get('oLabel', '')
+            pLabel = None
+            oLabel = entity  # We know the object is the entity
+            
+            # Get property label from property_retrieval if available
+            if property_retrieval:
+                prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
+                pLabel = property_retrieval.property_id_to_label.get(prop_id)
+            
+            # Fallback to camelCase separation if no label found
+            if not pLabel:
+                pLabel = separate_camel_case(p.split("/")[-1])
             
             label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
-            label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
+            label_p = pLabel
             label_o = oLabel if oLabel else replace_using_dict(entity.split("/")[-1], self.MANUAL_MAPPING_DICT)
 
             if label_p != curr_p:
@@ -251,10 +327,10 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             logger.error(f"Error getting references for property {property_uri}: {e}")
             return []
 
-    def run(self, question: str, entity: str, output_uri=False, include_references=False, debug_callback=None):
+    def run(self, question: str, entity: str, output_uri=False, include_references=False, debug_callback=None, property_retrieval=None, visualizer=None):
         """Run the verbalization process"""
         # Get candidate sentences
-        candidates, po, sp = self.get_list_of_candidates(entity)
+        candidates, po, sp = self.get_list_of_candidates(entity, property_retrieval, visualizer)
         cands = list(candidates.values())
         if not cands:  # Handle empty candidates
             return [], 0.0, []
@@ -350,16 +426,18 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
 
 class VerbalizationNode:
     """Node for retrieving entity information through verbalization"""
-    def __init__(self, genai_model=None, llm_factory=None):
+    def __init__(self, genai_model=None, llm_factory=None, property_retrieval=None):
         """
         Initialize VerbalizationNode
         
         Args:
             genai_model: Legacy Gemini model (for backward compatibility)
             llm_factory: LLM factory instance for multi-provider support
+            property_retrieval: Property retrieval system for getting property labels
         """
         self.genai_model = genai_model
         self.llm_factory = llm_factory
+        self.property_retrieval = property_retrieval
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
@@ -568,7 +646,11 @@ class VerbalizationNode:
                     )
                     
                 # Get all candidates for visualization
-                candidates, po, sp = self.verbalization.get_list_of_candidates(entity_uri)
+                candidates, po, sp = self.verbalization.get_list_of_candidates(
+                    entity_uri, 
+                    property_retrieval=self.property_retrieval,
+                    visualizer=state.visualizer if hasattr(state, 'visualizer') else None
+                )
                 
                 if hasattr(state, 'visualizer') and state.visualizer:
                     # Get top 5 candidates with similarities
@@ -620,7 +702,9 @@ class VerbalizationNode:
                     entity_uri, 
                     output_uri=state.output_uri,
                     include_references=getattr(state, 'include_references', True),
-                    debug_callback=debug_callback
+                    debug_callback=debug_callback,
+                    property_retrieval=self.property_retrieval,
+                    visualizer=state.visualizer if hasattr(state, 'visualizer') else None
                 )
                 
                 state.verbalization_result = result
