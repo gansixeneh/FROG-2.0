@@ -57,7 +57,7 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
   }, [messages]); // Remove isVisible from dependencies to prevent scrolling when toggling
 
   return (
-    <div className="mx-auto max-w-[680px] w-full mb-6">
+    <div className="mx-auto max-w-[680px] w-full mb-6 relative z-1">
       <button
         onClick={() => setIsVisible(!isVisible)}
         className="w-full text-sm font-medium py-2 px-3 bg-frog-dark text-white hover:bg-frog-dark/80 rounded-t-md flex items-center justify-center transition-colors duration-200"
