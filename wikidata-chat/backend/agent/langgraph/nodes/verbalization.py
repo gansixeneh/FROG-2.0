@@ -251,7 +251,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             logger.error(f"Error getting references for property {property_uri}: {e}")
             return []
 
-    def run(self, question: str, entity: str, output_uri=False, include_references=False):
+    def run(self, question: str, entity: str, output_uri=False, include_references=False, debug_callback=None):
         """Run the verbalization process"""
         # Get candidate sentences
         candidates, po, sp = self.get_list_of_candidates(entity)
@@ -259,9 +259,39 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
         if not cands:  # Handle empty candidates
             return [], 0.0, []
             
-        # Encode question and candidates
-        question_embed = self.model.encode(question, **self.query_model_encode_kwargs)
-        passages_embed = self.model.encode(cands, **self.passage_model_encode_kwargs)
+        # Use our custom encoding with progress if we have a debug callback
+        if debug_callback:
+            from ..utils.custom_encoding import encode_with_progress
+            debug_callback(f"Starting to encode question for similarity comparison...")
+            
+            # Encode question using custom function
+            question_embed = encode_with_progress(
+                self.model,
+                [question],  # Pass as list
+                batch_size=1,
+                show_progress_bar=True,
+                debug_callback=debug_callback,
+                **self.query_model_encode_kwargs
+            )[0]  # Get first (and only) embedding
+            
+            debug_callback(f"Starting to encode {len(cands)} candidates for similarity comparison...")
+            
+            # Encode candidates using custom function
+            passages_embed = encode_with_progress(
+                self.model,
+                cands,
+                batch_size=16,  # Process in batches of 16
+                show_progress_bar=True,
+                debug_callback=debug_callback,
+                **self.passage_model_encode_kwargs
+            )
+        else:
+            # Standard encoding without progress reporting
+            question_embed = self.model.encode(question, **self.query_model_encode_kwargs)
+            passages_embed = self.model.encode(cands, **self.passage_model_encode_kwargs)
+        
+        if debug_callback:
+            debug_callback(f"Encoding complete. Finding most similar candidate...")
 
         # Find most similar candidate
         similarities = self.model.similarity(question_embed, passages_embed).numpy().flatten()
@@ -576,11 +606,21 @@ class VerbalizationNode:
                         )                
 
                 # Run verbalization with references support
+                # Create a debug callback function to send progress to the visualizer
+                debug_callback = None
+                if hasattr(state, 'visualizer') and state.visualizer:
+                    debug_callback = lambda msg: state.visualizer.log_event(
+                        "Verbalization Node",
+                        "encoding progress",
+                        {"progress": msg}
+                    )
+                
                 result, similarity, references = self.verbalization.run(
                     state.translated_question, 
                     entity_uri, 
                     output_uri=state.output_uri,
-                    include_references=getattr(state, 'include_references', True)
+                    include_references=getattr(state, 'include_references', True),
+                    debug_callback=debug_callback
                 )
                 
                 state.verbalization_result = result
