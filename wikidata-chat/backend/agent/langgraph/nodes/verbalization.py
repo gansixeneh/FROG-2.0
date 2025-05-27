@@ -1,4 +1,4 @@
-# backend/agent/langgraph/nodes/verbalization.py
+# backend/agent/langgraph/nodes/verbalization.py (further refactored)
 from datetime import datetime
 import re
 import json
@@ -58,42 +58,6 @@ WHERE {{
     FILTER (LANG(?sLabel) = "en")
   }}
 }} LIMIT 1000
-"""
-
-    # Template for fetching references
-    REFERENCES_TEMPLATE = """
-SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
-  BIND(wd:{entity} AS ?s) .
-  BIND({property_uri} AS ?p) .
-  
-  # Get the full statement, not just direct property
-  ?s ?statement_prop ?statement .
-  ?statement ?value_prop ?o .
-  
-  # Get property for labeling
-  ?prop wikibase:directClaim ?p .
-  
-  # Get reference information
-  OPTIONAL {{
-    ?statement prov:wasDerivedFrom ?reference .
-    OPTIONAL {{ ?reference pr:P854 ?refUrl }}
-    OPTIONAL {{ ?reference pr:P813 ?refDate }}
-  }}
-  
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-  
-  # Filter to get the right property relationships
-  FILTER(?statement_prop = ?prop_statement && ?value_prop = ?prop_value)
-  
-  # Build the property relationships dynamically
-  {{
-    SELECT ?prop_statement ?prop_value WHERE {{
-      ?prop wikibase:claim ?prop_statement .
-      ?prop wikibase:statementProperty ?prop_value .
-      FILTER(?prop = {property_uri})
-    }}
-  }}
-}}
 """
 
     def __init__(
@@ -327,56 +291,26 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             logger.error(f"Error getting references for property {property_uri}: {e}")
             return []
 
-    def run(self, question: str, entity: str, output_uri=False, include_references=False, debug_callback=None, property_retrieval=None, visualizer=None):
-        """Run the verbalization process"""
-        # Get candidate sentences
-        candidates, po, sp = self.get_list_of_candidates(entity, property_retrieval, visualizer)
-        cands = list(candidates.values())
-        if not cands:  # Handle empty candidates
-            return [], 0.0, []
-            
-        # Use our custom encoding with progress if we have a debug callback
+    def encode_with_progress(self, texts, debug_callback=None, **encode_kwargs):
+        """Encode texts with progress reporting"""
         if debug_callback:
             from ..utils.custom_encoding import encode_with_progress
-            debug_callback(f"Starting to encode question for similarity comparison...")
-            
-            # Encode question using custom function
-            question_embed = encode_with_progress(
+            return encode_with_progress(
                 self.model,
-                [question],  # Pass as list
-                batch_size=1,
+                texts,
+                batch_size=16 if len(texts) > 16 else 1,
                 show_progress_bar=True,
                 debug_callback=debug_callback,
-                **self.query_model_encode_kwargs
-            )[0]  # Get first (and only) embedding
-            
-            debug_callback(f"Starting to encode {len(cands)} candidates for similarity comparison...")
-            
-            # Encode candidates using custom function
-            passages_embed = encode_with_progress(
-                self.model,
-                cands,
-                batch_size=16,  # Process in batches of 16
-                show_progress_bar=True,
-                debug_callback=debug_callback,
-                **self.passage_model_encode_kwargs
+                **encode_kwargs
             )
         else:
             # Standard encoding without progress reporting
-            question_embed = self.model.encode(question, **self.query_model_encode_kwargs)
-            passages_embed = self.model.encode(cands, **self.passage_model_encode_kwargs)
+            return self.model.encode(texts, **encode_kwargs)
+
+    def extract_results_for_property(self, property_uri, po, sp, output_uri=False):
+        """Extract results for a specific property"""
+        result = []
         
-        if debug_callback:
-            debug_callback(f"Encoding complete. Finding most similar candidate...")
-
-        # Find most similar candidate
-        similarities = self.model.similarity(question_embed, passages_embed).numpy().flatten()
-        similar_index = np.argmax(similarities)
-        similar_score = float(max(similarities))
-
-        # Extract results based on the most similar property
-        property_used = list(candidates.keys())[similar_index]
-        result = []        
         # Add predicate-object pairs
         for p_result in po:
             p = p_result.get('p', '')
@@ -384,14 +318,14 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             pLabel = p_result.get('propLabel', '')
             oLabel = p_result.get('oLabel', '')
             
-            if p == property_used:
+            if p == property_uri:
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
                 if o.startswith("http"):
                     label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1], self.MANUAL_MAPPING_DICT)
                 else:
                     label_o = o
                 result.append({label_p: o if output_uri else label_o})
-            
+        
         # Add subject-predicate pairs
         for s_result in sp:
             s = s_result.get('s', '')
@@ -399,30 +333,13 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             sLabel = s_result.get('sLabel', '')
             pLabel = s_result.get('propLabel', '')
             
-            if p == property_used:
+            if p == property_uri:
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
                 label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
                 result.append({label_p: s if output_uri else label_s})
-
-        # Get references if requested and similarity is high enough
-        references = []
-        if include_references and similar_score >= 0.6 and result:
-            logger.info(f"Fetching references for property {property_used} with similarity {similar_score}")
-            raw_references = self.get_references_for_property(entity, property_used)
-            
-            # Format the references with proper date formatting
-            for ref in raw_references:
-                formatted_ref = {}
-                if ref.get('refUrl'):
-                    formatted_ref['refUrl'] = ref['refUrl']
-                if ref.get('refDate'):
-                    formatted_ref['refDate'] = ref['refDate']
-                    formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
                 
-                if formatted_ref:  # Only add if we have some reference data
-                    references.append(formatted_ref)
-            
-        return result, similar_score, references
+        return result
+
 
 class VerbalizationNode:
     """Node for retrieving entity information through verbalization"""
@@ -644,51 +561,7 @@ class VerbalizationNode:
                         {"entity_uri": f"{entity_uri} - {entity_label}"},
                         start_time=verb_start_time
                     )
-                    
-                # Get all candidates for visualization
-                candidates, po, sp = self.verbalization.get_list_of_candidates(
-                    entity_uri, 
-                    entity_label,
-                    property_retrieval=self.property_retrieval,
-                    visualizer=state.visualizer if hasattr(state, 'visualizer') else None
-                )
                 
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    # Get top 5 candidates with similarities
-                    question_embed = self.verbalization.model.encode(
-                        state.translated_question, 
-                        **self.verbalization.query_model_encode_kwargs
-                    )
-                    cands = list(candidates.values())
-                    
-                    if cands:
-                        passages_embed = self.verbalization.model.encode(
-                            cands, 
-                            **self.verbalization.passage_model_encode_kwargs
-                        )
-                        
-                        similarities = self.verbalization.model.similarity(
-                            question_embed, 
-                            passages_embed
-                        ).numpy().flatten()
-                        
-                        # Sort by similarity and get top 5
-                        top_cands = []
-                        for i in range(len(cands)):
-                            prop_key = list(candidates.keys())[i]
-                            top_cands.append((prop_key, cands[i], similarities[i]))
-                            
-                        top_cands.sort(key=lambda x: x[2], reverse=True)
-                        top_cands = top_cands[:5]
-                        
-                        state.visualizer.log_event(
-                            "Verbalization Node",
-                            "top properties by similarity",
-                            [f"{i+1}. Property: {p.split('/')[-1]}, Sentence: {s}, Similarity: {sim:.4f}" 
-                             for i, (p, s, sim) in enumerate(top_cands)]
-                        )                
-
-                # Run verbalization with references support
                 # Create a debug callback function to send progress to the visualizer
                 debug_callback = None
                 if hasattr(state, 'visualizer') and state.visualizer:
@@ -698,16 +571,110 @@ class VerbalizationNode:
                         {"progress": msg}
                     )
                 
-                result, similarity, references = self.verbalization.run(
-                    state.translated_question, 
-                    entity_uri, 
-                    output_uri=state.output_uri,
-                    include_references=getattr(state, 'include_references', True),
-                    debug_callback=debug_callback,
+                # Get candidates - do this ONCE only
+                candidates, po, sp = self.verbalization.get_list_of_candidates(
+                    entity_uri=entity_uri, 
+                    entity_label=entity_label,
                     property_retrieval=self.property_retrieval,
                     visualizer=state.visualizer if hasattr(state, 'visualizer') else None
                 )
                 
+                # Only continue if we have candidates
+                if not candidates:
+                    if hasattr(state, 'visualizer') and state.visualizer:
+                        state.visualizer.log_event(
+                            "Verbalization Node", 
+                            "verbalization failed",
+                            {"error": "No candidate properties found"}
+                        )
+                    state.next = "sparql_generation"
+                    end_time = datetime.now()
+                    if hasattr(state, 'visualizer') and state.visualizer:
+                        state.visualizer.log_event(
+                            "Verbalization Node", 
+                            "end",
+                            None,
+                            start_time=start_time,
+                            end_time=end_time
+                        )
+                    return state
+                
+                # ----- COMPUTE EMBEDDINGS ONCE -----
+                
+                # Prepare for computing similarities - just once
+                cands = list(candidates.values())
+                if debug_callback:
+                    debug_callback(f"Computing embeddings for similarity ranking...")
+                
+                # Encode question once
+                question_embed = self.verbalization.encode_with_progress(
+                    [state.translated_question], 
+                    debug_callback=debug_callback,
+                    **self.verbalization.query_model_encode_kwargs
+                )[0]
+                
+                # Encode all candidates once
+                passages_embed = self.verbalization.encode_with_progress(
+                    cands, 
+                    debug_callback=debug_callback,
+                    **self.verbalization.passage_model_encode_kwargs
+                )
+                
+                # Compute similarities once
+                similarities = self.verbalization.model.similarity(
+                    question_embed, 
+                    passages_embed
+                ).numpy().flatten()
+                
+                # Log top 5 candidates with similarities
+                if hasattr(state, 'visualizer') and state.visualizer:
+                    # Get top 5 by similarity
+                    top_indices = np.argsort(similarities)[::-1][:5]
+                    top_cands = []
+                    
+                    for i in top_indices:
+                        prop_key = list(candidates.keys())[i]
+                        top_cands.append((prop_key, cands[i], similarities[i]))
+                    
+                    state.visualizer.log_event(
+                        "Verbalization Node",
+                        "top properties by similarity",
+                        [f"{idx+1}. Property: {p.split('/')[-1]}, Sentence: {s}, Similarity: {sim:.4f}" 
+                         for idx, (p, s, sim) in enumerate(top_cands)]
+                    )
+                
+                # Get the best property
+                best_index = np.argmax(similarities)
+                similarity = float(max(similarities))
+                best_property = list(candidates.keys())[best_index]
+                
+                # Extract results for this property
+                result = self.verbalization.extract_results_for_property(
+                    best_property, 
+                    po, 
+                    sp, 
+                    output_uri=state.output_uri
+                )
+                
+                # Get references if needed
+                references = []
+                if getattr(state, 'include_references', True) and similarity >= 0.6 and result:
+                    logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
+                    raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
+                    
+                    # Format the references with proper date formatting
+                    for ref in raw_references:
+                        formatted_ref = {}
+                        if ref.get('refUrl'):
+                            formatted_ref['refUrl'] = ref['refUrl']
+                        if ref.get('refDate'):
+                            formatted_ref['refDate'] = ref['refDate']
+                            formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
+                        
+                        if formatted_ref:  # Only add if we have some reference data
+                            references.append(formatted_ref)
+                
+                # Store results in state
                 state.verbalization_result = result
                 state.verbalization_similarity = similarity
                 
