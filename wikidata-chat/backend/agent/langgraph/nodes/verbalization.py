@@ -205,9 +205,9 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             df.append(result)
         return df
 
-    def get_list_of_candidates(self, entity: str, property_retrieval=None, visualizer=None):
+    def get_list_of_candidates(self, entity_uri: str, entity_label: str, property_retrieval=None, visualizer=None):
         """Get candidates for verbalization"""
-        po, sp = self.get_po(entity, visualizer), self.get_sp(entity, visualizer)
+        po, sp = self.get_po(entity_uri, visualizer), self.get_sp(entity_uri, visualizer)
         candidates = dict()
 
         # Process predicate-object pairs
@@ -215,7 +215,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
         for result in po:
             p = result.get('p', '')
             o = result.get('o', '')
-            sLabel = entity  # We know the subject is the entity
+            sLabel = entity_label  # We know the subject is the entity
             pLabel = None
             oLabel = result.get('oLabel', '')
             
@@ -228,7 +228,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             if not pLabel:
                 pLabel = separate_camel_case(p.split("/")[-1])
             
-            label_s = sLabel if sLabel else replace_using_dict(entity.split("/")[-1], self.MANUAL_MAPPING_DICT)
+            label_s = sLabel if sLabel else replace_using_dict(entity_uri.split("/")[-1], self.MANUAL_MAPPING_DICT)
             label_p = pLabel
 
             if label_p != curr_p:
@@ -247,7 +247,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             p = result.get('p', '')
             sLabel = result.get('sLabel', '')
             pLabel = None
-            oLabel = entity  # We know the object is the entity
+            oLabel = entity_label  # We know the object is the entity
             
             # Get property label from property_retrieval if available
             if property_retrieval:
@@ -260,7 +260,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             
             label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
             label_p = pLabel
-            label_o = oLabel if oLabel else replace_using_dict(entity.split("/")[-1], self.MANUAL_MAPPING_DICT)
+            label_o = oLabel if oLabel else replace_using_dict(entity_uri.split("/")[-1], self.MANUAL_MAPPING_DICT)
 
             if label_p != curr_p:
                 curr_p = label_p
@@ -648,6 +648,7 @@ class VerbalizationNode:
                 # Get all candidates for visualization
                 candidates, po, sp = self.verbalization.get_list_of_candidates(
                     entity_uri, 
+                    entity_label,
                     property_retrieval=self.property_retrieval,
                     visualizer=state.visualizer if hasattr(state, 'visualizer') else None
                 )
