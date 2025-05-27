@@ -20,9 +20,8 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
   // Calculate the content height when it becomes visible or when messages change
   useEffect(() => {
     if (isVisible && contentRef.current) {
-      // Set max height to the actual content height (capped at 400px)
-      const contentHeight = contentRef.current.scrollHeight;
-      setHeight(Math.min(contentHeight, 400));
+      // Set height to 400px when visible (fixed height for scrollable area)
+      setHeight(400);
     } else {
       setHeight(0);
     }
@@ -33,8 +32,10 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
     if (isVisible && contentRef.current) {
       const container = contentRef.current.querySelector('.agent-trace-content');
       if (container) {
-        // Scroll to bottom immediately when opened
-        container.scrollTop = container.scrollHeight;
+        // Add a small delay to ensure content is rendered
+        setTimeout(() => {
+          container.scrollTop = container.scrollHeight;
+        }, 100);
       }
     }
   }, [isVisible]); // Only run when visibility changes
@@ -45,16 +46,19 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
     if (isVisible && contentRef.current) {
       const container = contentRef.current.querySelector('.agent-trace-content');
       if (container) {
-        // Check if user is at the bottom (within 50px threshold)
-        const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
-        
-        // Only auto-scroll if user is already at the bottom
-        if (isAtBottom) {
-          container.scrollTop = container.scrollHeight;
-        }
+        // Small delay to ensure DOM has updated
+        setTimeout(() => {
+          // Check if user is at the bottom (within 50px threshold)
+          const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+          
+          // Only auto-scroll if user is already at the bottom
+          if (isAtBottom) {
+            container.scrollTop = container.scrollHeight;
+          }
+        }, 50);
       }
     }
-  }, [messages]); // Remove isVisible from dependencies to prevent scrolling when toggling
+  }, [messages, isVisible]); // Include isVisible to scroll when opened
 
   return (
     <div className="mx-auto max-w-[680px] w-full mb-6 relative z-1">
@@ -101,9 +105,10 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
         className={`bg-gradient-to-r from-frog-dark via-frog-dark/90 to-frog-dark 
                   text-frog-accent p-4 rounded-b-md font-mono text-sm 
                   overflow-hidden transition-all duration-300 ease-in-out
-                  border-t-0 border-2 border-frog-dark shadow-lg`}
+                  border-t-0 border-2 border-frog-dark shadow-lg
+                  flex flex-col`}
         style={{ 
-          maxHeight: height !== undefined ? `${height}px` : undefined,
+          height: height !== undefined ? `${height}px` : '0px',
           opacity: isVisible ? 1 : 0
         }}
       >
@@ -114,8 +119,8 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
         </div>
         
         {/* Use overflow-y-auto to ensure we get scrollbars when needed */}
-        <div className="max-h-[400px] overflow-y-auto pr-2 pb-4 agent-trace-content">
-          <pre className="whitespace-pre-wrap">{combinedContent}</pre>
+        <div className="overflow-y-auto pr-2 agent-trace-content" style={{ maxHeight: '100%' }}>
+          <pre className="whitespace-pre-wrap pb-4">{combinedContent}</pre>
         </div>
         
         {/* Lily pad decoration */}
