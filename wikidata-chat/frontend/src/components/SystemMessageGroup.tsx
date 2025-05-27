@@ -28,15 +28,33 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
     }
   }, [isVisible, messages]); // Add messages as a dependency to recalculate when they change
 
-  // Auto-scroll to the bottom of the trace content when new messages arrive
+  // One-time scroll to bottom when first opened
   useEffect(() => {
     if (isVisible && contentRef.current) {
       const container = contentRef.current.querySelector('.agent-trace-content');
       if (container) {
+        // Scroll to bottom immediately when opened
         container.scrollTop = container.scrollHeight;
       }
     }
-  }, [messages, isVisible]);
+  }, [isVisible]); // Only run when visibility changes
+
+  // Auto-scroll to the bottom of the trace content when new messages arrive
+  // Only if the user is already at the bottom
+  useEffect(() => {
+    if (isVisible && contentRef.current) {
+      const container = contentRef.current.querySelector('.agent-trace-content');
+      if (container) {
+        // Check if user is at the bottom (within 50px threshold)
+        const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+        
+        // Only auto-scroll if user is already at the bottom
+        if (isAtBottom) {
+          container.scrollTop = container.scrollHeight;
+        }
+      }
+    }
+  }, [messages]); // Remove isVisible from dependencies to prevent scrolling when toggling
 
   return (
     <div className="mx-auto max-w-[680px] w-full mb-6">
@@ -96,7 +114,7 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
         </div>
         
         {/* Use overflow-y-auto to ensure we get scrollbars when needed */}
-        <div className="max-h-[400px] overflow-y-auto pr-2 agent-trace-content">
+        <div className="max-h-[400px] overflow-y-auto pr-2 pb-4 agent-trace-content">
           <pre className="whitespace-pre-wrap">{combinedContent}</pre>
         </div>
         
