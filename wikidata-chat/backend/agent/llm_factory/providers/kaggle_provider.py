@@ -3,18 +3,18 @@ import os
 import logging
 from typing import Dict, Any, Optional
 from ..base_provider import BaseLLMProvider
-from .huggingface_provider import HuggingFaceProvider
+from .ollama_provider import OllamaProvider
 
 logger = logging.getLogger(__name__)
 
 class KaggleProvider(BaseLLMProvider):
     """
-    Provider for Kaggle models that downloads datasets and loads them with HuggingFace
+    Provider for Kaggle models that downloads datasets and loads them with Ollama
     """
     
     def __init__(self, model_name: str, config: Dict[str, Any]):
         super().__init__(model_name, config)
-        self.huggingface_provider = None
+        self.ollama_provider = None
         self.model_path = None
         
     def _validate_kaggle_credentials(self) -> None:
@@ -85,9 +85,10 @@ class KaggleProvider(BaseLLMProvider):
                 f"Check the model_files configuration: {model_files}"
             )
         
-        return model_path    
+        return model_path
+    
     def load_model(self) -> None:
-        """Load the Kaggle model by downloading it and using HuggingFace"""
+        """Load the Kaggle model by downloading it and using Ollama"""
         if self._is_loaded:
             return
         
@@ -97,44 +98,35 @@ class KaggleProvider(BaseLLMProvider):
         # Download model if needed
         self.model_path = self._download_kaggle_dataset()
         
-        # Create HuggingFace provider configuration
-        huggingface_config = self.config.copy()
+        # Create Ollama provider configuration
+        ollama_config = self.config.copy()
         
-        # Remove Kaggle-specific keys that shouldn't be passed to HuggingFace
+        # Remove Kaggle-specific keys that shouldn't be passed to Ollama
         kaggle_keys = {"dataset", "model_files", "cache_dir", "force_download"}
         for key in kaggle_keys:
-            huggingface_config.pop(key, None)
+            ollama_config.pop(key, None)
         
-        # Set the adapter path if it exists in the model path
-        adapter_dir = None
-        for dir_name in os.listdir(self.model_path):
-            if os.path.isdir(os.path.join(self.model_path, dir_name)) and "adapter" in dir_name.lower():
-                adapter_dir = os.path.join(self.model_path, dir_name)
-                break
+        # Create a model name for Ollama based on the Kaggle dataset
+        # This assumes the user has imported the model into Ollama already
+        dataset_name = self.config.get("dataset", "").split("/")[-1]
+        model_name = self.config.get("ollama_model_name", f"kaggle-{dataset_name}")
         
-        if adapter_dir:
-            huggingface_config["adapter_path"] = adapter_dir
-            logger.info(f"Found adapter directory: {adapter_dir}")
-        
-        # Create HuggingFace provider with the downloaded model path
-        self.huggingface_provider = HuggingFaceProvider(
-            model_name=self.model_path,
-            config=huggingface_config
+        # Create Ollama provider with the specified model name
+        self.ollama_provider = OllamaProvider(
+            model_name=model_name,
+            config=ollama_config
         )
         
-        # Load the model using HuggingFace
-        self.huggingface_provider.load_model()
+        # Load the model using Ollama
+        self.ollama_provider.load_model()
         
-        # Delegate to HuggingFace provider
-        self.model = self.huggingface_provider.model
-        self.tokenizer = self.huggingface_provider.tokenizer
-        
+        # Consider the model loaded
         self._is_loaded = True
-        logger.info(f"Loaded Kaggle model from: {self.model_path}")
+        logger.info(f"Loaded Kaggle model {dataset_name} using Ollama as {model_name}")
     
     def generate_response(self, prompt: str, **kwargs) -> str:
         """
-        Generate response using the downloaded Kaggle model via HuggingFace
+        Generate response using the downloaded Kaggle model via Ollama
         
         Args:
             prompt: Input prompt
@@ -146,10 +138,11 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.huggingface_provider.generate_response(prompt, **kwargs)    
+        return self.ollama_provider.generate_response(prompt, **kwargs)
+    
     def is_chat_template_supported(self) -> bool:
         """
-        Check if the model supports chat templates (delegated to HuggingFace provider)
+        Check if the model supports chat templates (delegated to Ollama provider)
         
         Returns:
             True if chat templates are supported, False otherwise
@@ -157,11 +150,11 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.huggingface_provider.is_chat_template_supported()
+        return self.ollama_provider.is_chat_template_supported()
     
     def _apply_chat_template_impl(self, messages: list, **kwargs) -> str:
         """
-        Apply chat template using HuggingFace provider
+        Apply chat template using Ollama provider
         
         Args:
             messages: List of message dictionaries
@@ -173,42 +166,13 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.huggingface_provider._apply_chat_template_impl(messages, **kwargs)
-    
-    def get_pipeline(self):
-        """
-        Get the HuggingFace pipeline wrapper
-        
-        Returns:
-            HuggingFacePipeline instance
-        """
-        if not self._is_loaded:
-            self.load_model()
-        
-        return self.huggingface_provider.get_pipeline()
-    
-    def get_raw_pipeline(self):
-        """
-        Get the raw transformers pipeline
-        
-        Returns:
-            Raw transformers pipeline
-        """
-        if not self._is_loaded:
-            self.load_model()
-        
-        return self.huggingface_provider.get_raw_pipeline()
+        return self.ollama_provider._apply_chat_template_impl(messages, **kwargs)
     
     def cleanup(self) -> None:
         """
         Clean up resources
         """
-        if self.huggingface_provider:
-            self.huggingface_provider.cleanup()
-            self.huggingface_provider = None
-        
-        self.model = None
-        self.tokenizer = None
+        self.ollama_provider = None
         self._is_loaded = False
         
         logger.info(f"Cleaned up Kaggle model: {self.model_name}")

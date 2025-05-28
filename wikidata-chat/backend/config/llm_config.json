@@ -8,17 +8,11 @@
   },
   "nodes": {
     "EntityExtractionNode": {
-      "provider": "huggingface",
-      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "provider": "ollama",
+      "model": "qwen3:0.6b",
       "config": {
-        "load_in_4bit": true,
-        "use_double_quant": true,
-        "quant_type": "nf4",
-        "trust_remote_code": true,
         "temperature": 0.2,
-        "max_new_tokens": 512,
-        "do_sample": false,
-        "repetition_penalty": 1.1
+        "base_url": "http://localhost:11434"
       }
     }
   },
@@ -28,30 +22,19 @@
         "temperature": 0.2
       }
     },
-    "huggingface": {
-      "default_config": {
-        "load_in_4bit": true,
-        "use_double_quant": true,
-        "quant_type": "nf4",
-        "trust_remote_code": true,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "do_sample": false,
-        "repetition_penalty": 1.1
-      }
-    },
     "kaggle": {
       "default_config": {
         "cache_dir": "./kaggle_models",
-        "load_in_4bit": true,
-        "use_double_quant": true,
-        "quant_type": "nf4",
-        "trust_remote_code": true,
         "force_download": false,
+        "temperature": 0.2
+      }
+    },
+    "ollama": {
+      "default_config": {
+        "base_url": "http://localhost:11434",
         "temperature": 0.2,
-        "max_new_tokens": 512,
-        "do_sample": false,
-        "repetition_penalty": 1.1
+        "top_p": 0.9,
+        "num_predict": 512
       }
     }
   }

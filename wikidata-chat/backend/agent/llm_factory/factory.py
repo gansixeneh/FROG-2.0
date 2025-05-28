@@ -4,7 +4,7 @@ import logging
 from typing import Dict, Any, Optional, Union
 from .config import load_llm_config, get_node_config, validate_environment_variables
 from .base_provider import BaseLLMProvider
-from .providers import GeminiProvider, HuggingFaceProvider, KaggleProvider
+from .providers import GeminiProvider, KaggleProvider, OllamaProvider
 
 logger = logging.getLogger(__name__)
 
@@ -51,15 +51,14 @@ class LLMFactory:
         """
         provider_classes = {
             "gemini": GeminiProvider,
-            "huggingface": HuggingFaceProvider,
-            "kaggle": KaggleProvider
+            "kaggle": KaggleProvider,
+            "ollama": OllamaProvider
         }
         
         if provider_name not in provider_classes:
             raise ValueError(f"Unsupported provider: {provider_name}")
         
-        return provider_classes[provider_name]
-    
+        return provider_classes[provider_name]    
     def _create_cache_key(self, node_name: Optional[str], provider: str, model: str) -> str:
         """
         Create a cache key for a model instance
@@ -96,9 +95,6 @@ class LLMFactory:
                     "Kaggle provider is not available. "
                     "Please set the KAGGLE_USERNAME and KAGGLE_KEY environment variables."
                 )
-            elif provider_name == "huggingface":
-                # HuggingFace should always be available if transformers is installed
-                pass
     
     def get_model(self, node_name: Optional[str] = None, 
                   force_reload: bool = False) -> BaseLLMProvider:
@@ -120,8 +116,7 @@ class LLMFactory:
         
         provider_name = node_config["provider"]
         model_name = node_config["model"]
-        model_config = node_config["config"]
-        
+        model_config = node_config["config"]        
         # Check provider availability
         self._check_provider_availability(provider_name)
         
@@ -164,8 +159,7 @@ class LLMFactory:
     
     def get_model_for_answer_generation(self) -> BaseLLMProvider:
         """Get model specifically for answer generation"""
-        return self.get_model("AnswerGenerationNode")
-    
+        return self.get_model("AnswerGenerationNode")    
     def list_available_models(self) -> Dict[str, Dict[str, Any]]:
         """
         List all available models from configuration

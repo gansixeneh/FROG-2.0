@@ -64,14 +64,13 @@ def validate_config(config: Dict[str, Any]) -> None:
     required_default_keys = ["provider", "model", "config"]
     for key in required_default_keys:
         if key not in default_config:
-            raise ValueError(f"Missing required key in default configuration: {key}")
-    
+            raise ValueError(f"Missing required key in default configuration: {key}")    
     # Validate providers
     providers = config["providers"]
     if not isinstance(providers, dict):
         raise ValueError("Providers configuration must be a dictionary")
     
-    supported_providers = ["gemini", "huggingface", "kaggle"]
+    supported_providers = ["gemini", "kaggle", "ollama"]
     for provider in supported_providers:
         if provider not in providers:
             raise ValueError(f"Missing provider configuration: {provider}")
@@ -118,7 +117,6 @@ def get_node_config(config: Dict[str, Any], node_name: str) -> Dict[str, Any]:
     else:
         logger.warning(f"No specific configuration found for node {node_name}, using default")
         return config["default"]
-
 def merge_configs(base_config: Dict[str, Any], override_config: Dict[str, Any]) -> Dict[str, Any]:
     """
     Merge two configuration dictionaries, with override_config taking precedence
@@ -155,7 +153,8 @@ def validate_environment_variables() -> Dict[str, bool]:
     kaggle_key = os.environ.get("KAGGLE_KEY")
     env_status["kaggle"] = bool(kaggle_username and kaggle_key)
     
-    # HuggingFace doesn't require API keys for most models, just local setup
-    env_status["huggingface"] = True
+    # Ollama is available if it's running locally or at a specified URL
+    # We'll assume it's available and check when actually trying to use it
+    env_status["ollama"] = True
     
     return env_status
