@@ -4,7 +4,7 @@ import logging
 from typing import Dict, Any, Optional, Union
 from .config import load_llm_config, get_node_config, validate_environment_variables
 from .base_provider import BaseLLMProvider
-from .providers import GeminiProvider, UnslothProvider, KaggleProvider
+from .providers import GeminiProvider, HuggingFaceProvider, KaggleProvider
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class LLMFactory:
         """
         provider_classes = {
             "gemini": GeminiProvider,
-            "unsloth": UnslothProvider,
+            "huggingface": HuggingFaceProvider,
             "kaggle": KaggleProvider
         }
         
@@ -96,8 +96,8 @@ class LLMFactory:
                     "Kaggle provider is not available. "
                     "Please set the KAGGLE_USERNAME and KAGGLE_KEY environment variables."
                 )
-            elif provider_name == "unsloth":
-                # Unsloth should always be available if installed
+            elif provider_name == "huggingface":
+                # HuggingFace should always be available if transformers is installed
                 pass
     
     def get_model(self, node_name: Optional[str] = None, 

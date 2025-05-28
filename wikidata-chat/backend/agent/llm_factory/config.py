@@ -71,7 +71,7 @@ def validate_config(config: Dict[str, Any]) -> None:
     if not isinstance(providers, dict):
         raise ValueError("Providers configuration must be a dictionary")
     
-    supported_providers = ["gemini", "unsloth", "kaggle"]
+    supported_providers = ["gemini", "huggingface", "kaggle"]
     for provider in supported_providers:
         if provider not in providers:
             raise ValueError(f"Missing provider configuration: {provider}")
@@ -155,7 +155,7 @@ def validate_environment_variables() -> Dict[str, bool]:
     kaggle_key = os.environ.get("KAGGLE_KEY")
     env_status["kaggle"] = bool(kaggle_username and kaggle_key)
     
-    # Unsloth doesn't require API keys, just local setup
-    env_status["unsloth"] = True
+    # HuggingFace doesn't require API keys for most models, just local setup
+    env_status["huggingface"] = True
     
     return env_status

@@ -8,12 +8,13 @@
   },
   "nodes": {
     "EntityExtractionNode": {
-      "provider": "unsloth",
-      "model": "unsloth/Qwen2.5-3B-Instruct-bnb-4bit",
+      "provider": "huggingface",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
       "config": {
-        "max_seq_length": 2048,
-        "dtype": null,
         "load_in_4bit": true,
+        "use_double_quant": true,
+        "quant_type": "nf4",
+        "trust_remote_code": true,
         "temperature": 0.2,
         "max_new_tokens": 512,
         "do_sample": false,
@@ -34,9 +35,10 @@
         "dataset": "muflihaufalmaxi/ft-model",
         "model_files": "ft_model_extract_entity_property/ft_model_extract_entity_property",
         "cache_dir": "./kaggle_models",
-        "max_seq_length": 2048,
-        "dtype": null,
         "load_in_4bit": true,
+        "use_double_quant": true,
+        "quant_type": "nf4",
+        "trust_remote_code": true,
         "temperature": 0.1,
         "max_new_tokens": 512,
         "do_sample": false,
@@ -59,11 +61,12 @@
         "temperature": 0.2
       }
     },
-    "unsloth": {
+    "huggingface": {
       "default_config": {
-        "max_seq_length": 2048,
-        "dtype": null,
         "load_in_4bit": true,
+        "use_double_quant": true,
+        "quant_type": "nf4",
+        "trust_remote_code": true,
         "temperature": 0.2,
         "max_new_tokens": 512,
         "do_sample": false,
@@ -73,9 +76,10 @@
     "kaggle": {
       "default_config": {
         "cache_dir": "./kaggle_models",
-        "max_seq_length": 2048,
-        "dtype": null,
         "load_in_4bit": true,
+        "use_double_quant": true,
+        "quant_type": "nf4",
+        "trust_remote_code": true,
         "force_download": false,
         "temperature": 0.2,
         "max_new_tokens": 512,

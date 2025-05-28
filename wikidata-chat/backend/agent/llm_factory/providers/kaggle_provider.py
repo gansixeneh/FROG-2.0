@@ -3,18 +3,18 @@ import os
 import logging
 from typing import Dict, Any, Optional
 from ..base_provider import BaseLLMProvider
-from .unsloth_provider import UnslothProvider
+from .huggingface_provider import HuggingFaceProvider
 
 logger = logging.getLogger(__name__)
 
 class KaggleProvider(BaseLLMProvider):
     """
-    Provider for Kaggle models that downloads datasets and loads them with Unsloth
+    Provider for Kaggle models that downloads datasets and loads them with HuggingFace
     """
     
     def __init__(self, model_name: str, config: Dict[str, Any]):
         super().__init__(model_name, config)
-        self.unsloth_provider = None
+        self.huggingface_provider = None
         self.model_path = None
         
     def _validate_kaggle_credentials(self) -> None:
@@ -85,10 +85,9 @@ class KaggleProvider(BaseLLMProvider):
                 f"Check the model_files configuration: {model_files}"
             )
         
-        return model_path
-    
+        return model_path    
     def load_model(self) -> None:
-        """Load the Kaggle model by downloading it and using Unsloth"""
+        """Load the Kaggle model by downloading it and using HuggingFace"""
         if self._is_loaded:
             return
         
@@ -98,33 +97,44 @@ class KaggleProvider(BaseLLMProvider):
         # Download model if needed
         self.model_path = self._download_kaggle_dataset()
         
-        # Create Unsloth provider configuration
-        unsloth_config = self.config.copy()
+        # Create HuggingFace provider configuration
+        huggingface_config = self.config.copy()
         
-        # Remove Kaggle-specific keys that shouldn't be passed to Unsloth
+        # Remove Kaggle-specific keys that shouldn't be passed to HuggingFace
         kaggle_keys = {"dataset", "model_files", "cache_dir", "force_download"}
         for key in kaggle_keys:
-            unsloth_config.pop(key, None)
+            huggingface_config.pop(key, None)
         
-        # Create Unsloth provider with the downloaded model path
-        self.unsloth_provider = UnslothProvider(
+        # Set the adapter path if it exists in the model path
+        adapter_dir = None
+        for dir_name in os.listdir(self.model_path):
+            if os.path.isdir(os.path.join(self.model_path, dir_name)) and "adapter" in dir_name.lower():
+                adapter_dir = os.path.join(self.model_path, dir_name)
+                break
+        
+        if adapter_dir:
+            huggingface_config["adapter_path"] = adapter_dir
+            logger.info(f"Found adapter directory: {adapter_dir}")
+        
+        # Create HuggingFace provider with the downloaded model path
+        self.huggingface_provider = HuggingFaceProvider(
             model_name=self.model_path,
-            config=unsloth_config
+            config=huggingface_config
         )
         
-        # Load the model using Unsloth
-        self.unsloth_provider.load_model()
+        # Load the model using HuggingFace
+        self.huggingface_provider.load_model()
         
-        # Delegate to Unsloth provider
-        self.model = self.unsloth_provider.model
-        self.tokenizer = self.unsloth_provider.tokenizer
+        # Delegate to HuggingFace provider
+        self.model = self.huggingface_provider.model
+        self.tokenizer = self.huggingface_provider.tokenizer
         
         self._is_loaded = True
         logger.info(f"Loaded Kaggle model from: {self.model_path}")
     
     def generate_response(self, prompt: str, **kwargs) -> str:
         """
-        Generate response using the downloaded Kaggle model via Unsloth
+        Generate response using the downloaded Kaggle model via HuggingFace
         
         Args:
             prompt: Input prompt
@@ -136,11 +146,10 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.unsloth_provider.generate_response(prompt, **kwargs)
-    
+        return self.huggingface_provider.generate_response(prompt, **kwargs)    
     def is_chat_template_supported(self) -> bool:
         """
-        Check if the model supports chat templates (delegated to Unsloth provider)
+        Check if the model supports chat templates (delegated to HuggingFace provider)
         
         Returns:
             True if chat templates are supported, False otherwise
@@ -148,11 +157,11 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.unsloth_provider.is_chat_template_supported()
+        return self.huggingface_provider.is_chat_template_supported()
     
     def _apply_chat_template_impl(self, messages: list, **kwargs) -> str:
         """
-        Apply chat template using Unsloth provider
+        Apply chat template using HuggingFace provider
         
         Args:
             messages: List of message dictionaries
@@ -164,7 +173,7 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.unsloth_provider._apply_chat_template_impl(messages, **kwargs)
+        return self.huggingface_provider._apply_chat_template_impl(messages, **kwargs)
     
     def get_pipeline(self):
         """
@@ -176,7 +185,7 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.unsloth_provider.get_pipeline()
+        return self.huggingface_provider.get_pipeline()
     
     def get_raw_pipeline(self):
         """
@@ -188,15 +197,15 @@ class KaggleProvider(BaseLLMProvider):
         if not self._is_loaded:
             self.load_model()
         
-        return self.unsloth_provider.get_raw_pipeline()
+        return self.huggingface_provider.get_raw_pipeline()
     
     def cleanup(self) -> None:
         """
         Clean up resources
         """
-        if self.unsloth_provider:
-            self.unsloth_provider.cleanup()
-            self.unsloth_provider = None
+        if self.huggingface_provider:
+            self.huggingface_provider.cleanup()
+            self.huggingface_provider = None
         
         self.model = None
         self.tokenizer = None
