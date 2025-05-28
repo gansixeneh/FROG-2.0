@@ -9,7 +9,7 @@
   "nodes": {
     "EntityExtractionNode": {
       "provider": "ollama",
-      "model": "qwen3:0.6b",
+      "model": "hf.co/gansixeneh/Qwen2.5-Coder-3B-Instruct-extract-entity",
       "config": {
         "temperature": 0.2,
         "base_url": "http://localhost:11434"
@@ -19,13 +19,6 @@
   "providers": {
     "gemini": {
       "default_config": {
-        "temperature": 0.2
-      }
-    },
-    "kaggle": {
-      "default_config": {
-        "cache_dir": "./kaggle_models",
-        "force_download": false,
         "temperature": 0.2
       }
     },

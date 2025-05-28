@@ -8,8 +8,7 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
 
 - Python 3.8 or higher
 - Google Gemini API key (required)
-- Optional: Kaggle API credentials (for Kaggle models)
-- Optional: Unsloth installation (for local fine-tuned models)
+- Optional: Ollama installation (for running local models)
 
 ### Setup
 
@@ -39,26 +38,18 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
 4. **Optional dependencies** (install based on which LLM providers you want to use):
 
    ```bash
-   # For Unsloth provider (local fine-tuned models)
-   pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
-
-   # For Kaggle provider (already included in requirements.txt)
-   pip install kaggle
+   # For Ollama provider (required if using local models)
+   # Install Ollama from https://ollama.ai/
    ```
 5. Create a `.env` file in the project root with your API keys:
 
    ```
    GEMINI_API_KEY=your_gemini_api_key_here
-
-   # Optional: For Kaggle provider
-   KAGGLE_USERNAME=your_kaggle_username
-   KAGGLE_KEY=your_kaggle_api_key
    ```
 
    **Configuration options:**
 
    - `GEMINI_API_KEY`: **Required**. Your Google Gemini API key.
-   - `KAGGLE_USERNAME` & `KAGGLE_KEY`: Optional. Required only if using Kaggle models for SPARQL generation.
 6. Run database migrations:
 
    ```
@@ -80,17 +71,16 @@ The backend now supports multiple LLM providers through a configuration-based sy
 ### Supported Providers
 
 1. **Gemini** - Google's Gemini models via API
-2. **Unsloth** - Local fine-tuned models using Unsloth's FastLanguageModel
-3. **Kaggle** - Models downloaded from Kaggle and loaded with Unsloth
+2. **Ollama** - Local models via Ollama
 
 ### Configuration
 
 The LLM configuration is stored in `config/llm_config.json`. You can customize which models are used for different tasks:
 
-- **EntityExtractionNode**: Currently configured to use Unsloth with Qwen2.5-3B-Instruct-bnb-4bit
-- **VerbalizationNode**: Uses Gemini 2.0 Flash
-- **SparqlGenerationNode**: Configured to use a fine-tuned Kaggle model
-- **AnswerGenerationNode**: Uses Gemini 1.5 Pro
+- **EntityExtractionNode**: Currently configured to use Ollama with Qwen3:0.6b
+- **VerbalizationNode**: Uses Gemini 2.0 Flash (default)
+- **SparqlGenerationNode**: Can be configured to use Hugging Face models via Ollama (see llm_config.example.json)
+- **AnswerGenerationNode**: Uses Gemini 1.5 Pro (default)
 
 ### Testing the Configuration
 
@@ -108,19 +98,12 @@ python example_llm_factory_usage.py
 
 ### Provider-Specific Setup
 
-#### Unsloth Provider
+#### Ollama Provider
 
-- Requires Unsloth installation (see optional dependencies above)
-- Loads models locally using `FastLanguageModel.from_pretrained()`
+- Requires Ollama to be installed (download from https://ollama.ai/)
+- Can pull models directly from Hugging Face using the format `huggingface/username/repo-name`
 - Supports chat templates automatically
-- Uses GPU memory - ensure adequate VRAM
-
-#### Kaggle Provider
-
-- Requires Kaggle API credentials in environment variables
-- Downloads datasets automatically to `./kaggle_models/` directory
-- Caches downloaded models to avoid re-downloading
-- Uses Unsloth for model loading after download
+- Uses GPU memory if available - ensure adequate VRAM
 
 #### Gemini Provider
 

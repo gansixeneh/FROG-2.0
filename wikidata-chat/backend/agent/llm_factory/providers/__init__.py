@@ -1,6 +1,5 @@
 # backend/agent/llm_factory/providers/__init__.py
 from .gemini_provider import GeminiProvider
-from .kaggle_provider import KaggleProvider
 from .ollama_provider import OllamaProvider
 
-__all__ = ["GeminiProvider", "KaggleProvider", "OllamaProvider"]
+__all__ = ["GeminiProvider", "OllamaProvider"]

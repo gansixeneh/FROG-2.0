@@ -70,7 +70,7 @@ def validate_config(config: Dict[str, Any]) -> None:
     if not isinstance(providers, dict):
         raise ValueError("Providers configuration must be a dictionary")
     
-    supported_providers = ["gemini", "kaggle", "ollama"]
+    supported_providers = ["gemini", "ollama"]
     for provider in supported_providers:
         if provider not in providers:
             raise ValueError(f"Missing provider configuration: {provider}")
@@ -147,11 +147,6 @@ def validate_environment_variables() -> Dict[str, bool]:
     
     # Check Gemini API key
     env_status["gemini"] = bool(os.environ.get("GEMINI_API_KEY"))
-    
-    # Check Kaggle credentials
-    kaggle_username = os.environ.get("KAGGLE_USERNAME")
-    kaggle_key = os.environ.get("KAGGLE_KEY")
-    env_status["kaggle"] = bool(kaggle_username and kaggle_key)
     
     # Ollama is available if it's running locally or at a specified URL
     # We'll assume it's available and check when actually trying to use it

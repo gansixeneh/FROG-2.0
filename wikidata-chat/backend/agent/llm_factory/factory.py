@@ -4,7 +4,7 @@ import logging
 from typing import Dict, Any, Optional, Union
 from .config import load_llm_config, get_node_config, validate_environment_variables
 from .base_provider import BaseLLMProvider
-from .providers import GeminiProvider, KaggleProvider, OllamaProvider
+from .providers import GeminiProvider, OllamaProvider
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,6 @@ class LLMFactory:
         """
         provider_classes = {
             "gemini": GeminiProvider,
-            "kaggle": KaggleProvider,
             "ollama": OllamaProvider
         }
         
@@ -89,11 +88,6 @@ class LLMFactory:
                 raise ValueError(
                     "Gemini provider is not available. "
                     "Please set the GEMINI_API_KEY environment variable."
-                )
-            elif provider_name == "kaggle":
-                raise ValueError(
-                    "Kaggle provider is not available. "
-                    "Please set the KAGGLE_USERNAME and KAGGLE_KEY environment variables."
                 )
     
     def get_model(self, node_name: Optional[str] = None, 
