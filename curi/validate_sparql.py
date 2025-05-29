@@ -29,7 +29,7 @@ def validate_and_analyze_sparql_queries(input_json_path, ttl_file_path, output_j
     """
     # Default output path if not specified
     if output_json_path is None:
-        output_json_path = f"enhanced_sparql_results.json"
+        output_json_path = f"curi.json"
     
     print(f"Loading RDF graph from {ttl_file_path}...")
     # Load the RDF graph
@@ -170,7 +170,7 @@ def main():
     if len(sys.argv) > 1:
         input_json_path = sys.argv[1]
     else:
-        input_json_path = 'enhanced_university_course_dataset.json'
+        input_json_path = 'curi.json'
     
     ttl_file_path = 'final_result.ttl'
     

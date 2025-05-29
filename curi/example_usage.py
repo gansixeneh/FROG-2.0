@@ -80,7 +80,7 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         
         print("\nGenerating question-SPARQL pairs for university course data...")
         dataset = generator.generate_dataset(
-            size=200,
+            size=10,
             complexity_distribution={"basic": 0.4, "intermediate": 0.3, "advanced": 0.3},
             include_variations=False,
             variations_per_question=0
@@ -99,8 +99,8 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
                 print(f"    SPARQL: {q['sparql'].replace('{', '{{').replace('}', '}}')[:80]}...")
         
         # Write to files
-        output_json_path = 'enhanced_university_course_dataset.json'
-        output_csv_path = 'enhanced_university_course_dataset.csv'
+        output_json_path = 'curi.json'
+        output_csv_path = 'curi.csv'
         
         with open(output_json_path, 'w', encoding='utf-8') as f:
             f.write(generator.export_json(dataset))
