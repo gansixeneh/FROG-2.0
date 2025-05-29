@@ -1,0 +1,242 @@
+[
+  {
+    "id": "q1",
+    "question": "How is Logic Programming informally known or abbreviated?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?nickname where { ns1:logic_programming ns1:also_known_as ?nickname.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-nickname",
+    "success": true,
+    "results": [
+      {
+        "nickname": "prolog"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q2",
+    "question": "What category does Introduction to Digital Systems belong to?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?category where { ns1:introduction_to_digital_systems ns1:has_course_category ?category.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-category",
+    "success": true,
+    "results": [
+      {
+        "category": "http://example.org/study_program_mandatory_course"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q3",
+    "question": "What are the alternative names or abbreviations for Programming Basics 2?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?nickname where { ns1:programming_basics_2 ns1:also_known_as ?nickname.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-nickname",
+    "success": true,
+    "results": [
+      {
+        "nickname": "DDP 2"
+      },
+      {
+        "nickname": "Introduction to Programming 2"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q4",
+    "question": "Which courses must be completed before taking Advanced Database?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?prereq where { ns1:advanced_database ns1:has_prerequisite_course ?prereq.}",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "prereq": "http://example.org/database"
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q5",
+    "question": "What is the total number of prerequisite courses for Mobile Technology?",
+    "sparql": "PREFIX ns1: <http://example.org/> select (count(?prereq) as ?count) where { ns1:mobile_technology ns1:has_prerequisite_course ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "count": 1
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q6",
+    "question": "How many prerequisites does Natural Language Processing have?",
+    "sparql": "PREFIX ns1: <http://example.org/> select (count(?prereq) as ?count) where { ns1:natural_language_processing ns1:has_prerequisite_course ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "count": 1
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q7",
+    "question": "How many prerequisites does Logic Programming have?",
+    "sparql": "PREFIX ns1: <http://example.org/> select (count(?prereq) as ?count) where { ns1:logic_programming ns1:has_prerequisite_course ?prereq.}",
+    "category": "university",
+    "complexity": "intermediate",
+    "templateId": "count-prerequisites",
+    "success": true,
+    "results": [
+      {
+        "count": 2
+      }
+    ],
+    "result_count": 1
+  },
+  {
+    "id": "q8",
+    "question": "What courses have Discrete Mathematics 2 as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?course where { ?course ns1:has_prerequisite_course ns1:discrete_mathematics_2.?course ns1:has_evaluation_method ns1:group_project.?course ns1:has_course_category ns1:study_program_elective_course.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/knowledge_graph"
+      },
+      {
+        "course": "http://example.org/knowledge_representation_and_reasoning"
+      }
+    ],
+    "result_count": 2
+  },
+  {
+    "id": "q9",
+    "question": "What courses have prerequisites with Programming Basics 1 as their prerequisites?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?course where { ?course ns1:has_prerequisite_course ?prereq.?prereq ns1:has_prerequisite_course ns1:programming_basics_1.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/computer_assisted_teaching"
+      },
+      {
+        "course": "http://example.org/human-computer_interaction"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_software_security"
+      },
+      {
+        "course": "http://example.org/parallel_programming"
+      },
+      {
+        "course": "http://example.org/advanced_programming"
+      },
+      {
+        "course": "http://example.org/software_engineering"
+      },
+      {
+        "course": "http://example.org/database"
+      },
+      {
+        "course": "http://example.org/cloud_computing"
+      },
+      {
+        "course": "http://example.org/digital_forensics"
+      },
+      {
+        "course": "http://example.org/distributed_systems"
+      },
+      {
+        "course": "http://example.org/internet_of_things"
+      },
+      {
+        "course": "http://example.org/mobile_technology"
+      },
+      {
+        "course": "http://example.org/system_administration"
+      },
+      {
+        "course": "http://example.org/web_application_architecture"
+      },
+      {
+        "course": "http://example.org/algorithm_design_and_analysis"
+      },
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/competitive_programming"
+      },
+      {
+        "course": "http://example.org/competitive_programming_practicum"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/computational_geometry"
+      },
+      {
+        "course": "http://example.org/functional_programming"
+      },
+      {
+        "course": "http://example.org/game_development"
+      },
+      {
+        "course": "http://example.org/system_programming"
+      },
+      {
+        "course": "http://example.org/introduction_to_artificial_intelligence_and_data_science"
+      }
+    ],
+    "result_count": 26
+  },
+  {
+    "id": "q10",
+    "question": "What courses have Data Structures and Algorithms as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
+    "sparql": "PREFIX ns1: <http://example.org/> select ?course where { ?course ns1:has_prerequisite_course ns1:data_structures_and_algorithms.?course ns1:has_evaluation_method ns1:programming_assignment.?course ns1:has_course_category ns1:study_program_elective_course.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
+    "success": true,
+    "results": [
+      {
+        "course": "http://example.org/bioinformatics"
+      },
+      {
+        "course": "http://example.org/competitive_programming"
+      },
+      {
+        "course": "http://example.org/compiler_techniques"
+      },
+      {
+        "course": "http://example.org/computational_geometry"
+      }
+    ],
+    "result_count": 4
+  }
+]

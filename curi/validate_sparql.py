@@ -29,7 +29,7 @@ def validate_and_analyze_sparql_queries(input_json_path, ttl_file_path, output_j
     """
     # Default output path if not specified
     if output_json_path is None:
-        output_json_path = f"curi.json"
+        output_json_path = f"curi_validate.json"
     
     print(f"Loading RDF graph from {ttl_file_path}...")
     # Load the RDF graph
