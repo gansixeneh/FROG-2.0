@@ -1721,11 +1721,7 @@ class NL2SPARQLGenerator:
             
         Returns:
             dict: The instantiated question and SPARQL query or None if failed
-        """
-        if not self.graph:
-            # If we don't have a graph, fall back to the old method
-            return self.instantiate_template(template)
-            
+        """ 
         # Extract placeholders from the template
         placeholders = self.extract_placeholders(template)
         
@@ -1927,57 +1923,6 @@ class NL2SPARQLGenerator:
         
         return discovery_query
 
-    def instantiate_template(self, template):
-        """
-        Original method to instantiate a template with specific entities and properties
-        Kept as a fallback method
-        
-        Args:
-            template (dict): The template to instantiate
-            
-        Returns:
-            dict: The instantiated question and SPARQL query or None if failed
-        """
-        # Select entities and properties appropriate for this template
-        placeholders = self.extract_placeholders(template)
-        replacements = self.select_replacements(placeholders, template)
-        
-        if not replacements:
-            return None
-        
-        # Randomly select one of the question templates
-        question_template = random.choice(template["questionTemplates"]).strip()
-        sparql = template["sparqlTemplate"].strip()
-        
-        # Replace placeholders in question and query
-        for placeholder, replacement in replacements.items():
-            # Create a pattern that can handle whitespace around the placeholder
-            pattern = r"{[\s]*" + re.escape(placeholder) + r"[\s]*}"
-            
-            # Replace in question
-            replacement_text = replacement.get("label", replacement.get("value", ""))
-            question = re.sub(pattern, replacement_text, question_template)
-            
-            # Replace in SPARQL
-            if "uri" in replacement:
-                sparql_value = f"<{replacement['uri']}>"
-            elif "sparqlValue" in replacement:
-                sparql_value = replacement["sparqlValue"]
-            else:
-                sparql_value = replacement["value"]
-                
-            sparql = re.sub(pattern, sparql_value, sparql)
-        
-        # Replace all prefixed URIs with full URIs
-        for prefix, uri in self.prefixes.items():
-            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
-            sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
-        
-        # Format the SPARQL query for readability
-        sparql = self.format_sparql(sparql)
-        
-        return {"question": question, "sparql": sparql}
-
     def extract_placeholders(self, template):
         """
         Extract all placeholders from template (text in curly braces)
@@ -2009,86 +1954,6 @@ class NL2SPARQLGenerator:
             placeholders.add(match.group(1).strip())
         
         return placeholders
-
-    def select_replacements(self, placeholders, template):
-        """
-        Select appropriate replacements for template placeholders
-        
-        Args:
-            placeholders (set): Set of placeholder names
-            template (dict): The template being instantiated
-            
-        Returns:
-            dict: Map of placeholder to replacement value or None if failed
-        """
-        replacements = {}
-        
-        # Try to select appropriate values for each placeholder
-        for placeholder in placeholders:
-            replacement = None
-            
-            # Handle entity placeholders
-            if placeholder.startswith('entity'):
-                # If we have a graph, try to find entities that fit the template
-                if self.graph:
-                    # For placeholder that are numbered (entity1, entity2), we need to
-                    # extract the pattern based on the placeholder name
-                    placeholder_number = None
-                    if placeholder != "entity":
-                        match = re.match(r'entity(\d+)', placeholder)
-                        if match:
-                            placeholder_number = int(match.group(1))
-                    
-                    replacement = self.select_entity_from_graph(template, placeholder_number)
-                
-                # If we didn't get a replacement from the graph, try pattern-based selection
-                if not replacement:
-                    question_templates_text = ' '.join(template["questionTemplates"]).lower()
-                    
-                    if "research-group" in template["id"] or placeholder == "entity1" and "research" in question_templates_text:
-                        replacement = self.select_entity_by_type("ns1:research_lab")
-                    elif "evaluation" in template["id"] or placeholder in ["entity1", "entity2", "entity3"] and "evaluation" in question_templates_text:
-                        replacement = self.select_entity_by_type("ns1:evaluation")
-                    elif "category" in template["id"] or placeholder in ["entity2", "entity3"] and "categor" in question_templates_text:
-                        replacement = self.select_entity_by_type("ns1:course_category")
-                    else:
-                        replacement = self.select_entity_by_type("ns1:course")
-                
-                # Fallback to any entity if specific type not found
-                if not replacement:
-                    replacement = self.select_random_entity()
-            
-            # Handle value placeholders
-            elif placeholder == "value" or placeholder.endswith("Value"):
-                # If we have a graph, try to find values that fit the template
-                if self.graph:
-                    replacement = self.select_value_from_graph(template, placeholder)
-                
-                # If we didn't get a replacement from the graph, use predefined values
-                if not replacement:
-                    question_templates_text = ' '.join(template["questionTemplates"]).lower()
-                    
-                    if "credits" in template["id"] or "credits" in question_templates_text:
-                        # For credit-related templates, use realistic credit values
-                        replacement = self.select_credit_value()
-                    elif "code" in template["id"] or "code" in question_templates_text:
-                        # For course code, use realistic course code format
-                        replacement = self.select_course_code_value()
-                    else:
-                        replacement = self.select_random_value(template)
-            
-            # Handle property placeholders
-            elif placeholder.startswith('property'):
-                replacement = self.select_university_property(template, placeholder)
-            
-            # If we couldn't find a replacement, return None
-            if not replacement:
-                print(f"Could not find replacement for placeholder: {placeholder}")
-                return None
-            
-            replacements[placeholder] = replacement
-        
-        return replacements
 
     def select_entity_from_graph(self, template, placeholder_number=None):
         """
@@ -2354,106 +2219,7 @@ class NL2SPARQLGenerator:
         
         print("Warning: Using fallback university entities")
         return random.choice(university_entities)
-
-    def select_university_property(self, template, placeholder):
-        """
-        Select a property appropriate for university course templates
-        
-        Args:
-            template (dict): The template being instantiated
-            placeholder (str): The property placeholder name
-            
-        Returns:
-            dict: Selected property
-        """
-        # Define common university course properties
-        university_properties = {
-            "credits": {"value": "ns1:has_credits", "label": "credits", 
-                       "uri": "http://example.org/has_credits"},
-            "prerequisite": {"value": "ns1:has_prerequisite_course", "label": "prerequisite course", 
-                            "uri": "http://example.org/has_prerequisite_course"},
-            "code": {"value": "ns1:has_course_code", "label": "course code", 
-                    "uri": "http://example.org/has_course_code"},
-            "evaluation": {"value": "ns1:has_evaluation_method", "label": "evaluation method", 
-                          "uri": "http://example.org/has_evaluation_method"},
-            "research": {"value": "ns1:has_research_group", "label": "research group", 
-                        "uri": "http://example.org/has_research_group"},
-            "category": {"value": "ns1:has_course_category", "label": "course category", 
-                        "uri": "http://example.org/has_course_category"},
-            "nickname": {"value": "ns1:also_known_as", "label": "also known as", 
-                        "uri": "http://example.org/also_known_as"},
-        }
-        
-        # Get the combined text of all question templates
-        question_templates_text = ' '.join(template["questionTemplates"]).lower()
-        
-        # First check if our schema info has this property
-        if "properties" in self.schema_info:
-            # Try to find a matching property from the schema
-            if "credit" in template["id"] or "credit" in placeholder or "credit" in question_templates_text:
-                prop = self.find_property_by_name("has_credits")
-                if prop:
-                    return prop
-                
-            elif "prerequisite" in template["id"] or "prerequisite" in placeholder or "prerequisite" in question_templates_text:
-                prop = self.find_property_by_name("has_prerequisite_course")
-                if prop:
-                    return prop
-                
-            elif "code" in template["id"] or "code" in placeholder or "code" in question_templates_text:
-                prop = self.find_property_by_name("has_course_code")
-                if prop:
-                    return prop
-                
-            elif "evaluation" in template["id"] or "evaluation" in placeholder or "evaluation" in question_templates_text:
-                prop = self.find_property_by_name("has_evaluation_method")
-                if prop:
-                    return prop
-                
-            elif "research" in template["id"] or "research" in placeholder or "research" in question_templates_text:
-                prop = self.find_property_by_name("has_research_group")
-                if prop:
-                    return prop
-                
-            elif "category" in template["id"] or "category" in placeholder or "category" in question_templates_text:
-                prop = self.find_property_by_name("has_course_category")
-                if prop:
-                    return prop
-                
-            elif "nickname" in template["id"] or "nickname" in placeholder or "nickname" in question_templates_text:
-                prop = self.find_property_by_name("also_known_as")
-                if prop:
-                    return prop
-        
-        # If we don't have the property in schema info, use our predefined ones
-        if "credit" in template["id"] or "credit" in placeholder or "credit" in question_templates_text:
-            return university_properties["credits"]
-            
-        elif "prerequisite" in template["id"] or "prerequisite" in placeholder or "prerequisite" in question_templates_text:
-            return university_properties["prerequisite"]
-            
-        elif "code" in template["id"] or "code" in placeholder or "code" in question_templates_text:
-            return university_properties["code"]
-            
-        elif "evaluation" in template["id"] or "evaluation" in placeholder or "evaluation" in question_templates_text:
-            return university_properties["evaluation"]
-            
-        elif "research" in template["id"] or "research" in placeholder or "research" in question_templates_text:
-            return university_properties["research"]
-            
-        elif "category" in template["id"] or "category" in placeholder or "category" in question_templates_text:
-            return university_properties["category"]
-            
-        elif "nickname" in template["id"] or "nickname" in placeholder or "nickname" in question_templates_text:
-            return university_properties["nickname"]
-            
-        # Fallback to any property if we can't find a specific match
-        if "properties" in self.schema_info and self.schema_info["properties"]:
-            return random.choice(self.schema_info["properties"])
-            
-        # Last resort - return credits as default
-        return university_properties["credits"]
-
+    
     def select_credit_value(self):
         """
         Select a realistic credit value for university courses
@@ -2503,27 +2269,6 @@ class NL2SPARQLGenerator:
         # Default to a generic value
         dummy_value = random.randint(1, 10)
         return {"value": str(dummy_value), "label": str(dummy_value)}
-
-    def find_property_by_name(self, name):
-        """
-        Find a property by name in schema info
-        
-        Args:
-            name (str): Property name to find
-            
-        Returns:
-            dict: Found property or None
-        """
-        if "properties" not in self.schema_info:
-            return None
-        
-        for prop in self.schema_info["properties"]:
-            if (name in prop["value"] or 
-                name in prop["label"] or 
-                (prop.get("uri", "").split("/")[-1] == name)):
-                return prop
-        
-        return None
 
     def extract_label_from_uri(self, uri):
         """
