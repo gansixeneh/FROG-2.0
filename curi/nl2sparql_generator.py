@@ -755,7 +755,7 @@ class NL2SPARQLGenerator:
         
         # Add entity mappings
         for i, uri in enumerate(entity_uris):
-            key = "entity" if i == 0 and len(entity_uris) == 1 else f"entity{i+1}"
+            key = "entity" if i == 0 else f"entity{i+1}"
             label = self._get_label_from_graph(uri)
             if not label:
                 label = self.extract_label_from_uri(uri)
