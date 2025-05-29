@@ -14,11 +14,51 @@ logger = logging.getLogger(__name__)
 class UniversityPropertyRetrieval:
     """Class for managing University course properties and entities retrieval and search"""
     
+    # Define SPARQL queries for entities and properties
+    get_entities_query = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?label
+    (REPLACE(STR(?entity), "http://example.org/", "ns1:") AS ?short)
+WHERE {
+  { 
+    ?entity ?predicate ?object. 
+    FILTER(isIRI(?entity) && STRSTARTS(STR(?entity), STR(ns1:)) && STRSTARTS(STR(?predicate), STR(ns1:)))
+  }
+  UNION
+  { 
+    ?subject ?predicate ?entity. 
+    FILTER(isIRI(?entity) && STRSTARTS(STR(?entity), STR(ns1:)) && STRSTARTS(STR(?predicate), STR(ns1:)))
+  }
+  
+  OPTIONAL {
+    ?entity rdfs:label ?label.
+  }
+}
+"""
+        
+    get_properties_query = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?label 
+    (REPLACE(STR(?property), "http://example.org/", "ns1:") AS ?short)
+WHERE {
+  ?subject ?property ?object.
+  FILTER(STRSTARTS(STR(?property), STR(ns1:)))
+  
+  OPTIONAL {
+    ?property rdfs:label ?label.
+  }
+}
+"""
+    
     def __init__(
         self,
         turtle_file_path: str,
-        get_entities_query: str,
-        get_properties_query: str,
         embedding_model_name: str = "jinaai/jina-embeddings-v3",
         is_local_client: bool = True,
         weaviate_host: str = "localhost",
@@ -26,8 +66,6 @@ class UniversityPropertyRetrieval:
         weaviate_client=None
     ) -> None:
         self.turtle_file_path = turtle_file_path
-        self.get_entities_query = get_entities_query
-        self.get_properties_query = get_properties_query
         
         # Initialize the embedding model
         self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
@@ -99,15 +137,11 @@ class UniversityPropertyRetrieval:
             for result in results:
                 label = str(result[0]) if result[0] else ""
                 short = str(result[1]) if result[1] else ""
-                short_domain = str(result[2]) if len(result) > 2 and result[2] else ""
-                short_range = str(result[3]) if len(result) > 3 and result[3] else ""
                 
                 if label or short:
                     properties_data.append({
                         'label': label,
                         'short': short,
-                        'shortDomain': short_domain,
-                        'shortRange': short_range
                     })
             
             df = pd.DataFrame(properties_data)
@@ -116,7 +150,7 @@ class UniversityPropertyRetrieval:
             
         except Exception as e:
             logger.error(f"Error extracting properties: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'shortDomain', 'shortRange'])
+            return pd.DataFrame(columns=['label', 'short'])
 
     def _setup_collection(self, collection_name: str, df: pd.DataFrame):
         """Setup Weaviate collection for entities or properties"""
