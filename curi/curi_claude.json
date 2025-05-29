@@ -3286,4 +3286,2182 @@
             }
           ]
         }
-      ]
+  ,
+  {
+    "id": "q101",
+    "question": "Which courses have Computer Network as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-with-prerequisite",
+    "thoughts": [
+      "1. The query is looking for courses that have Computer Network as a prerequisite.",
+      "2. The entity 'ns1:computer_network' represents the Computer Network course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that have Computer Network as a prerequisite course."
+    ],
+    "entities": [
+      "Computer Network"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q102",
+    "question": "What evaluation methods are used in the Distributed Systems course?",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_evaluation_method ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation-methods",
+    "thoughts": [
+      "1. The query is looking for evaluation methods used in the Distributed Systems course.",
+      "2. The entity 'ns1:distributed_systems' represents the Distributed Systems course.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the evaluation methods we're looking for.",
+      "5. This query will return all evaluation methods used in the Distributed Systems course."
+    ],
+    "entities": [
+      "Distributed Systems"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:distributed_systems",
+        "label": "Distributed Systems"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q103",
+    "question": "What is the alternative name for a course that has Lab Assignment as an evaluation method and Data Structures and Algorithms as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?hidden ns1:has_prerequisite_course ns1:data_structures_and_algorithms . ?hidden ns1:also_known_as ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-alternative-name",
+    "thoughts": [
+      "1. The query is looking for the alternative name of a course.",
+      "2. This course has Lab Assignment as an evaluation method.",
+      "3. This course also has Data Structures and Algorithms as a prerequisite.",
+      "4. The variable ?hidden represents the course we're looking for details about.",
+      "5. The property 'ns1:also_known_as' links the course to its alternative name.",
+      "6. The variable ?target will contain the alternative name of the course."
+    ],
+    "entities": [
+      "Lab Assignment",
+      "Data Structures and Algorithms"
+    ],
+    "properties": [
+      "has evaluation method",
+      "has prerequisite course",
+      "also known as"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      },
+      {
+        "id": "ns1:data_structures_and_algorithms",
+        "label": "Data Structures and Algorithms"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q104",
+    "question": "What prerequisites are required for courses that use presentation or demo of project assignments as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-by-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisites of courses with a specific evaluation method.",
+      "2. The entity 'ns1:presentation_or_demo_of_project_assignments' represents an evaluation method.",
+      "3. The variable ?hidden represents courses that have this evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for courses using presentation or demo of project assignments."
+    ],
+    "entities": [
+      "Presentation or demo of project assignments"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:presentation_or_demo_of_project_assignments",
+        "label": "Presentation or demo of project assignments"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q105",
+    "question": "Under which course category is English classified?",
+    "sparql": "SELECT ?target WHERE { ns1:english ns1:has_course_category ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-category",
+    "thoughts": [
+      "1. The query is looking for the category of the English course.",
+      "2. The entity 'ns1:english' represents the English course.",
+      "3. The property 'ns1:has_course_category' links courses to their categories.",
+      "4. The variable ?target represents the category we're looking for.",
+      "5. This query will return the category under which the English course is classified."
+    ],
+    "entities": [
+      "English"
+    ],
+    "properties": [
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:english",
+        "label": "English"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q106",
+    "question": "What prerequisite courses for Embedded Systems use Task as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:embedded_systems ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:task . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Embedded Systems that have a specific evaluation method.",
+      "2. The entity 'ns1:embedded_systems' represents the Embedded Systems course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The entity 'ns1:task' represents the Task evaluation method.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for Embedded Systems and use Task as an evaluation method."
+    ],
+    "entities": [
+      "Embedded Systems",
+      "Task"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:embedded_systems",
+        "label": "Embedded Systems"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q107",
+    "question": "What prerequisite courses for Information Retrieval use Test as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Information Retrieval that have a specific evaluation method.",
+      "2. The entity 'ns1:information_retrieval' represents the Information Retrieval course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The entity 'ns1:test' represents the Test evaluation method.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for Information Retrieval and use Test as an evaluation method."
+    ],
+    "entities": [
+      "Information Retrieval",
+      "Test"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q108",
+    "question": "Which courses are associated with the Information Retrieval and Natural Language Processing research group?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-research-group",
+    "thoughts": [
+      "1. The query is looking for courses associated with a specific research group.",
+      "2. The entity 'ns1:information_retrieval_and_natural_language_processing' represents the research group.",
+      "3. The property 'ns1:has_research_group' links courses to their research groups.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses associated with the Information Retrieval and Natural Language Processing research group."
+    ],
+    "entities": [
+      "Information Retrieval and Natural Language Processing"
+    ],
+    "properties": [
+      "has research group"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval_and_natural_language_processing",
+        "label": "Information Retrieval and Natural Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q109",
+    "question": "What evaluation methods are used in the Functional Programming course?",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation-methods",
+    "thoughts": [
+      "1. The query is looking for evaluation methods used in the Functional Programming course.",
+      "2. The entity 'ns1:functional_programming' represents the Functional Programming course.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the evaluation methods we're looking for.",
+      "5. This query will return all evaluation methods used in the Functional Programming course."
+    ],
+    "entities": [
+      "Functional Programming"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:functional_programming",
+        "label": "Functional Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q110",
+    "question": "What are the prerequisite courses for Statistics and Probability?",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "thoughts": [
+      "1. The query is looking for prerequisites of the Statistics and Probability course.",
+      "2. The entity 'ns1:statistics_and_probability' represents the Statistics and Probability course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the prerequisite courses we're looking for.",
+      "5. This query will return all courses that are prerequisites for Statistics and Probability."
+    ],
+    "entities": [
+      "Statistics and Probability"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q111",
+    "question": "What are the prerequisite courses for Knowledge Graph?",
+    "sparql": "SELECT ?target WHERE { ns1:knowledge_graph ns1:has_prerequisite_course ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "thoughts": [
+      "1. The query is looking for prerequisites of the Knowledge Graph course.",
+      "2. The entity 'ns1:knowledge_graph' represents the Knowledge Graph course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the prerequisite courses we're looking for.",
+      "5. This query will return all courses that are prerequisites for Knowledge Graph."
+    ],
+    "entities": [
+      "Knowledge Graph"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:knowledge_graph",
+        "label": "Knowledge Graph"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q112",
+    "question": "What prerequisites are required for courses that use Lab Assignment as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:lab_assignment . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-by-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisites of courses with a specific evaluation method.",
+      "2. The entity 'ns1:lab_assignment' represents the Lab Assignment evaluation method.",
+      "3. The variable ?hidden represents courses that use Lab Assignment as an evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for courses using Lab Assignment as an evaluation method."
+    ],
+    "entities": [
+      "Lab Assignment"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q113",
+    "question": "Which courses use Projects & Presentations as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:projects_and_presentations . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:projects_and_presentations' represents the Projects & Presentations evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Projects & Presentations as an evaluation method."
+    ],
+    "entities": [
+      "Projects & Presentations"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q114",
+    "question": "Which research group is associated with the Technopreneurship course?",
+    "sparql": "SELECT ?target WHERE { ns1:technopreneurship ns1:has_research_group ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "thoughts": [
+      "1. The query is looking for the research group associated with the Technopreneurship course.",
+      "2. The entity 'ns1:technopreneurship' represents the Technopreneurship course.",
+      "3. The property 'ns1:has_research_group' links courses to their research groups.",
+      "4. The variable ?target represents the research group we're looking for.",
+      "5. This query will return the research group associated with the Technopreneurship course."
+    ],
+    "entities": [
+      "Technopreneurship"
+    ],
+    "properties": [
+      "has research group"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:technopreneurship",
+        "label": "Technopreneurship"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q115",
+    "question": "Which mandatory program courses have Operating System as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-and-category",
+    "thoughts": [
+      "1. The query is looking for courses with a specific prerequisite and category.",
+      "2. The entity 'ns1:operating_system' represents the Operating System course.",
+      "3. The entity 'ns1:study_program_mandatory_course' represents the Study Program Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the courses we're looking for.",
+      "7. This query will return all Study Program Mandatory courses that have Operating System as a prerequisite."
+    ],
+    "entities": [
+      "Operating System",
+      "Study Program Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:operating_system",
+        "label": "Operating system"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q116",
+    "question": "What mandatory program courses are prerequisites for Ethical Hacking?",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Ethical Hacking that belong to a specific category.",
+      "2. The entity 'ns1:ethical_hacking' represents the Ethical Hacking course.",
+      "3. The entity 'ns1:study_program_mandatory_course' represents the Study Program Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Study Program Mandatory courses that are prerequisites for Ethical Hacking."
+    ],
+    "entities": [
+      "Ethical Hacking",
+      "Study Program Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:ethical_hacking",
+        "label": "Ethical Hacking"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q117",
+    "question": "What prerequisites for System Administration use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for System Administration that have a specific evaluation method.",
+      "2. The entity 'ns1:system_administration' represents the System Administration course.",
+      "3. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all courses that are prerequisites for System Administration and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "System Administration",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q118",
+    "question": "Which courses use Group DiscussionTask as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_discussiontask . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:group_discussiontask' represents the Group DiscussionTask evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Group DiscussionTask as an evaluation method."
+    ],
+    "entities": [
+      "Group DiscussionTask"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:group_discussiontask",
+        "label": "Group DiscussionTask"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q119",
+    "question": "Which courses have Computer Network as a prerequisite and use Test as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . ?target ns1:has_evaluation_method ns1:test . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-and-evaluation",
+    "thoughts": [
+      "1. The query is looking for courses with a specific prerequisite and evaluation method.",
+      "2. The entity 'ns1:computer_network' represents the Computer Network course.",
+      "3. The entity 'ns1:test' represents the Test evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the courses we're looking for.",
+      "7. This query will return all courses that have Computer Network as a prerequisite and use Test as an evaluation method."
+    ],
+    "entities": [
+      "Computer Network",
+      "Test"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q120",
+    "question": "What evaluation methods are used in the Programming Basics 2 course?",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_2 ns1:has_evaluation_method ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation-methods",
+    "thoughts": [
+      "1. The query is looking for evaluation methods used in the Programming Basics 2 course.",
+      "2. The entity 'ns1:programming_basics_2' represents the Programming Basics 2 course.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the evaluation methods we're looking for.",
+      "5. This query will return all evaluation methods used in the Programming Basics 2 course."
+    ],
+    "entities": [
+      "Programming Basics 2"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q121",
+    "question": "What are the prerequisite courses for Introduction to Computer Organization?",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "thoughts": [
+      "1. The query is looking for prerequisites of the Introduction to Computer Organization course.",
+      "2. The entity 'ns1:introduction_to_computer_organization' represents the Introduction to Computer Organization course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the prerequisite courses we're looking for.",
+      "5. This query will return all courses that are prerequisites for Introduction to Computer Organization."
+    ],
+    "entities": [
+      "Introduction to Computer Organization"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_computer_organization",
+        "label": "Introduction to Computer Organization"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q122",
+    "question": "What prerequisites for Human-Computer Interaction use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:human-computer_interaction ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Human-Computer Interaction that have a specific evaluation method.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "4. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for Human-Computer Interaction and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "Human-Computer Interaction",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q123",
+    "question": "Which courses have Computer Network as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-with-prerequisite",
+    "thoughts": [
+      "1. The query is looking for courses that have Computer Network as a prerequisite.",
+      "2. The entity 'ns1:computer_network' represents the Computer Network course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that have Computer Network as a prerequisite course."
+    ],
+    "entities": [
+      "Computer Network"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q124",
+    "question": "What faculty mandatory courses are prerequisites for Software Project?",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Software Project that belong to a specific category.",
+      "2. The entity 'ns1:software_project' represents the Software Project course.",
+      "3. The entity 'ns1:faculty_mandatory_course' represents the Faculty Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Faculty Mandatory courses that are prerequisites for Software Project."
+    ],
+    "entities": [
+      "Software Project",
+      "Faculty Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q125",
+    "question": "What mandatory program courses are prerequisites for System Administration?",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for System Administration that belong to a specific category.",
+      "2. The entity 'ns1:system_administration' represents the System Administration course.",
+      "3. The entity 'ns1:study_program_mandatory_course' represents the Study Program Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Study Program Mandatory courses that are prerequisites for System Administration."
+    ],
+    "entities": [
+      "System Administration",
+      "Study Program Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q126",
+    "question": "What prerequisites for Computer Vision use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Computer Vision that have a specific evaluation method.",
+      "2. The entity 'ns1:computer_vision' represents the Computer Vision course.",
+      "3. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all courses that are prerequisites for Computer Vision and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "Computer Vision",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:computer_vision",
+        "label": "Computer Vision"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q127",
+    "question": "What prerequisite courses for Statistics and Probability use Test as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Statistics and Probability that have a specific evaluation method.",
+      "2. The entity 'ns1:statistics_and_probability' represents the Statistics and Probability course.",
+      "3. The entity 'ns1:test' represents the Test evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all courses that are prerequisites for Statistics and Probability and use Test as an evaluation method."
+    ],
+    "entities": [
+      "Statistics and Probability",
+      "Test"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q128",
+    "question": "Which courses have a mandatory program course with Lab Assignment evaluation as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?target ns1:has_prerequisite_course ?hidden . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-of-category-and-evaluation",
+    "thoughts": [
+      "1. The query is looking for courses that have a prerequisite with specific characteristics.",
+      "2. The variable ?hidden represents courses that belong to the Study Program Mandatory Course category and use Lab Assignment as an evaluation method.",
+      "3. The entity 'ns1:study_program_mandatory_course' represents the Study Program Mandatory Course category.",
+      "4. The entity 'ns1:lab_assignment' represents the Lab Assignment evaluation method.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "7. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "8. The variable ?target represents the courses we're looking for.",
+      "9. This query will return all courses that have a Study Program Mandatory course with Lab Assignment evaluation as a prerequisite."
+    ],
+    "entities": [
+      "Study Program Mandatory Course",
+      "Lab Assignment"
+    ],
+    "properties": [
+      "has course category",
+      "has evaluation method",
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q129",
+    "question": "How many credits do elective program courses with Projects & Presentations evaluation have?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_evaluation_method ns1:projects_and_presentations . ?hidden ns1:has_credits ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "credits-by-category-and-evaluation",
+    "thoughts": [
+      "1. The query is looking for the credit value of courses with specific characteristics.",
+      "2. The variable ?hidden represents courses that belong to the Study Program Elective Course category and use Projects & Presentations as an evaluation method.",
+      "3. The entity 'ns1:study_program_elective_course' represents the Study Program Elective Course category.",
+      "4. The entity 'ns1:projects_and_presentations' represents the Projects & Presentations evaluation method.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "7. The property 'ns1:has_credits' links courses to their credit values.",
+      "8. The variable ?target represents the credit values we're looking for.",
+      "9. This query will return the credit values of Study Program Elective courses that use Projects & Presentations as an evaluation method."
+    ],
+    "entities": [
+      "Study Program Elective Course",
+      "Projects & Presentations"
+    ],
+    "properties": [
+      "has course category",
+      "has evaluation method",
+      "has credits"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q130",
+    "question": "How many credits do elective program courses in the Reliable Software Engineering research group have?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_research_group ns1:reliable_software_engineering . ?hidden ns1:has_credits ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "credits-by-category-and-research-group",
+    "thoughts": [
+      "1. The query is looking for the credit value of courses with specific characteristics.",
+      "2. The variable ?hidden represents courses that belong to the Study Program Elective Course category and are associated with the Reliable Software Engineering research group.",
+      "3. The entity 'ns1:study_program_elective_course' represents the Study Program Elective Course category.",
+      "4. The entity 'ns1:reliable_software_engineering' represents the Reliable Software Engineering research group.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The property 'ns1:has_research_group' links courses to their research groups.",
+      "7. The property 'ns1:has_credits' links courses to their credit values.",
+      "8. The variable ?target represents the credit values we're looking for.",
+      "9. This query will return the credit values of Study Program Elective courses associated with the Reliable Software Engineering research group."
+    ],
+    "entities": [
+      "Study Program Elective Course",
+      "Reliable Software Engineering"
+    ],
+    "properties": [
+      "has course category",
+      "has research group",
+      "has credits"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:reliable_software_engineering",
+        "label": "Reliable Software Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q131",
+    "question": "What prerequisite courses for Machine Learning use Test as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:machine_learning ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Machine Learning that have a specific evaluation method.",
+      "2. The entity 'ns1:machine_learning' represents the Machine Learning course.",
+      "3. The entity 'ns1:test' represents the Test evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all courses that are prerequisites for Machine Learning and use Test as an evaluation method."
+    ],
+    "entities": [
+      "Machine Learning",
+      "Test"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:machine_learning",
+        "label": "Machine Learning"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q132",
+    "question": "Which courses use Laboratory Assignment as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:laboratory_assignment . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:laboratory_assignment' represents the Laboratory Assignment evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Laboratory Assignment as an evaluation method."
+    ],
+    "entities": [
+      "Laboratory Assignment"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:laboratory_assignment",
+        "label": "Laboratory Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q133",
+    "question": "Which courses have Database as a prerequisite and use Test as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:database . ?target ns1:has_evaluation_method ns1:test . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-and-evaluation",
+    "thoughts": [
+      "1. The query is looking for courses with a specific prerequisite and evaluation method.",
+      "2. The entity 'ns1:database' represents the Database course.",
+      "3. The entity 'ns1:test' represents the Test evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the courses we're looking for.",
+      "7. This query will return all courses that have Database as a prerequisite and use Test as an evaluation method."
+    ],
+    "entities": [
+      "Database",
+      "Test"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q134",
+    "question": "What mandatory program courses are prerequisites for Compiler Techniques?",
+    "sparql": "SELECT ?target WHERE { ns1:compiler_techniques ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Compiler Techniques that belong to a specific category.",
+      "2. The entity 'ns1:compiler_techniques' represents the Compiler Techniques course.",
+      "3. The entity 'ns1:study_program_mandatory_course' represents the Study Program Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Study Program Mandatory courses that are prerequisites for Compiler Techniques."
+    ],
+    "entities": [
+      "Compiler Techniques",
+      "Study Program Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:compiler_techniques",
+        "label": "Compiler Techniques"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q135",
+    "question": "Which courses use Report Document as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:report_document' represents the Report Document evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Report Document as an evaluation method."
+    ],
+    "entities": [
+      "Report Document"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:report_document",
+        "label": "Report Document"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q136",
+    "question": "What prerequisites for Human-Computer Interaction use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:human-computer_interaction ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Human-Computer Interaction that have a specific evaluation method.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "4. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "5. The variable ?target represents the prerequisite courses we're looking for.",
+      "6. This query will return all courses that are prerequisites for Human-Computer Interaction and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "Human-Computer Interaction",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q137",
+    "question": "Which courses have faculty mandatory courses as prerequisites?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-of-category",
+    "thoughts": [
+      "1. The query is looking for courses that have prerequisites of a specific category.",
+      "2. The variable ?hidden represents courses that belong to the Faculty Mandatory Course category.",
+      "3. The entity 'ns1:faculty_mandatory_course' represents the Faculty Mandatory Course category.",
+      "4. The property 'ns1:has_course_category' links courses to their categories.",
+      "5. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "6. The variable ?target represents the courses we're looking for.",
+      "7. This query will return all courses that have at least one Faculty Mandatory course as a prerequisite."
+    ],
+    "entities": [
+      "Faculty Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q138",
+    "question": "What is the course category for courses that have Discrete Mathematics 2 as a prerequisite and use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_2 . ?hidden ns1:has_evaluation_method ns1:group_project . ?hidden ns1:has_course_category ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "category-by-prerequisite-and-evaluation",
+    "thoughts": [
+      "1. The query is looking for the category of courses with specific characteristics.",
+      "2. The variable ?hidden represents courses that have Discrete Mathematics 2 as a prerequisite and use Group Project as an evaluation method.",
+      "3. The entity 'ns1:discrete_mathematics_2' represents the Discrete Mathematics 2 course.",
+      "4. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "5. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "6. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "7. The property 'ns1:has_course_category' links courses to their categories.",
+      "8. The variable ?target represents the categories we're looking for.",
+      "9. This query will return the categories of courses that have Discrete Mathematics 2 as a prerequisite and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "Discrete Mathematics 2",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q139",
+    "question": "What evaluation methods are used in the Spoken Language Processing course?",
+    "sparql": "SELECT ?target WHERE { ns1:spoken_language_processing ns1:has_evaluation_method ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation-methods",
+    "thoughts": [
+      "1. The query is looking for evaluation methods used in the Spoken Language Processing course.",
+      "2. The entity 'ns1:spoken_language_processing' represents the Spoken Language Processing course.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the evaluation methods we're looking for.",
+      "5. This query will return all evaluation methods used in the Spoken Language Processing course."
+    ],
+    "entities": [
+      "Spoken Language Processing"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:spoken_language_processing",
+        "label": "Spoken Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q140",
+    "question": "What is the alternative name for a course that uses Demo as an evaluation method and has Programming Basics 1 as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:demo . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:also_known_as ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-alternative-name",
+    "thoughts": [
+      "1. The query is looking for the alternative name of a course with specific characteristics.",
+      "2. The variable ?hidden represents a course that uses Demo as an evaluation method and has Programming Basics 1 as a prerequisite.",
+      "3. The entity 'ns1:demo' represents the Demo evaluation method.",
+      "4. The entity 'ns1:programming_basics_1' represents the Programming Basics 1 course.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "7. The property 'ns1:also_known_as' links courses to their alternative names.",
+      "8. The variable ?target represents the alternative name we're looking for.",
+      "9. This query will return the alternative name of a course that uses Demo as an evaluation method and has Programming Basics 1 as a prerequisite."
+    ],
+    "entities": [
+      "Demo",
+      "Programming Basics 1"
+    ],
+    "properties": [
+      "has evaluation method",
+      "has prerequisite course",
+      "also known as"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q141",
+    "question": "Which courses use Demo as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:demo . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:demo' represents the Demo evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Demo as an evaluation method."
+    ],
+    "entities": [
+      "Demo"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q142",
+    "question": "What is the course code for a course that has Platform Based Programming as a prerequisite and is associated with the Digital Library & Distance Learning Laboratory research group?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . ?hidden ns1:has_course_code ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-code-by-prerequisite-and-research-group",
+    "thoughts": [
+      "1. The query is looking for the course code of a course with specific characteristics.",
+      "2. The variable ?hidden represents a course that has Platform Based Programming as a prerequisite and is associated with the Digital Library & Distance Learning Laboratory research group.",
+      "3. The entity 'ns1:platform_based_programming' represents the Platform Based Programming course.",
+      "4. The entity 'ns1:digital_library_and_distance_learning_laboratory' represents the Digital Library & Distance Learning Laboratory research group.",
+      "5. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "6. The property 'ns1:has_research_group' links courses to their research groups.",
+      "7. The property 'ns1:has_course_code' links courses to their course codes.",
+      "8. The variable ?target represents the course code we're looking for.",
+      "9. This query will return the course code of a course that has Platform Based Programming as a prerequisite and is associated with the Digital Library & Distance Learning Laboratory research group."
+    ],
+    "entities": [
+      "Platform Based Programming",
+      "Digital Library & Distance Learning Laboratory"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has research group",
+      "has course code"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      },
+      {
+        "id": "ns1:digital_library_and_distance_learning_laboratory",
+        "label": "Digital Library & Distance Learning Laboratory"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q143",
+    "question": "What faculty mandatory courses are prerequisites for Information Retrieval?",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Information Retrieval that belong to a specific category.",
+      "2. The entity 'ns1:information_retrieval' represents the Information Retrieval course.",
+      "3. The entity 'ns1:faculty_mandatory_course' represents the Faculty Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Faculty Mandatory courses that are prerequisites for Information Retrieval."
+    ],
+    "entities": [
+      "Information Retrieval",
+      "Faculty Mandatory Course"
+    ],
+    "properties": [
+      "has course category",
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q144",
+    "question": "What are the prerequisite courses for Statistics and Probability?",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "thoughts": [
+      "1. The query is looking for prerequisites of the Statistics and Probability course.",
+      "2. The entity 'ns1:statistics_and_probability' represents the Statistics and Probability course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the prerequisite courses we're looking for.",
+      "5. This query will return all courses that are prerequisites for Statistics and Probability."
+    ],
+    "entities": [
+      "Statistics and Probability"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q145",
+    "question": "What are the prerequisite courses for Introduction to Artificial Intelligence and Data Science?",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-prerequisites",
+    "thoughts": [
+      "1. The query is looking for prerequisites of the Introduction to Artificial Intelligence and Data Science course.",
+      "2. The entity 'ns1:introduction_to_artificial_intelligence_and_data_science' represents the Introduction to Artificial Intelligence and Data Science course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the prerequisite courses we're looking for.",
+      "5. This query will return all courses that are prerequisites for Introduction to Artificial Intelligence and Data Science."
+    ],
+    "entities": [
+      "Introduction to Artificial Intelligence and Data Science"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q146",
+    "question": "What faculty mandatory courses are prerequisites for Logic Programming?",
+    "sparql": "SELECT ?target WHERE { ns1:logic_programming ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-category",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Logic Programming that belong to a specific category.",
+      "2. The entity 'ns1:logic_programming' represents the Logic Programming course.",
+      "3. The entity 'ns1:faculty_mandatory_course' represents the Faculty Mandatory Course category.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_course_category' links courses to their categories.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all Faculty Mandatory courses that are prerequisites for Logic Programming."
+    ],
+    "entities": [
+      "Logic Programming",
+      "Faculty Mandatory Course"
+    ],
+    "properties": [
+      "has course category",
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:logic_programming",
+        "label": "Logic Programming"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q147",
+    "question": "Which courses have prerequisites that use Task as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:task . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "courses-with-prerequisite-by-evaluation",
+    "thoughts": [
+      "1. The query is looking for courses that have prerequisites with a specific evaluation method.",
+      "2. The variable ?hidden represents courses that use Task as an evaluation method.",
+      "3. The entity 'ns1:task' represents the Task evaluation method.",
+      "4. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "5. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "6. The variable ?target represents the courses we're looking for.",
+      "7. This query will return all courses that have a prerequisite which uses Task as an evaluation method."
+    ],
+    "entities": [
+      "Task"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q148",
+    "question": "Which courses use Demo as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:demo . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:demo' represents the Demo evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Demo as an evaluation method."
+    ],
+    "entities": [
+      "Demo"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q149",
+    "question": "Which courses use Group DiscussionTask as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_discussiontask . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-by-evaluation-method",
+    "thoughts": [
+      "1. The query is looking for courses that use a specific evaluation method.",
+      "2. The entity 'ns1:group_discussiontask' represents the Group DiscussionTask evaluation method.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that use Group DiscussionTask as an evaluation method."
+    ],
+    "entities": [
+      "Group DiscussionTask"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:group_discussiontask",
+        "label": "Group DiscussionTask"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q150",
+    "question": "What is the course category for courses that use Lab Assignment as an evaluation method and have Platform Based Programming as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_course_category ?target . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "category-by-evaluation-and-prerequisite",
+    "thoughts": [
+      "1. The query is looking for the category of courses with specific characteristics.",
+      "2. The variable ?hidden represents courses that use Lab Assignment as an evaluation method and have Platform Based Programming as a prerequisite.",
+      "3. The entity 'ns1:lab_assignment' represents the Lab Assignment evaluation method.",
+      "4. The entity 'ns1:platform_based_programming' represents the Platform Based Programming course.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "7. The property 'ns1:has_course_category' links courses to their categories.",
+      "8. The variable ?target represents the categories we're looking for.",
+      "9. This query will return the categories of courses that use Lab Assignment as an evaluation method and have Platform Based Programming as a prerequisite."
+    ],
+    "entities": [
+      "Lab Assignment",
+      "Platform Based Programming"
+    ],
+    "properties": [
+      "has evaluation method",
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      },
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q151",
+    "question": "Which courses have Linear Algebra as a prerequisite?",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "courses-with-prerequisite",
+    "thoughts": [
+      "1. The query is looking for courses that have Linear Algebra as a prerequisite.",
+      "2. The entity 'ns1:linear_algebra' represents the Linear Algebra course.",
+      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "4. The variable ?target represents the courses we're looking for.",
+      "5. This query will return all courses that have Linear Algebra as a prerequisite course."
+    ],
+    "entities": [
+      "Linear Algebra"
+    ],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:linear_algebra",
+        "label": "Linear Algebra"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q152",
+    "question": "Which research group is associated with the Computer Science Special Topics course?",
+    "sparql": "SELECT ?target WHERE { ns1:computer_science_special_topics ns1:has_research_group ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-research-group",
+    "thoughts": [
+      "1. The query is looking for the research group associated with the Computer Science Special Topics course.",
+      "2. The entity 'ns1:computer_science_special_topics' represents the Computer Science Special Topics course.",
+      "3. The property 'ns1:has_research_group' links courses to their research groups.",
+      "4. The variable ?target represents the research group we're looking for.",
+      "5. This query will return the research group associated with the Computer Science Special Topics course."
+    ],
+    "entities": [
+      "Computer Science Special Topics"
+    ],
+    "properties": [
+      "has research group"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:computer_science_special_topics",
+        "label": "Computer Science Special Topics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q153",
+    "question": "What evaluation methods are used in the Software Product Line Engineering course?",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }",
+    "category": "university",
+    "complexity": "basic",
+    "templateId": "course-evaluation-methods",
+    "thoughts": [
+      "1. The query is looking for evaluation methods used in the Software Product Line Engineering course.",
+      "2. The entity 'ns1:software_product_line_engineering' represents the Software Product Line Engineering course.",
+      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "4. The variable ?target represents the evaluation methods we're looking for.",
+      "5. This query will return all evaluation methods used in the Software Product Line Engineering course."
+    ],
+    "entities": [
+      "Software Product Line Engineering"
+    ],
+    "properties": [
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q154",
+    "question": "What prerequisites for Internet of Things use Group Project as an evaluation method?",
+    "sparql": "SELECT ?target WHERE { ns1:internet_of_things ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "category": "university",
+    "complexity": "complex",
+    "templateId": "course-prerequisites-with-evaluation",
+    "thoughts": [
+      "1. The query is looking for prerequisite courses for Internet of Things that have a specific evaluation method.",
+      "2. The entity 'ns1:internet_of_things' represents the Internet of Things course.",
+      "3. The entity 'ns1:group_project' represents the Group Project evaluation method.",
+      "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "5. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+      "6. The variable ?target represents the prerequisite courses we're looking for.",
+      "7. This query will return all courses that are prerequisites for Internet of Things and use Group Project as an evaluation method."
+    ],
+    "entities": [
+      "Internet of Things",
+      "Group Project"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has evaluation method"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:internet_of_things",
+        "label": "Internet of Things"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  }
+]
