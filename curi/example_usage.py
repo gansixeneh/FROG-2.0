@@ -108,6 +108,7 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
 
 def main():
     """Main function to run the enhanced university course example"""
+    # nyong
     try:
         # Check if the TTL file exists
         if not os.path.exists('final_result.ttl'):
