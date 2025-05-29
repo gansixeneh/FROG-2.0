@@ -572,15 +572,28 @@ class NL2SPARQLGenerator:
                         instance = self.instantiate_template_with_discovery(template)
                         
                         if instance:
-                            # Success! Add the question-query pair
-                            dataset.append({
+                            # Generate chain of thoughts for the question-query pair
+                            thoughts = self.generate_chain_of_thoughts(instance["question"], instance["sparql"], template)
+                            
+                            # Get entity matches and property matches
+                            entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
+                            
+                            # Create the dataset entry with additional fields
+                            entry = {
                                 "id": f"q{id_counter}",
                                 "question": instance["question"],
                                 "sparql": instance["sparql"],
                                 "category": template["category"],
                                 "complexity": template["complexity"],
-                                "templateId": template["id"]
-                            })
+                                "templateId": template["id"],
+                                "thoughts": thoughts,
+                                "entities": list(entity_matches.keys()),
+                                "properties": list(property_matches.keys()),
+                                "entities_matches": entity_matches,
+                                "properties_matches": property_matches
+                            }
+                            
+                            dataset.append(entry)
                             id_counter += 1
                             successful_generations += 1
                             
@@ -596,6 +609,12 @@ class NL2SPARQLGenerator:
                                     if len(dataset) >= size:
                                         break
                                     
+                                    # Generate chain of thoughts for the variation
+                                    var_thoughts = self.generate_chain_of_thoughts(variation, instance["sparql"], template)
+                                    
+                                    # Get entity matches and property matches for the variation
+                                    var_entity_matches, var_property_matches = self.get_entities_and_properties(variation, instance["sparql"])
+                                    
                                     dataset.append({
                                         "id": f"q{id_counter}",
                                         "question": variation,
@@ -603,7 +622,12 @@ class NL2SPARQLGenerator:
                                         "category": template["category"],
                                         "complexity": template["complexity"],
                                         "templateId": template["id"],
-                                        "isVariation": True
+                                        "isVariation": True,
+                                        "thoughts": var_thoughts,
+                                        "entities": list(var_entity_matches.keys()),
+                                        "properties": list(var_property_matches.keys()),
+                                        "entities_matches": var_entity_matches,
+                                        "properties_matches": var_property_matches
                                     })
                                     id_counter += 1
                             
@@ -656,6 +680,307 @@ class NL2SPARQLGenerator:
             return filtered_dataset
         
         return dataset
+
+    def generate_chain_of_thoughts(self, question, sparql, template):
+        """
+        Generate a chain of thoughts explaining how to translate the question to SPARQL
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            template (dict): Template used to generate the question-query pair
+            
+        Returns:
+            list: List of thought steps
+        """
+        thoughts = []
+        
+        # Identify the main intent of the question
+        if "how many" in question.lower():
+            thoughts.append(f"1. The question asks for a count of {question.lower().replace('how many', '').replace('?', '').strip()}.")
+        elif question.lower().startswith("what"):
+            thoughts.append(f"1. The question asks for {question.lower().replace('what', '').replace('?', '').strip()}.")
+        elif question.lower().startswith("which"):
+            thoughts.append(f"1. The question asks for {question.lower().replace('which', '').replace('?', '').strip()}.")
+        else:
+            thoughts.append(f"1. The question seeks information about {question.lower().replace('?', '').strip()}.")
+        
+        # Identify the entities in the question and their mappings
+        entities, _ = self.get_entities_and_properties(question, sparql)
+        if entities:
+            entities_thought = "2. "
+            if len(entities) == 1:
+                entity_key = list(entities.keys())[0]
+                entities_thought += f"The entity '{entity_key}' is represented as '{entities[entity_key][0]['label']}' in the knowledge graph."
+            else:
+                entities_thought += "The entities identified in the question are: "
+                for i, (entity_key, entity_vals) in enumerate(entities.items()):
+                    if i > 0:
+                        entities_thought += ", "
+                    entities_thought += f"'{entity_key}' (represented as '{entity_vals[0]['label']}')"
+            thoughts.append(entities_thought)
+        
+        # Identify the properties/relationships in the question
+        _, properties = self.get_entities_and_properties(question, sparql)
+        if properties:
+            props_thought = "3. "
+            if len(properties) == 1:
+                prop_key = list(properties.keys())[0]
+                props_thought += f"The relationship '{prop_key}' is used to connect entities."
+            else:
+                props_thought += "The relationships used in this query are: "
+                for i, prop_key in enumerate(properties.keys()):
+                    if i > 0:
+                        props_thought += ", "
+                    props_thought += f"'{prop_key}'"
+            thoughts.append(props_thought)
+        
+        # Analyze the structure of the SPARQL query
+        if "SELECT" in sparql:
+            select_var = re.search(r'SELECT\s+(\?\w+|\(.*?\))', sparql, re.IGNORECASE)
+            if select_var:
+                var_name = select_var.group(1)
+                thoughts.append(f"4. The SPARQL query selects {var_name} as the output variable.")
+        
+        # Identify the pattern in the WHERE clause
+        where_pattern = re.search(r'WHERE\s*{(.*?)}', sparql, re.DOTALL | re.IGNORECASE)
+        if where_pattern:
+            pattern = where_pattern.group(1).strip()
+            thoughts.append(f"5. The query pattern in the WHERE clause establishes the relationship between entities.")
+        
+        # Explain any special operations in the query
+        if "COUNT" in sparql:
+            thoughts.append("6. The query uses COUNT to determine the number of matching items.")
+        if "ORDER BY" in sparql:
+            order_dir = "descending" if "DESC" in sparql else "ascending"
+            thoughts.append(f"7. Results are ordered in {order_dir} order.")
+        if "LIMIT" in sparql:
+            limit_match = re.search(r'LIMIT\s+(\d+)', sparql)
+            if limit_match:
+                limit = limit_match.group(1)
+                thoughts.append(f"8. The query limits results to {limit} items.")
+        if "FILTER" in sparql:
+            thoughts.append("9. The query applies a filter to exclude certain results.")
+        
+        return thoughts
+
+    def get_entities_and_properties(self, question, sparql):
+        """
+        Extract entities and properties from question and query and get their labels
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_matches, property_matches) dictionaries
+        """
+        entity_matches = {}
+        property_matches = {}
+        
+        # Extract entity URIs from the SPARQL query
+        uri_pattern = r'<([^>]+)>'
+        entity_uris = re.findall(uri_pattern, sparql)
+        
+        # For each entity URI, get its label using rdfs:label
+        for uri in entity_uris:
+            # Skip property URIs
+            if "has_" in uri or "#" in uri:
+                continue
+                
+            # Query for entity label
+            if self.graph:
+                try:
+                    query = f"""
+                        SELECT ?label WHERE {{
+                            <{uri}> rdfs:label ?label .
+                        }}
+                        LIMIT 1
+                    """
+                    results = list(self.graph.query(query))
+                    if results and results[0][0]:
+                        label = str(results[0][0])
+                        
+                        # Try to find this entity in the question
+                        entity_name = self.extract_label_from_uri(uri)
+                        if entity_name.lower() in question.lower() or label.lower() in question.lower():
+                            # Use the label or extract from URI
+                            entity_key = label if label else entity_name
+                            
+                            # Get entity description if available
+                            description = self.get_entity_description(uri)
+                            
+                            if entity_key not in entity_matches:
+                                entity_matches[entity_key] = []
+                                
+                            entity_matches[entity_key].append({
+                                "id": uri.split('/')[-1],
+                                "label": label if label else entity_name,
+                                "description": description,
+                                "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
+                            })
+                except Exception as e:
+                    print(f"Error getting label for entity {uri}: {e}")
+            
+            # If we couldn't get a label from the graph, use the URI
+            if not entity_matches:
+                entity_name = self.extract_label_from_uri(uri)
+                entity_matches[entity_name] = [{
+                    "id": uri.split('/')[-1],
+                    "label": entity_name,
+                    "description": "",
+                    "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
+                }]
+        
+        # Extract property URIs from the SPARQL query
+        property_uris = [uri for uri in entity_uris if "has_" in uri or "#" in uri]
+        
+        # For each property URI, get its label
+        for uri in property_uris:
+            # Query for property label
+            if self.graph:
+                try:
+                    query = f"""
+                        SELECT ?label WHERE {{
+                            <{uri}> rdfs:label ?label .
+                        }}
+                        LIMIT 1
+                    """
+                    results = list(self.graph.query(query))
+                    if results and results[0][0]:
+                        label = str(results[0][0])
+                        
+                        # Use the label or extract from URI
+                        prop_key = label if label else self.extract_label_from_uri(uri)
+                        
+                        # Get property description if available
+                        description = self.get_property_description(uri)
+                        
+                        if prop_key not in property_matches:
+                            property_matches[prop_key] = []
+                            
+                        property_matches[prop_key].append({
+                            "id": uri.split('/')[-1],
+                            "label": label if label else self.extract_label_from_uri(uri),
+                            "description": description,
+                            "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
+                        })
+                except Exception as e:
+                    print(f"Error getting label for property {uri}: {e}")
+            
+            # If we couldn't get a label from the graph, use the URI
+            if not property_matches:
+                prop_name = self.extract_label_from_uri(uri)
+                # Convert has_credits to "credits"
+                if prop_name.startswith("has_"):
+                    prop_name = prop_name[4:]
+                property_matches[prop_name] = [{
+                    "id": uri.split('/')[-1],
+                    "label": prop_name,
+                    "description": "",
+                    "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
+                }]
+        
+        return entity_matches, property_matches
+
+    def get_entity_description(self, uri):
+        """
+        Get description for an entity
+        
+        Args:
+            uri (str): Entity URI
+            
+        Returns:
+            str: Entity description or empty string
+        """
+        if not self.graph:
+            return ""
+            
+        try:
+            # Try to get a description using common properties
+            for desc_prop in ["rdfs:comment", "schema:description", "dcterms:description"]:
+                query = f"""
+                    SELECT ?desc WHERE {{
+                        <{uri}> {desc_prop} ?desc .
+                    }}
+                    LIMIT 1
+                """
+                results = list(self.graph.query(query))
+                if results and results[0][0]:
+                    return str(results[0][0])
+            
+            # Fallback - construct a simple description
+            entity_type_query = f"""
+                SELECT ?type WHERE {{
+                    <{uri}> a ?type .
+                }}
+                LIMIT 1
+            """
+            type_results = list(self.graph.query(entity_type_query))
+            if type_results and type_results[0][0]:
+                type_uri = str(type_results[0][0])
+                type_label = self.extract_label_from_uri(type_uri)
+                return f"{type_label}"
+                
+            return ""
+        except Exception as e:
+            print(f"Error getting description for entity {uri}: {e}")
+            return ""
+
+    def get_property_description(self, uri):
+        """
+        Get description for a property
+        
+        Args:
+            uri (str): Property URI
+            
+        Returns:
+            str: Property description or empty string
+        """
+        if not self.graph:
+            return ""
+            
+        try:
+            # Try to get a description using common properties
+            for desc_prop in ["rdfs:comment", "schema:description", "dcterms:description"]:
+                query = f"""
+                    SELECT ?desc WHERE {{
+                        <{uri}> {desc_prop} ?desc .
+                    }}
+                    LIMIT 1
+                """
+                results = list(self.graph.query(query))
+                if results and results[0][0]:
+                    return str(results[0][0])
+            
+            # For properties, create a description based on domain and range
+            domain_query = f"""
+                SELECT ?domain WHERE {{
+                    <{uri}> rdfs:domain ?domain .
+                }}
+                LIMIT 1
+            """
+            domain_results = list(self.graph.query(domain_query))
+            
+            range_query = f"""
+                SELECT ?range WHERE {{
+                    <{uri}> rdfs:range ?range .
+                }}
+                LIMIT 1
+            """
+            range_results = list(self.graph.query(range_query))
+            
+            if domain_results and domain_results[0][0] and range_results and range_results[0][0]:
+                domain_uri = str(domain_results[0][0])
+                range_uri = str(range_results[0][0])
+                domain_label = self.extract_label_from_uri(domain_uri)
+                range_label = self.extract_label_from_uri(range_uri)
+                return f"property that links {domain_label} to {range_label}"
+                
+            return ""
+        except Exception as e:
+            print(f"Error getting description for property {uri}: {e}")
+            return ""
 
     def instantiate_template_with_discovery(self, template):
         """
@@ -997,7 +1322,6 @@ class NL2SPARQLGenerator:
                     elif "category" in template["id"] or placeholder in ["entity2", "entity3"] and "categor" in question_templates_text:
                         replacement = self.select_entity_by_type("ns1:course_category")
                     else:
-                        # Default to course entities
                         replacement = self.select_entity_by_type("ns1:course")
                 
                 # Fallback to any entity if specific type not found
