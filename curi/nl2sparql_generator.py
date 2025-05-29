@@ -755,7 +755,7 @@ class NL2SPARQLGenerator:
         
         # Add entity mappings
         for i, uri in enumerate(entity_uris):
-            key = "entity" if i == 0 else f"entity{i+1}"
+            key = "entity" if i == 0 and len(entity_uris) == 1 else f"entity{i+1}"
             label = self._get_label_from_graph(uri)
             if not label:
                 label = self.extract_label_from_uri(uri)
@@ -1435,7 +1435,7 @@ class NL2SPARQLGenerator:
                 
                 # Replace in question
                 replacement_text = replacement.get("label", replacement.get("value", ""))
-                question = re.sub(pattern, replacement_text, question_template)
+                question = re.sub(pattern, replacement_text, question)
                 
                 # Replace in SPARQL
                 if "uri" in replacement:

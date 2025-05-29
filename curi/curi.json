@@ -1,225 +1,65 @@
 [
   {
     "id": "q1",
-    "question": "Which subject area is Computer Assisted Teaching classified under?",
-    "sparql": "select ?category where { <http://example.org/computer_assisted_teaching> <http://example.org/has_course_category> ?category.}",
+    "question": "Which courses have prerequisites classified under the Faculty Mandatory Course category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
     "category": "university",
-    "complexity": "basic",
-    "templateId": "course-category",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-category",
     "thoughts": [
-      "1. The question asks for the course category of Computer Assisted Teaching.",
-      "2. The entity 'ns1:computer_assisted_teaching' represents a course in the university domain.",
-      "3. The property 'ns1:has_course_category' links courses to their classification categories.",
-      "4. To solve this, retrieve the category linked to ns1:computer_assisted_teaching via the 'ns1:has_course_category' property.",
-      "5. Construct a SPARQL query to retrieve the course category for Computer Assisted Teaching."
+      "1. The question asks for courses whose prerequisites belong to the 'Faculty Mandatory Course' category.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The property 'ns1:has_course_category' links courses to their categories.",
+      "4. To solve this, find courses with prerequisites that are categorized as 'Faculty Mandatory Course'.",
+      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites are of the specified category."
     ],
     "entities": [
-      "Computer Assisted Teaching"
+      "Faculty Mandatory Course"
     ],
     "properties": [
+      "has prerequisite course",
       "has course category"
     ],
     "entities_matches": [
       {
-        "id": "ns1:project",
-        "label": "Project"
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
       },
       {
-        "id": "ns1:english",
-        "label": "English"
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
       },
       {
-        "id": "ns1:presentation",
-        "label": "Presentation"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
-        "id": "ns1:task",
-        "label": "Task"
-      },
-      {
-        "id": "ns1:demo",
-        "label": "Demo"
-      },
-      {
-        "id": "ns1:lab_assignment",
-        "label": "Lab assignment"
-      },
-      {
-        "id": "ns1:computer_network",
-        "label": "Computer network"
-      },
-      {
-        "id": "ns1:computer_system_laboratory",
-        "label": "Computer System Laboratory"
-      },
-      {
-        "id": "ns1:computer_vision",
-        "label": "Computer Vision"
-      },
-      {
-        "id": "ns1:computers_and_society",
-        "label": "Computers & Society"
-      },
-      {
-        "id": "ns1:human-computer_interaction",
-        "label": "Human-Computer Interaction"
-      },
-      {
-        "id": "ns1:computer_assisted_teaching",
-        "label": "Computer Assisted Teaching"
-      },
-      {
-        "id": "ns1:robotics",
-        "label": "robotics"
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
       },
       {
         "id": "ns1:faculty_mandatory_course",
         "label": "Faculty Mandatory Course"
       },
       {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
+        "id": "ns1:test",
+        "label": "Test"
       },
       {
-        "id": "ns1:practicum",
-        "label": "Practicum"
+        "id": "ns1:english",
+        "label": "English"
       },
       {
         "id": "ns1:report_document",
         "label": "Report Document"
       },
       {
-        "id": "ns1:computer_science_special_topics",
-        "label": "Computer Science Special Topics"
-      },
-      {
-        "id": "ns1:introduction_to_computer_organization",
-        "label": "Introduction to Computer Organization"
-      },
-      {
-        "id": "ns1:study_program_elective_course",
-        "label": "Study Program Elective Course"
-      },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_course_category",
-        "label": "has course category"
-      },
-      {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
-        "id": "ns1:has_prerequisite_course",
-        "label": "has prerequisite course"
-      },
-      {
-        "id": "ns1:has_evaluation_method",
-        "label": "has evaluation method"
-      }
-    ]
-  },
-  {
-    "id": "q2",
-    "question": "Which academic research team is connected to Machine Learning?",
-    "sparql": "select ?group where { <http://example.org/machine_learning> <http://example.org/has_research_group> ?group.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-research-group",
-    "thoughts": [
-      "1. The question asks for research groups associated with Machine Learning.",
-      "2. The entity 'ns1:machine_learning' represents a course in the university domain.",
-      "3. The property 'ns1:has_research_group' links courses to their associated research groups.",
-      "4. To solve this, retrieve all research groups linked to ns1:machine_learning via the 'ns1:has_research_group' property.",
-      "5. Construct a SPARQL query to list all research groups for Machine Learning."
-    ],
-    "entities": [
-      "Machine Learning"
-    ],
-    "properties": [
-      "has research group"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      },
-      {
-        "id": "ns1:practicum",
-        "label": "Practicum"
-      },
-      {
-        "id": "ns1:english",
-        "label": "English"
-      },
-      {
-        "id": "ns1:research_methodology_and_scientific_writing",
-        "label": "Research Methodology and Scientific Writing"
-      },
-      {
-        "id": "ns1:group_task",
-        "label": "Group task"
-      },
-      {
-        "id": "ns1:group_project",
-        "label": "Group Project"
-      },
-      {
-        "id": "ns1:computer_network",
-        "label": "Computer network"
+        "id": "ns1:task",
+        "label": "Task"
       },
       {
         "id": "ns1:project",
         "label": "Project"
       },
       {
-        "id": "ns1:machine_learning",
-        "label": "Machine Learning"
-      },
-      {
-        "id": "ns1:robotics",
-        "label": "robotics"
-      },
-      {
-        "id": "ns1:deep_learning",
-        "label": "Deep Learning"
-      },
-      {
-        "id": "ns1:machine_learning_and_computer_vision",
-        "label": "Machine Learning and Computer Vision"
-      },
-      {
-        "id": "ns1:final_project_group_assignment",
-        "label": "Final Project Group Assignment"
-      },
-      {
-        "id": "ns1:lab_assignment",
-        "label": "Lab assignment"
-      },
-      {
-        "id": "ns1:group_presentation",
-        "label": "Group Presentation"
-      },
-      {
-        "id": "ns1:group_discussiontask",
-        "label": "Group DiscussionTask"
+        "id": "ns1:database",
+        "label": "Database"
       }
     ],
     "properties_matches": [
@@ -228,58 +68,9 @@
         "label": "has course category"
       },
       {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_research_group",
-        "label": "has research group"
-      },
-      {
         "id": "ns1:has_course_code",
         "label": "has course code"
-      }
-    ]
-  },
-  {
-    "id": "q3",
-    "question": "What are the prerequisites for Numerical Analysis?",
-    "sparql": "select ?prereq where { <http://example.org/numerical_analysis> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "basic",
-    "templateId": "course-prerequisites",
-    "thoughts": [
-      "1. The question asks for prerequisite courses of Numerical Analysis.",
-      "2. The entity 'ns1:numerical_analysis' represents a course in the university domain.",
-      "3. The property 'ns1:has_prerequisite_course' links courses to their required prerequisites.",
-      "4. To solve this, retrieve all prerequisite courses linked to ns1:numerical_analysis via the 'ns1:has_prerequisite_course' property.",
-      "5. Construct a SPARQL query to list all prerequisite courses for Numerical Analysis."
-    ],
-    "entities": [
-      "Numerical Analysis"
-    ],
-    "properties": [
-      "has prerequisite course"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
       },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      },
-      {
-        "id": "ns1:numerical_analysis",
-        "label": "Numerical Analysis"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      }
-    ],
-    "properties_matches": [
       {
         "id": "ns1:has_prerequisite_course",
         "label": "has prerequisite course"
@@ -289,63 +80,40 @@
         "label": "also known as"
       },
       {
-        "id": "ns1:has_evaluation_method",
-        "label": "has evaluation method"
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
       }
     ]
   },
   {
-    "id": "q4",
-    "question": "How are students assessed in the Machine Learning course?",
-    "sparql": "select ?method where { <http://example.org/machine_learning> <http://example.org/has_evaluation_method> ?method.}",
+    "id": "q2",
+    "question": "What courses have Programming Basics 1 as a prerequisite and Test as an evaluation method, and are Faculty Mandatory Course?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> <http://example.org/programming_basics_1>.?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
     "category": "university",
-    "complexity": "basic",
-    "templateId": "course-evaluation",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-eval-category",
     "thoughts": [
-      "1. The question asks for all evaluation methods used in Machine Learning.",
-      "2. The entity 'ns1:machine_learning' represents a course in the university domain.",
+      "1. The question asks for courses with prerequisite 'Programming Basics 1', evaluation method 'Test', and category 'Faculty Mandatory Course'.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
       "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-      "4. To solve this, retrieve all entities connected to ns1:machine_learning via the 'ns1:has_evaluation_method' property.",
-      "5. Construct a SPARQL query to list all evaluation methods for Machine Learning."
+      "4. The property 'ns1:has_course_category' links courses to their categories.",
+      "5. To solve this, find courses that satisfy all three conditions.",
+      "6. Construct a SPARQL query with constraints for prerequisite, evaluation method, and category."
     ],
     "entities": [
-      "Machine Learning"
+      "Programming Basics 1",
+      "Test",
+      "Faculty Mandatory Course"
     ],
     "properties": [
-      "has evaluation method"
+      "has prerequisite course",
+      "has evaluation method",
+      "has course category"
     ],
     "entities_matches": [
       {
         "id": "ns1:university_mandatory_course",
         "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:english",
-        "label": "English"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
-        "id": "ns1:individual_review",
-        "label": "Individual Review"
-      },
-      {
-        "id": "ns1:machine_learning",
-        "label": "Machine Learning"
-      },
-      {
-        "id": "ns1:robotics",
-        "label": "robotics"
-      },
-      {
-        "id": "ns1:deep_learning",
-        "label": "Deep Learning"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
       },
       {
         "id": "ns1:study_program_elective_course",
@@ -356,42 +124,74 @@
         "label": "Study Program Mandatory Course"
       },
       {
-        "id": "ns1:individual_final_assignment",
-        "label": "Individual Final Assignment"
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
       },
       {
-        "id": "ns1:lab_assignment",
-        "label": "Lab assignment"
+        "id": "ns1:programming_projects",
+        "label": "Programming Projects"
       },
       {
-        "id": "ns1:operating_system",
-        "label": "Operating system"
+        "id": "ns1:advanced_programming",
+        "label": "Advanced Programming"
       },
       {
-        "id": "ns1:machine_learning_and_computer_vision",
-        "label": "Machine Learning and Computer Vision"
+        "id": "ns1:programming_activities",
+        "label": "Programming Activities"
       },
       {
-        "id": "ns1:lab_assignment",
-        "label": "Lab Assignment"
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
       },
       {
-        "id": "ns1:computer_system_laboratory",
-        "label": "Computer System Laboratory"
+        "id": "ns1:system_programming",
+        "label": "System Programming"
+      },
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      },
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      },
+      {
+        "id": "ns1:calculus_1",
+        "label": "Calculus 1"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
       },
       {
         "id": "ns1:supervisor_evaluation",
         "label": "Supervisor Evaluation"
+      },
+      {
+        "id": "ns1:individual_review",
+        "label": "Individual Review"
       }
     ],
     "properties_matches": [
       {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
         "id": "ns1:has_course_category",
         "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
       },
       {
         "id": "ns1:has_prerequisite_course",
@@ -402,8 +202,418 @@
         "label": "has minimum credits"
       },
       {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
         "id": "ns1:has_evaluation_method",
         "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "question": "What research lab develops the largest number of courses?",
+    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "research-group-most-courses",
+    "thoughts": [
+      "1. The question asks for the research group with the most associated courses.",
+      "2. In the ontology, 'ns1:course' represents all course entities.",
+      "3. The property 'ns1:has_research_group' links courses to their research groups.",
+      "4. To solve this, count courses for each research group using GROUP BY and COUNT.",
+      "5. Construct a SPARQL query using GROUP BY to group by research groups and COUNT to count courses.",
+      "6. Use ORDER BY DESC to sort by count in descending order, and LIMIT 1 to return only the top research group."
+    ],
+    "entities": [
+      "course"
+    ],
+    "properties": [
+      "has research group"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:research_methodology_and_scientific_writing",
+        "label": "Research Methodology and Scientific Writing"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      },
+      {
+        "id": "ns1:laboratory_assignment",
+        "label": "Laboratory Assignment"
+      },
+      {
+        "id": "ns1:game_development",
+        "label": "Game Development"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:case_study",
+        "label": "Case study"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:final_project",
+        "label": "Final Project"
+      },
+      {
+        "id": "ns1:discrete_mathematics_1",
+        "label": "Discrete Mathematics 1"
+      },
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:computer_system_laboratory",
+        "label": "Computer System Laboratory"
+      },
+      {
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
+      {
+        "id": "ns1:advanced_programming",
+        "label": "Advanced Programming"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      },
+      {
+        "id": "ns1:group_presentation",
+        "label": "Group Presentation"
+      },
+      {
+        "id": "ns1:group_task",
+        "label": "Group task"
+      },
+      {
+        "id": "ns1:group_discussiontask",
+        "label": "Group DiscussionTask"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q4",
+    "question": "What are the 5 most common prerequisite courses?",
+    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "common-prerequisites",
+    "thoughts": [
+      "1. The question asks for the most commonly used prerequisite courses.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. To solve this, count how many times each course appears as a prerequisite.",
+      "4. Construct a SPARQL query using GROUP BY to group by prerequisite courses and COUNT to count occurrences.",
+      "5. Use ORDER BY DESC to sort by count in descending order, and LIMIT 5 to return the top 5 prerequisites."
+    ],
+    "entities": [],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:final_project",
+        "label": "Final Project"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:group_task",
+        "label": "Group task"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      }
+    ]
+  },
+  {
+    "id": "q5",
+    "question": "What are the 5 most common prerequisite courses?",
+    "sparql": "select ?prereq (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> ?prereq.} group by ?prereq order by DESC(?count) limit 5",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "common-prerequisites",
+    "thoughts": [
+      "1. The question asks for the most commonly used prerequisite courses.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. To solve this, count how many times each course appears as a prerequisite.",
+      "4. Construct a SPARQL query using GROUP BY to group by prerequisite courses and COUNT to count occurrences.",
+      "5. Use ORDER BY DESC to sort by count in descending order, and LIMIT 5 to return the top 5 prerequisites."
+    ],
+    "entities": [],
+    "properties": [
+      "has prerequisite course"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:final_project",
+        "label": "Final Project"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:group_task",
+        "label": "Group task"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      }
+    ]
+  },
+  {
+    "id": "q6",
+    "question": "What courses have prerequisites with Faculty Mandatory Course as their category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-category",
+    "thoughts": [
+      "1. The question asks for courses whose prerequisites belong to the 'Faculty Mandatory Course' category.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The property 'ns1:has_course_category' links courses to their categories.",
+      "4. To solve this, find courses with prerequisites that are categorized as 'Faculty Mandatory Course'.",
+      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites are of the specified category."
+    ],
+    "entities": [
+      "Faculty Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
       },
       {
         "id": "ns1:also_known_as",
@@ -412,26 +622,231 @@
     ]
   },
   {
-    "id": "q5",
-    "question": "How many courses have Introduction to Artificial Intelligence and Data Science as a prerequisite course?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_artificial_intelligence_and_data_science>.}",
+    "id": "q7",
+    "question": "Which courses have prerequisites classified under the Faculty Mandatory Course category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/faculty_mandatory_course>.}",
     "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-courses-by-prerequisite",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-category",
     "thoughts": [
-      "1. The question asks for the number of courses that have 'Introduction to Artificial Intelligence and Data Science' as a prerequisite.",
-      "2. The entity 'ns1:introduction_to_artificial_intelligence_and_data_science' represents the prerequisite course in question.",
-      "3. The property 'ns1:has_prerequisite_course' links a course to its prerequisite courses.",
-      "4. To solve this, count all courses linked to 'ns1:introduction_to_artificial_intelligence_and_data_science' via the 'ns1:has_prerequisite_course' property.",
-      "5. Construct a SPARQL query using the COUNT function to determine the number of such courses."
+      "1. The question asks for courses whose prerequisites belong to the 'Faculty Mandatory Course' category.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The property 'ns1:has_course_category' links courses to their categories.",
+      "4. To solve this, find courses with prerequisites that are categorized as 'Faculty Mandatory Course'.",
+      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites are of the specified category."
     ],
     "entities": [
-      "Introduction to Artificial Intelligence and Data Science"
+      "Faculty Mandatory Course"
     ],
     "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:report_document",
+        "label": "Report Document"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
+      }
+    ]
+  },
+  {
+    "id": "q8",
+    "question": "What courses have prerequisites with Study Program Mandatory Course as their category?",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_course_category> <http://example.org/study_program_mandatory_course>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prerequisite-category",
+    "thoughts": [
+      "1. The question asks for courses whose prerequisites belong to the 'Study Program Mandatory Course' category.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. The property 'ns1:has_course_category' links courses to their categories.",
+      "4. To solve this, find courses with prerequisites that are categorized as 'Study Program Mandatory Course'.",
+      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites are of the specified category."
+    ],
+    "entities": [
+      "Study Program Mandatory Course"
+    ],
+    "properties": [
+      "has prerequisite course",
+      "has course category"
+    ],
+    "entities_matches": [
+      {
+        "id": "ns1:university_mandatory_course",
+        "label": "University Mandatory Course"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:case_study",
+        "label": "Case study"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
+      },
+      {
+        "id": "ns1:system_programming",
+        "label": "System Programming"
+      },
+      {
+        "id": "ns1:programming_projects",
+        "label": "Programming Projects"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      },
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      }
+    ]
+  },
+  {
+    "id": "q9",
+    "question": "Find courses where Introduction to Digital Systems is a prerequisite of their prerequisites.",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_digital_systems>.}",
+    "category": "university",
+    "complexity": "advanced",
+    "templateId": "courses-with-prereq-of-prereq",
+    "thoughts": [
+      "1. The question asks for courses whose prerequisites have 'Introduction to Digital Systems' as their prerequisite.",
+      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+      "3. To solve this, find courses with prerequisites that themselves have 'Introduction to Digital Systems' as a prerequisite.",
+      "4. This involves a two-level prerequisite relationship query.",
+      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites have 'ns1:introduction_to_digital_systems' as their prerequisite."
+    ],
+    "entities": [
+      "Introduction to Digital Systems"
+    ],
+    "properties": [
+      "has prerequisite course",
       "has prerequisite course"
     ],
     "entities_matches": [
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
       {
         "id": "ns1:demo",
         "label": "Demo"
@@ -465,510 +880,35 @@
         "label": "Introduction to Computer Organization"
       },
       {
-        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
-        "label": "Introduction to Artificial Intelligence and Data Science"
+        "id": "ns1:digital_forensics",
+        "label": "Digital Forensics"
       },
       {
-        "id": "ns1:robotics",
-        "label": "robotics"
+        "id": "ns1:distributed_systems",
+        "label": "Distributed Systems"
+      },
+      {
+        "id": "ns1:embedded_systems",
+        "label": "Embedded Systems"
+      },
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      },
+      {
+        "id": "ns1:operating_system",
+        "label": "Operating system"
       },
       {
         "id": "ns1:intelligent_systems_and_robotics",
         "label": "Intelligent Systems & Robotics"
       },
       {
-        "id": "ns1:english",
-        "label": "English"
-      },
-      {
-        "id": "ns1:data_mining",
-        "label": "Data Mining"
-      },
-      {
-        "id": "ns1:database",
-        "label": "Database"
-      },
-      {
-        "id": "ns1:data_structures_and_algorithms",
-        "label": "Data Structures and Algorithms"
-      },
-      {
-        "id": "ns1:computer_science_special_topics",
-        "label": "Computer Science Special Topics"
-      },
-      {
-        "id": "ns1:lab_assignment",
-        "label": "Lab assignment"
-      },
-      {
-        "id": "ns1:lab_assignment",
-        "label": "Lab Assignment"
-      },
-      {
-        "id": "ns1:religion",
-        "label": "Religion"
-      },
-      {
-        "id": "ns1:computer_assisted_teaching",
-        "label": "Computer Assisted Teaching"
+        "id": "ns1:system_programming",
+        "label": "System Programming"
       }
     ],
     "properties_matches": [
-      {
-        "id": "ns1:has_minimum_credits",
-        "label": "has minimum credits"
-      },
-      {
-        "id": "ns1:has_credits",
-        "label": "has credits"
-      },
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_course_category",
-        "label": "has course category"
-      },
-      {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
-        "id": "ns1:has_prerequisite_course",
-        "label": "has prerequisite course"
-      },
-      {
-        "id": "ns1:has_research_group",
-        "label": "has research group"
-      }
-    ]
-  },
-  {
-    "id": "q6",
-    "question": "How many courses must be completed before taking Software Project?",
-    "sparql": "select (count(?prereq) as ?count) where { <http://example.org/software_project> <http://example.org/has_prerequisite_course> ?prereq.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "count-prerequisites",
-    "thoughts": [
-      "1. The question asks for the number of prerequisite courses for Software Project.",
-      "2. The entity 'ns1:software_project' represents a course in the university domain.",
-      "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-      "4. To solve this, count all prerequisite courses linked to ns1:software_project via the 'ns1:has_prerequisite_course' property.",
-      "5. Construct a SPARQL query using the COUNT function to determine the number of prerequisites."
-    ],
-    "entities": [
-      "Software Project"
-    ],
-    "properties": [
-      "has prerequisite course"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:demo",
-        "label": "Demo"
-      },
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:study_program_elective_course",
-        "label": "Study Program Elective Course"
-      },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
-        "id": "ns1:task",
-        "label": "Task"
-      },
-      {
-        "id": "ns1:final_project",
-        "label": "Final Project"
-      },
-      {
-        "id": "ns1:software_project",
-        "label": "Software Project"
-      },
-      {
-        "id": "ns1:software_engineering",
-        "label": "Software engineering"
-      },
-      {
-        "id": "ns1:software_quality_assurance",
-        "label": "Software Quality Assurance"
-      },
-      {
-        "id": "ns1:project",
-        "label": "Project"
-      },
-      {
-        "id": "ns1:project_assignment",
-        "label": "Project Assignment"
-      },
-      {
-        "id": "ns1:group_project",
-        "label": "Group Project"
-      },
-      {
-        "id": "ns1:individual_final_assignment",
-        "label": "Individual Final Assignment"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "ns1:has_minimum_credits",
-        "label": "has minimum credits"
-      },
-      {
-        "id": "ns1:has_credits",
-        "label": "has credits"
-      },
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_course_category",
-        "label": "has course category"
-      },
-      {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
-        "id": "ns1:has_prerequisite_course",
-        "label": "has prerequisite course"
-      }
-    ]
-  },
-  {
-    "id": "q7",
-    "question": "What courses are developed by the Reliable Software Engineering research team?",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> <http://example.org/reliable_software_engineering>.}",
-    "category": "university",
-    "complexity": "intermediate",
-    "templateId": "courses-by-research-group",
-    "thoughts": [
-      "1. The question asks for courses that are part of the 'course' research group.",
-      "2. The entity 'ns1:course' represents the research group in question.",
-      "3. The property 'ns1:has_research_group' links a course to its research group.",
-      "4. To solve this, retrieve all courses linked to 'ns1:course' via the 'ns1:has_research_group' property.",
-      "5. Construct a SPARQL query to list all courses associated with this research group."
-    ],
-    "entities": [
-      "course",
-      "Reliable Software Engineering"
-    ],
-    "properties": [
-      "has research group"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:study_program_elective_course",
-        "label": "Study Program Elective Course"
-      },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      },
-      {
-        "id": "ns1:demo",
-        "label": "Demo"
-      },
-      {
-        "id": "ns1:presentation",
-        "label": "Presentation"
-      },
-      {
-        "id": "ns1:project",
-        "label": "Project"
-      },
-      {
-        "id": "ns1:game_development",
-        "label": "Game Development"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
-        "id": "ns1:reliable_software_engineering",
-        "label": "Reliable Software Engineering"
-      },
-      {
-        "id": "ns1:software_project",
-        "label": "Software Project"
-      },
-      {
-        "id": "ns1:software_engineering",
-        "label": "Software engineering"
-      },
-      {
-        "id": "ns1:software_quality_assurance",
-        "label": "Software Quality Assurance"
-      },
-      {
-        "id": "ns1:research_methodology_and_scientific_writing",
-        "label": "Research Methodology and Scientific Writing"
-      },
-      {
-        "id": "ns1:group_task",
-        "label": "Group task"
-      },
-      {
-        "id": "ns1:group_project",
-        "label": "Group Project"
-      },
-      {
-        "id": "ns1:final_project_group_assignment",
-        "label": "Final Project Group Assignment"
-      },
-      {
-        "id": "ns1:group_presentation",
-        "label": "Group Presentation"
-      },
-      {
-        "id": "ns1:group_discussiontask",
-        "label": "Group DiscussionTask"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "ns1:has_course_category",
-        "label": "has course category"
-      },
-      {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_research_group",
-        "label": "has research group"
-      },
-      {
-        "id": "ns1:has_minimum_credits",
-        "label": "has minimum credits"
-      },
-      {
-        "id": "ns1:has_prerequisite_course",
-        "label": "has prerequisite course"
-      }
-    ]
-  },
-  {
-    "id": "q8",
-    "question": "What courses have prerequisites that have Group Project as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/group_project>.}",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "courses-with-prerequisite-eval",
-    "thoughts": [
-      "1. The question asks for courses whose prerequisites use 'Group Project' as an evaluation method.",
-      "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-      "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-      "4. To solve this, find courses with prerequisites that have 'Group Project' as their evaluation method.",
-      "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites use the specified evaluation method."
-    ],
-    "entities": [
-      "Group Project"
-    ],
-    "properties": [
-      "has prerequisite course",
-      "has evaluation method"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:study_program_elective_course",
-        "label": "Study Program Elective Course"
-      },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      },
-      {
-        "id": "ns1:group_project",
-        "label": "Group Project"
-      },
-      {
-        "id": "ns1:group_presentation",
-        "label": "Group Presentation"
-      },
-      {
-        "id": "ns1:group_task",
-        "label": "Group task"
-      },
-      {
-        "id": "ns1:group_discussiontask",
-        "label": "Group DiscussionTask"
-      },
-      {
-        "id": "ns1:project",
-        "label": "Project"
-      },
-      {
-        "id": "ns1:project_assignment",
-        "label": "Project Assignment"
-      },
-      {
-        "id": "ns1:software_project",
-        "label": "Software Project"
-      },
-      {
-        "id": "ns1:final_project",
-        "label": "Final Project"
-      },
-      {
-        "id": "ns1:supervisor_evaluation",
-        "label": "Supervisor Evaluation"
-      },
-      {
-        "id": "ns1:individual_review",
-        "label": "Individual Review"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
-        "id": "ns1:presentation",
-        "label": "Presentation"
-      },
-      {
-        "id": "ns1:final_project_group_assignment",
-        "label": "Final Project Group Assignment"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "ns1:has_course_category",
-        "label": "has course category"
-      },
-      {
-        "id": "ns1:has_course_code",
-        "label": "has course code"
-      },
-      {
-        "id": "ns1:has_prerequisite_course",
-        "label": "has prerequisite course"
-      },
-      {
-        "id": "ns1:has_research_group",
-        "label": "has research group"
-      },
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
-      },
-      {
-        "id": "ns1:has_evaluation_method",
-        "label": "has evaluation method"
-      }
-    ]
-  },
-  {
-    "id": "q9",
-    "question": "Which research team has created the most courses?",
-    "sparql": "select ?group (count(?course) as ?count) where { ?course a <http://example.org/course>.?course <http://example.org/has_research_group> ?group.} group by ?group order by DESC(?count) limit 1",
-    "category": "university",
-    "complexity": "advanced",
-    "templateId": "research-group-most-courses",
-    "thoughts": [
-      "1. The question asks for the research group with the most associated courses.",
-      "2. In the ontology, 'ns1:course' represents all course entities.",
-      "3. The property 'ns1:has_research_group' links courses to their research groups.",
-      "4. To solve this, count courses for each research group using GROUP BY and COUNT.",
-      "5. Construct a SPARQL query using GROUP BY to group by research groups and COUNT to count courses.",
-      "6. Use ORDER BY DESC to sort by count in descending order, and LIMIT 1 to return only the top research group."
-    ],
-    "entities": [
-      "course"
-    ],
-    "properties": [
-      "has research group"
-    ],
-    "entities_matches": [
-      {
-        "id": "ns1:research_methodology_and_scientific_writing",
-        "label": "Research Methodology and Scientific Writing"
-      },
-      {
-        "id": "ns1:group_task",
-        "label": "Group task"
-      },
-      {
-        "id": "ns1:group_project",
-        "label": "Group Project"
-      },
-      {
-        "id": "ns1:project",
-        "label": "Project"
-      },
-      {
-        "id": "ns1:university_mandatory_course",
-        "label": "University Mandatory Course"
-      },
-      {
-        "id": "ns1:study_program_elective_course",
-        "label": "Study Program Elective Course"
-      },
-      {
-        "id": "ns1:study_program_mandatory_course",
-        "label": "Study Program Mandatory Course"
-      },
-      {
-        "id": "ns1:faculty_mandatory_course",
-        "label": "Faculty Mandatory Course"
-      },
-      {
-        "id": "ns1:lab_assignment",
-        "label": "Lab assignment"
-      },
-      {
-        "id": "ns1:group_presentation",
-        "label": "Group Presentation"
-      },
-      {
-        "id": "ns1:group_discussiontask",
-        "label": "Group DiscussionTask"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "ns1:has_research_group",
-        "label": "has research group"
-      },
       {
         "id": "ns1:also_known_as",
         "label": "also known as"
@@ -989,16 +929,16 @@
   },
   {
     "id": "q10",
-    "question": "What courses have prerequisites with 4 credits?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 4.}",
+    "question": "Find courses that require completion of 3-credit courses first.",
+    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_credits> 3.}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prerequisite-credits",
     "thoughts": [
-      "1. The question asks for courses whose prerequisites have 4 credits.",
+      "1. The question asks for courses whose prerequisites have 3 credits.",
       "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
       "3. The property 'ns1:has_credits' links courses to their credit values.",
-      "4. To solve this, find courses with prerequisites that have 4 as their credit value.",
+      "4. To solve this, find courses with prerequisites that have 3 as their credit value.",
       "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites have the specified credit value."
     ],
     "entities": [],
@@ -1007,6 +947,26 @@
       "has credits"
     ],
     "entities_matches": [
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
       {
         "id": "ns1:university_mandatory_course",
         "label": "University Mandatory Course"
@@ -1024,18 +984,6 @@
         "label": "Faculty Mandatory Course"
       },
       {
-        "id": "ns1:demo",
-        "label": "Demo"
-      },
-      {
-        "id": "ns1:presentation",
-        "label": "Presentation"
-      },
-      {
-        "id": "ns1:test",
-        "label": "Test"
-      },
-      {
         "id": "ns1:final_project",
         "label": "Final Project"
       },
@@ -1044,11 +992,31 @@
         "label": "Task"
       },
       {
-        "id": "ns1:project",
-        "label": "Project"
+        "id": "ns1:individual_final_assignment",
+        "label": "Individual Final Assignment"
+      },
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      },
+      {
+        "id": "ns1:english",
+        "label": "English"
+      },
+      {
+        "id": "ns1:group_task",
+        "label": "Group task"
+      },
+      {
+        "id": "ns1:project_assignment",
+        "label": "Project Assignment"
       }
     ],
     "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
       {
         "id": "ns1:has_course_category",
         "label": "has course category"
@@ -1064,10 +1032,6 @@
       {
         "id": "ns1:has_minimum_credits",
         "label": "has minimum credits"
-      },
-      {
-        "id": "ns1:also_known_as",
-        "label": "also known as"
       },
       {
         "id": "ns1:has_credits",
