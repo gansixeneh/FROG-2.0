@@ -725,12 +725,10 @@ class NL2SPARQLGenerator:
     def generate_chain_of_thoughts(self, question, sparql, template):
         """
         Generate a chain of thoughts explaining how to translate the question to SPARQL
-        
         Args:
             question (str): Natural language question
             sparql (str): SPARQL query
             template (dict): Template used to generate the question-query pair
-            
         Returns:
             list: List of thought steps
         """
@@ -759,7 +757,6 @@ class NL2SPARQLGenerator:
             label = self._get_label_from_graph(uri)
             if not label:
                 label = self.extract_label_from_uri(uri)
-            
             all_mappings[key] = {
                 'uri': uri,
                 'label': label,
@@ -793,6 +790,15 @@ class NL2SPARQLGenerator:
                 pattern = r'\{' + re.escape(placeholder) + r'\}'
                 replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
                 processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            # Special handling for first entity: check if {entity} exists, if not try {entity1}
+            if 'entity' in all_mappings:
+                entity_mapping = all_mappings['entity']
+                
+                if '{entity}' not in processed_thought and '{entity1}' in processed_thought:
+                    pattern = r'\{entity1\}'
+                    replacement_value = self.get_appropriate_replacement(thought, 'entity1', entity_mapping)
+                    processed_thought = re.sub(pattern, replacement_value, processed_thought)
             
             processed_thoughts.append(processed_thought)
         
