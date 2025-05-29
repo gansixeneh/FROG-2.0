@@ -32,18 +32,17 @@ class BasePropertyRetrieval(ABC):
         
         # Initialize Weaviate client
         if is_local_client:
-            self.client = weaviate.Client(
-                url=f"http://{weaviate_host}:{weaviate_port}",
-                additional_headers={
-                    "X-OpenAI-Api-Key": "fake-key"  # Required but not used for local
-                }
+            self.client = weaviate.connect_to_local(
+                host="localhost",
+                port=8080,
+                grpc_port=50052,
             )
         else:
             # Add cloud configuration if needed
             raise NotImplementedError("Cloud Weaviate client not implemented yet")
         
         # Initialize embedding model
-        self.model_embed = SentenceTransformer(embedding_model_name)
+        self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
         
         # Initialize collection
         self._setup_collection()
