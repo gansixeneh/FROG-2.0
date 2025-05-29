@@ -187,13 +187,19 @@ class UniversityPropertyRetrieval:
             return pd.DataFrame()
 
     def _preprocess_into_tokens(self, q: str) -> list[str]:
-        """Tokenize and preprocess the input query"""
-        tokenizer = RegexpTokenizer(r"\w+")
+        """Tokenize and preprocess the input query using NLTK RegexpTokenizer"""
+        tok_pattern = r"\w+"
+        tokenizer = RegexpTokenizer(tok_pattern)
         tokenized = tokenizer.tokenize(q)
-        return [tok.lower() for tok in tokenized if tok.lower() not in self.stopwords]
+        result = []
+        for tok in tokenized:
+            tok = tok.lower()
+            if tok not in self.stopwords:
+                result.append(tok)
+        return result
 
     def _generate_ngrams(self, tokens: list[str]) -> list[str]:
-        """Generate n-grams from a list of tokens"""
+        """Generate n-grams from a list of tokens using NLTK"""
         max_n = min(len(tokens), 3)
         result = []
         for n in range(1, max_n + 1):
@@ -213,36 +219,31 @@ class UniversityPropertyRetrieval:
         ngrams = self._generate_ngrams(tokens)
         result = {"entities": [], "properties": []}
 
-        # Search entities
-        for ngram in ngrams + property_candidates:
-            df_res = self.search_entities(ngram, k=k)
-            if not df_res.empty:
-                filtered_results = df_res[df_res["score"] >= threshold]["short"].tolist()
-                if filtered_results:
-                    result["entities"].extend(filtered_results)
-                    result["entities"] = list(set(result["entities"]))
+        def search(ngram, search_type, threshold=threshold):
+            def format_result(x):
+                return x  # Simplified - no domain/range needed
 
-        # Search properties
-        for ngram in ngrams + property_candidates:
-            df_res = self.search_properties(ngram, k=k)
-            if not df_res.empty:
-                # Format properties with domain and range info
-                for _, row in df_res[df_res["score"] >= threshold].iterrows():
-                    short = row["short"]
-                    domain = row.get("shortDomain", "")
-                    range_val = row.get("shortRange", "")
-                    
-                    if domain and range_val:
-                        formatted = f"{short}: {{'domain': '{domain}', 'range': '{range_val}'}}"
-                    else:
-                        formatted = f"{short}: No domain and range"
-                    
-                    result["properties"].append(formatted)
+            if search_type == "entities":
+                df_res = self.search_entities(ngram, k=k)
+            else:
+                df_res = self.search_properties(ngram, k=k)
+            
+            if df_res.empty:
+                return search_type, []
                 
-                result["properties"] = list(set(result["properties"]))
+            result_list = (
+                df_res[df_res["score"] >= threshold]["short"]
+                .apply(format_result)
+                .tolist()
+            )
+            return search_type, result_list
 
-        result["entities"] = sorted(result["entities"])
-        result["properties"] = sorted(result["properties"])
+        for ngram in ngrams + property_candidates:
+            for search_type in result.keys():
+                search_result_type, df_res = search(ngram, search_type)
+                if df_res:
+                    result[search_result_type].extend(df_res)
+                    result[search_result_type] = list(set(result[search_result_type]))
 
         return result
 

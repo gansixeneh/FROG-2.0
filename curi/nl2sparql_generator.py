@@ -5,7 +5,6 @@ import datetime
 import csv
 import io
 import os
-import pandas as pd
 from rdflib import Graph, Namespace, URIRef, Literal
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
@@ -29,6 +28,9 @@ class NL2SPARQLGenerator:
         self.schema_info = config.get("schemaInfo", {})
         self.templates = self.initialize_templates()
         self.property_retrieval = property_retrieval
+        
+        # Initialize stopwords
+        self.stopwords = set(stopwords.words('english'))
         
         # Store the RDF graph for context-aware entity selection
         self.graph = graph
@@ -745,172 +747,56 @@ class NL2SPARQLGenerator:
         # Get the thoughts template
         thoughts_template = template["thoughtsTemplate"]
         
-        # Extract entity mappings from the SPARQL query
-        entity_mappings = self.extract_entity_mappings_from_sparql(sparql, question)
+        # Extract entity and property URIs from SPARQL
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
         
-        # Extract value mappings from the SPARQL query
-        value_mappings = self.extract_value_mappings_from_sparql(sparql, question)
+        # Create mappings for replacement
+        all_mappings = {}
         
-        # Combine all mappings
-        all_mappings = {**entity_mappings, **value_mappings}
+        # Add entity mappings
+        for i, uri in enumerate(entity_uris):
+            key = "entity" if i == 0 else f"entity{i+1}"
+            label = self._get_label_from_graph(uri)
+            if not label:
+                label = self.extract_label_from_uri(uri)
+            
+            all_mappings[key] = {
+                'uri': uri,
+                'label': label,
+                'prefixed': self.shorten_uri(uri)
+            }
+        
+        # Add value mappings from SPARQL
+        numeric_pattern = r'\b(\d+)\b'
+        numeric_values = re.findall(numeric_pattern, sparql)
+        string_pattern = r'"([^"]+)"'
+        string_values = re.findall(string_pattern, sparql)
+        
+        if numeric_values:
+            all_mappings['value'] = {
+                'value': numeric_values[0],
+                'label': numeric_values[0]
+            }
+        elif string_values:
+            all_mappings['value'] = {
+                'value': string_values[0],
+                'label': string_values[0]
+            }
         
         # Replace placeholders in thoughts
         processed_thoughts = []
         for thought in thoughts_template:
             processed_thought = thought
             
-            # Replace each placeholder with the appropriate value (label or URI based on context)
+            # Replace each placeholder with the appropriate value
             for placeholder, mapping in all_mappings.items():
                 pattern = r'\{' + re.escape(placeholder) + r'\}'
-                
-                # Determine whether to use URI or label based on context
                 replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
-                
                 processed_thought = re.sub(pattern, replacement_value, processed_thought)
             
             processed_thoughts.append(processed_thought)
         
         return processed_thoughts
-
-    def extract_entity_mappings_from_sparql(self, sparql, question):
-        """
-        Extract entity mappings from SPARQL query
-        
-        Args:
-            sparql (str): SPARQL query
-            question (str): Natural language question
-            
-        Returns:
-            dict: Mapping of placeholders to entity info
-        """
-        entity_mappings = {}
-        
-        # Find all URI patterns in the SPARQL query
-        uri_pattern = r'<([^>]+)>'
-        uris = re.findall(uri_pattern, sparql)
-        
-        # Find all prefixed names in the SPARQL query  
-        prefixed_pattern = r'ns1:([a-zA-Z_][a-zA-Z0-9_]*)'
-        prefixed_names = re.findall(prefixed_pattern, sparql)
-        
-        # Convert prefixed names to full URIs
-        full_uris = []
-        for name in prefixed_names:
-            if "ns1" in self.prefixes:
-                full_uri = f"{self.prefixes['ns1']}{name}"
-                full_uris.append(full_uri)
-        
-        # Combine all URIs
-        all_uris = uris + full_uris
-        
-        # Filter out property URIs (those containing 'has_' or similar patterns)
-        entity_uris = [uri for uri in all_uris if not self.is_property_uri(uri)]
-        
-        # Create mappings for entity placeholders
-        entity_counter = 0
-        for uri in entity_uris:
-            # Get label for this URI
-            label = self.get_entity_label_from_uri(uri)
-            
-            # Create mapping for base 'entity' placeholder
-            if entity_counter == 0:
-                entity_mappings['entity'] = {
-                    'uri': uri,
-                    'label': label,
-                    'prefixed': self.shorten_uri(uri)
-                }
-            
-            # Create mapping for numbered entity placeholders
-            entity_counter += 1
-            entity_mappings[f'entity{entity_counter}'] = {
-                'uri': uri,
-                'label': label,
-                'prefixed': self.shorten_uri(uri)
-            }
-        
-        return entity_mappings
-
-    def extract_value_mappings_from_sparql(self, sparql, question):
-        """
-        Extract value mappings from SPARQL query
-        
-        Args:
-            sparql (str): SPARQL query
-            question (str): Natural language question
-            
-        Returns:
-            dict: Mapping of placeholders to value info
-        """
-        value_mappings = {}
-        
-        # Find numeric values
-        numeric_pattern = r'\b(\d+)\b'
-        numeric_values = re.findall(numeric_pattern, sparql)
-        
-        # Find string literals
-        string_pattern = r'"([^"]+)"'
-        string_values = re.findall(string_pattern, sparql)
-        
-        # Create mapping for 'value' placeholder
-        if numeric_values:
-            value_mappings['value'] = {
-                'value': numeric_values[0],
-                'label': numeric_values[0]
-            }
-        elif string_values:
-            value_mappings['value'] = {
-                'value': string_values[0],
-                'label': string_values[0]
-            }
-        
-        return value_mappings
-
-    def is_property_uri(self, uri):
-        """
-        Check if a URI is a property URI
-        
-        Args:
-            uri (str): URI to check
-            
-        Returns:
-            bool: True if it's a property URI
-        """
-        # Common property indicators
-        property_indicators = ['has_', 'is_', 'also_known_as', 'belongs_to']
-        
-        for indicator in property_indicators:
-            if indicator in uri:
-                return True
-                
-        return False
-
-    def get_entity_label_from_uri(self, uri):
-        """
-        Get human-readable label for an entity URI
-        
-        Args:
-            uri (str): Entity URI
-            
-        Returns:
-            str: Human-readable label
-        """
-        # Try to get label from graph if available
-        if self.graph:
-            try:
-                query = f"""
-                    SELECT ?label WHERE {{
-                        <{uri}> rdfs:label ?label .
-                    }}
-                    LIMIT 1
-                """
-                results = list(self.graph.query(query))
-                if results and results[0][0]:
-                    return str(results[0][0])
-            except Exception:
-                pass
-        
-        # Fallback to extracting from URI
-        return self.extract_label_from_uri(uri)
 
     def get_appropriate_replacement(self, thought_text, placeholder, mapping):
         """
@@ -958,7 +844,132 @@ class NL2SPARQLGenerator:
         # Default to label for most contexts
         return mapping.get('label', mapping.get('value', placeholder))
 
+
+
+    def _extract_uris_from_sparql(self, sparql):
+        """
+        Extract entity and property URIs from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_uris, property_uris)
+        """
+        entity_uris = []
+        property_uris = []
+        
+        # Extract URIs in angle brackets
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Extract prefixed names (ns1:something)
+        prefixed_pattern = r'ns1:([a-zA-Z_][a-zA-Z0-9_]*)'
+        prefixed_names = re.findall(prefixed_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        ns1_prefix = self.prefixes.get('ns1', 'http://example.org/')
+        for name in prefixed_names:
+            full_uri = f"{ns1_prefix}{name}"
+            uris.append(full_uri)
+        
+        # Classify URIs as entities or properties
+        for uri in uris:
+            if self.is_property_uri(uri):
+                property_uris.append(uri)
+            else:
+                entity_uris.append(uri)
+        
+        return entity_uris, property_uris
+
+    def _get_label_from_graph(self, uri):
+        """
+        Get rdfs:label for a URI from the RDF graph
+        
+        Args:
+            uri (str): URI to get label for
+            
+        Returns:
+            str: Label or None if not found
+        """
+        if not self.graph:
+            return None
+            
+        try:
+            # Query for rdfs:label
+            query = f"""
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?label WHERE {{
+                    <{uri}> rdfs:label ?label .
+                }}
+                LIMIT 1
+            """
+            results = list(self.graph.query(query))
+            if results and results[0][0]:
+                return str(results[0][0])
+        except Exception as e:
+            print(f"Error getting label for {uri}: {e}")
+        
+        return None
+
+    def is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # Common property indicators
+        property_indicators = ['has_', 'is_', 'also_known_as']
+        
+        for indicator in property_indicators:
+            if indicator in uri:
+                return True
+                
+        return False
+
     def _preprocess_into_tokens(self, q: str) -> list[str]:
+        """
+        Preprocess question into tokens using NLTK RegexpTokenizer
+        
+        Args:
+            q (str): Question string
+            
+        Returns:
+            list[str]: List of tokens
+        """
+        tok_pattern = r"\w+"
+        tokenizer = RegexpTokenizer(tok_pattern)
+        tokenized = tokenizer.tokenize(q)
+        result = []
+        for tok in tokenized:
+            tok = tok.lower()
+            if tok not in self.stopwords:
+                result.append(tok)
+        return result
+
+    def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+        """
+        Generate n-grams from tokens using NLTK
+        
+        Args:
+            tokens (list[str]): List of tokens
+            max_n (int): Maximum n-gram size
+            
+        Returns:
+            list[str]: List of n-grams
+        """
+        result = []
+        
+        # Generate unigrams, bigrams, and trigrams using NLTK
+        for n in range(1, min(max_n + 1, len(tokens) + 1)):
+            n_grams = ngrams(tokens, n)
+            result.extend([" ".join(ng) for ng in n_grams])
+        
+        return result
         """
         Preprocess question into tokens similar to EnterprisePropertyRetrieval
         
@@ -995,7 +1006,7 @@ class NL2SPARQLGenerator:
 
     def _search_entities_weaviate(self, query: str, k: int = 5) -> list[dict]:
         """
-        Search entities using Weaviate-like approach
+        Search entities using Weaviate-based approach
         
         Args:
             query (str): Search query
@@ -1020,39 +1031,11 @@ class NL2SPARQLGenerator:
             except Exception as e:
                 print(f"Error searching entities with Weaviate: {e}")
         
-        # Fallback: search in entity examples
-        results = []
-        query_lower = query.lower()
-        
-        for entity in self.entity_examples:
-            label = entity.get('label', '').lower()
-            value = entity.get('value', '').lower()
-            
-            # Simple similarity scoring based on substring matching
-            score = 0.0
-            if query_lower in label:
-                score = 0.9
-            elif query_lower in value:
-                score = 0.8
-            elif any(word in label for word in query_lower.split()):
-                score = 0.6
-            elif any(word in value for word in query_lower.split()):
-                score = 0.5
-            
-            if score > 0:
-                results.append({
-                    'short': entity.get('value', ''),
-                    'label': entity.get('label', ''),
-                    'score': score
-                })
-        
-        # Sort by score and return top k
-        results.sort(key=lambda x: x['score'], reverse=True)
-        return results[:k]
+        return []
 
     def _search_properties_weaviate(self, query: str, k: int = 5) -> list[dict]:
         """
-        Search properties using Weaviate-like approach
+        Search properties using Weaviate-based approach
         
         Args:
             query (str): Search query
@@ -1070,251 +1053,93 @@ class NL2SPARQLGenerator:
                     results.append({
                         'short': row.get('short', ''),
                         'label': row.get('label', ''),
-                        'score': row.get('score', 0.0),
-                        'shortDomain': row.get('shortDomain', ''),
-                        'shortRange': row.get('shortRange', '')
+                        'score': row.get('score', 0.0)
                     })
                 
                 return results
             except Exception as e:
                 print(f"Error searching properties with Weaviate: {e}")
         
-        # Fallback: search in schema properties
-        results = []
-        query_lower = query.lower()
-        
-        if "properties" in self.schema_info:
-            for prop in self.schema_info["properties"]:
-                label = prop.get('label', '').lower()
-                value = prop.get('value', '').lower()
-                
-                # Simple similarity scoring based on substring matching
-                score = 0.0
-                if query_lower in label:
-                    score = 0.9
-                elif query_lower in value:
-                    score = 0.8
-                elif any(word in label for word in query_lower.split()):
-                    score = 0.6
-                elif any(word in value for word in query_lower.split()):
-                    score = 0.5
-                
-                if score > 0:
-                    results.append({
-                        'short': prop.get('value', ''),
-                        'label': prop.get('label', ''),
-                        'score': score,
-                        'shortDomain': '',
-                        'shortRange': ''
-                    })
-        
-        # Sort by score and return top k
-        results.sort(key=lambda x: x['score'], reverse=True)
-        return results[:k]
+        return []
 
     def get_entities_and_properties(self, question, sparql):
         """
-        Extract entities and properties using enhanced n-gram search with logic similar to PropertyGenerationNode
+        Extract entities and properties from SPARQL query and get their labels using rdfs:label
         
         Args:
             question (str): Natural language question
             sparql (str): SPARQL query
             
         Returns:
-            tuple: (entity_matches, property_matches) as flattened lists
+            tuple: (entities_list, properties_list, entity_matches, property_matches)
         """
-        # Initialize result lists
-        entity_matches = []
-        property_matches = []
+        # Extract actual URIs from SPARQL query
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
         
-        # Extract initial entities and properties from SPARQL query for context
-        initial_entities = []
-        initial_properties = []
+        # Get labels for entities and properties
+        entities_list = []
+        properties_list = []
         
-        # Extract entities and properties from SPARQL query
-        uri_pattern = r'<([^>]+)>'
-        entity_uris = re.findall(uri_pattern, sparql)
-        
-        # Separate entities from properties based on URI patterns
+        # Get entity labels using rdfs:label
         for uri in entity_uris:
-            if self.is_property_uri(uri):
-                prop_label = self.extract_label_from_uri(uri)
-                if prop_label not in initial_properties:
-                    initial_properties.append(prop_label)
-            else:
-                entity_label = self.get_entity_label_from_uri(uri)
-                if entity_label not in initial_entities:
-                    initial_entities.append(entity_label)
+            label = self._get_label_from_graph(uri)
+            if label:
+                entities_list.append(label)
         
-        # Use NLTK tokenizer for better tokenization
-        tokenizer = RegexpTokenizer(r"\w+")
-        tokens = tokenizer.tokenize(question)
+        # Get property labels using rdfs:label  
+        for uri in property_uris:
+            label = self._get_label_from_graph(uri)
+            if label:
+                properties_list.append(label)
         
-        # Get stopwords (with fallback if not available)
-        try:
-            stop_words = set(stopwords.words('english'))
-        except:
-            # Fallback stopwords if NLTK data not downloaded
-            stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should'])
-        
-        # Filter tokens and convert to lowercase
-        tokens = [tok.lower() for tok in tokens if tok.lower() not in stop_words and len(tok) > 1]
-        
-        # Generate n-grams using NLTK
-        max_n = min(len(tokens), 3)
-        ngrams_list = []
-        for n in range(1, max_n + 1):
-            n_grams = ngrams(tokens, n)
-            ngrams_list.extend([" ".join(ng) for ng in n_grams])
-        
-        # Get properties using n-gram approach similar to PropertyGenerationNode
-        threshold = 0.6
-        top_ngram_properties = []
-        
-        # Search using n-grams for properties
-        for ngram in ngrams_list:  # Limit to top 10 n-grams for performance
-            if len(ngram.strip()) >= 2:
-                property_results = self._search_properties_weaviate(ngram, k=5)
-                
-                # Filter by threshold and format similar to PropertyGenerationNode
-                for result in property_results:
-                    if result['score'] >= threshold:
-                        # Create label with ID similar to paste-2.txt format
-                        id_with_label = f"{result['short']} - {result['label']}"
-                        if id_with_label not in top_ngram_properties:
-                            top_ngram_properties.append(id_with_label)
-                        
-                        if len(top_ngram_properties) >= 5:
-                            break
-            
-            if len(top_ngram_properties) >= 5:
-                break
-        
-        # Get entities using similar approach
-        top_ngram_entities = []
-        for ngram in ngrams_list[:10]:
-            if len(ngram.strip()) >= 2:
-                entity_results = self._search_entities_weaviate(ngram, k=5)
-                
-                for result in entity_results:
-                    if result['score'] >= threshold:
-                        id_with_label = f"{result['short']} - {result['label']}"
-                        if id_with_label not in top_ngram_entities:
-                            top_ngram_entities.append(id_with_label)
-                        
-                        if len(top_ngram_entities) >= 5:
-                            break
-            
-            if len(top_ngram_entities) >= 5:
-                break
-        
-        # Combine initial properties with processing similar to PropertyGenerationNode
-        combined_properties = []
-        
-        # Process initial properties from SPARQL extraction
-        for prop in initial_properties:
-            combined_properties.append(prop)
-            
-            # Add camelCase version if it contains spaces (like in PropertyGenerationNode)
-            if " " in prop:
-                words = prop.lower().split()
-                camel_prop = words[0]
-                for word in words[1:]:
-                    camel_prop += word.capitalize()
-                combined_properties.append(camel_prop)
-        
-        # Add n-gram properties
-        combined_properties.extend([prop.split(' - ')[1] if ' - ' in prop else prop for prop in top_ngram_properties])
-        
-        # Use get_related_candidates method similar to PropertyGenerationNode
+        # Get entity and property candidates for entities_matches and properties_matches
+        property_candidates = entities_list + properties_list
         related_candidates = self.get_related_candidates(
             question, 
-            property_candidates=combined_properties,
-            threshold=threshold,
+            property_candidates=property_candidates,
+            threshold=0.6,
             k=5
         )
         
-        # Process entities from related candidates and initial extraction
-        entity_candidates = set()
-        
-        # Add initial entities
-        for entity in initial_entities:
-            entity_candidates.add(entity)
-        
-        # Add entities from n-gram search
-        for entity_str in top_ngram_entities:
-            if ' - ' in entity_str:
-                entity_label = entity_str.split(' - ')[1]
-            else:
-                entity_label = entity_str
-            entity_candidates.add(entity_label)
-        
-        # Add entities from related candidates if available
+        # Format entity matches
+        entity_matches = []
         if "entities" in related_candidates:
             for entity_str in related_candidates["entities"]:
-                # Extract entity name from formatted string
-                if ':' in entity_str:
-                    entity_name = entity_str.split(':')[0].strip()
-                else:
-                    entity_name = entity_str.strip()
-                entity_candidates.add(entity_name)
-        
-        # Convert entity candidates to flattened list format
-        for entity_name in entity_candidates:
-            # Search for detailed information about this entity
-            entity_results = self._search_entities_weaviate(entity_name, k=1)
-            
-            if entity_results and entity_results[0]['score'] >= 0.5:
-                result = entity_results[0]
+                entity_id = entity_str.split(':')[0].strip() if ':' in entity_str else entity_str.strip()
+                if not entity_id.startswith('ns1:'):
+                    entity_id = f"ns1:{entity_id}"
+                
+                # Get label from graph
+                full_uri = entity_id.replace('ns1:', self.prefixes.get('ns1', 'http://example.org/'))
+                label = self._get_label_from_graph(full_uri)
+                if not label:
+                    label = self.extract_label_from_uri(full_uri)
+                
                 entity_matches.append({
-                    "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
-                    "label": result['label'],
-                    "url": f"//www.example.org/{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
-                    "score": result['score']
+                    "id": entity_id,
+                    "label": label
                 })
         
-        # Process properties from related candidates
+        # Format property matches
+        property_matches = []
         if "properties" in related_candidates:
             for prop_str in related_candidates["properties"]:
-                # Extract property information from formatted string
-                if ':' in prop_str:
-                    # Handle format like "property_name: {domain: X, range: Y}"
-                    parts = prop_str.split(':')
-                    prop_name = parts[0].strip()
-                    
-                    # Search for detailed information about this property
-                    property_results = self._search_properties_weaviate(prop_name, k=1)
-                    
-                    if property_results and property_results[0]['score'] >= 0.6:
-                        result = property_results[0]
-                        
-                        property_matches.append({
-                            "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
-                            "label": result['label'],
-                            "url": f"//www.example.org/Property:{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
-                            "score": result['score']
-                        })
+                prop_id = prop_str.split(':')[0].strip() if ':' in prop_str else prop_str.strip()
+                if not prop_id.startswith('ns1:'):
+                    prop_id = f"ns1:{prop_id}"
+                
+                # Get label from graph
+                full_uri = prop_id.replace('ns1:', self.prefixes.get('ns1', 'http://example.org/'))
+                label = self._get_label_from_graph(full_uri)
+                if not label:
+                    label = self.extract_label_from_uri(full_uri)
+                
+                property_matches.append({
+                    "id": prop_id,
+                    "label": label
+                })
         
-        # Sort by score (descending) and remove duplicates
-        entity_matches = sorted(entity_matches, key=lambda x: x['score'], reverse=True)
-        property_matches = sorted(property_matches, key=lambda x: x['score'], reverse=True)
-        
-        # Remove duplicates based on ID
-        seen_entities = set()
-        unique_entity_matches = []
-        for entity in entity_matches:
-            if entity['id'] not in seen_entities:
-                unique_entity_matches.append(entity)
-                seen_entities.add(entity['id'])
-        
-        seen_properties = set()
-        unique_property_matches = []
-        for prop in property_matches:
-            if prop['id'] not in seen_properties:
-                unique_property_matches.append(prop)
-                seen_properties.add(prop['id'])
-        
-        return unique_entity_matches, unique_property_matches
+        return entities_list, properties_list, entity_matches, property_matches
 
     def get_related_candidates(
         self,
@@ -1325,11 +1150,10 @@ class NL2SPARQLGenerator:
     ) -> dict[str, list[str]]:
         """
         Get related entity and property candidates using n-grams and property candidates
-        Similar to EnterprisePropertyRetrieval.get_related_candidates
         
         Args:
             q (str): Question string
-            property_candidates (list[str]): List of property candidates
+            property_candidates (list[str]): List of property candidates (entities and properties)
             threshold (float): Score threshold for relevance
             k (int): Number of results per search
             
@@ -1342,27 +1166,9 @@ class NL2SPARQLGenerator:
 
         def search(ngram, search_type, threshold=threshold):
             """Search for entities or properties and format results"""
-            def format_result(x, df_res):
+            def format_result(x):
                 if search_type == "properties":
-                    # Find the record for this result
-                    matching_records = [r for r in df_res if r.get('short') == x]
-                    if matching_records:
-                        record = matching_records[0]
-                        domain = record.get('shortDomain', '')
-                        range_val = record.get('shortRange', '')
-                        
-                        # Create formatted result
-                        info = {}
-                        if domain:
-                            info['domain'] = domain
-                        if range_val:
-                            info['range'] = range_val
-                        
-                        if info:
-                            return f"{x}: {info}"
-                        else:
-                            return f"{x}: No domain and range"
-                    return f"{x}: No domain and range"
+                    return x  # Simplified - no domain/range needed
                 return x
 
             # Search using the appropriate method
@@ -1372,15 +1178,14 @@ class NL2SPARQLGenerator:
                 df_res = self._search_properties_weaviate(ngram, k=k)
             
             # Filter by threshold and format results
-            filtered_results = [r for r in df_res if r['score'] >= threshold]
-            formatted_results = []
+            filtered_results = []
+            for result_item in df_res:
+                if result_item['score'] >= threshold:
+                    short = result_item['short']
+                    formatted = format_result(short)
+                    filtered_results.append(formatted)
             
-            for result_item in filtered_results:
-                short = result_item['short']
-                formatted = format_result(short, df_res)
-                formatted_results.append(formatted)
-            
-            return search_type, formatted_results
+            return search_type, filtered_results
 
         # Search using n-grams and property candidates
         search_terms = ngrams + property_candidates
@@ -1461,7 +1266,7 @@ class NL2SPARQLGenerator:
                             thoughts = self.generate_chain_of_thoughts(instance["question"], instance["sparql"], template)
                             
                             # Get entity matches and property matches
-                            entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
+                            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
                             
                             # Create the dataset entry with additional fields
                             entry = {
@@ -1472,8 +1277,8 @@ class NL2SPARQLGenerator:
                                 "complexity": template["complexity"],
                                 "templateId": template["id"],
                                 "thoughts": thoughts,
-                                "entities": [match['label'] for match in entity_matches],
-                                "properties": [match['label'] for match in property_matches],
+                                "entities": entities_list,
+                                "properties": properties_list,
                                 "entities_matches": entity_matches,
                                 "properties_matches": property_matches
                             }
