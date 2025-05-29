@@ -10,6 +10,7 @@ import os
 import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
+from property_retrieval import LegalPropertyRetrieval
 
 
 def generate_legal_document_dataset(
@@ -64,8 +65,28 @@ def generate_legal_document_dataset(
         print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
-        # Generate dataset using extracted schema
-        generator = NL2SPARQLGenerator(schema)
+        # Initialize the property retrieval system for entity/property matching
+        print("\nInitializing property retrieval system...")
+        try:
+            property_retrieval = LegalPropertyRetrieval(
+                endpoint_url=endpoint_url + "/query",  # Add /query for SPARQL endpoint
+                embedding_model_name="jinaai/jina-embeddings-v3",
+                is_local_client=True,
+                weaviate_host="localhost",
+                weaviate_port=8080
+            )
+            print("Property retrieval system initialized successfully!")
+        except Exception as e:
+            print(f"Warning: Could not initialize property retrieval system: {e}")
+            print("Continuing without entity/property matching...")
+            property_retrieval = None
+
+        # Generate dataset using extracted schema with property retrieval
+        generator = NL2SPARQLGenerator(
+            schema, 
+            endpoint_url=endpoint_url + "/query",
+            property_retrieval=property_retrieval
+        )
 
         print("\nGenerating question-SPARQL pairs for legal documents data...")
         dataset = generator.generate_dataset(
@@ -94,6 +115,8 @@ def generate_legal_document_dataset(
                 print(
                     f"    SPARQL: {q['sparql'].replace('{', '{{').replace('}', '}}')[:80]}..."
                 )
+                print(f"    Entities matches: {len(q.get('entities_matches', []))}")
+                print(f"    Properties matches: {len(q.get('properties_matches', []))}")
 
         # Write to files
         output_json_path = "legal_documents_dataset.json"
@@ -108,6 +131,14 @@ def generate_legal_document_dataset(
         print(f"\nLegal documents dataset exported to:")
         print(f"  - JSON: {output_json_path}")
         print(f"  - CSV: {output_csv_path}")
+
+        # Clean up property retrieval system
+        if property_retrieval:
+            try:
+                property_retrieval.close()
+                print("Property retrieval system closed.")
+            except Exception as e:
+                print(f"Warning: Error closing property retrieval system: {e}")
 
         return dataset
     except Exception as e:
@@ -140,6 +171,23 @@ def main():
         except requests.exceptions.RequestException:
             print(f"Warning: Could not connect to Fuseki endpoint at {endpoint_url}")
             print("Make sure the Fuseki server is running.")
+            proceed = input("Do you want to proceed anyway? (y/n): ")
+            if proceed.lower() != "y":
+                sys.exit(1)
+
+        # Check if Weaviate is running
+        try:
+            import requests
+            weaviate_response = requests.get("http://localhost:8080/v1/.well-known/ready")
+            if weaviate_response.status_code != 200:
+                print("Warning: Weaviate server may not be running at localhost:8080")
+                print("Entity/property matching may not work properly.")
+                proceed = input("Do you want to proceed anyway? (y/n): ")
+                if proceed.lower() != "y":
+                    sys.exit(1)
+        except requests.exceptions.RequestException:
+            print("Warning: Could not connect to Weaviate at localhost:8080")
+            print("Entity/property matching may not work properly.")
             proceed = input("Do you want to proceed anyway? (y/n): ")
             if proceed.lower() != "y":
                 sys.exit(1)
