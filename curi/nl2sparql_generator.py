@@ -970,18 +970,6 @@ class NL2SPARQLGenerator:
             result.extend([" ".join(ng) for ng in n_grams])
         
         return result
-        """
-        Preprocess question into tokens similar to EnterprisePropertyRetrieval
-        
-        Args:
-            q (str): Question string
-            
-        Returns:
-            list[str]: List of tokens
-        """
-        # Basic tokenization - split by spaces and remove punctuation
-        tokens = re.findall(r'\b\w+\b', q.lower())
-        return tokens
 
     def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
         """
