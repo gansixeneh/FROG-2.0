@@ -1092,39 +1092,19 @@ class NL2SPARQLGenerator:
         # Format entity matches
         entity_matches = []
         if "entities" in related_candidates:
-            for entity_str in related_candidates["entities"]:
-                entity_id = entity_str.split(':')[0].strip() if ':' in entity_str else entity_str.strip()
-                if not entity_id.startswith('ns1:'):
-                    entity_id = f"ns1:{entity_id}"
-                
-                # Get label from graph
-                full_uri = entity_id.replace('ns1:', self.prefixes.get('ns1', 'http://example.org/'))
-                label = self._get_label_from_graph(full_uri)
-                if not label:
-                    label = self.extract_label_from_uri(full_uri)
-                
+            for entity in related_candidates["entities"]:
                 entity_matches.append({
-                    "id": entity_id,
-                    "label": label
+                    "id": entity['short'],
+                    "label": entity['label'],
                 })
         
         # Format property matches
         property_matches = []
         if "properties" in related_candidates:
-            for prop_str in related_candidates["properties"]:
-                prop_id = prop_str.split(':')[0].strip() if ':' in prop_str else prop_str.strip()
-                if not prop_id.startswith('ns1:'):
-                    prop_id = f"ns1:{prop_id}"
-                
-                # Get label from graph
-                full_uri = prop_id.replace('ns1:', self.prefixes.get('ns1', 'http://example.org/'))
-                label = self._get_label_from_graph(full_uri)
-                if not label:
-                    label = self.extract_label_from_uri(full_uri)
-                
+            for property in related_candidates["properties"]:
                 property_matches.append({
-                    "id": prop_id,
-                    "label": label
+                    "id": property['short'],
+                    "label": property['label'],
                 })
         
         return entities_list, properties_list, entity_matches, property_matches
@@ -1165,8 +1145,7 @@ class NL2SPARQLGenerator:
             filtered_results = []
             for result_item in df_res:
                 if result_item['score'] >= threshold:
-                    short = result_item['short']
-                    filtered_results.append(short)
+                    filtered_results.append(result_item)
             
             return search_type, filtered_results
 
@@ -1177,9 +1156,20 @@ class NL2SPARQLGenerator:
             for search_type in result.keys():
                 search_result_type, df_res = search(term, search_type)
                 if df_res:
-                    result[search_result_type].extend(df_res)
-                    result[search_result_type] = list(dict.fromkeys(result[search_result_type]))
-
+                    extracted_items = [{'short': item['short'], 'label': item['label']} for item in df_res]
+                    result[search_result_type].extend(extracted_items)
+                    
+        # Remove duplicates at the end
+        for key in result.keys():
+            # Convert to list of tuples, use set for deduplication, then back to dicts
+            seen = set()
+            unique_items = []
+            for item in result[key]:
+                item_tuple = (item['short'], item['label'])
+                if item_tuple not in seen:
+                    seen.add(item_tuple)
+                    unique_items.append(item)
+            result[key] = unique_items
         return result
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
