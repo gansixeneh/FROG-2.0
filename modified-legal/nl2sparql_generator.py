@@ -991,7 +991,11 @@ class NL2SPARQLGenerator:
             "using",
             "through"
         ]):
-            # Use prefixed form if available, otherwise full URI  
+            # For entity placeholders (typically starting with "entity"), use full URI
+            if placeholder.startswith('entity') and 'uri' in mapping and mapping['uri'].startswith('http'):
+                return f"<{mapping['uri']}>"
+            
+            # For property placeholders or other placeholders, keep using prefixed form
             return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
         
         # Use label form in these contexts:
