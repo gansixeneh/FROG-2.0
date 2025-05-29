@@ -1,5 +1,6 @@
 import json
 import re
+import random
 
 def upper_case_sparql(sparql_query):
     """Convert SPARQL keywords to uppercase."""
@@ -238,13 +239,31 @@ def main():
 
     # Process the data
     result = process_json(json_data, ttl_content)
+    
+    # Handle more than 150 rows by randomly sampling
+    if len(result) > 150:
+        print(f"Dataset has {len(result)} rows. Randomly sampling 150 rows.")
+        result = random.sample(result, 150)
+    
+    # Split into train (100) and test (50) sets
+    random.shuffle(result)  # Shuffle to ensure random distribution
+    
+    train_data = result[:100]
+    test_data = result[100:150]
+    
+    # Save training data
+    train_file = 'curi_train.json'
+    with open(train_file, 'w') as f:
+        json.dump(train_data, f, indent=2)
+    
+    # Save test data
+    test_file = 'curi_test.json'
+    with open(test_file, 'w') as f:
+        json.dump(test_data, f, indent=2)
 
-    # Save the result
-    output_file = 'curi_post.json'
-    with open(output_file, 'w') as f:
-        json.dump(result, f, indent=2)
-
-    print(f"Processing complete. Result saved to {output_file}.")
+    print(f"Processing complete.")
+    print(f"Training data ({len(train_data)} rows) saved to {train_file}.")
+    print(f"Test data ({len(test_data)} rows) saved to {test_file}.")
 
 if __name__ == "__main__":
     main()
