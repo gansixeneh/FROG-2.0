@@ -5,15 +5,8 @@ import datetime
 import csv
 import io
 import os
+import pandas as pd
 from rdflib import Graph, Namespace, URIRef, Literal
-
-# Optional import for property retrieval functionality
-try:
-    import pandas as pd
-    PANDAS_AVAILABLE = True
-except ImportError:
-    PANDAS_AVAILABLE = False
-    print("Warning: pandas not available. Property retrieval functionality will be limited.")
 
 class NL2SPARQLGenerator:
     """Generator for natural language to SPARQL query pairs for university courses."""
@@ -1014,22 +1007,12 @@ class NL2SPARQLGenerator:
                 df_result = self.property_retrieval.search_entities(query, k=k)
                 results = []
                 
-                # Handle pandas DataFrame if available
-                if PANDAS_AVAILABLE and hasattr(df_result, 'iterrows'):
-                    for _, row in df_result.iterrows():
-                        results.append({
-                            'short': row.get('short', ''),
-                            'label': row.get('label', ''),
-                            'score': row.get('score', 0.0)
-                        })
-                elif isinstance(df_result, list):
-                    # Handle list of dictionaries
-                    for row in df_result:
-                        results.append({
-                            'short': row.get('short', ''),
-                            'label': row.get('label', ''),
-                            'score': row.get('score', 0.0)
-                        })
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0)
+                    })
                 
                 return results
             except Exception as e:
@@ -1081,26 +1064,14 @@ class NL2SPARQLGenerator:
                 df_result = self.property_retrieval.search_properties(query, k=k)
                 results = []
                 
-                # Handle pandas DataFrame if available
-                if PANDAS_AVAILABLE and hasattr(df_result, 'iterrows'):
-                    for _, row in df_result.iterrows():
-                        results.append({
-                            'short': row.get('short', ''),
-                            'label': row.get('label', ''),
-                            'score': row.get('score', 0.0),
-                            'shortDomain': row.get('shortDomain', ''),
-                            'shortRange': row.get('shortRange', '')
-                        })
-                elif isinstance(df_result, list):
-                    # Handle list of dictionaries
-                    for row in df_result:
-                        results.append({
-                            'short': row.get('short', ''),
-                            'label': row.get('label', ''),
-                            'score': row.get('score', 0.0),
-                            'shortDomain': row.get('shortDomain', ''),
-                            'shortRange': row.get('shortRange', '')
-                        })
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0),
+                        'shortDomain': row.get('shortDomain', ''),
+                        'shortRange': row.get('shortRange', '')
+                    })
                 
                 return results
             except Exception as e:

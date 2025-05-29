@@ -10,6 +10,7 @@ import os
 import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
+from property_retrieval import UniversityPropertyRetrieval
 from rdflib import Graph
 
 
@@ -62,17 +63,65 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
-        # Initialize property retrieval system (if available)
-        # This would typically be an EnterprisePropertyRetrieval or similar Weaviate-based system
-        property_retrieval = None
+        # Initialize the university property retrieval system with Weaviate
+        print("\nInitializing University Property Retrieval with Weaviate...")
         
-        # If you have a property retrieval system, initialize it here:
-        # from property_retrieval import EnterprisePropertyRetrieval
-        # property_retrieval = EnterprisePropertyRetrieval(
-        #     turtle_file_path=file_path,
-        #     get_entities_query="your_entities_query",
-        #     get_properties_query="your_properties_query"
-        # )
+        # Define SPARQL queries for entities and properties
+        get_entities_query = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?label
+    (REPLACE(STR(?entity), "http://example.org/", "ns1:") AS ?short)
+WHERE {
+  { 
+    ?entity ?predicate ?object. 
+    FILTER(isIRI(?entity) && STRSTARTS(STR(?entity), STR(ns1:)) && STRSTARTS(STR(?predicate), STR(ns1:)))
+  }
+  UNION
+  { 
+    ?subject ?predicate ?entity. 
+    FILTER(isIRI(?entity) && STRSTARTS(STR(?entity), STR(ns1:)) && STRSTARTS(STR(?predicate), STR(ns1:)))
+  }
+  
+  OPTIONAL {
+    ?entity rdfs:label ?label.
+  }
+}
+"""
+        
+        get_properties_query = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?label 
+    (REPLACE(STR(?property), "http://example.org/", "ns1:") AS ?short) 
+    (REPLACE(REPLACE(STR(?domain), "http://example.org/", "ns1:"), "http://www.w3.org/2000/01/rdf-schema#", "rdfs:") AS ?shortDomain)
+    (REPLACE(REPLACE(STR(?range), "http://example.org/", "ns1:"), "http://www.w3.org/2001/XMLSchema#", "xsd:") AS ?shortRange)
+WHERE {
+  ?subject ?property ?object.
+  FILTER(STRSTARTS(STR(?property), STR(ns1:)))
+  
+  OPTIONAL {
+    ?property rdfs:label ?label.
+    ?property rdfs:domain ?domain.
+    ?property rdfs:range ?range.
+  }
+}
+"""
+        
+        # Initialize property retrieval system
+        property_retrieval = UniversityPropertyRetrieval(
+            turtle_file_path=file_path,
+            get_entities_query=get_entities_query,
+            get_properties_query=get_properties_query,
+            embedding_model_name="jinaai/jina-embeddings-v3",
+            is_local_client=True,
+            weaviate_host="localhost",
+            weaviate_port=8080,
+        )
 
         # Generate dataset using extracted schema and the graph from the extractor
         generator = NL2SPARQLGenerator(schema, graph=extractor.graph, property_retrieval=property_retrieval)
