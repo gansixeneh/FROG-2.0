@@ -1146,239 +1146,175 @@ class NL2SPARQLGenerator:
                 if entity_label not in initial_entities:
                     initial_entities.append(entity_label)
         
+        # Use NLTK tokenizer for better tokenization
+        tokenizer = RegexpTokenizer(r"\w+")
+        tokens = tokenizer.tokenize(question)
+        
+        # Get stopwords (with fallback if not available)
         try:
-            # Use NLTK tokenizer for better tokenization
-            tokenizer = RegexpTokenizer(r"\w+")
-            tokens = tokenizer.tokenize(question)
-            
-            # Get stopwords (with fallback if not available)
-            try:
-                stop_words = set(stopwords.words('english'))
-            except:
-                # Fallback stopwords if NLTK data not downloaded
-                stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should'])
-            
-            # Filter tokens and convert to lowercase
-            tokens = [tok.lower() for tok in tokens if tok.lower() not in stop_words and len(tok) > 1]
-            
-            # Generate n-grams using NLTK
-            max_n = min(len(tokens), 3)
-            ngrams_list = []
-            for n in range(1, max_n + 1):
-                n_grams = ngrams(tokens, n)
-                ngrams_list.extend([" ".join(ng) for ng in n_grams])
-            
-            # Get properties using n-gram approach similar to PropertyGenerationNode
-            threshold = 0.6
-            top_ngram_properties = []
-            
-            # Search using n-grams for properties
-            for ngram in ngrams_list:  # Limit to top 10 n-grams for performance
-                if len(ngram.strip()) >= 2:
-                    property_results = self._search_properties_weaviate(ngram, k=5)
-                    
-                    # Filter by threshold and format similar to PropertyGenerationNode
-                    for result in property_results:
-                        if result['score'] >= threshold:
-                            # Create label with ID similar to paste-2.txt format
-                            id_with_label = f"{result['short']} - {result['label']}"
-                            if id_with_label not in top_ngram_properties:
-                                top_ngram_properties.append(id_with_label)
-                            
-                            if len(top_ngram_properties) >= 5:
-                                break
+            stop_words = set(stopwords.words('english'))
+        except:
+            # Fallback stopwords if NLTK data not downloaded
+            stop_words = set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should'])
+        
+        # Filter tokens and convert to lowercase
+        tokens = [tok.lower() for tok in tokens if tok.lower() not in stop_words and len(tok) > 1]
+        
+        # Generate n-grams using NLTK
+        max_n = min(len(tokens), 3)
+        ngrams_list = []
+        for n in range(1, max_n + 1):
+            n_grams = ngrams(tokens, n)
+            ngrams_list.extend([" ".join(ng) for ng in n_grams])
+        
+        # Get properties using n-gram approach similar to PropertyGenerationNode
+        threshold = 0.6
+        top_ngram_properties = []
+        
+        # Search using n-grams for properties
+        for ngram in ngrams_list:  # Limit to top 10 n-grams for performance
+            if len(ngram.strip()) >= 2:
+                property_results = self._search_properties_weaviate(ngram, k=5)
                 
-                if len(top_ngram_properties) >= 5:
-                    break
-            
-            # Get entities using similar approach
-            top_ngram_entities = []
-            for ngram in ngrams_list[:10]:
-                if len(ngram.strip()) >= 2:
-                    entity_results = self._search_entities_weaviate(ngram, k=5)
-                    
-                    for result in entity_results:
-                        if result['score'] >= threshold:
-                            id_with_label = f"{result['short']} - {result['label']}"
-                            if id_with_label not in top_ngram_entities:
-                                top_ngram_entities.append(id_with_label)
-                            
-                            if len(top_ngram_entities) >= 5:
-                                break
-                
-                if len(top_ngram_entities) >= 5:
-                    break
-            
-            # Combine initial properties with processing similar to PropertyGenerationNode
-            combined_properties = []
-            
-            # Process initial properties from SPARQL extraction
-            for prop in initial_properties:
-                combined_properties.append(prop)
-                
-                # Add camelCase version if it contains spaces (like in PropertyGenerationNode)
-                if " " in prop:
-                    words = prop.lower().split()
-                    camel_prop = words[0]
-                    for word in words[1:]:
-                        camel_prop += word.capitalize()
-                    combined_properties.append(camel_prop)
-            
-            # Add n-gram properties
-            combined_properties.extend([prop.split(' - ')[1] if ' - ' in prop else prop for prop in top_ngram_properties])
-            
-            # Use get_related_candidates method similar to PropertyGenerationNode
-            related_candidates = self.get_related_candidates(
-                question, 
-                property_candidates=combined_properties,
-                threshold=threshold,
-                k=5
-            )
-            
-            # Process entities from related candidates and initial extraction
-            entity_candidates = set()
-            
-            # Add initial entities
-            for entity in initial_entities:
-                entity_candidates.add(entity)
-            
-            # Add entities from n-gram search
-            for entity_str in top_ngram_entities:
-                if ' - ' in entity_str:
-                    entity_label = entity_str.split(' - ')[1]
-                else:
-                    entity_label = entity_str
-                entity_candidates.add(entity_label)
-            
-            # Add entities from related candidates if available
-            if "entities" in related_candidates:
-                for entity_str in related_candidates["entities"]:
-                    # Extract entity name from formatted string
-                    if ':' in entity_str:
-                        entity_name = entity_str.split(':')[0].strip()
-                    else:
-                        entity_name = entity_str.strip()
-                    entity_candidates.add(entity_name)
-            
-            # Convert entity candidates to flattened list format
-            for entity_name in entity_candidates:
-                # Search for detailed information about this entity
-                entity_results = self._search_entities_weaviate(entity_name, k=1)
-                
-                if entity_results and entity_results[0]['score'] >= 0.5:
-                    result = entity_results[0]
-                    entity_matches.append({
-                        "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
-                        "label": result['label'],
-                        "description": f"Entity in the university course knowledge graph",
-                        "url": f"//www.example.org/{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
-                        "score": result['score']
-                    })
-                else:
-                    # Fallback for entities not found in search
-                    entity_matches.append({
-                        "id": entity_name.lower().replace(' ', '_'),
-                        "label": entity_name,
-                        "description": f"Entity in the university course knowledge graph",
-                        "url": f"//www.example.org/{entity_name.lower().replace(' ', '_')}",
-                        "score": 0.5
-                    })
-            
-            # Process properties from related candidates
-            if "properties" in related_candidates:
-                for prop_str in related_candidates["properties"]:
-                    # Extract property information from formatted string
-                    if ':' in prop_str:
-                        # Handle format like "property_name: {domain: X, range: Y}"
-                        parts = prop_str.split(':')
-                        prop_name = parts[0].strip()
+                # Filter by threshold and format similar to PropertyGenerationNode
+                for result in property_results:
+                    if result['score'] >= threshold:
+                        # Create label with ID similar to paste-2.txt format
+                        id_with_label = f"{result['short']} - {result['label']}"
+                        if id_with_label not in top_ngram_properties:
+                            top_ngram_properties.append(id_with_label)
                         
-                        # Search for detailed information about this property
-                        property_results = self._search_properties_weaviate(prop_name, k=1)
+                        if len(top_ngram_properties) >= 5:
+                            break
+            
+            if len(top_ngram_properties) >= 5:
+                break
+        
+        # Get entities using similar approach
+        top_ngram_entities = []
+        for ngram in ngrams_list[:10]:
+            if len(ngram.strip()) >= 2:
+                entity_results = self._search_entities_weaviate(ngram, k=5)
+                
+                for result in entity_results:
+                    if result['score'] >= threshold:
+                        id_with_label = f"{result['short']} - {result['label']}"
+                        if id_with_label not in top_ngram_entities:
+                            top_ngram_entities.append(id_with_label)
                         
-                        if property_results and property_results[0]['score'] >= 0.5:
-                            result = property_results[0]
-                            description = ""
-                            if result.get('shortDomain') and result.get('shortRange'):
-                                description = f"Property linking {result['shortDomain']} to {result['shortRange']}"
-                            else:
-                                description = f"Property in the university course knowledge graph"
-                            
-                            property_matches.append({
-                                "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
-                                "label": result['label'],
-                                "description": description,
-                                "url": f"//www.example.org/Property:{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
-                                "score": result['score']
-                            })
-                        else:
-                            # Fallback for properties not found in search
-                            property_matches.append({
-                                "id": prop_name.lower().replace(' ', '_'),
-                                "label": prop_name,
-                                "description": f"Property in the university course knowledge graph",
-                                "url": f"//www.example.org/Property:{prop_name.lower().replace(' ', '_')}",
-                                "score": 0.5
-                            })
-                    else:
-                        # Handle simple property name
-                        prop_name = prop_str.strip()
-                        property_matches.append({
-                            "id": prop_name.lower().replace(' ', '_'),
-                            "label": prop_name,
-                            "description": f"Property in the university course knowledge graph",
-                            "url": f"//www.example.org/Property:{prop_name.lower().replace(' ', '_')}",
-                            "score": 0.6
-                        })
+                        if len(top_ngram_entities) >= 5:
+                            break
             
-            # Sort by score (descending) and remove duplicates
-            entity_matches = sorted(entity_matches, key=lambda x: x['score'], reverse=True)
-            property_matches = sorted(property_matches, key=lambda x: x['score'], reverse=True)
+            if len(top_ngram_entities) >= 5:
+                break
+        
+        # Combine initial properties with processing similar to PropertyGenerationNode
+        combined_properties = []
+        
+        # Process initial properties from SPARQL extraction
+        for prop in initial_properties:
+            combined_properties.append(prop)
             
-            # Remove duplicates based on ID
-            seen_entities = set()
-            unique_entity_matches = []
-            for entity in entity_matches:
-                if entity['id'] not in seen_entities:
-                    unique_entity_matches.append(entity)
-                    seen_entities.add(entity['id'])
+            # Add camelCase version if it contains spaces (like in PropertyGenerationNode)
+            if " " in prop:
+                words = prop.lower().split()
+                camel_prop = words[0]
+                for word in words[1:]:
+                    camel_prop += word.capitalize()
+                combined_properties.append(camel_prop)
+        
+        # Add n-gram properties
+        combined_properties.extend([prop.split(' - ')[1] if ' - ' in prop else prop for prop in top_ngram_properties])
+        
+        # Use get_related_candidates method similar to PropertyGenerationNode
+        related_candidates = self.get_related_candidates(
+            question, 
+            property_candidates=combined_properties,
+            threshold=threshold,
+            k=5
+        )
+        
+        # Process entities from related candidates and initial extraction
+        entity_candidates = set()
+        
+        # Add initial entities
+        for entity in initial_entities:
+            entity_candidates.add(entity)
+        
+        # Add entities from n-gram search
+        for entity_str in top_ngram_entities:
+            if ' - ' in entity_str:
+                entity_label = entity_str.split(' - ')[1]
+            else:
+                entity_label = entity_str
+            entity_candidates.add(entity_label)
+        
+        # Add entities from related candidates if available
+        if "entities" in related_candidates:
+            for entity_str in related_candidates["entities"]:
+                # Extract entity name from formatted string
+                if ':' in entity_str:
+                    entity_name = entity_str.split(':')[0].strip()
+                else:
+                    entity_name = entity_str.strip()
+                entity_candidates.add(entity_name)
+        
+        # Convert entity candidates to flattened list format
+        for entity_name in entity_candidates:
+            # Search for detailed information about this entity
+            entity_results = self._search_entities_weaviate(entity_name, k=1)
             
-            seen_properties = set()
-            unique_property_matches = []
-            for prop in property_matches:
-                if prop['id'] not in seen_properties:
-                    unique_property_matches.append(prop)
-                    seen_properties.add(prop['id'])
-            
-            return unique_entity_matches, unique_property_matches
-            
-        except Exception as e:
-            print(f"Error in enhanced entity/property extraction: {e}")
-            
-            # Fallback to basic extraction
-            entity_candidates = set(initial_entities)
-            property_candidates = set(initial_properties)
-            
-            # Create basic matches
-            for entity_name in entity_candidates:
+            if entity_results and entity_results[0]['score'] >= 0.5:
+                result = entity_results[0]
                 entity_matches.append({
-                    "id": entity_name.lower().replace(' ', '_'),
-                    "label": entity_name,
-                    "description": f"Entity in the university course knowledge graph",
-                    "url": f"//www.example.org/{entity_name.lower().replace(' ', '_')}",
-                    "score": 0.5
+                    "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
+                    "label": result['label'],
+                    "url": f"//www.example.org/{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
+                    "score": result['score']
                 })
-            
-            for prop_name in property_candidates:
-                property_matches.append({
-                    "id": prop_name.lower().replace(' ', '_'),
-                    "label": prop_name,
-                    "description": f"Property in the university course knowledge graph",
-                    "url": f"//www.example.org/Property:{prop_name.lower().replace(' ', '_')}",
-                    "score": 0.5
-                })
-            
-            return entity_matches, property_matches
+        
+        # Process properties from related candidates
+        if "properties" in related_candidates:
+            for prop_str in related_candidates["properties"]:
+                # Extract property information from formatted string
+                if ':' in prop_str:
+                    # Handle format like "property_name: {domain: X, range: Y}"
+                    parts = prop_str.split(':')
+                    prop_name = parts[0].strip()
+                    
+                    # Search for detailed information about this property
+                    property_results = self._search_properties_weaviate(prop_name, k=1)
+                    
+                    if property_results and property_results[0]['score'] >= 0.6:
+                        result = property_results[0]
+                        
+                        property_matches.append({
+                            "id": result['short'].split(':')[-1] if ':' in result['short'] else result['short'],
+                            "label": result['label'],
+                            "url": f"//www.example.org/Property:{result['short'].split(':')[-1] if ':' in result['short'] else result['short']}",
+                            "score": result['score']
+                        })
+        
+        # Sort by score (descending) and remove duplicates
+        entity_matches = sorted(entity_matches, key=lambda x: x['score'], reverse=True)
+        property_matches = sorted(property_matches, key=lambda x: x['score'], reverse=True)
+        
+        # Remove duplicates based on ID
+        seen_entities = set()
+        unique_entity_matches = []
+        for entity in entity_matches:
+            if entity['id'] not in seen_entities:
+                unique_entity_matches.append(entity)
+                seen_entities.add(entity['id'])
+        
+        seen_properties = set()
+        unique_property_matches = []
+        for prop in property_matches:
+            if prop['id'] not in seen_properties:
+                unique_property_matches.append(prop)
+                seen_properties.add(prop['id'])
+        
+        return unique_entity_matches, unique_property_matches
 
     def get_related_candidates(
         self,
@@ -1612,105 +1548,6 @@ class NL2SPARQLGenerator:
         if numbers:
             return numbers[0]
         return "specified"
-
-    def get_entity_description(self, uri):
-        """
-        Get description for an entity
-        
-        Args:
-            uri (str): Entity URI
-            
-        Returns:
-            str: Entity description or empty string
-        """
-        if not self.graph:
-            return ""
-            
-        try:
-            # Try to get a description using common properties
-            for desc_prop in ["rdfs:comment", "schema:description", "dcterms:description"]:
-                query = f"""
-                    SELECT ?desc WHERE {{
-                        <{uri}> {desc_prop} ?desc .
-                    }}
-                    LIMIT 1
-                """
-                results = list(self.graph.query(query))
-                if results and results[0][0]:
-                    return str(results[0][0])
-            
-            # Fallback - construct a simple description
-            entity_type_query = f"""
-                SELECT ?type WHERE {{
-                    <{uri}> a ?type .
-                }}
-                LIMIT 1
-            """
-            type_results = list(self.graph.query(entity_type_query))
-            if type_results and type_results[0][0]:
-                type_uri = str(type_results[0][0])
-                type_label = self.extract_label_from_uri(type_uri)
-                return f"{type_label}"
-                
-            return ""
-        except Exception as e:
-            print(f"Error getting description for entity {uri}: {e}")
-            return ""
-
-    def get_property_description(self, uri):
-        """
-        Get description for a property
-        
-        Args:
-            uri (str): Property URI
-            
-        Returns:
-            str: Property description or empty string
-        """
-        if not self.graph:
-            return ""
-            
-        try:
-            # Try to get a description using common properties
-            for desc_prop in ["rdfs:comment", "schema:description", "dcterms:description"]:
-                query = f"""
-                    SELECT ?desc WHERE {{
-                        <{uri}> {desc_prop} ?desc .
-                    }}
-                    LIMIT 1
-                """
-                results = list(self.graph.query(query))
-                if results and results[0][0]:
-                    return str(results[0][0])
-            
-            # For properties, create a description based on domain and range
-            domain_query = f"""
-                SELECT ?domain WHERE {{
-                    <{uri}> rdfs:domain ?domain .
-                }}
-                LIMIT 1
-            """
-            domain_results = list(self.graph.query(domain_query))
-            
-            range_query = f"""
-                SELECT ?range WHERE {{
-                    <{uri}> rdfs:range ?range .
-                }}
-                LIMIT 1
-            """
-            range_results = list(self.graph.query(range_query))
-            
-            if domain_results and domain_results[0][0] and range_results and range_results[0][0]:
-                domain_uri = str(domain_results[0][0])
-                range_uri = str(range_results[0][0])
-                domain_label = self.extract_label_from_uri(domain_uri)
-                range_label = self.extract_label_from_uri(range_uri)
-                return f"property that links {domain_label} to {range_label}"
-                
-            return ""
-        except Exception as e:
-            print(f"Error getting description for property {uri}: {e}")
-            return ""
 
     def instantiate_template_with_discovery(self, template):
         """
