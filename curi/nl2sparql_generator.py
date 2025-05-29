@@ -1336,7 +1336,6 @@ class NL2SPARQLGenerator:
 
         return result
 
-    # ... rest of the methods remain the same ...
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
                         variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
         """
