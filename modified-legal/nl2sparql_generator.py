@@ -3,6 +3,7 @@ NL2SPARQL - Natural Language to SPARQL Dataset Generator - Modified for Fuseki S
 
 This version supports context-aware entity selection, generating queries with real entities from
 the knowledge graph that match the template structure using a discovery-based approach.
+Enhanced with chain of thoughts and entity/property matching similar to the curi approach.
 """
 
 import json
@@ -13,7 +14,10 @@ import csv
 import io
 from SPARQLWrapper import SPARQLWrapper, JSON
 from collections import Counter
-from kg_schema_extractor import legal_entity_label
+from kg_schema_extractor import legal_entity_label, legal_property_label
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
+from nltk import ngrams
 
 
 class SparqlExecutor:
@@ -312,7 +316,10 @@ class NL2SPARQLGenerator:
     """Generator for natural language to SPARQL query pairs for legal documents."""
 
     def __init__(
-        self, config, endpoint_url="http://localhost:3030/modified-lex2kg/query"
+        self, 
+        config, 
+        endpoint_url="http://localhost:3030/modified-lex2kg/query",
+        property_retrieval=None
     ):
         """
         Initialize the generator with knowledge graph schema information
@@ -320,6 +327,7 @@ class NL2SPARQLGenerator:
         Args:
             config (dict): Configuration with prefixes, entity examples, and schema info
             endpoint_url (str): URL of the Fuseki SPARQL endpoint
+            property_retrieval: Property retrieval system for Weaviate-based search
         """
         self.config = config
         self.prefixes = config.get("prefixes", {})
@@ -327,6 +335,10 @@ class NL2SPARQLGenerator:
         self.schema_info = config.get("schemaInfo", {})
         self.templates = self.initialize_templates()
         self.variation_generator = VariationGenerator()
+        self.property_retrieval = property_retrieval
+
+        # Initialize stopwords
+        self.stopwords = set(stopwords.words('english'))
 
         # Create a SPARQL executor to connect to Fuseki
         self.sparql_exec = SparqlExecutor(endpoint_url)
@@ -407,6 +419,7 @@ class NL2SPARQLGenerator:
     def initialize_templates(self):
         """
         Initialize question-query template pairs for legal document data with multiple question variations
+        Enhanced with thoughts templates for chain of reasoning.
 
         Returns:
             list: Templates for different question types and complexity levels
@@ -433,6 +446,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:tentang ?title .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the title of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:tentang' links legal documents to their titles.",
+                    "4. To solve this, retrieve the title linked to {entity} via the 'lex2kg-o:tentang' property.",
+                    "5. Construct a SPARQL query to retrieve the title for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -453,6 +473,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanPada ?date .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the enactment date of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanPada' links legal documents to their enactment dates.",
+                    "4. To solve this, retrieve the date when {entity} was enacted via the 'lex2kg-o:disahkanPada' property.",
+                    "5. Construct a SPARQL query to retrieve the enactment date for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -473,6 +500,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanDi ?location .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the enactment location of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanDi' links legal documents to their enactment locations.",
+                    "4. To solve this, retrieve the location where {entity} was enacted via the 'lex2kg-o:disahkanDi' property.",
+                    "5. Construct a SPARQL query to retrieve the enactment location for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -493,6 +527,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanOleh ?person .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the person who enacted {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanOleh' links legal documents to the person who enacted them.",
+                    "4. To solve this, retrieve the person who enacted {entity} via the 'lex2kg-o:disahkanOleh' property.",
+                    "5. Construct a SPARQL query to retrieve the enactor for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -513,6 +554,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:jabatanPengesah ?position .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the official position of the person who enacted {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:jabatanPengesah' links legal documents to the official position of their enactor.",
+                    "4. To solve this, retrieve the position of the person who enacted {entity} via the 'lex2kg-o:jabatanPengesah' property.",
+                    "5. Construct a SPARQL query to retrieve the enactor's position for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -533,6 +581,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:jenisPeraturan ?type .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the type or category of regulation that {entity} represents.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:jenisPeraturan' links legal documents to their regulation type.",
+                    "4. To solve this, retrieve the regulation type of {entity} via the 'lex2kg-o:jenisPeraturan' property.",
+                    "5. Construct a SPARQL query to retrieve the regulation type for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -553,6 +608,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:tahun ?year .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the year when {entity} was enacted.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:tahun' links legal documents to the year of their enactment.",
+                    "4. To solve this, retrieve the year when {entity} was enacted via the 'lex2kg-o:tahun' property.",
+                    "5. Construct a SPARQL query to retrieve the enactment year for {entity}."
+                ],
                 "complexity": "basic",
             },
             {
@@ -573,86 +635,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:nomor ?number .
                     }
                 """,
-                "complexity": "basic",
-            },
-            {
-                "id": "law-jurisdiction",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa yurisdiksi dari {entity}?",
-                    "Di bawah yurisdiksi apa {entity} berlaku?",
-                    "Wilayah hukum apa yang mencakup {entity}?",
+                "thoughtsTemplate": [
+                    "1. The question asks for the official number assigned to {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:nomor' links legal documents to their official numbers.",
+                    "4. To solve this, retrieve the number assigned to {entity} via the 'lex2kg-o:nomor' property.",
+                    "5. Construct a SPARQL query to retrieve the official number for {entity}."
                 ],
-                "englishQuestions": [
-                    "What is the jurisdiction of {entity}?",
-                    "Under which jurisdiction does {entity} apply?",
-                    "What legal territory covers {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?jurisdiction WHERE {
-                    {entity} lex2kg-o:yurisdiksi ?jurisdiction .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "law-language",
-                "category": "legal",
-                "questionTemplates": [
-                    "Dalam bahasa apa {entity} ditulis?",
-                    "Bahasa apa yang digunakan dalam {entity}?",
-                    "Apa bahasa penulisan {entity}?",
-                ],
-                "englishQuestions": [
-                    "In what language is {entity} written?",
-                    "What language was used in {entity}?",
-                    "What is the language of {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?language WHERE {
-                    {entity} lex2kg-o:bahasa ?language .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "law-menimbang",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa yang menjadi pertimbangan dari {entity}?",
-                    "Apa pertimbangan dalam {entity}?",
-                    "Apa dasar pertimbangan {entity}?",
-                ],
-                "englishQuestions": [
-                    "What are the considerations of {entity}?",
-                    "What considerations are included in {entity}?",
-                    "What is the basis of consideration for {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?menimbang WHERE {
-                    {entity} lex2kg-o:menimbang ?menimbang .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "law-mengingat",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa yang menjadi dasar hukum dari {entity}?",
-                    "Apa dasar hukum {entity}?",
-                    "Apa rujukan hukum untuk {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the legal basis of {entity}?",
-                    "What legal basis does {entity} have?",
-                    "What are the legal references for {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?mengingat WHERE {
-                    {entity} lex2kg-o:mengingat ?mengingat .
-                    }
-                """,
                 "complexity": "basic",
             },
             {
@@ -673,146 +662,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:teks ?text .
                     }
                 """,
-                "complexity": "basic",
-            },
-            {
-                "id": "article-version",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa versi terbaru dari {entity}?",
-                    "Versi berapa {entity} saat ini?",
-                    "Apa versi terakhir dari {entity}?",
+                "thoughtsTemplate": [
+                    "1. The question asks for the textual content of {entity}.",
+                    "2. The entity '{entity}' represents a legal document or article in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:teks' links legal documents to their textual content.",
+                    "4. To solve this, retrieve the text content of {entity} via the 'lex2kg-o:teks' property.",
+                    "5. Construct a SPARQL query to retrieve the text content for {entity}."
                 ],
-                "englishQuestions": [
-                    "What is the latest version of {entity}?",
-                    "Which version of {entity} is current?",
-                    "What is the most recent version of {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?version WHERE {
-                    {entity} lex2kg-o:versi ?version .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "chapter-title",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa judul dari {entity}?",
-                    "Apa nama {entity}?",
-                    "Apa judul bab {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the title of {entity}?",
-                    "What is the name of {entity}?",
-                    "What is the chapter title of {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    {entity} lex2kg-o:judul ?title .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "article-letters",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa saja huruf yang terdapat dalam {entity}?",
-                    "Huruf apa saja yang ada di {entity}?",
-                    "Apa huruf-huruf dalam {entity}?",
-                ],
-                "englishQuestions": [
-                    "What letters are in {entity}?",
-                    "Which letters can be found in {entity}?",
-                    "What are the letters included in {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?letter WHERE {
-                    {entity} lex2kg-o:huruf ?letter .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "law-references-what",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa saja yang dirujuk oleh {entity}?",
-                    "Dokumen apa yang direferensikan oleh {entity}?",
-                    "Apa rujukan dari {entity}?",
-                ],
-                "englishQuestions": [
-                    "What does {entity} reference?",
-                    "Which documents are referenced by {entity}?",
-                    "What are the references from {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?referenced WHERE {
-                    {entity} lex2kg-o:merujuk ?referenced .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "what-amended-law",
-                "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang mengubah {entity}?",
-                    "Peraturan apa yang telah mengamendemen {entity}?",
-                    "Apa saja peraturan yang memodifikasi {entity}?",
-                ],
-                "englishQuestions": [
-                    "Which laws amended {entity}?",
-                    "What regulations have amended {entity}?",
-                    "Which regulations have modified {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?amendingLaw WHERE {
-                    ?amendingLaw lex2kg-o:mengubah {entity} .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "laws-deleted-what",
-                "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang dihapus oleh {entity}?",
-                    "Peraturan apa yang telah dicabut oleh {entity}?",
-                    "Apa saja peraturan yang dibatalkan oleh {entity}?",
-                ],
-                "englishQuestions": [
-                    "Which laws were deleted by {entity}?",
-                    "What regulations have been revoked by {entity}?",
-                    "Which regulations were canceled by {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?deletedLaw WHERE {
-                    {entity} lex2kg-o:menghapus ?deletedLaw .
-                    }
-                """,
-                "complexity": "basic",
-            },
-            {
-                "id": "what-deleted-law",
-                "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang menghapus {entity}?",
-                    "Peraturan apa yang telah mencabut {entity}?",
-                    "Apa saja peraturan yang membatalkan {entity}?",
-                ],
-                "englishQuestions": [
-                    "Which laws deleted {entity}?",
-                    "What regulations have revoked {entity}?",
-                    "Which regulations have canceled {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?deletingLaw WHERE {
-                    ?deletingLaw lex2kg-o:menghapus {entity} .
-                    }
-                """,
                 "complexity": "basic",
             },
             # ==================== INTERMEDIATE TEMPLATES ====================
@@ -835,6 +691,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:pasal ?article .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of articles (pasal) within {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:pasal' links legal documents to their constituent articles.",
+                    "4. To solve this, count all articles linked to {entity} via the 'lex2kg-o:pasal' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of articles."
+                ],
                 "complexity": "intermediate",
             },
             {
@@ -855,47 +718,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:bab ?chapter .
                     }
                 """,
-                "complexity": "intermediate",
-            },
-            {
-                "id": "article-sections",
-                "category": "legal",
-                "questionTemplates": [
-                    "Berapa jumlah ayat dalam {entity}?",
-                    "Ada berapa ayat di dalam {entity}?",
-                    "Berapa banyak ayat yang terdapat dalam {entity}?",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of chapters (bab) within {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:bab' links legal documents to their constituent chapters.",
+                    "4. To solve this, count all chapters linked to {entity} via the 'lex2kg-o:bab' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of chapters."
                 ],
-                "englishQuestions": [
-                    "How many sections are in {entity}?",
-                    "What is the number of sections in {entity}?",
-                    "How many sections does {entity} contain?",
-                ],
-                "sparqlTemplate": """
-                    SELECT (COUNT(?section) AS ?count) WHERE {
-                    {entity} lex2kg-o:versi ?version .
-                    ?version lex2kg-o:ayat ?section .
-                    }
-                """,
-                "complexity": "intermediate",
-            },
-            {
-                "id": "count-article-letters",
-                "category": "legal",
-                "questionTemplates": [
-                    "Berapa jumlah huruf dalam {entity}?",
-                    "Ada berapa huruf di dalam {entity}?",
-                    "Berapa banyak huruf yang terdapat dalam {entity}?",
-                ],
-                "englishQuestions": [
-                    "How many letters are in {entity}?",
-                    "What is the number of letters in {entity}?",
-                    "How many letters does {entity} contain?",
-                ],
-                "sparqlTemplate": """
-                    SELECT (COUNT(?letter) AS ?count) WHERE {
-                    {entity} lex2kg-o:huruf ?letter .
-                    }
-                """,
                 "complexity": "intermediate",
             },
             {
@@ -917,72 +746,13 @@ class NL2SPARQLGenerator:
                     ?law lex2kg-o:tentang ?title .
                     }
                 """,
-                "complexity": "intermediate",
-            },
-            {
-                "id": "law-parts",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa saja bagian dari {entity}?",
-                    "Bagian apa saja yang terdapat dalam {entity}?",
-                    "Sebutkan bagian-bagian dari {entity}?",
+                "thoughtsTemplate": [
+                    "1. The question asks for all laws enacted in the year {value}.",
+                    "2. In the legal ontology, laws are linked to their enactment year via 'lex2kg-o:tahun'.",
+                    "3. Laws also have titles accessible via 'lex2kg-o:tentang' property.",
+                    "4. To solve this, find all laws with {value} as their enactment year and retrieve their titles.",
+                    "5. Construct a SPARQL query that filters laws by year and returns both the law entity and its title."
                 ],
-                "englishQuestions": [
-                    "What are the parts of {entity}?",
-                    "Which components are contained in {entity}?",
-                    "List the sections of {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?part ?type WHERE {
-                    { {entity} lex2kg-o:pasal ?part . BIND("pasal" AS ?type) }
-                    UNION
-                    { {entity} lex2kg-o:bab ?part . BIND("bab" AS ?type) }
-                    UNION
-                    { {entity} lex2kg-o:bagian ?part . BIND("bagian" AS ?type) }
-                    }
-                """,
-                "complexity": "intermediate",
-            },
-            {
-                "id": "article-subsections",
-                "category": "legal",
-                "questionTemplates": [
-                    "Apa saja ayat yang terdapat dalam {entity}?",
-                    "Ayat apa saja yang ada di {entity}?",
-                    "Sebutkan ayat-ayat dalam {entity}?",
-                ],
-                "englishQuestions": [
-                    "What sections are in {entity}?",
-                    "Which subsections exist in {entity}?",
-                    "List the paragraphs in {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?section WHERE {
-                    {entity} lex2kg-o:versi ?version .
-                    ?version lex2kg-o:ayat ?section .
-                    }
-                """,
-                "complexity": "intermediate",
-            },
-            {
-                "id": "article-references",
-                "category": "legal",
-                "questionTemplates": [
-                    "Pasal mana saja yang merujuk ke {entity}?",
-                    "Pasal apa yang mengacu pada {entity}?",
-                    "Pasal-pasal apa yang mereferensikan {entity}?",
-                ],
-                "englishQuestions": [
-                    "Which articles reference {entity}?",
-                    "What articles refer to {entity}?",
-                    "Which articles cite {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?referringArticle ?text WHERE {
-                    ?referringArticle lex2kg-o:merujuk {entity} .
-                    ?referringArticle lex2kg-o:teks ?text .
-                    }
-                """,
                 "complexity": "intermediate",
             },
             {
@@ -1004,6 +774,13 @@ class NL2SPARQLGenerator:
                     FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for laws related to the keyword '{value}'.",
+                    "2. In the legal ontology, laws have titles accessible via 'lex2kg-o:tentang' property.",
+                    "3. The keyword '{value}' should appear in the law's title to be considered related.",
+                    "4. To solve this, retrieve all laws whose titles contain the keyword '{value}' (case-insensitive).",
+                    "5. Construct a SPARQL query using FILTER and CONTAINS to match titles containing the keyword."
+                ],
                 "complexity": "intermediate",
             },
             {
@@ -1027,6 +804,13 @@ class NL2SPARQLGenerator:
                     }
                     ORDER BY DESC(?date)
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for laws enacted by the person {value}.",
+                    "2. In the legal ontology, 'lex2kg-o:disahkanOleh' links laws to their enactor.",
+                    "3. Laws also have titles and enactment dates accessible via respective properties.",
+                    "4. To solve this, find all laws enacted by {value} and retrieve their titles and dates.",
+                    "5. Construct a SPARQL query that filters by enactor and orders results by date (most recent first)."
+                ],
                 "complexity": "intermediate",
             },
             # ==================== ADVANCED TEMPLATES ====================
@@ -1052,6 +836,14 @@ class NL2SPARQLGenerator:
                     ?amendedLaw lex2kg-o:tentang ?title .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for laws that were amended by {entity}.",
+                    "2. The entity '{entity}' represents an amending law in the Indonesian legal system.",
+                    "3. Amendments work through versions: {entity} changes versions of articles in other laws.",
+                    "4. To solve this, trace the chain: {entity} changes versions, which belong to articles, which belong to laws.",
+                    "5. Construct a multi-step SPARQL query to follow the amendment relationship through the version mechanism.",
+                    "6. The query uses multiple properties: 'lex2kg-o:mengubah', 'lex2kg-o:versi', 'lex2kg-o:pasal', and 'lex2kg-o:tentang'."
+                ],
                 "complexity": "advanced",
             },
             {
@@ -1076,6 +868,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?articleCount)
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the law with the highest number of articles.",
+                    "2. In the legal ontology, laws are linked to their articles via 'lex2kg-o:pasal' property.",
+                    "3. Laws also have titles accessible via 'lex2kg-o:tentang' property.",
+                    "4. To solve this, count articles for each law, then find the law with the maximum count.",
+                    "5. Construct a SPARQL query using GROUP BY to group articles by law and COUNT to count them.",
+                    "6. Use ORDER BY DESC to sort by article count in descending order, and LIMIT 1 to get the top result."
+                ],
                 "complexity": "advanced",
             },
         ]
@@ -1083,6 +883,412 @@ class NL2SPARQLGenerator:
         # Only use legal templates, ignoring any custom templates
         # to focus specifically on legal document data
         return legal_templates
+
+    def generate_chain_of_thoughts(self, question, sparql, template):
+        """
+        Generate a chain of thoughts explaining how to translate the question to SPARQL
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            template (dict): Template used to generate the question-query pair
+        Returns:
+            list: List of thought steps
+        """
+        if "thoughtsTemplate" not in template:
+            # Fallback for templates without thoughtsTemplate
+            return [
+                "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+                "2. The query involves entities and relationships defined in the legal domain ontology.",
+                "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+                "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+                "5. The result provides valuable insights for legal research and document analysis."
+            ]
+        
+        # Get the thoughts template
+        thoughts_template = template["thoughtsTemplate"]
+        
+        # Extract entity and property URIs from SPARQL
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+        
+        # Create mappings for replacement
+        all_mappings = {}
+        
+        # Add entity mappings
+        for i, uri in enumerate(entity_uris):
+            key = "entity" if i == 0 else f"entity{i+1}"
+            label = legal_entity_label(uri)
+            all_mappings[key] = {
+                'uri': uri,
+                'label': label,
+                'prefixed': self.shorten_uri(uri)
+            }
+        
+        # Add value mappings from SPARQL
+        numeric_pattern = r'\b(\d+)\b'
+        numeric_values = re.findall(numeric_pattern, sparql)
+        string_pattern = r'"([^"]+)"'
+        string_values = re.findall(string_pattern, sparql)
+        
+        if numeric_values:
+            all_mappings['value'] = {
+                'value': numeric_values[0],
+                'label': numeric_values[0]
+            }
+        elif string_values:
+            all_mappings['value'] = {
+                'value': string_values[0],
+                'label': string_values[0]
+            }
+        
+        # Replace placeholders in thoughts
+        processed_thoughts = []
+        for thought in thoughts_template:
+            processed_thought = thought
+            
+            # Replace each placeholder with the appropriate value
+            for placeholder, mapping in all_mappings.items():
+                pattern = r'\{' + re.escape(placeholder) + r'\}'
+                replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+                processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            # Special handling for first entity: check if {entity} exists, if not try {entity1}
+            if 'entity' in all_mappings:
+                entity_mapping = all_mappings['entity']
+                
+                if '{entity}' not in processed_thought and '{entity1}' in processed_thought:
+                    pattern = r'\{entity1\}'
+                    replacement_value = self.get_appropriate_replacement(thought, 'entity1', entity_mapping)
+                    processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            processed_thoughts.append(processed_thought)
+        
+        return processed_thoughts
+
+    def get_appropriate_replacement(self, thought_text, placeholder, mapping):
+        """
+        Determine whether to use URI or label based on the context in the thought
+        
+        Args:
+            thought_text (str): The thought text containing the placeholder
+            placeholder (str): The placeholder being replaced
+            mapping (dict): The mapping containing uri, label, and prefixed forms
+            
+        Returns:
+            str: The appropriate replacement value
+        """
+        # Check context around the placeholder to determine appropriate replacement
+        thought_lower = thought_text.lower()
+        
+        # Use URI/prefixed form in these contexts:
+        if any(phrase in thought_lower for phrase in [
+            "in the ontology",
+            "represents the",
+            "lex2kg-o:",
+            "property '",
+            "entity '",
+            "via the '",
+            "using",
+            "through"
+        ]):
+            # Use prefixed form if available, otherwise full URI  
+            return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
+        
+        # Use label form in these contexts:
+        elif any(phrase in thought_lower for phrase in [
+            "categorized as",
+            "belonging to", 
+            "classified as",
+            "of the '",
+            "as a '",
+            "category '",
+            "group '",
+            "method '",
+            "law '",
+            "document '"
+        ]):
+            return mapping.get('label', mapping.get('value', placeholder))
+        
+        # Default to label for most contexts
+        return mapping.get('label', mapping.get('value', placeholder))
+
+    def _extract_uris_from_sparql(self, sparql):
+        """
+        Extract entity and property URIs from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_uris, property_uris)
+        """
+        entity_uris = []
+        property_uris = []
+        
+        # Extract URIs in angle brackets
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Extract prefixed names (lex2kg-o:something)
+        prefixed_pattern = r'lex2kg-o:([a-zA-Z_][a-zA-Z0-9_]*)'
+        prefixed_names = re.findall(prefixed_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        lex2kg_prefix = self.prefixes.get('lex2kg-o', 'https://example.org/lex2kg/ontology/')
+        for name in prefixed_names:
+            full_uri = f"{lex2kg_prefix}{name}"
+            uris.append(full_uri)
+        
+        # Classify URIs as entities or properties
+        for uri in uris:
+            if self.is_property_uri(uri):
+                property_uris.append(uri)
+            else:
+                entity_uris.append(uri)
+        
+        return entity_uris, property_uris
+
+    def is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # Check if it's from the ontology namespace (properties)
+        if "ontology/" in uri:
+            return True
+        
+        # Common property indicators for legal domain
+        property_indicators = ['tentang', 'disahkan', 'pasal', 'bab', 'teks', 'tahun', 'nomor', 'jenis']
+        
+        for indicator in property_indicators:
+            if indicator in uri:
+                return True
+                
+        return False
+
+    def _preprocess_into_tokens(self, q: str) -> list[str]:
+        """
+        Preprocess question into tokens using NLTK RegexpTokenizer
+        
+        Args:
+            q (str): Question string
+            
+        Returns:
+            list[str]: List of tokens
+        """
+        tok_pattern = r"\w+"
+        tokenizer = RegexpTokenizer(tok_pattern)
+        tokenized = tokenizer.tokenize(q)
+        result = []
+        for tok in tokenized:
+            tok = tok.lower()
+            if tok not in self.stopwords:
+                result.append(tok)
+        return result
+
+    def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+        """
+        Generate n-grams from tokens using NLTK
+        
+        Args:
+            tokens (list[str]): List of tokens
+            max_n (int): Maximum n-gram size
+            
+        Returns:
+            list[str]: List of n-grams
+        """
+        result = []
+        
+        # Generate unigrams, bigrams, and trigrams using NLTK
+        for n in range(1, min(max_n + 1, len(tokens) + 1)):
+            n_grams = ngrams(tokens, n)
+            result.extend([" ".join(ng) for ng in n_grams])
+        
+        return result
+
+    def _search_entities_weaviate(self, query: str, k: int = 5) -> list[dict]:
+        """
+        Search entities using Weaviate-based approach
+        
+        Args:
+            query (str): Search query
+            k (int): Number of results to return
+            
+        Returns:
+            list[dict]: List of entity results with scores
+        """
+        if self.property_retrieval:
+            try:
+                df_result = self.property_retrieval.search_entities(query, k=k)
+                results = []
+                
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0)
+                    })
+                
+                return results
+            except Exception as e:
+                print(f"Error searching entities with Weaviate: {e}")
+        
+        return []
+
+    def _search_properties_weaviate(self, query: str, k: int = 5) -> list[dict]:
+        """
+        Search properties using Weaviate-based approach
+        
+        Args:
+            query (str): Search query
+            k (int): Number of results to return
+            
+        Returns:
+            list[dict]: List of property results with scores
+        """
+        if self.property_retrieval:
+            try:
+                df_result = self.property_retrieval.search_properties(query, k=k)
+                results = []
+                
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0)
+                    })
+                
+                return results
+            except Exception as e:
+                print(f"Error searching properties with Weaviate: {e}")
+        
+        return []
+
+    def get_entities_and_properties(self, question, sparql):
+        """
+        Extract entities and properties from SPARQL query and get their labels using legal_entity_label and legal_property_label
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entities_list, properties_list, entity_matches, property_matches)
+        """
+        # Extract actual URIs from SPARQL query
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+        
+        # Get labels for entities and properties
+        entities_list = []
+        properties_list = []
+        
+        # Get entity labels using legal_entity_label function
+        for uri in entity_uris:
+            label = legal_entity_label(uri)
+            if label:
+                entities_list.append(label)
+        
+        # Get property labels using legal_property_label function  
+        for uri in property_uris:
+            label = legal_property_label(uri)
+            if label:
+                properties_list.append(label)
+        
+        # Get entity and property candidates for entities_matches and properties_matches
+        property_candidates = entities_list + properties_list
+        related_candidates = self.get_related_candidates(
+            question, 
+            property_candidates=property_candidates,
+            threshold=0.6,
+            k=5
+        )
+        
+        # Format entity matches
+        entity_matches = []
+        if "entities" in related_candidates:
+            for entity in related_candidates["entities"]:
+                entity_matches.append({
+                    "id": entity['short'],
+                    "label": entity['label'],
+                })
+        
+        # Format property matches
+        property_matches = []
+        if "properties" in related_candidates:
+            for property in related_candidates["properties"]:
+                property_matches.append({
+                    "id": property['short'],
+                    "label": property['label'],
+                })
+        
+        return entities_list, properties_list, entity_matches, property_matches
+
+    def get_related_candidates(
+        self,
+        q: str,
+        property_candidates: list[str] = [],
+        threshold: float = 0.6,
+        k: int = 5,
+    ) -> dict[str, list[str]]:
+        """
+        Get related entity and property candidates using n-grams and property candidates
+        
+        Args:
+            q (str): Question string
+            property_candidates (list[str]): List of property candidates (entities and properties)
+            threshold (float): Score threshold for relevance
+            k (int): Number of results per search
+            
+        Returns:
+            dict[str, list[str]]: Dictionary with 'entities' and 'properties' lists
+        """
+        tokens = self._preprocess_into_tokens(q)
+        ngrams = self._generate_ngrams(tokens)
+        result = {"entities": [], "properties": []}
+
+        def search(ngram, search_type, threshold=threshold):
+            """Search for entities or properties and format results"""
+
+            # Search using the appropriate method
+            if search_type == "entities":
+                df_res = self._search_entities_weaviate(ngram, k=k)
+            else:
+                df_res = self._search_properties_weaviate(ngram, k=k)
+            
+            # Filter by threshold and format results
+            filtered_results = []
+            for result_item in df_res:
+                if result_item['score'] >= threshold:
+                    filtered_results.append(result_item)
+            
+            return search_type, filtered_results
+
+        # Search using n-grams and property candidates
+        search_terms = ngrams + property_candidates
+        
+        for term in search_terms:
+            for search_type in result.keys():
+                search_result_type, df_res = search(term, search_type)
+                if df_res:
+                    extracted_items = [{'short': item['short'], 'label': item['label']} for item in df_res]
+                    result[search_result_type].extend(extracted_items)
+                    
+        # Remove duplicates at the end
+        for key in result.keys():
+            # Convert to list of tuples, use set for deduplication, then back to dicts
+            seen = set()
+            unique_items = []
+            for item in result[key]:
+                item_tuple = (item['short'], item['label'])
+                if item_tuple not in seen:
+                    seen.add(item_tuple)
+                    unique_items.append(item)
+            result[key] = unique_items
+        return result
 
     def generate_dataset(
         self,
@@ -1160,7 +1366,13 @@ class NL2SPARQLGenerator:
                         instance = self.instantiate_template_with_discovery(template)
 
                         if instance:
-                            # Success! Add the question-query pair
+                            # Generate chain of thoughts for the question-query pair
+                            thoughts = self.generate_chain_of_thoughts(instance["question"], instance["sparql"], template)
+                            
+                            # Get entity matches and property matches
+                            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
+                            
+                            # Success! Add the question-query pair with enhanced fields
                             dataset.append(
                                 {
                                     "id": f"q{id_counter}",
@@ -1170,6 +1382,11 @@ class NL2SPARQLGenerator:
                                     "category": template["category"],
                                     "complexity": template["complexity"],
                                     "templateId": template["id"],
+                                    "thoughts": thoughts,
+                                    "entities": entities_list,
+                                    "properties": properties_list,
+                                    "entities_matches": entity_matches,
+                                    "properties_matches": property_matches
                                 }
                             )
                             id_counter += 1
@@ -1192,6 +1409,10 @@ class NL2SPARQLGenerator:
                                     if len(dataset) >= size:
                                         break
 
+                                    # Generate thoughts for variation too
+                                    var_thoughts = self.generate_chain_of_thoughts(variation["indonesian"], instance["sparql"], template)
+                                    var_entities_list, var_properties_list, var_entity_matches, var_property_matches = self.get_entities_and_properties(variation["indonesian"], instance["sparql"])
+
                                     dataset.append(
                                         {
                                             "id": f"q{id_counter}",
@@ -1202,6 +1423,11 @@ class NL2SPARQLGenerator:
                                             "complexity": template["complexity"],
                                             "templateId": template["id"],
                                             "isVariation": True,
+                                            "thoughts": var_thoughts,
+                                            "entities": var_entities_list,
+                                            "properties": var_properties_list,
+                                            "entities_matches": var_entity_matches,
+                                            "properties_matches": var_property_matches
                                         }
                                     )
                                     id_counter += 1
@@ -1330,8 +1556,8 @@ class NL2SPARQLGenerator:
                     if label_var in selected and selected[label_var] is not None:
                         entity_label = str(selected[label_var])
                     else:
-                        # Extract label from URI if not found in result
-                        entity_label = self.extract_label_from_uri(entity_uri)
+                        # Extract label using legal_entity_label function
+                        entity_label = legal_entity_label(entity_uri)
 
                     replacement = {
                         "value": self.shorten_uri(entity_uri),
@@ -1820,11 +2046,8 @@ class NL2SPARQLGenerator:
             selected = random.choice(results)
             entity_uri = selected["entity"]
 
-            # Use label if available, otherwise extract from URI
-            if "label" in selected and selected["label"]:
-                entity_label = selected["label"]
-            else:
-                entity_label = self.extract_label_from_uri(entity_uri)
+            # Use legal_entity_label function to generate label
+            entity_label = legal_entity_label(entity_uri)
 
             return {
                 "value": self.shorten_uri(entity_uri),
@@ -1947,7 +2170,7 @@ class NL2SPARQLGenerator:
             if value_str.startswith("http"):
                 return {
                     "value": self.shorten_uri(value_str),
-                    "label": self.extract_label_from_uri(value_str),
+                    "label": legal_entity_label(value_str),
                     "uri": value_str
                 }
             
@@ -2175,7 +2398,7 @@ class NL2SPARQLGenerator:
         """
         enactors = [
             "JOKO WIDODO",
-            "SUSILO BAMBANG YUDHOYONO",
+            "SUSILO BAMBANG YUDHOYONO", 
             "MEGAWATI SOEKARNOPUTRI",
             "ABDURRAHMAN WAHID",
             "SOEHARTO",
@@ -2296,7 +2519,6 @@ class NL2SPARQLGenerator:
         Returns:
             str: Formatted SPARQL query
         """
-
         # First, clean URIs by removing spaces within angle brackets
         def clean_uri(match):
             uri = match.group(0)
@@ -2359,33 +2581,38 @@ class NL2SPARQLGenerator:
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_ALL)
 
-        # Write header
-        writer.writerow(
-            [
-                "id",
-                "question",
-                "englishQuestion",
-                "sparql",
-                "category",
-                "complexity",
-                "templateId",
-            ]
-        )
+        # Write header - updated to include new fields
+        writer.writerow([
+            'id', 'question', 'englishQuestion', 'sparql', 'category', 
+            'complexity', 'templateId', 'thoughts', 'entities', 'properties',
+            'entities_matches', 'properties_matches'
+        ])
 
         # Write rows
         for item in dataset:
             sparql_escaped = item["sparql"].replace("\n", " ")
-            writer.writerow(
-                [
-                    item["id"],
-                    item["question"],
-                    item["englishQuestion"],
-                    sparql_escaped,
-                    item["category"],
-                    item["complexity"],
-                    item["templateId"],
-                ]
-            )
+            
+            # Convert complex fields to JSON strings for CSV
+            thoughts_str = json.dumps(item.get("thoughts", []))
+            entities_str = json.dumps(item.get("entities", []))
+            properties_str = json.dumps(item.get("properties", []))
+            entities_matches_str = json.dumps(item.get("entities_matches", []))
+            properties_matches_str = json.dumps(item.get("properties_matches", []))
+            
+            writer.writerow([
+                item["id"],
+                item["question"],
+                item["englishQuestion"],
+                sparql_escaped,
+                item["category"],
+                item["complexity"],
+                item["templateId"],
+                thoughts_str,
+                entities_str,
+                properties_str,
+                entities_matches_str,
+                properties_matches_str
+            ])
 
         return output.getvalue()
 
@@ -2400,3 +2627,4 @@ class NL2SPARQLGenerator:
             str: JSONL string
         """
         return "\n".join(json.dumps(item) for item in dataset)
+            

@@ -69,7 +69,7 @@ def generate_legal_document_dataset(
 
         print("\nGenerating question-SPARQL pairs for legal documents data...")
         dataset = generator.generate_dataset(
-            size=100,  # Smaller size for debugging
+            size=10,  # Smaller size for debugging
             complexity_distribution={
                 "basic": 0.3,
                 "intermediate": 0.3,
