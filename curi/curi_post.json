@@ -2,7 +2,7 @@
   {
     "id": "q1",
     "question": "What is the course code for Technopreneurship?",
-    "sparql": "select ?code where { <http://example.org/technopreneurship> <http://example.org/has_course_code> ?code.}",
+    "sparql": "SELECT?code\nWHERE {\n  ns1:technopreneurship ns1:has_course_code?code.\n}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-code",
@@ -67,7 +67,7 @@
   {
     "id": "q2",
     "question": "What evaluation methods are used for Knowledge Graph?",
-    "sparql": "select ?method where { <http://example.org/knowledge_graph> <http://example.org/has_evaluation_method> ?method.}",
+    "sparql": "SELECT?method\nWHERE {\n  ns1:knowledge_graph ns1:has_evaluation_method?method.\n}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-evaluation",
@@ -136,7 +136,7 @@
   {
     "id": "q3",
     "question": "Which subject area is Computers & Society classified under?",
-    "sparql": "select ?category where { <http://example.org/computers_and_society> <http://example.org/has_course_category> ?category.}",
+    "sparql": "SELECT?category\nWHERE {\n  ns1:computers_and_society ns1:has_course_category?category.\n}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-category",
@@ -245,7 +245,7 @@
   {
     "id": "q4",
     "question": "What nicknames or short forms are used for Natural Language Processing?",
-    "sparql": "select ?nickname where { <http://example.org/natural_language_processing> <http://example.org/also_known_as> ?nickname.}",
+    "sparql": "SELECT?nickname\nWHERE {\n  ns1:natural_language_processing ns1:also_known_as?nickname.\n}",
     "category": "university",
     "complexity": "basic",
     "templateId": "course-nickname",
@@ -322,7 +322,7 @@
   {
     "id": "q5",
     "question": "How many courses need Discrete Mathematics 2 to be completed first?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/discrete_mathematics_2>.}",
+    "sparql": "SELECT (count(?course) as?count)\nWHERE {\n  ?course ns1:has_prerequisite_course ns1:discrete_mathematics_2.\n}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-courses-by-prerequisite",
@@ -439,7 +439,7 @@
   {
     "id": "q6",
     "question": "How many courses have Introduction to Computer Organization as a prerequisite course?",
-    "sparql": "select (count(?course) as ?count) where { ?course <http://example.org/has_prerequisite_course> <http://example.org/introduction_to_computer_organization>.}",
+    "sparql": "SELECT (count(?course) as?count)\nWHERE {\n  ?course ns1:has_prerequisite_course ns1:introduction_to_computer_organization.\n}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "count-courses-by-prerequisite",
@@ -556,7 +556,7 @@
   {
     "id": "q7",
     "question": "List all courses worth 2 credit points.",
-    "sparql": "select ?course where { ?course a <http://example.org/course>.?course <http://example.org/has_credits> 2.}",
+    "sparql": "SELECT?course\nWHERE {\n  ?course a ns1:course.\n  ?course ns1:has_credits 2.\n}",
     "category": "university",
     "complexity": "intermediate",
     "templateId": "courses-with-credits",
@@ -669,7 +669,7 @@
   {
     "id": "q8",
     "question": "Find courses that use both '{entity1}' and '{entity2}' for assessment and are coded as 'CSGE601021'.",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/demo>.?course <http://example.org/has_evaluation_method> <http://example.org/demo>.?course <http://example.org/has_course_code> \"CSGE601021\".}",
+    "sparql": "SELECT?course\nWHERE {\n  ?course ns1:has_evaluation_method ns1:demo.\n  ?course ns1:has_evaluation_method ns1:demo.\n  ?course ns1:has_course_code \"CSGE601021\".\n}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-double-evaluation-code",
@@ -785,7 +785,7 @@
   {
     "id": "q9",
     "question": "What courses have prerequisites that have Programming Assignment as their evaluation method?",
-    "sparql": "select ?course where { ?course <http://example.org/has_prerequisite_course> ?prereq.?prereq <http://example.org/has_evaluation_method> <http://example.org/programming_assignment>.}",
+    "sparql": "SELECT?course\nWHERE {\n  ?course ns1:has_prerequisite_course?prereq.\n  ?prereq ns1:has_evaluation_method ns1:programming_assignment.\n}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-prerequisite-eval",
@@ -907,7 +907,7 @@
   {
     "id": "q10",
     "question": "Which courses are evaluated using '{entity1}', connected to '{entity2}' research group, and identified by 'CSCE604243'?",
-    "sparql": "select ?course where { ?course <http://example.org/has_evaluation_method> <http://example.org/test>.?course <http://example.org/has_research_group> <http://example.org/center_for_cyber_security_and_cryptography>.?course <http://example.org/has_course_code> \"CSCE604243\".}",
+    "sparql": "SELECT?course\nWHERE {\n  ?course ns1:has_evaluation_method ns1:test.\n  ?course ns1:has_research_group ns1:center_for_cyber_security_and_cryptography.\n  ?course ns1:has_course_code \"CSCE604243\".\n}",
     "category": "university",
     "complexity": "advanced",
     "templateId": "courses-with-research-eval-code",
