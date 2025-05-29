@@ -57,6 +57,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_credits ?value .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the credit value of {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_credits' links a course to its credit value.",
+                    "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
+                    "5. Construct a SPARQL query to retrieve the credit value for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -72,6 +79,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_course_code ?code .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the course code of {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_course_code' links courses to their unique identifiers.",
+                    "4. To solve this, retrieve the course code linked to {entity} via the 'ns1:has_course_code' property.",
+                    "5. Construct a SPARQL query to retrieve the course code for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -87,6 +101,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_course_category ?category .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the course category of {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_course_category' links courses to their classification categories.",
+                    "4. To solve this, retrieve the category linked to {entity} via the 'ns1:has_course_category' property.",
+                    "5. Construct a SPARQL query to retrieve the course category for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -102,6 +123,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_prerequisite_course ?prereq .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for prerequisite courses of {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_prerequisite_course' links courses to their required prerequisites.",
+                    "4. To solve this, retrieve all prerequisite courses linked to {entity} via the 'ns1:has_prerequisite_course' property.",
+                    "5. Construct a SPARQL query to list all prerequisite courses for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -117,6 +145,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_evaluation_method ?method .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for all evaluation methods used in {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "4. To solve this, retrieve all entities connected to {entity} via the 'ns1:has_evaluation_method' property.",
+                    "5. Construct a SPARQL query to list all evaluation methods for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -132,6 +167,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_research_group ?group .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for research groups associated with {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_research_group' links courses to their associated research groups.",
+                    "4. To solve this, retrieve all research groups linked to {entity} via the 'ns1:has_research_group' property.",
+                    "5. Construct a SPARQL query to list all research groups for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -147,6 +189,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:also_known_as ?nickname .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for alternative names or abbreviations for {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:also_known_as' links courses to their alternative names, nicknames, or abbreviations.",
+                    "4. To solve this, retrieve all alternative names linked to {entity} via the 'ns1:also_known_as' property.",
+                    "5. Construct a SPARQL query to list all alternative names for {entity}."
+                ],
                 "complexity": "basic"
             },
         ]
@@ -166,6 +215,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_prerequisite_course ?prereq .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of prerequisite courses for {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "4. To solve this, count all prerequisite courses linked to {entity} via the 'ns1:has_prerequisite_course' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of prerequisites."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -181,6 +237,13 @@ class NL2SPARQLGenerator:
                       {entity} ns1:has_evaluation_method ?method .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of evaluation methods used in {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "4. To solve this, count all evaluation methods linked to {entity} via the 'ns1:has_evaluation_method' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of evaluation methods."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -197,6 +260,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_credits {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that have {value} credits.",
+                    "2. In the ontology, 'ns1:course' represents all course entities.",
+                    "3. The property 'ns1:has_credits' links courses to their credit values.",
+                    "4. To solve this, identify all courses with {value} as their credit value.",
+                    "5. Construct a SPARQL query that filters courses with 'ns1:has_credits' equal to {value}."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -213,6 +283,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_research_group {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that are part of the '{entity}' research group.",
+                    "2. The entity '{entity}' represents the research group in question.",
+                    "3. The property 'ns1:has_research_group' links a course to its research group.",
+                    "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_research_group' property.",
+                    "5. Construct a SPARQL query to list all courses associated with this research group."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -229,6 +306,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_evaluation_method {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that use '{entity}' as an evaluation method.",
+                    "2. The entity '{entity}' represents the evaluation method in question.",
+                    "3. The property 'ns1:has_evaluation_method' links a course to its evaluation methods.",
+                    "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_evaluation_method' property.",
+                    "5. Construct a SPARQL query to list all courses using this evaluation method."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -245,6 +329,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_course_category {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of courses in the '{entity}' category.",
+                    "2. The entity '{entity}' represents the course category in question.",
+                    "3. The property 'ns1:has_course_category' links a course to its category.",
+                    "4. To solve this, count all courses linked to '{entity}' via the 'ns1:has_course_category' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of such courses."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -260,6 +351,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_prerequisite_course {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that have '{entity}' as a prerequisite.",
+                    "2. The entity '{entity}' represents the prerequisite course in question.",
+                    "3. The property 'ns1:has_prerequisite_course' links a course to its prerequisite courses.",
+                    "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_prerequisite_course' property.",
+                    "5. Construct a SPARQL query to list all courses with this prerequisite."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -275,6 +373,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_prerequisite_course {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of courses that have '{entity}' as a prerequisite.",
+                    "2. The entity '{entity}' represents the prerequisite course in question.",
+                    "3. The property 'ns1:has_prerequisite_course' links a course to its prerequisite courses.",
+                    "4. To solve this, count all courses linked to '{entity}' via the 'ns1:has_prerequisite_course' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the number of such courses."
+                ],
                 "complexity": "intermediate"
             },
         ]
@@ -296,6 +401,14 @@ class NL2SPARQLGenerator:
                       FILTER(?course != {entity})
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that have the same prerequisites as '{entity}'.",
+                    "2. The entity '{entity}' represents the reference course.",
+                    "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "4. To solve this, first find prerequisites of '{entity}', then find other courses with those same prerequisites.",
+                    "5. Construct a SPARQL query using a pattern to match courses with identical prerequisite requirements.",
+                    "6. Use FILTER to exclude '{entity}' from the results to show only other courses."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -314,6 +427,13 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?credits)
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the course with the highest credit value.",
+                    "2. In the ontology, 'ns1:course' represents all course entities.",
+                    "3. The property 'ns1:has_credits' links courses to their credit values.",
+                    "4. To solve this, retrieve all courses and their credit values, then order by credits in descending order.",
+                    "5. Construct a SPARQL query using ORDER BY DESC to sort by credits and LIMIT 1 to get the highest."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -333,6 +453,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?count)
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the research group with the most associated courses.",
+                    "2. In the ontology, 'ns1:course' represents all course entities.",
+                    "3. The property 'ns1:has_research_group' links courses to their research groups.",
+                    "4. To solve this, count courses for each research group using GROUP BY and COUNT.",
+                    "5. Construct a SPARQL query using GROUP BY to group by research groups and COUNT to count courses.",
+                    "6. Use ORDER BY DESC to sort by count in descending order, and LIMIT 1 to return only the top research group."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -351,6 +479,13 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?count)
                     LIMIT 5
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the most commonly used prerequisite courses.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. To solve this, count how many times each course appears as a prerequisite.",
+                    "4. Construct a SPARQL query using GROUP BY to group by prerequisite courses and COUNT to count occurrences.",
+                    "5. Use ORDER BY DESC to sort by count in descending order, and LIMIT 5 to return the top 5 prerequisites."
+                ],
                 "complexity": "advanced"
             },
         ]
@@ -372,6 +507,14 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_evaluation_method {entity3} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses that meet three criteria: research group '{entity1}', category '{entity2}', and evaluation method '{entity3}'.",
+                    "2. The property 'ns1:has_research_group' links courses to their research groups.",
+                    "3. The property 'ns1:has_course_category' links courses to their categories.",
+                    "4. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "5. To solve this, find courses that satisfy all three conditions simultaneously.",
+                    "6. Construct a SPARQL query with multiple constraints to find courses matching all three conditions."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -389,6 +532,14 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_course_code {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for a course with evaluation method '{entity1}', category '{entity2}', and course code '{value}'.",
+                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "3. The property 'ns1:has_course_category' links courses to their categories.",
+                    "4. The property 'ns1:has_course_code' links courses to their unique identifiers.",
+                    "5. To solve this, find the course that satisfies all three conditions.",
+                    "6. Construct a SPARQL query with multiple constraints to find the course matching all conditions."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -406,6 +557,13 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_course_code {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses with both '{entity1}' and '{entity2}' as evaluation methods and course code '{value}'.",
+                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "3. The property 'ns1:has_course_code' links courses to their unique identifiers.",
+                    "4. To solve this, find courses that have both evaluation methods and the specified course code.",
+                    "5. Construct a SPARQL query with multiple evaluation method constraints and a course code constraint."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -423,6 +581,14 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_course_code {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses with evaluation method '{entity1}', research group '{entity2}', and course code '{value}'.",
+                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "3. The property 'ns1:has_research_group' links courses to their research groups.",
+                    "4. The property 'ns1:has_course_code' links courses to their unique identifiers.",
+                    "5. To solve this, find courses that satisfy all three conditions.",
+                    "6. Construct a SPARQL query with constraints for evaluation method, research group, and course code."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -440,6 +606,14 @@ class NL2SPARQLGenerator:
                       ?course ns1:has_course_category {entity3} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses with prerequisite '{entity1}', evaluation method '{entity2}', and category '{entity3}'.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "4. The property 'ns1:has_course_category' links courses to their categories.",
+                    "5. To solve this, find courses that satisfy all three conditions.",
+                    "6. Construct a SPARQL query with constraints for prerequisite, evaluation method, and category."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -456,6 +630,13 @@ class NL2SPARQLGenerator:
                       ?prereq ns1:has_evaluation_method {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses whose prerequisites use '{entity}' as an evaluation method.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
+                    "4. To solve this, find courses with prerequisites that have '{entity}' as their evaluation method.",
+                    "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites use the specified evaluation method."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -472,6 +653,13 @@ class NL2SPARQLGenerator:
                       ?prereq ns1:has_course_category {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses whose prerequisites belong to the '{entity}' category.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. The property 'ns1:has_course_category' links courses to their categories.",
+                    "4. To solve this, find courses with prerequisites that are categorized as '{entity}'.",
+                    "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites are of the specified category."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -488,6 +676,13 @@ class NL2SPARQLGenerator:
                       ?prereq ns1:has_credits {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses whose prerequisites have {value} credits.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. The property 'ns1:has_credits' links courses to their credit values.",
+                    "4. To solve this, find courses with prerequisites that have {value} as their credit value.",
+                    "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites have the specified credit value."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -504,6 +699,13 @@ class NL2SPARQLGenerator:
                       ?prereq ns1:has_prerequisite_course {entity} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses whose prerequisites have '{entity}' as their prerequisite.",
+                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "3. To solve this, find courses with prerequisites that themselves have '{entity}' as a prerequisite.",
+                    "4. This involves a two-level prerequisite relationship query.",
+                    "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites have '{entity}' as their prerequisite."
+                ],
                 "complexity": "advanced"
             },
         ]
@@ -513,6 +715,364 @@ class NL2SPARQLGenerator:
         
         return all_templates
 
+    def generate_chain_of_thoughts(self, question, sparql, template):
+        """
+        Generate a chain of thoughts explaining how to translate the question to SPARQL
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            template (dict): Template used to generate the question-query pair
+            
+        Returns:
+            list: List of thought steps
+        """
+        if "thoughtsTemplate" not in template:
+            # Fallback for templates without thoughtsTemplate
+            return [
+                "1. The question seeks specific information from the university course knowledge graph.",
+                "2. The query involves entities and relationships defined in the university domain ontology.",
+                "3. Properties in the knowledge graph connect courses to their various attributes and relationships.",
+                "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+                "5. The result provides valuable insights for academic planning and course selection."
+            ]
+        
+        # Get the thoughts template
+        thoughts_template = template["thoughtsTemplate"]
+        
+        # Extract entity mappings from the SPARQL query
+        entity_mappings = self.extract_entity_mappings_from_sparql(sparql, question)
+        
+        # Extract value mappings from the SPARQL query
+        value_mappings = self.extract_value_mappings_from_sparql(sparql, question)
+        
+        # Combine all mappings
+        all_mappings = {**entity_mappings, **value_mappings}
+        
+        # Replace placeholders in thoughts
+        processed_thoughts = []
+        for thought in thoughts_template:
+            processed_thought = thought
+            
+            # Replace each placeholder with the appropriate value (label or URI based on context)
+            for placeholder, mapping in all_mappings.items():
+                pattern = r'\{' + re.escape(placeholder) + r'\}'
+                
+                # Determine whether to use URI or label based on context
+                replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+                
+                processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            processed_thoughts.append(processed_thought)
+        
+        return processed_thoughts
+
+    def extract_entity_mappings_from_sparql(self, sparql, question):
+        """
+        Extract entity mappings from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            question (str): Natural language question
+            
+        Returns:
+            dict: Mapping of placeholders to entity info
+        """
+        entity_mappings = {}
+        
+        # Find all URI patterns in the SPARQL query
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Find all prefixed names in the SPARQL query  
+        prefixed_pattern = r'ns1:([a-zA-Z_][a-zA-Z0-9_]*)'
+        prefixed_names = re.findall(prefixed_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        full_uris = []
+        for name in prefixed_names:
+            if "ns1" in self.prefixes:
+                full_uri = f"{self.prefixes['ns1']}{name}"
+                full_uris.append(full_uri)
+        
+        # Combine all URIs
+        all_uris = uris + full_uris
+        
+        # Filter out property URIs (those containing 'has_' or similar patterns)
+        entity_uris = [uri for uri in all_uris if not self.is_property_uri(uri)]
+        
+        # Create mappings for entity placeholders
+        entity_counter = 0
+        for uri in entity_uris:
+            # Get label for this URI
+            label = self.get_entity_label_from_uri(uri)
+            
+            # Create mapping for base 'entity' placeholder
+            if entity_counter == 0:
+                entity_mappings['entity'] = {
+                    'uri': uri,
+                    'label': label,
+                    'prefixed': self.shorten_uri(uri)
+                }
+            
+            # Create mapping for numbered entity placeholders
+            entity_counter += 1
+            entity_mappings[f'entity{entity_counter}'] = {
+                'uri': uri,
+                'label': label,
+                'prefixed': self.shorten_uri(uri)
+            }
+        
+        return entity_mappings
+
+    def extract_value_mappings_from_sparql(self, sparql, question):
+        """
+        Extract value mappings from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            question (str): Natural language question
+            
+        Returns:
+            dict: Mapping of placeholders to value info
+        """
+        value_mappings = {}
+        
+        # Find numeric values
+        numeric_pattern = r'\b(\d+)\b'
+        numeric_values = re.findall(numeric_pattern, sparql)
+        
+        # Find string literals
+        string_pattern = r'"([^"]+)"'
+        string_values = re.findall(string_pattern, sparql)
+        
+        # Create mapping for 'value' placeholder
+        if numeric_values:
+            value_mappings['value'] = {
+                'value': numeric_values[0],
+                'label': numeric_values[0]
+            }
+        elif string_values:
+            value_mappings['value'] = {
+                'value': string_values[0],
+                'label': string_values[0]
+            }
+        
+        return value_mappings
+
+    def is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # Common property indicators
+        property_indicators = ['has_', 'is_', 'also_known_as', 'belongs_to']
+        
+        for indicator in property_indicators:
+            if indicator in uri:
+                return True
+                
+        return False
+
+    def get_entity_label_from_uri(self, uri):
+        """
+        Get human-readable label for an entity URI
+        
+        Args:
+            uri (str): Entity URI
+            
+        Returns:
+            str: Human-readable label
+        """
+        # Try to get label from graph if available
+        if self.graph:
+            try:
+                query = f"""
+                    SELECT ?label WHERE {{
+                        <{uri}> rdfs:label ?label .
+                    }}
+                    LIMIT 1
+                """
+                results = list(self.graph.query(query))
+                if results and results[0][0]:
+                    return str(results[0][0])
+            except Exception:
+                pass
+        
+        # Fallback to extracting from URI
+        return self.extract_label_from_uri(uri)
+
+    def get_appropriate_replacement(self, thought_text, placeholder, mapping):
+        """
+        Determine whether to use URI or label based on the context in the thought
+        
+        Args:
+            thought_text (str): The thought text containing the placeholder
+            placeholder (str): The placeholder being replaced
+            mapping (dict): The mapping containing uri, label, and prefixed forms
+            
+        Returns:
+            str: The appropriate replacement value
+        """
+        # Check context around the placeholder to determine appropriate replacement
+        thought_lower = thought_text.lower()
+        
+        # Use URI/prefixed form in these contexts:
+        if any(phrase in thought_lower for phrase in [
+            "in the ontology",
+            "represents the",
+            "ns1:",
+            "property '",
+            "entity '",
+            "via the '",
+            "using",
+            "through"
+        ]):
+            # Use prefixed form if available, otherwise full URI  
+            return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
+        
+        # Use label form in these contexts:
+        elif any(phrase in thought_lower for phrase in [
+            "categorized as",
+            "belonging to", 
+            "classified as",
+            "of the '",
+            "as a '",
+            "category '",
+            "group '",
+            "method '",
+            "course '"
+        ]):
+            return mapping.get('label', mapping.get('value', placeholder))
+        
+        # Default to label for most contexts
+        return mapping.get('label', mapping.get('value', placeholder))
+
+    def get_entities_and_properties(self, question, sparql):
+        """
+        Extract entities and properties from question and query and get their labels
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_matches, property_matches) dictionaries
+        """
+        entity_matches = {}
+        property_matches = {}
+        
+        # Extract entity URIs from the SPARQL query
+        uri_pattern = r'<([^>]+)>'
+        entity_uris = re.findall(uri_pattern, sparql)
+        
+        # For each entity URI, get its label using rdfs:label
+        for uri in entity_uris:
+            # Skip property URIs
+            if "has_" in uri or "#" in uri:
+                continue
+                
+            # Query for entity label
+            if self.graph:
+                try:
+                    query = f"""
+                        SELECT ?label WHERE {{
+                            <{uri}> rdfs:label ?label .
+                        }}
+                        LIMIT 1
+                    """
+                    results = list(self.graph.query(query))
+                    if results and results[0][0]:
+                        label = str(results[0][0])
+                        
+                        # Try to find this entity in the question
+                        entity_name = self.extract_label_from_uri(uri)
+                        if entity_name.lower() in question.lower() or label.lower() in question.lower():
+                            # Use the label or extract from URI
+                            entity_key = label if label else entity_name
+                            
+                            # Get entity description if available
+                            description = self.get_entity_description(uri)
+                            
+                            if entity_key not in entity_matches:
+                                entity_matches[entity_key] = []
+                                
+                            entity_matches[entity_key].append({
+                                "id": uri.split('/')[-1],
+                                "label": label if label else entity_name,
+                                "description": description,
+                                "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
+                            })
+                except Exception as e:
+                    print(f"Error getting label for entity {uri}: {e}")
+            
+            # If we couldn't get a label from the graph, use the URI
+            if not entity_matches:
+                entity_name = self.extract_label_from_uri(uri)
+                entity_matches[entity_name] = [{
+                    "id": uri.split('/')[-1],
+                    "label": entity_name,
+                    "description": "",
+                    "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
+                }]
+        
+        # Extract property URIs from the SPARQL query
+        property_uris = [uri for uri in entity_uris if "has_" in uri or "#" in uri]
+        
+        # For each property URI, get its label
+        for uri in property_uris:
+            # Query for property label
+            if self.graph:
+                try:
+                    query = f"""
+                        SELECT ?label WHERE {{
+                            <{uri}> rdfs:label ?label .
+                        }}
+                        LIMIT 1
+                    """
+                    results = list(self.graph.query(query))
+                    if results and results[0][0]:
+                        label = str(results[0][0])
+                        
+                        # Use the label or extract from URI
+                        prop_key = label if label else self.extract_label_from_uri(uri)
+                        
+                        # Get property description if available
+                        description = self.get_property_description(uri)
+                        
+                        if prop_key not in property_matches:
+                            property_matches[prop_key] = []
+                            
+                        property_matches[prop_key].append({
+                            "id": uri.split('/')[-1],
+                            "label": label if label else self.extract_label_from_uri(uri),
+                            "description": description,
+                            "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
+                        })
+                except Exception as e:
+                    print(f"Error getting label for property {uri}: {e}")
+            
+            # If we couldn't get a label from the graph, use the URI
+            if not property_matches:
+                prop_name = self.extract_label_from_uri(uri)
+                # Convert has_credits to "credits"
+                if prop_name.startswith("has_"):
+                    prop_name = prop_name[4:]
+                property_matches[prop_name] = [{
+                    "id": uri.split('/')[-1],
+                    "label": prop_name,
+                    "description": "",
+                    "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
+                }]
+        
+        return entity_matches, property_matches
+
+    # ... rest of the methods remain the same ...
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
                         variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
         """
@@ -681,211 +1241,22 @@ class NL2SPARQLGenerator:
         
         return dataset
 
-    def generate_chain_of_thoughts(self, question, sparql, template):
+    def extract_credit_value(self, question):
         """
-        Generate a chain of thoughts explaining how to translate the question to SPARQL
+        Extract credit value from question text
         
         Args:
-            question (str): Natural language question
-            sparql (str): SPARQL query
-            template (dict): Template used to generate the question-query pair
+            question (str): Question containing credit value
             
         Returns:
-            list: List of thought steps
+            str: Credit value or "specified"
         """
-        thoughts = []
-        
-        # Identify the main intent of the question
-        if "how many" in question.lower():
-            thoughts.append(f"1. The question asks for a count of {question.lower().replace('how many', '').replace('?', '').strip()}.")
-        elif question.lower().startswith("what"):
-            thoughts.append(f"1. The question asks for {question.lower().replace('what', '').replace('?', '').strip()}.")
-        elif question.lower().startswith("which"):
-            thoughts.append(f"1. The question asks for {question.lower().replace('which', '').replace('?', '').strip()}.")
-        else:
-            thoughts.append(f"1. The question seeks information about {question.lower().replace('?', '').strip()}.")
-        
-        # Identify the entities in the question and their mappings
-        entities, _ = self.get_entities_and_properties(question, sparql)
-        if entities:
-            entities_thought = "2. "
-            if len(entities) == 1:
-                entity_key = list(entities.keys())[0]
-                entity_id = entities[entity_key][0]['id']
-                entities_thought += f"The entity '{entity_key}' is represented as 'ns1:{entity_id}' in the knowledge graph."
-            else:
-                entities_thought += "The entities identified in the question are: "
-                for i, (entity_key, entity_vals) in enumerate(entities.items()):
-                    if i > 0:
-                        entities_thought += ", "
-                    entity_id = entity_vals[0]['id']
-                    entities_thought += f"'{entity_key}' (represented as 'ns1:{entity_id}')"
-            thoughts.append(entities_thought)
-        
-        # Identify the properties/relationships in the question
-        _, properties = self.get_entities_and_properties(question, sparql)
-        if properties:
-            props_thought = "3. "
-            if len(properties) == 1:
-                prop_key = list(properties.keys())[0]
-                prop_id = properties[prop_key][0]['id']
-                props_thought += f"The relationship 'ns1:{prop_id}' is used to connect entities."
-            else:
-                props_thought += "The relationships used in this query are: "
-                for i, prop_key in enumerate(properties.keys()):
-                    if i > 0:
-                        props_thought += ", "
-                    prop_id = properties[prop_key][0]['id']
-                    props_thought += f"'ns1:{prop_id}'"
-            thoughts.append(props_thought)
-        
-        # Analyze the structure of the SPARQL query
-        if "SELECT" in sparql:
-            select_var = re.search(r'SELECT\s+(\?\w+|\(.*?\))', sparql, re.IGNORECASE)
-            if select_var:
-                var_name = select_var.group(1)
-                thoughts.append(f"4. The SPARQL query selects {var_name} as the output variable.")
-        
-        # Identify the pattern in the WHERE clause
-        where_pattern = re.search(r'WHERE\s*{(.*?)}', sparql, re.DOTALL | re.IGNORECASE)
-        if where_pattern:
-            pattern = where_pattern.group(1).strip()
-            thoughts.append(f"5. The query pattern in the WHERE clause establishes the relationship between entities.")
-        
-        # Explain any special operations in the query
-        if "COUNT" in sparql:
-            thoughts.append("6. The query uses COUNT to determine the number of matching items.")
-        if "ORDER BY" in sparql:
-            order_dir = "descending" if "DESC" in sparql else "ascending"
-            thoughts.append(f"7. Results are ordered in {order_dir} order.")
-        if "LIMIT" in sparql:
-            limit_match = re.search(r'LIMIT\s+(\d+)', sparql)
-            if limit_match:
-                limit = limit_match.group(1)
-                thoughts.append(f"8. The query limits results to {limit} items.")
-        if "FILTER" in sparql:
-            thoughts.append("9. The query applies a filter to exclude certain results.")
-        
-        return thoughts
-
-    def get_entities_and_properties(self, question, sparql):
-        """
-        Extract entities and properties from question and query and get their labels
-        
-        Args:
-            question (str): Natural language question
-            sparql (str): SPARQL query
-            
-        Returns:
-            tuple: (entity_matches, property_matches) dictionaries
-        """
-        entity_matches = {}
-        property_matches = {}
-        
-        # Extract entity URIs from the SPARQL query
-        uri_pattern = r'<([^>]+)>'
-        entity_uris = re.findall(uri_pattern, sparql)
-        
-        # For each entity URI, get its label using rdfs:label
-        for uri in entity_uris:
-            # Skip property URIs
-            if "has_" in uri or "#" in uri:
-                continue
-                
-            # Query for entity label
-            if self.graph:
-                try:
-                    query = f"""
-                        SELECT ?label WHERE {{
-                            <{uri}> rdfs:label ?label .
-                        }}
-                        LIMIT 1
-                    """
-                    results = list(self.graph.query(query))
-                    if results and results[0][0]:
-                        label = str(results[0][0])
-                        
-                        # Try to find this entity in the question
-                        entity_name = self.extract_label_from_uri(uri)
-                        if entity_name.lower() in question.lower() or label.lower() in question.lower():
-                            # Use the label or extract from URI
-                            entity_key = label if label else entity_name
-                            
-                            # Get entity description if available
-                            description = self.get_entity_description(uri)
-                            
-                            if entity_key not in entity_matches:
-                                entity_matches[entity_key] = []
-                                
-                            entity_matches[entity_key].append({
-                                "id": uri.split('/')[-1],
-                                "label": label if label else entity_name,
-                                "description": description,
-                                "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
-                            })
-                except Exception as e:
-                    print(f"Error getting label for entity {uri}: {e}")
-            
-            # If we couldn't get a label from the graph, use the URI
-            if not entity_matches:
-                entity_name = self.extract_label_from_uri(uri)
-                entity_matches[entity_name] = [{
-                    "id": uri.split('/')[-1],
-                    "label": entity_name,
-                    "description": "",
-                    "url": f"//www.wikidata.org/wiki/{uri.split('/')[-1]}"
-                }]
-        
-        # Extract property URIs from the SPARQL query
-        property_uris = [uri for uri in entity_uris if "has_" in uri or "#" in uri]
-        
-        # For each property URI, get its label
-        for uri in property_uris:
-            # Query for property label
-            if self.graph:
-                try:
-                    query = f"""
-                        SELECT ?label WHERE {{
-                            <{uri}> rdfs:label ?label .
-                        }}
-                        LIMIT 1
-                    """
-                    results = list(self.graph.query(query))
-                    if results and results[0][0]:
-                        label = str(results[0][0])
-                        
-                        # Use the label or extract from URI
-                        prop_key = label if label else self.extract_label_from_uri(uri)
-                        
-                        # Get property description if available
-                        description = self.get_property_description(uri)
-                        
-                        if prop_key not in property_matches:
-                            property_matches[prop_key] = []
-                            
-                        property_matches[prop_key].append({
-                            "id": uri.split('/')[-1],
-                            "label": label if label else self.extract_label_from_uri(uri),
-                            "description": description,
-                            "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
-                        })
-                except Exception as e:
-                    print(f"Error getting label for property {uri}: {e}")
-            
-            # If we couldn't get a label from the graph, use the URI
-            if not property_matches:
-                prop_name = self.extract_label_from_uri(uri)
-                # Convert has_credits to "credits"
-                if prop_name.startswith("has_"):
-                    prop_name = prop_name[4:]
-                property_matches[prop_name] = [{
-                    "id": uri.split('/')[-1],
-                    "label": prop_name,
-                    "description": "",
-                    "url": f"//www.wikidata.org/wiki/Property:{uri.split('/')[-1]}"
-                }]
-        
-        return entity_matches, property_matches
+        # Look for number patterns in the question
+        import re
+        numbers = re.findall(r'\b(\d+)\b', question)
+        if numbers:
+            return numbers[0]
+        return "specified"
 
     def get_entity_description(self, uri):
         """
