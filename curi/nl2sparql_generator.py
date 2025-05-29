@@ -1439,7 +1439,8 @@ class NL2SPARQLGenerator:
                 
                 # Replace in SPARQL
                 if "uri" in replacement:
-                    sparql_value = f"<{replacement['uri']}>"
+                    # Use prefixed notation instead of full URI
+                    sparql_value = replacement["value"]  # This is already the prefixed form
                 elif "sparqlValue" in replacement:
                     sparql_value = replacement["sparqlValue"]
                 else:
@@ -1447,10 +1448,8 @@ class NL2SPARQLGenerator:
                     
                 sparql = re.sub(pattern, sparql_value, sparql)
             
-            # Replace all prefixed URIs with full URIs
-            for prefix, uri in self.prefixes.items():
-                pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
-                sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+            # Keep prefixed URIs and add PREFIX declarations
+            sparql = self.add_prefix_declarations(sparql)
             
             # Format the SPARQL query for readability
             sparql = self.format_sparql(sparql)
@@ -1529,10 +1528,8 @@ class NL2SPARQLGenerator:
         # Close the query
         discovery_query += "\n}"
         
-        # Replace all prefixed URIs with full URIs for consistency
-        for prefix, uri in self.prefixes.items():
-            pattern = r'\b' + re.escape(prefix) + r':(\w+)\b'
-            discovery_query = re.sub(pattern, r'<' + uri + r'\1>', discovery_query)
+        # Keep prefixed URIs and add PREFIX declarations
+        discovery_query = self.add_prefix_declarations(discovery_query)
         
         return discovery_query
 
@@ -1941,8 +1938,10 @@ class NL2SPARQLGenerator:
         # Fix all URIs first by removing spaces
         sparql = re.sub(r'<[^>]+>', clean_uri, sparql)
         
-        # Now proceed with other formatting
-        sparql = re.sub(r'PREFIX\s+\w+:\s+<[^>]+>\s*', '', sparql)
+        # DON'T remove PREFIX declarations - keep them
+        # sparql = re.sub(r'PREFIX\s+\w+:\s+<[^>]+>\s*', '', sparql)  # REMOVED THIS LINE
+        
+        # Clean up multiple spaces
         sparql = re.sub(r'\s+', ' ', sparql)
         
         # Format spaces around keywords properly
@@ -1966,6 +1965,37 @@ class NL2SPARQLGenerator:
         
         # Final cleanup of any double spaces
         sparql = re.sub(r'\s+', ' ', sparql).strip()
+        
+        return sparql
+
+    def add_prefix_declarations(self, sparql):
+        """
+        Add PREFIX declarations to SPARQL query based on used prefixes
+        
+        Args:
+            sparql (str): SPARQL query potentially containing prefixed names
+            
+        Returns:
+            str: SPARQL query with PREFIX declarations prepended
+        """
+        # Find which prefixes are actually used in the query
+        used_prefixes = set()
+        
+        for prefix, namespace in self.prefixes.items():
+            # Look for prefix usage in the query (prefix followed by colon)
+            pattern = r'\b' + re.escape(prefix) + r':'
+            if re.search(pattern, sparql):
+                used_prefixes.add(prefix)
+        
+        # Build PREFIX declarations for used prefixes
+        prefix_declarations = []
+        for prefix in sorted(used_prefixes):  # Sort for consistent output
+            namespace = self.prefixes[prefix]
+            prefix_declarations.append(f"PREFIX {prefix}: <{namespace}>")
+        
+        # Prepend PREFIX declarations to the query
+        if prefix_declarations:
+            return "\n".join(prefix_declarations) + "\n" + sparql
         
         return sparql
 
