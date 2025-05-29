@@ -205,7 +205,7 @@ class UniversityPropertyRetrieval:
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.5,
+        threshold: float = 0.6,
         k: int = 5,
     ) -> dict[str, list[str]]:
         """Get related entity and property candidates for a query"""

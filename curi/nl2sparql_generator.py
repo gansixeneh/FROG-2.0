@@ -1163,7 +1163,7 @@ class NL2SPARQLGenerator:
             if len(ngram.strip()) >= 2:  # Only search meaningful n-grams
                 entity_results = self._search_entities_weaviate(ngram, k=3)
                 for result in entity_results:
-                    if result['score'] >= 0.5:  # Threshold for relevance
+                    if result['score'] >= 0.6:  # Threshold for relevance
                         entity_candidates.add(result['label'])
         
         # Search for properties using n-grams and extracted properties
@@ -1178,7 +1178,7 @@ class NL2SPARQLGenerator:
             if len(ngram.strip()) >= 2:  # Only search meaningful n-grams
                 property_results = self._search_properties_weaviate(ngram, k=3)
                 for result in property_results:
-                    if result['score'] >= 0.5:  # Threshold for relevance
+                    if result['score'] >= 0.6:  # Threshold for relevance
                         property_candidates.add(result['label'])
         
         # Convert entity candidates to flattened list format
@@ -1260,7 +1260,7 @@ class NL2SPARQLGenerator:
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.5,
+        threshold: float = 0.6,
         k: int = 5,
     ) -> dict[str, list[str]]:
         """
