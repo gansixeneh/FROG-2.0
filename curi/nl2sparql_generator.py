@@ -1154,10 +1154,6 @@ class NL2SPARQLGenerator:
 
         def search(ngram, search_type, threshold=threshold):
             """Search for entities or properties and format results"""
-            def format_result(x):
-                if search_type == "properties":
-                    return x  # Simplified - no domain/range needed
-                return x
 
             # Search using the appropriate method
             if search_type == "entities":
@@ -1170,8 +1166,7 @@ class NL2SPARQLGenerator:
             for result_item in df_res:
                 if result_item['score'] >= threshold:
                     short = result_item['short']
-                    formatted = format_result(short)
-                    filtered_results.append(formatted)
+                    filtered_results.append(short)
             
             return search_type, filtered_results
 
@@ -1179,13 +1174,11 @@ class NL2SPARQLGenerator:
         search_terms = ngrams + property_candidates
         
         for term in search_terms:
-            if len(term.strip()) >= 2:  # Only search meaningful terms
-                for search_type in result.keys():
-                    search_result_type, df_res = search(term, search_type)
-                    if df_res:
-                        result[search_result_type].extend(df_res)
-                        # Remove duplicates while preserving order
-                        result[search_result_type] = list(dict.fromkeys(result[search_result_type]))
+            for search_type in result.keys():
+                search_result_type, df_res = search(term, search_type)
+                if df_res:
+                    result[search_result_type].extend(df_res)
+                    result[search_result_type] = list(dict.fromkeys(result[search_result_type]))
 
         return result
 
