@@ -1373,6 +1373,7 @@ class NL2SPARQLGenerator:
         
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
+            print(f"\nGenerating {count} questions for complexity level: {complexity}")
             successful_generations = 0
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
             
@@ -1381,6 +1382,7 @@ class NL2SPARQLGenerator:
                 continue
             
             while successful_generations < count and len(dataset) < size:
+                print(f"  - Attempting to generate questions for complexity '{complexity}' (current count: {successful_generations}/{count})")
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
                 
