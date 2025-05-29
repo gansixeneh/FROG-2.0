@@ -1,0 +1,3550 @@
+[
+  {
+    "id": "q1",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:programming_activities . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_activities",
+        "label": "Programming Activities"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q2",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q4",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q5",
+    "sparql": "SELECT ?target WHERE { ns1:software_engineering ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_engineering",
+        "label": "Software engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q6",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }",
+    "entities_matches": [
+      {
+        "id": "ns1:center_for_cyber_security_and_cryptography",
+        "label": "Center for Cyber Security and Cryptography"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q7",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:ethical_hacking",
+        "label": "Ethical Hacking"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q8",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:study_program_elective_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q9",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q10",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_2 . ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      }
+    ]
+  },
+  {
+    "id": "q11",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:statistics_and_probability . }",
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q12",
+    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:deep_learning",
+        "label": "Deep Learning"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q13",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:projects_and_presentations . ?hidden ns1:has_prerequisite_course ns1:data_structures_and_algorithms . ?hidden ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      },
+      {
+        "id": "ns1:data_structures_and_algorithms",
+        "label": "Data Structures and Algorithms"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q14",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:task . }",
+    "entities_matches": [
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q15",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval_and_natural_language_processing",
+        "label": "Information Retrieval and Natural Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q16",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:programming_assignment . ?hidden ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      },
+      {
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q17",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:parallel_programming",
+        "label": "Parallel Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q18",
+    "sparql": "SELECT ?target WHERE { ns1:simulation_and_modeling ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:programming_assignment . }",
+    "entities_matches": [
+      {
+        "id": "ns1:simulation_and_modeling",
+        "label": "Simulation and Modeling"
+      },
+      {
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q19",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:computer_system_laboratory . ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_minimum_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_system_laboratory",
+        "label": "Computer System Laboratory"
+      },
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_minimum_credits",
+        "label": "has minimum credits"
+      }
+    ]
+  },
+  {
+    "id": "q20",
+    "sparql": "SELECT ?target WHERE { ns1:robotics ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:robotics",
+        "label": "robotics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q21",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:test . ns1:operating_system ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:operating_system",
+        "label": "Operating system"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      }
+    ]
+  },
+  {
+    "id": "q22",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:faculty_mandatory_course . ns1:programming_basics_2 ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q23",
+    "sparql": "SELECT ?target WHERE { ns1:final_project_group_assignment ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:final_project_group_assignment",
+        "label": "Final Project Group Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q24",
+    "sparql": "SELECT ?target WHERE { ns1:competitive_programming_practicum ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:competitive_programming_practicum",
+        "label": "Competitive Programming Practicum"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q25",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:bioinformatics",
+        "label": "Bioinformatics"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q26",
+    "sparql": "SELECT ?target WHERE { ns1:robotics ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:robotics",
+        "label": "robotics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q27",
+    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_vision",
+        "label": "Computer Vision"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q28",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q29",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:case_study . }",
+    "entities_matches": [
+      {
+        "id": "ns1:case_study",
+        "label": "Case study"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q30",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . }",
+    "entities_matches": [
+      {
+        "id": "ns1:research_methodology_and_scientific_writing",
+        "label": "Research Methodology and Scientific Writing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q31",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_presentation . }",
+    "entities_matches": [
+      {
+        "id": "ns1:group_presentation",
+        "label": "Group Presentation"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q32",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q33",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:programming_basics_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q34",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:parallel_programming",
+        "label": "Parallel Programming"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q35",
+    "sparql": "SELECT ?target WHERE { ns1:parallel_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:parallel_programming",
+        "label": "Parallel Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q36",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:functional_programming",
+        "label": "Functional Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q37",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:software_engineering . ?hidden ns1:has_evaluation_method ns1:project . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:software_engineering",
+        "label": "Software engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q38",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:task . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:also_known_as ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      },
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q39",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:functional_programming",
+        "label": "Functional Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q40",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_2 ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q41",
+    "sparql": "SELECT ?target WHERE { ns1:web_application_architecture ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:web_application_architecture",
+        "label": "Web Application Architecture"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q42",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q43",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:data_structures_and_algorithms . ?hidden ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:data_structures_and_algorithms",
+        "label": "Data Structures and Algorithms"
+      },
+      {
+        "id": "ns1:information_retrieval_and_natural_language_processing",
+        "label": "Information Retrieval and Natural Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q44",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:capture_the_flag . }",
+    "entities_matches": [
+      {
+        "id": "ns1:capture_the_flag",
+        "label": "Capture The Flag"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q45",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:discrete_mathematics_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q46",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q47",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:algorithm_design_and_analysis",
+        "label": "Algorithm Design and Analysis"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q48",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q49",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:bioinformatics",
+        "label": "Bioinformatics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q50",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:task . }",
+    "entities_matches": [
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q51",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "entities_matches": [
+      {
+        "id": "ns1:language_theory_and_automata",
+        "label": "Language Theory & Automata"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q52",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q53",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q54",
+    "sparql": "SELECT ?target WHERE { ns1:compiler_techniques ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:programming_projects . }",
+    "entities_matches": [
+      {
+        "id": "ns1:compiler_techniques",
+        "label": "Compiler Techniques"
+      },
+      {
+        "id": "ns1:programming_projects",
+        "label": "Programming Projects"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q55",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:algorithm_design_and_analysis",
+        "label": "Algorithm Design and Analysis"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q56",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation . }",
+    "entities_matches": [
+      {
+        "id": "ns1:presentation",
+        "label": "Presentation"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q57",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:ept_or_toefl_or_ielts_or_similar_exams . }",
+    "entities_matches": [
+      {
+        "id": "ns1:ept_or_toefl_or_ielts_or_similar_exams",
+        "label": "EPT/TOEFL/IELTS or similar exams"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q58",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_1 ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q59",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q60",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:database . ?hidden ns1:has_evaluation_method ns1:individual_review . ?hidden ns1:also_known_as ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
+      {
+        "id": "ns1:individual_review",
+        "label": "Individual Review"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q61",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q62",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:computer_network . ?hidden ns1:has_research_group ns1:reliable_software_engineering . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      },
+      {
+        "id": "ns1:reliable_software_engineering",
+        "label": "Reliable Software Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q63",
+    "sparql": "SELECT ?target WHERE { ns1:english ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:english",
+        "label": "English"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q64",
+    "sparql": "SELECT ?target WHERE { ns1:system_programming ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:system_programming",
+        "label": "System Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q65",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q66",
+    "sparql": "SELECT ?target WHERE { ns1:software_quality_assurance ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_quality_assurance",
+        "label": "Software Quality Assurance"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q67",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q68",
+    "sparql": "SELECT ?target WHERE { ns1:calculus_2 ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q69",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q70",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:functional_programming",
+        "label": "Functional Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q71",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q72",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:programming_assignment . ?hidden ns1:has_prerequisite_course ns1:language_theory_and_automata . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_assignment",
+        "label": "Programming Assignment"
+      },
+      {
+        "id": "ns1:language_theory_and_automata",
+        "label": "Language Theory & Automata"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q73",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:language_theory_and_automata . }",
+    "entities_matches": [
+      {
+        "id": "ns1:language_theory_and_automata",
+        "label": "Language Theory & Automata"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q74",
+    "sparql": "SELECT ?target WHERE { ns1:final_project_group_assignment ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:final_project_group_assignment",
+        "label": "Final Project Group Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q75",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q76",
+    "sparql": "SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_assisted_teaching",
+        "label": "Computer Assisted Teaching"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q77",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:statistics_and_probability . }",
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q78",
+    "sparql": "SELECT ?target WHERE { ns1:calculus_2 ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q79",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_1 . ?hidden ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:discrete_mathematics_1",
+        "label": "Discrete Mathematics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q80",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:statistics_and_probability . }",
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q81",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:programming_basics_1 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q82",
+    "sparql": "SELECT ?target WHERE { ns1:advanced_database ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:advanced_database",
+        "label": "Advanced Database"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q83",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:distributed_systems",
+        "label": "Distributed Systems"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q84",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:center_for_cyber_security_and_cryptography . }",
+    "entities_matches": [
+      {
+        "id": "ns1:center_for_cyber_security_and_cryptography",
+        "label": "Center for Cyber Security and Cryptography"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q85",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q86",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q87",
+    "sparql": "SELECT ?target WHERE { ns1:system_programming ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:system_programming",
+        "label": "System Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q88",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q89",
+    "sparql": "SELECT ?target WHERE { ns1:integrated_personality_development_skills ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:integrated_personality_development_skills",
+        "label": "Integrated Personality Development Skills"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q90",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:programming_basics_1 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q91",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:task . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q92",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:introduction_to_artificial_intelligence_and_data_science . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q93",
+    "sparql": "SELECT ?target WHERE { ns1:numerical_analysis ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:numerical_analysis",
+        "label": "Numerical Analysis"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q94",
+    "sparql": "SELECT ?target WHERE { ns1:algorithm_design_and_analysis ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:algorithm_design_and_analysis",
+        "label": "Algorithm Design and Analysis"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q95",
+    "sparql": "SELECT ?target WHERE { ns1:bioinformatics ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:bioinformatics",
+        "label": "Bioinformatics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q96",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:case_study . }",
+    "entities_matches": [
+      {
+        "id": "ns1:case_study",
+        "label": "Case study"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q97",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+    "entities_matches": [
+      {
+        "id": "ns1:presentation_or_demo_of_project_assignments",
+        "label": "Presentation or demo of project assignments"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q98",
+    "sparql": "SELECT ?target WHERE { ns1:compiler_techniques ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:compiler_techniques",
+        "label": "Compiler Techniques"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q99",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:lab_assignment . }",
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q100",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:lab_assignment . }",
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q101",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q102",
+    "sparql": "SELECT ?target WHERE { ns1:distributed_systems ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:distributed_systems",
+        "label": "Distributed Systems"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q103",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?hidden ns1:has_prerequisite_course ns1:data_structures_and_algorithms . ?hidden ns1:also_known_as ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      },
+      {
+        "id": "ns1:data_structures_and_algorithms",
+        "label": "Data Structures and Algorithms"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q104",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:presentation_or_demo_of_project_assignments . }",
+    "entities_matches": [
+      {
+        "id": "ns1:presentation_or_demo_of_project_assignments",
+        "label": "Presentation or demo of project assignments"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q105",
+    "sparql": "SELECT ?target WHERE { ns1:english ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:english",
+        "label": "English"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q106",
+    "sparql": "SELECT ?target WHERE { ns1:embedded_systems ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:task . }",
+    "entities_matches": [
+      {
+        "id": "ns1:embedded_systems",
+        "label": "Embedded Systems"
+      },
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q107",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q108",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval_and_natural_language_processing",
+        "label": "Information Retrieval and Natural Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q109",
+    "sparql": "SELECT ?target WHERE { ns1:functional_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:functional_programming",
+        "label": "Functional Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q110",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q111",
+    "sparql": "SELECT ?target WHERE { ns1:knowledge_graph ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:knowledge_graph",
+        "label": "Knowledge Graph"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q112",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ?target . ?hidden ns1:has_evaluation_method ns1:lab_assignment . }",
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q113",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:projects_and_presentations . }",
+    "entities_matches": [
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q114",
+    "sparql": "SELECT ?target WHERE { ns1:technopreneurship ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:technopreneurship",
+        "label": "Technopreneurship"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q115",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:operating_system . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:operating_system",
+        "label": "Operating system"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q116",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:ethical_hacking",
+        "label": "Ethical Hacking"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q117",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q118",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_discussiontask . }",
+    "entities_matches": [
+      {
+        "id": "ns1:group_discussiontask",
+        "label": "Group DiscussionTask"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q119",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q120",
+    "sparql": "SELECT ?target WHERE { ns1:programming_basics_2 ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:programming_basics_2",
+        "label": "Programming Basics 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q121",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_computer_organization ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_computer_organization",
+        "label": "Introduction to Computer Organization"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q122",
+    "sparql": "SELECT ?target WHERE { ns1:human-computer_interaction ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q123",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:computer_network . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q124",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q125",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q126",
+    "sparql": "SELECT ?target WHERE { ns1:computer_vision ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_vision",
+        "label": "Computer Vision"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q127",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      },
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q128",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?target ns1:has_prerequisite_course ?hidden . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q129",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_evaluation_method ns1:projects_and_presentations . ?hidden ns1:has_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q130",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_research_group ns1:reliable_software_engineering . ?hidden ns1:has_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:reliable_software_engineering",
+        "label": "Reliable Software Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q131",
+    "sparql": "SELECT ?target WHERE { ns1:machine_learning ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:machine_learning",
+        "label": "Machine Learning"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q132",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:laboratory_assignment . }",
+    "entities_matches": [
+      {
+        "id": "ns1:laboratory_assignment",
+        "label": "Laboratory Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q133",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:database . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:database",
+        "label": "Database"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q134",
+    "sparql": "SELECT ?target WHERE { ns1:compiler_techniques ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:study_program_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:compiler_techniques",
+        "label": "Compiler Techniques"
+      },
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q135",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:report_document . }",
+    "entities_matches": [
+      {
+        "id": "ns1:report_document",
+        "label": "Report Document"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q136",
+    "sparql": "SELECT ?target WHERE { ns1:human-computer_interaction ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q137",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q138",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:discrete_mathematics_2 . ?hidden ns1:has_evaluation_method ns1:group_project . ?hidden ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:discrete_mathematics_2",
+        "label": "Discrete Mathematics 2"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q139",
+    "sparql": "SELECT ?target WHERE { ns1:spoken_language_processing ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:spoken_language_processing",
+        "label": "Spoken Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q140",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:demo . ?hidden ns1:has_prerequisite_course ns1:programming_basics_1 . ?hidden ns1:also_known_as ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      },
+      {
+        "id": "ns1:programming_basics_1",
+        "label": "Programming Basics 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q141",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:demo . }",
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q142",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_research_group ns1:digital_library_and_distance_learning_laboratory . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      },
+      {
+        "id": "ns1:digital_library_and_distance_learning_laboratory",
+        "label": "Digital Library & Distance Learning Laboratory"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q143",
+    "sparql": "SELECT ?target WHERE { ns1:information_retrieval ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval",
+        "label": "Information Retrieval"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q144",
+    "sparql": "SELECT ?target WHERE { ns1:statistics_and_probability ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:statistics_and_probability",
+        "label": "Statistics and Probability"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q145",
+    "sparql": "SELECT ?target WHERE { ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:introduction_to_artificial_intelligence_and_data_science",
+        "label": "Introduction to Artificial Intelligence and Data Science"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q146",
+    "sparql": "SELECT ?target WHERE { ns1:logic_programming ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:logic_programming",
+        "label": "Logic Programming"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q147",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ?hidden . ?hidden ns1:has_evaluation_method ns1:task . }",
+    "entities_matches": [
+      {
+        "id": "ns1:task",
+        "label": "Task"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q148",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:demo . }",
+    "entities_matches": [
+      {
+        "id": "ns1:demo",
+        "label": "Demo"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q149",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:group_discussiontask . }",
+    "entities_matches": [
+      {
+        "id": "ns1:group_discussiontask",
+        "label": "Group DiscussionTask"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q150",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_evaluation_method ns1:lab_assignment . ?hidden ns1:has_prerequisite_course ns1:platform_based_programming . ?hidden ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab assignment"
+      },
+      {
+        "id": "ns1:lab_assignment",
+        "label": "Lab Assignment"
+      },
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q151",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:linear_algebra . }",
+    "entities_matches": [
+      {
+        "id": "ns1:linear_algebra",
+        "label": "Linear Algebra"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q152",
+    "sparql": "SELECT ?target WHERE { ns1:computer_science_special_topics ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_science_special_topics",
+        "label": "Computer Science Special Topics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q153",
+    "sparql": "SELECT ?target WHERE { ns1:software_product_line_engineering ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_product_line_engineering",
+        "label": "Software Product Line Engineering"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q154",
+    "sparql": "SELECT ?target WHERE { ns1:internet_of_things ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:internet_of_things",
+        "label": "Internet of Things"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q155",
+    "sparql": "SELECT ?target WHERE { ns1:ethical_hacking ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:ethical_hacking",
+        "label": "Ethical Hacking"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q156",
+    "sparql": "SELECT ?target WHERE { ns1:cryptography_and_information_security ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:test . }",
+    "entities_matches": [
+      {
+        "id": "ns1:cryptography_and_information_security",
+        "label": "Cryptography and Information Security"
+      },
+      {
+        "id": "ns1:test",
+        "label": "Test"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q157",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q158",
+    "sparql": "SELECT ?target WHERE { ns1:advanced_programming ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:advanced_programming",
+        "label": "Advanced Programming"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q159",
+    "sparql": "SELECT ?target WHERE { ns1:deep_learning ns1:has_prerequisite_course ?target . ?target ns1:has_evaluation_method ns1:group_project . }",
+    "entities_matches": [
+      {
+        "id": "ns1:deep_learning",
+        "label": "Deep Learning"
+      },
+      {
+        "id": "ns1:group_project",
+        "label": "Group Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q160",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:operating_system . ?hidden ns1:has_evaluation_method ns1:project_assignment . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:operating_system",
+        "label": "Operating system"
+      },
+      {
+        "id": "ns1:project_assignment",
+        "label": "Project Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q161",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_research_group ns1:intelligent_systems_and_robotics . ?hidden ns1:has_evaluation_method ns1:project . ?hidden ns1:also_known_as ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:project",
+        "label": "Project"
+      },
+      {
+        "id": "ns1:intelligent_systems_and_robotics",
+        "label": "Intelligent Systems & Robotics"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:also_known_as",
+        "label": "also known as"
+      },
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q162",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:capture_the_flag . }",
+    "entities_matches": [
+      {
+        "id": "ns1:capture_the_flag",
+        "label": "Capture The Flag"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q163",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:supervisor_evaluation . }",
+    "entities_matches": [
+      {
+        "id": "ns1:supervisor_evaluation",
+        "label": "Supervisor Evaluation"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q164",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_evaluation_method ns1:projects_and_presentations . }",
+    "entities_matches": [
+      {
+        "id": "ns1:projects_and_presentations",
+        "label": "Projects & Presentations"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q165",
+    "sparql": "SELECT ?target WHERE { ns1:final_project_group_assignment ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      },
+      {
+        "id": "ns1:final_project_group_assignment",
+        "label": "Final Project Group Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q166",
+    "sparql": "SELECT ?target WHERE { ns1:software_project ns1:has_prerequisite_course ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:software_project",
+        "label": "Software Project"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q167",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_prerequisite_course ns1:calculus_2 . }",
+    "entities_matches": [
+      {
+        "id": "ns1:calculus_2",
+        "label": "Calculus 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q168",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_mandatory_course . ?hidden ns1:has_prerequisite_course ns1:calculus_1 . ?hidden ns1:has_course_code ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_mandatory_course",
+        "label": "Study Program Mandatory Course"
+      },
+      {
+        "id": "ns1:calculus_1",
+        "label": "Calculus 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_code",
+        "label": "has course code"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q169",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_course_category ns1:study_program_elective_course . ?hidden ns1:has_evaluation_method ns1:practicum . ?hidden ns1:has_research_group ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:study_program_elective_course",
+        "label": "Study Program Elective Course"
+      },
+      {
+        "id": "ns1:practicum",
+        "label": "Practicum"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      },
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q170",
+    "sparql": "SELECT ?target WHERE { ?target ns1:has_research_group ns1:information_retrieval_and_natural_language_processing . }",
+    "entities_matches": [
+      {
+        "id": "ns1:information_retrieval_and_natural_language_processing",
+        "label": "Information Retrieval and Natural Language Processing"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_research_group",
+        "label": "has research group"
+      }
+    ]
+  },
+  {
+    "id": "q171",
+    "sparql": "SELECT ?target WHERE { ns1:system_administration ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:system_administration",
+        "label": "System Administration"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q172",
+    "sparql": "SELECT ?target WHERE { ns1:individual_final_assignment ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:individual_final_assignment",
+        "label": "Individual Final Assignment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  },
+  {
+    "id": "q173",
+    "sparql": "SELECT ?target WHERE { ns1:integrated_personality_development_skills ns1:has_course_category ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:integrated_personality_development_skills",
+        "label": "Integrated Personality Development Skills"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      }
+    ]
+  },
+  {
+    "id": "q174",
+    "sparql": "SELECT ?target WHERE { ?hidden ns1:has_prerequisite_course ns1:research_methodology_and_scientific_writing . ?hidden ns1:has_evaluation_method ns1:supervisor_evaluation . ?hidden ns1:has_credits ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:research_methodology_and_scientific_writing",
+        "label": "Research Methodology and Scientific Writing"
+      },
+      {
+        "id": "ns1:supervisor_evaluation",
+        "label": "Supervisor Evaluation"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      },
+      {
+        "id": "ns1:has_credits",
+        "label": "has credits"
+      }
+    ]
+  },
+  {
+    "id": "q175",
+    "sparql": "SELECT ?target WHERE { ns1:platform_based_programming ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:platform_based_programming",
+        "label": "Platform Based Programming"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q176",
+    "sparql": "SELECT ?target WHERE { ns1:computer_network ns1:has_prerequisite_course ?target . ?target ns1:has_course_category ns1:faculty_mandatory_course . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_network",
+        "label": "Computer network"
+      },
+      {
+        "id": "ns1:faculty_mandatory_course",
+        "label": "Faculty Mandatory Course"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_course_category",
+        "label": "has course category"
+      },
+      {
+        "id": "ns1:has_prerequisite_course",
+        "label": "has prerequisite course"
+      }
+    ]
+  },
+  {
+    "id": "q177",
+    "sparql": "SELECT ?target WHERE { ns1:computer_assisted_teaching ns1:has_evaluation_method ?target . }",
+    "entities_matches": [
+      {
+        "id": "ns1:computer_assisted_teaching",
+        "label": "Computer Assisted Teaching"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "ns1:has_evaluation_method",
+        "label": "has evaluation method"
+      }
+    ]
+  }
+]
