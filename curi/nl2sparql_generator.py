@@ -711,13 +711,15 @@ class NL2SPARQLGenerator:
             entities_thought = "2. "
             if len(entities) == 1:
                 entity_key = list(entities.keys())[0]
-                entities_thought += f"The entity '{entity_key}' is represented as '{entities[entity_key][0]['label']}' in the knowledge graph."
+                entity_id = entities[entity_key][0]['id']
+                entities_thought += f"The entity '{entity_key}' is represented as 'ns1:{entity_id}' in the knowledge graph."
             else:
                 entities_thought += "The entities identified in the question are: "
                 for i, (entity_key, entity_vals) in enumerate(entities.items()):
                     if i > 0:
                         entities_thought += ", "
-                    entities_thought += f"'{entity_key}' (represented as '{entity_vals[0]['label']}')"
+                    entity_id = entity_vals[0]['id']
+                    entities_thought += f"'{entity_key}' (represented as 'ns1:{entity_id}')"
             thoughts.append(entities_thought)
         
         # Identify the properties/relationships in the question
@@ -726,13 +728,15 @@ class NL2SPARQLGenerator:
             props_thought = "3. "
             if len(properties) == 1:
                 prop_key = list(properties.keys())[0]
-                props_thought += f"The relationship '{prop_key}' is used to connect entities."
+                prop_id = properties[prop_key][0]['id']
+                props_thought += f"The relationship 'ns1:{prop_id}' is used to connect entities."
             else:
                 props_thought += "The relationships used in this query are: "
                 for i, prop_key in enumerate(properties.keys()):
                     if i > 0:
                         props_thought += ", "
-                    props_thought += f"'{prop_key}'"
+                    prop_id = properties[prop_key][0]['id']
+                    props_thought += f"'ns1:{prop_id}'"
             thoughts.append(props_thought)
         
         # Analyze the structure of the SPARQL query
