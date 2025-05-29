@@ -62,8 +62,20 @@ def generate_university_course_dataset(file_path='final_result.ttl'):
         print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
+        # Initialize property retrieval system (if available)
+        # This would typically be an EnterprisePropertyRetrieval or similar Weaviate-based system
+        property_retrieval = None
+        
+        # If you have a property retrieval system, initialize it here:
+        # from property_retrieval import EnterprisePropertyRetrieval
+        # property_retrieval = EnterprisePropertyRetrieval(
+        #     turtle_file_path=file_path,
+        #     get_entities_query="your_entities_query",
+        #     get_properties_query="your_properties_query"
+        # )
+
         # Generate dataset using extracted schema and the graph from the extractor
-        generator = NL2SPARQLGenerator(schema, graph=extractor.graph)
+        generator = NL2SPARQLGenerator(schema, graph=extractor.graph, property_retrieval=property_retrieval)
         
         print("\nGenerating question-SPARQL pairs for university course data...")
         dataset = generator.generate_dataset(
