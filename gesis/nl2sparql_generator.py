@@ -687,9 +687,9 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?contributorName WHERE {
-                    ?contributor schema:name ?contributorName .
                     ?publication schema:publisher {entity} .
                     ?publication schema:author|schema:contributor ?contributor .
+                    ?contributor schema:name ?contributorName .
                     }
                     GROUP BY ?contributor ?contributorName
                     ORDER BY DESC(COUNT(?publication))
