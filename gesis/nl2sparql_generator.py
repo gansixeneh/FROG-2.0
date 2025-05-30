@@ -638,7 +638,7 @@ class NL2SPARQLGenerator:
                 "complexity": "advanced"
             },
             {
-                "id": "topic-top-expert",
+                "id": "keyword-topic-top-expert",
                 "category": "scholarly",
                 "questionTemplates": [
                     "Who is the top expert on '{value}'?",
