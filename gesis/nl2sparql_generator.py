@@ -578,66 +578,6 @@ class NL2SPARQLGenerator:
             
             # Advanced: Complex relationships and analytics
             {
-                "id": "author-most-cited-work",
-                "category": "scholarly",
-                "questionTemplates": [
-                    "What is the most cited work of {entity}?",
-                    "Which publication by {entity} has the most citations?",
-                    "What is {entity}'s most influential paper?"
-                ],
-                "englishQuestionTemplates": [
-                    "What is the most cited work of {entity}?",
-                    "Which publication by {entity} has the most citations?",
-                    "What is {entity}'s most influential paper?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    ?publication schema:author {entity} .
-                    ?publication schema:name ?title .
-                    ?citing schema:citation ?publication .
-                    }
-                    GROUP BY ?publication ?title
-                    ORDER BY DESC(COUNT(?citing))
-                    LIMIT 1
-                """,
-                "complexity": "advanced"
-            },
-            {
-                "id": "keyword-most-relevant-publication",
-                "category": "scholarly",
-                "questionTemplates": [
-                    "What is the most relevant publication about '{value}'?",
-                    "Which paper is most related to '{value}'?",
-                    "What is the key research on '{value}'?"
-                ],
-                "englishQuestionTemplates": [
-                    "What is the most relevant publication about '{value}'?",
-                    "Which paper is most related to '{value}'?",
-                    "What is the key research on '{value}'?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    ?publication schema:name ?title .
-                    {
-                        ?publication schema:about ?topic .
-                        ?topic schema:name ?topicName .
-                        FILTER(CONTAINS(LCASE(?topicName), LCASE({value})))
-                    } UNION {
-                        ?publication schema:keywords ?keyword .
-                        FILTER(CONTAINS(LCASE(?keyword), LCASE({value})))
-                    } UNION {
-                        ?publication schema:name ?titleForFilter .
-                        FILTER(CONTAINS(LCASE(?titleForFilter), LCASE({value})))
-                    }
-                    ?publication schema:citation ?cited .
-                    }
-                    GROUP BY ?publication ?title
-                    ORDER BY DESC(COUNT(?cited))
-                    LIMIT 1
-                """,
-                "complexity": "advanced"
-            },
-            {
                 "id": "keyword-topic-top-expert",
                 "category": "scholarly",
                 "questionTemplates": [
@@ -791,30 +731,6 @@ class NL2SPARQLGenerator:
                     }
                     GROUP BY ?year
                     ORDER BY DESC(COUNT(?publication))
-                    LIMIT 1
-                """,
-                "complexity": "advanced"
-            },
-            {
-                "id": "most-cited-publication",
-                "category": "scholarly",
-                "questionTemplates": [
-                    "What is the most cited publication?",
-                    "Which paper has received the most citations?",
-                    "What is the most referenced research work?"
-                ],
-                "englishQuestionTemplates": [
-                    "What is the most cited publication?",
-                    "Which paper has received the most citations?",
-                    "What is the most referenced research work?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    ?publication schema:name ?title .
-                    ?citing schema:citation ?publication .
-                    }
-                    GROUP BY ?publication ?title
-                    ORDER BY DESC(COUNT(?citing))
                     LIMIT 1
                 """,
                 "complexity": "advanced"
