@@ -1,402 +1,321 @@
 [
   {
     "id": "q1",
-    "question": "What is the publisher of 'Childbearing preferences and family issues in Europe'?",
-    "englishQuestion": "What is the publisher of 'Childbearing preferences and family issues in Europe'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-150650> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "question": "When was 'Seminar on Pharmaceutical competitor analysis. A guide for marketing researchers. Lisbon (Portugal) 27th - 2nd March 1985' published?",
+    "englishQuestion": "When was 'Seminar on Pharmaceutical competitor analysis. A guide for marketing researchers. Lisbon (Portugal) 27th - 2nd March 1985' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102157> <https://schema.org/datePublished> ?date . }",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-publisher"
+    "templateId": "publication-date"
   },
   {
     "id": "q2",
-    "question": "Who published 'Standards zur Qualit\u00e4tssicherung in der Markt- und Sozialforschung'?",
-    "englishQuestion": "Who published 'Standards zur Qualit\u00e4tssicherung in der Markt- und Sozialforschung'?",
+    "question": "In what year was 'Die Trennung von jung und alt in der Stadt. Eine vergleichende Analyse der Segregation von Altersgruppen in Hamburg und Wien' published?",
+    "englishQuestion": "In what year was 'Die Trennung von jung und alt in der Stadt. Eine vergleichende Analyse der Segregation von Altersgruppen in Hamburg und Wien' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102160> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q3",
+    "question": "Who created 'Methoden der empirischen Sozialforschung'?",
+    "englishQuestion": "Who created 'Methoden der empirischen Sozialforschung'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103605> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author"
+  },
+  {
+    "id": "q4",
+    "question": "What is the topic of 'Mittlere M\u00e4chte - einflussreiche Akteure in der internationalen Politik'?",
+    "englishQuestion": "What is the topic of 'Mittlere M\u00e4chte - einflussreiche Akteure in der internationalen Politik'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-93296> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic"
+  },
+  {
+    "id": "q5",
+    "question": "What is the publisher of 'Standards zur Qualit\u00e4tssicherung in der Markt- und Sozialforschung'?",
+    "englishQuestion": "What is the publisher of 'Standards zur Qualit\u00e4tssicherung in der Markt- und Sozialforschung'?",
     "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-96344> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-publisher"
   },
   {
-    "id": "q3",
-    "question": "Which organization published 'Die Wirtschaftsstruktur der Stadt und der goldenen Mark Duderstadt in vergleichender Darstellung zu der Struktur der St\u00e4dte und der Landkreise G\u00f6ttingen und Northeim'?",
-    "englishQuestion": "Which organization published 'Die Wirtschaftsstruktur der Stadt und der goldenen Mark Duderstadt in vergleichender Darstellung zu der Struktur der St\u00e4dte und der Landkreise G\u00f6ttingen und Northeim'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-89108> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher"
-  },
-  {
-    "id": "q4",
-    "question": "In what year was 'Macrothesaurus for information processing in the field of economic and social development' published?",
-    "englishQuestion": "In what year was 'Macrothesaurus for information processing in the field of economic and social development' published?",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102206> <https://schema.org/datePublished> ?date . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-date"
-  },
-  {
-    "id": "q5",
-    "question": "Which organization published 'Childbearing preferences and family issues in Europe'?",
-    "englishQuestion": "Which organization published 'Childbearing preferences and family issues in Europe'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-150650> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher"
-  },
-  {
     "id": "q6",
-    "question": "What is the main theme of 'Tunisia's legitimacy and constitutional crisis: the Troika has failed'?",
-    "englishQuestion": "What is the main theme of 'Tunisia's legitimacy and constitutional crisis: the Troika has failed'?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-39960> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-topic"
-  },
-  {
-    "id": "q7",
-    "question": "Who created 'Senioren 1994'?",
-    "englishQuestion": "Who created 'Senioren 1994'?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA6483> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "question": "Who wrote 'Main kinds of land use and agriculturally used areas in Germany 1883 to 2001'?",
+    "englishQuestion": "Who wrote 'Main kinds of land use and agriculturally used areas in Germany 1883 to 2001'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8309> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-author"
   },
   {
-    "id": "q8",
-    "question": "What is the main theme of 'The Engagement of Arab Gulf States in Egypt and Tunisia since 2011: Rationale and Impact'?",
-    "englishQuestion": "What is the main theme of 'The Engagement of Arab Gulf States in Egypt and Tunisia since 2011: Rationale and Impact'?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-55770> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "id": "q7",
+    "question": "What is the topic of 'Mikrokredite f\u00fcr Frauen: Instrument zur Akkumulation von symbolischem Kapital?! Empowermentma\u00dfnahmen als Basis f\u00fcr genderspezifischen sozialen Wandel am Beispiel des Mikrokreditsektors in Mittel\u00e4gypten'?",
+    "englishQuestion": "What is the topic of 'Mikrokredite f\u00fcr Frauen: Instrument zur Akkumulation von symbolischem Kapital?! Empowermentma\u00dfnahmen als Basis f\u00fcr genderspezifischen sozialen Wandel am Beispiel des Mikrokreditsektors in Mittel\u00e4gypten'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-39440> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic"
   },
   {
-    "id": "q9",
-    "question": "Who published 'Data visualization : principles and practice'?",
-    "englishQuestion": "Who published 'Data visualization : principles and practice'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-127215> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "id": "q8",
+    "question": "Who wrote 'Latin America'?",
+    "englishQuestion": "Who wrote 'Latin America'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100804> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-publisher"
+    "templateId": "publication-author"
+  },
+  {
+    "id": "q9",
+    "question": "What is the topic of 'The effect of customer relationship management practices on airline customer loyalty'?",
+    "englishQuestion": "What is the topic of 'The effect of customer relationship management practices on airline customer loyalty'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-66331> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic"
   },
   {
     "id": "q10",
-    "question": "In what year was 'Rechtsextremismus und Strafrechtspflege. Eine Analyse von Strafverfahren wegen mutma\u00dflicher rechtsextremistischer Aktivit\u00e4ten und Erscheinungen' published?",
-    "englishQuestion": "In what year was 'Rechtsextremismus und Strafrechtspflege. Eine Analyse von Strafverfahren wegen mutma\u00dflicher rechtsextremistischer Aktivit\u00e4ten und Erscheinungen' published?",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102957> <https://schema.org/datePublished> ?date . }",
+    "question": "What is the publication date of 'Dritte-Welt-Forschung : Entwicklungstheorien und Entwicklungspolitik'?",
+    "englishQuestion": "What is the publication date of 'Dritte-Welt-Forschung : Entwicklungstheorien und Entwicklungspolitik'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103293> <https://schema.org/datePublished> ?date . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-date"
   },
   {
     "id": "q11",
-    "question": "What is the main theme of 'Rule and revenue in Egypt and Rome: political stability and fiscal institutions'?",
-    "englishQuestion": "What is the main theme of 'Rule and revenue in Egypt and Rome: political stability and fiscal institutions'?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-6291> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "question": "What is the topic of 'Umbruch und Stagnation im Nahen Osten: Ist der 'Herbst der Autokraten' gekommen?'?",
+    "englishQuestion": "What is the topic of 'Umbruch und Stagnation im Nahen Osten: Ist der 'Herbst der Autokraten' gekommen?'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-97519> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic"
   },
   {
     "id": "q12",
-    "question": "Who published 'Readings in the analysis of survey data'?",
-    "englishQuestion": "Who published 'Readings in the analysis of survey data'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-109584> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "question": "Who published 'ACM SIGIR : 25 years of SIGIR proceedings 1978-2002'?",
+    "englishQuestion": "Who published 'ACM SIGIR : 25 years of SIGIR proceedings 1978-2002'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142174> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-publisher"
   },
   {
     "id": "q13",
-    "question": "Who created 'Erfahrungen mit Einb\u00fcrgerungsprozessen in Baden-W\u00fcrttemberg 2012'?",
-    "englishQuestion": "Who created 'Erfahrungen mit Einb\u00fcrgerungsprozessen in Baden-W\u00fcrttemberg 2012'?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA5840> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "question": "In what year was 'Soziologie. Ein Lehrbuch f\u00fcr den wirtschafts- und sozialwissenschaftlichen Bereich' published?",
+    "englishQuestion": "In what year was 'Soziologie. Ein Lehrbuch f\u00fcr den wirtschafts- und sozialwissenschaftlichen Bereich' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102145> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q14",
+    "question": "Who is the author of 'Political Action I (An Eight Nation Study)'?",
+    "englishQuestion": "Who is the author of 'Political Action I (An Eight Nation Study)'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA0765> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-author"
   },
   {
-    "id": "q14",
-    "question": "What is the topic of 'The Egyptian Muslim brotherhood and the road towards the Ummah'?",
-    "englishQuestion": "What is the topic of 'The Egyptian Muslim brotherhood and the road towards the Ummah'?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-55996> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "id": "q15",
+    "question": "What is the topic of 'Die Muslimbruderschaft und der Widerstand gegen eine dynastische Erbfolge in \u00c4gypten'?",
+    "englishQuestion": "What is the topic of 'Die Muslimbruderschaft und der Widerstand gegen eine dynastische Erbfolge in \u00c4gypten'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-27575> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic"
   },
   {
-    "id": "q15",
-    "question": "Who wrote 'Kirchenmitgliedschafts-Studie der EKD 1972'?",
-    "englishQuestion": "Who wrote 'Kirchenmitgliedschafts-Studie der EKD 1972'?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA2419> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-author"
-  },
-  {
     "id": "q16",
-    "question": "In what year was 'Raumwirksamkeit neuer Technologien. Literaturquerschnitt' published?",
-    "englishQuestion": "In what year was 'Raumwirksamkeit neuer Technologien. Literaturquerschnitt' published?",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102644> <https://schema.org/datePublished> ?date . }",
+    "question": "Who published 'Rationalisierung und Mechanisierung im \u00f6ffentlichen Dienst'?",
+    "englishQuestion": "Who published 'Rationalisierung und Mechanisierung im \u00f6ffentlichen Dienst'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-99471> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-date"
+    "templateId": "publication-publisher"
   },
   {
     "id": "q17",
-    "question": "In what year was 'Life course dynamics : trajectories and transitions, 1968 - 1980' published?",
-    "englishQuestion": "In what year was 'Life course dynamics : trajectories and transitions, 1968 - 1980' published?",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102569> <https://schema.org/datePublished> ?date . }",
+    "question": "What is the main theme of 'Ver\u00e4nderte Priorit\u00e4ten am Golf: Saudi-Arabien und die Emirate \u00fcberdenken ihre Beziehungen zu \u00c4gypten'?",
+    "englishQuestion": "What is the main theme of 'Ver\u00e4nderte Priorit\u00e4ten am Golf: Saudi-Arabien und die Emirate \u00fcberdenken ihre Beziehungen zu \u00c4gypten'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-45966> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-date"
+    "templateId": "publication-topic"
   },
   {
     "id": "q18",
-    "question": "Who published 'Wage Inequality: International Comparisons of Its Source'?",
-    "englishQuestion": "Who published 'Wage Inequality: International Comparisons of Its Source'?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/bibsonomy-blaufrancined1996inequality> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "question": "What is the publisher of 'Umri\u00df einer Geschichte der Preise und L\u00f6hne in Deutschland vom ausgehenden Mittelalter bis zum Beginn des neunzehnten Jahrhunderts. Erster Band'?",
+    "englishQuestion": "What is the publisher of 'Umri\u00df einer Geschichte der Preise und L\u00f6hne in Deutschland vom ausgehenden Mittelalter bis zum Beginn des neunzehnten Jahrhunderts. Erster Band'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-108395> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-publisher"
   },
   {
     "id": "q19",
-    "question": "Who created 'Historische Devisenkurse der Frankfurter B\u00f6rse 1953-1998'?",
-    "englishQuestion": "Who created 'Historische Devisenkurse der Frankfurter B\u00f6rse 1953-1998'?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8352> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "question": "What is the publisher of 'Dimensions of the European Identity'?",
+    "englishQuestion": "What is the publisher of 'Dimensions of the European Identity'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-149501> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-author"
+    "templateId": "publication-publisher"
   },
   {
     "id": "q20",
-    "question": "When was 'Geschichte der deutschen Psychologie im 20. Jahrhundert : ein \u00dcberblick' published?",
-    "englishQuestion": "When was 'Geschichte der deutschen Psychologie im 20. Jahrhundert : ein \u00dcberblick' published?",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100158> <https://schema.org/datePublished> ?date . }",
+    "question": "When was 'Die Vielseher : Fernseh-Zuschauerforschung in Deutschland ; Theorie, Praxis, Ergebnisse' published?",
+    "englishQuestion": "When was 'Die Vielseher : Fernseh-Zuschauerforschung in Deutschland ; Theorie, Praxis, Ergebnisse' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103343> <https://schema.org/datePublished> ?date . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-date"
   },
   {
     "id": "q21",
-    "question": "What did 'Wiliarty, Sarah Elise' publish most recently?",
-    "englishQuestion": "What did 'Wiliarty, Sarah Elise' publish most recently?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-130529_Wiliarty_Sarah_Elise> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "question": "What did 'Hill, Paul B.' publish most recently?",
+    "englishQuestion": "What did 'Hill, Paul B.' publish most recently?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103607_Hill_Paul_B> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
     "category": "scholarly",
     "complexity": "intermediate",
     "templateId": "person-latest-publication"
   },
   {
     "id": "q22",
-    "question": "What did 'Esser, Elke' publish most recently?",
-    "englishQuestion": "What did 'Esser, Elke' publish most recently?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-128846_Esser_Elke> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "question": "How many publications were published in 1973?",
+    "englishQuestion": "How many publications were published in 1973?",
+    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> 1973 . }",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "person-latest-publication"
+    "templateId": "year-publication-count"
   },
   {
     "id": "q23",
-    "question": "What is the publication count of 'Evangelische Kirche in Hessen und Nassau'?",
-    "englishQuestion": "What is the publication count of 'Evangelische Kirche in Hessen und Nassau'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/Evangelische_Kirche_in_Hessen_und_Nassau> . }",
+    "question": "How many publications has 'Nuttal, Ronald' authored?",
+    "englishQuestion": "How many publications has 'Nuttal, Ronald' authored?",
+    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-107307_Nuttal_Ronald> . }",
     "category": "scholarly",
     "complexity": "intermediate",
     "templateId": "person-publication-count"
   },
   {
     "id": "q24",
-    "question": "What is the publication count for '\u00d6sterr. Studienges. f\u00fcr Kybernetik'?",
-    "englishQuestion": "What is the publication count for '\u00d6sterr. Studienges. f\u00fcr Kybernetik'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { { ?publication <https://schema.org/publisher> <https://data.gesis.org/gesiskg/resource/%C3%96sterr._Studienges._f%C3%BCr_Kybernetik> . } UNION { ?publication <https://schema.org/contributor> <https://data.gesis.org/gesiskg/resource/%C3%96sterr._Studienges._f%C3%BCr_Kybernetik> . } }",
+    "question": "What is the number of authors for 'Historical exchange rates at the stock exchange in frankfurt 1953 to 1998.'?",
+    "englishQuestion": "What is the number of authors for 'Historical exchange rates at the stock exchange in frankfurt 1953 to 1998.'?",
+    "sparql": "SELECT (COUNT(DISTINCT ?collaborator) AS ?COUNT) WHERE { <https://data.gesis.org/gesiskg/resource/ZA8352> <https://schema.org/author> ?collaborator . }",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "organization-publication-count"
+    "templateId": "publication-collaborator-count"
   },
   {
     "id": "q25",
-    "question": "What was 'Anderson, Theodore R.''s most recent work?",
-    "englishQuestion": "What was 'Anderson, Theodore R.''s most recent work?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-101649_Anderson_Theodore_R> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "question": "How many publications were published in 1979?",
+    "englishQuestion": "How many publications were published in 1979?",
+    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> 1979 . }",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "person-latest-publication"
+    "templateId": "year-publication-count"
   },
   {
     "id": "q26",
-    "question": "What is the publication count for 'American Marketing Ass., Market Research Division'?",
-    "englishQuestion": "What is the publication count for 'American Marketing Ass., Market Research Division'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { { ?publication <https://schema.org/publisher> <https://data.gesis.org/gesiskg/resource/American_Marketing_Ass.%2C_Market_Research_Division> . } UNION { ?publication <https://schema.org/contributor> <https://data.gesis.org/gesiskg/resource/American_Marketing_Ass.%2C_Market_Research_Division> . } }",
+    "question": "How many publications has 'Eifler, Stefanie' authored?",
+    "englishQuestion": "How many publications has 'Eifler, Stefanie' authored?",
+    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-130080_Eifler_Stefanie> . }",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "organization-publication-count"
+    "templateId": "person-publication-count"
   },
   {
     "id": "q27",
-    "question": "How many collaborators worked on 'Overview on Traffic- and Transportation-Statistics of the former German Democratic Republic (GDR) from 1950 to 1989.'?",
-    "englishQuestion": "How many collaborators worked on 'Overview on Traffic- and Transportation-Statistics of the former German Democratic Republic (GDR) from 1950 to 1989.'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?collaborator) AS ?COUNT) WHERE { <https://data.gesis.org/gesiskg/resource/ZA8429> <https://schema.org/author> ?collaborator . }",
+    "question": "How many researchers contributed to 'paper presented at the annual meeting of Eastern American Sociological Society'?",
+    "englishQuestion": "How many researchers contributed to 'paper presented at the annual meeting of Eastern American Sociological Society'?",
+    "sparql": "SELECT (COUNT(DISTINCT ?collaborator) AS ?COUNT) WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-107307> <https://schema.org/author> ?collaborator . }",
     "category": "scholarly",
     "complexity": "intermediate",
     "templateId": "publication-collaborator-count"
   },
   {
     "id": "q28",
-    "question": "How many works were released in 1992?",
-    "englishQuestion": "How many works were released in 1992?",
-    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> ?date . FILTER (CONTAINS(STR(?date), \"1992\")) }",
+    "question": "What is the publication count of 'Friedrichs, J\u00fcrgen'?",
+    "englishQuestion": "What is the publication count of 'Friedrichs, J\u00fcrgen'?",
+    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-101182_Friedrichs_J%C3%BCrgen> . }",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "year-publication-count"
+    "templateId": "person-publication-count"
   },
   {
     "id": "q29",
-    "question": "What is the publication count for '3ones'?",
-    "englishQuestion": "What is the publication count for '3ones'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { { ?publication <https://schema.org/publisher> <https://data.gesis.org/gesiskg/resource/3ones> . } UNION { ?publication <https://schema.org/contributor> <https://data.gesis.org/gesiskg/resource/3ones> . } }",
+    "question": "What was 'Esser, Elke''s most recent work?",
+    "englishQuestion": "What was 'Esser, Elke''s most recent work?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-110565_Esser_Elke> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "organization-publication-count"
+    "templateId": "person-latest-publication"
   },
   {
     "id": "q30",
-    "question": "How many publications were published in 1991?",
-    "englishQuestion": "How many publications were published in 1991?",
-    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> ?date . FILTER (CONTAINS(STR(?date), \"1991\")) }",
+    "question": "What was 'Atteslander, Peter''s most recent work?",
+    "englishQuestion": "What was 'Atteslander, Peter''s most recent work?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-104288_Atteslander_Peter> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "year-publication-count"
+    "templateId": "person-latest-publication"
   },
   {
     "id": "q31",
-    "question": "How many works has 'Amt f\u00fcr amtliche Ver\u00f6ffentlichungen der Europ\u00e4ischen Gemeinschaften' published?",
-    "englishQuestion": "How many works has 'Amt f\u00fcr amtliche Ver\u00f6ffentlichungen der Europ\u00e4ischen Gemeinschaften' published?",
-    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { { ?publication <https://schema.org/publisher> <https://data.gesis.org/gesiskg/resource/Amt_f%C3%BCr_amtliche_Ver%C3%B6ffentlichungen_der_Europ%C3%A4ischen_Gemeinschaften> . } UNION { ?publication <https://schema.org/contributor> <https://data.gesis.org/gesiskg/resource/Amt_f%C3%BCr_amtliche_Ver%C3%B6ffentlichungen_der_Europ%C3%A4ischen_Gemeinschaften> . } }",
+    "question": "How many works did 'Hill, Paul B.' create?",
+    "englishQuestion": "How many works did 'Hill, Paul B.' create?",
+    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103605_Hill_Paul_B> . }",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "person-publication-count"
+  },
+  {
+    "id": "q32",
+    "question": "What is the latest publication by 'Esser, Elke'?",
+    "englishQuestion": "What is the latest publication by 'Esser, Elke'?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-128846_Esser_Elke> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "person-latest-publication"
+  },
+  {
+    "id": "q33",
+    "question": "What is the latest publication by 'Hill, Paul B.'?",
+    "englishQuestion": "What is the latest publication by 'Hill, Paul B.'?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-128846_Hill_Paul_B> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "person-latest-publication"
+  },
+  {
+    "id": "q34",
+    "question": "How many publications are associated with 'Akademischer Verl.'?",
+    "englishQuestion": "How many publications are associated with 'Akademischer Verl.'?",
+    "sparql": "SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { { ?publication <https://schema.org/publisher> <https://data.gesis.org/gesiskg/resource/Akademischer_Verl.> . } UNION { ?publication <https://schema.org/contributor> <https://data.gesis.org/gesiskg/resource/Akademischer_Verl.> . } }",
     "category": "scholarly",
     "complexity": "intermediate",
     "templateId": "organization-publication-count"
   },
   {
-    "id": "q32",
-    "question": "What is the number of authors for 'Nursing Care in Social Change'?",
-    "englishQuestion": "What is the number of authors for 'Nursing Care in Social Change'?",
-    "sparql": "SELECT (COUNT(DISTINCT ?collaborator) AS ?COUNT) WHERE { <https://data.gesis.org/gesiskg/resource/ZA3445> <https://schema.org/author> ?collaborator . }",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "publication-collaborator-count"
-  },
-  {
-    "id": "q33",
-    "question": "What is the publication count for the year 1996?",
-    "englishQuestion": "What is the publication count for the year 1996?",
-    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> ?date . FILTER (CONTAINS(STR(?date), \"1996\")) }",
+    "id": "q35",
+    "question": "How many works were released in 1946?",
+    "englishQuestion": "How many works were released in 1946?",
+    "sparql": "SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> 1946 . }",
     "category": "scholarly",
     "complexity": "intermediate",
     "templateId": "year-publication-count"
   },
   {
-    "id": "q34",
-    "question": "What is the latest publication by 'Wenckebach, Johanna'?",
-    "englishQuestion": "What is the latest publication by 'Wenckebach, Johanna'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-136485_Wenckebach_Johanna> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-latest-publication"
-  },
-  {
-    "id": "q35",
-    "question": "What is the latest publication by 'Collins, Linda M.'?",
-    "englishQuestion": "What is the latest publication by 'Collins, Linda M.'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-136508_Collins_Linda_M> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-latest-publication"
-  },
-  {
     "id": "q36",
-    "question": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "englishQuestion": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "organization-top-contributor"
-  },
-  {
-    "id": "q37",
-    "question": "Who is the top expert on 'GRUNDBILDUNG'?",
-    "englishQuestion": "Who is the top expert on 'GRUNDBILDUNG'?",
-    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"GRUNDBILDUNG\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"GRUNDBILDUNG\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"GRUNDBILDUNG\"))) } } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "topic-top-expert"
-  },
-  {
-    "id": "q38",
-    "question": "Who has published the most about '\u00d6KONOMIE'?",
-    "englishQuestion": "Who has published the most about '\u00d6KONOMIE'?",
-    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"\u00d6KONOMIE\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"\u00d6KONOMIE\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"\u00d6KONOMIE\"))) } } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "topic-top-expert"
-  },
-  {
-    "id": "q39",
-    "question": "Who is the top expert on '(AGARD'?",
-    "englishQuestion": "Who is the top expert on '(AGARD'?",
-    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"(AGARD\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"(AGARD\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"(AGARD\"))) } } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "topic-top-expert"
-  },
-  {
-    "id": "q40",
-    "question": "What is the most relevant publication about '123)'?",
-    "englishQuestion": "What is the most relevant publication about '123)'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"123)\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"123)\"))) } UNION { FILTER (CONTAINS(LCASE(?title), LCASE(\"123)\"))) } ?publication <https://schema.org/citation> ?cited . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?cited)) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-most-relevant-publication"
-  },
-  {
-    "id": "q41",
-    "question": "What is the key research on 'DOKUMENTATIONSPRAXIS'?",
-    "englishQuestion": "What is the key research on 'DOKUMENTATIONSPRAXIS'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"DOKUMENTATIONSPRAXIS\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"DOKUMENTATIONSPRAXIS\"))) } UNION { FILTER (CONTAINS(LCASE(?title), LCASE(\"DOKUMENTATIONSPRAXIS\"))) } ?publication <https://schema.org/citation> ?cited . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?cited)) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-most-relevant-publication"
-  },
-  {
-    "id": "q42",
-    "question": "Which paper is most related to 'POLITICAL'?",
-    "englishQuestion": "Which paper is most related to 'POLITICAL'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"POLITICAL\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"POLITICAL\"))) } UNION { FILTER (CONTAINS(LCASE(?title), LCASE(\"POLITICAL\"))) } ?publication <https://schema.org/citation> ?cited . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?cited)) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-most-relevant-publication"
-  },
-  {
-    "id": "q43",
-    "question": "What is the key research on 'SCIENCE)'?",
-    "englishQuestion": "What is the key research on 'SCIENCE)'?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"SCIENCE)\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"SCIENCE)\"))) } UNION { FILTER (CONTAINS(LCASE(?title), LCASE(\"SCIENCE)\"))) } ?publication <https://schema.org/citation> ?cited . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?cited)) LIMIT 1",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-most-relevant-publication"
-  },
-  {
-    "id": "q44",
-    "question": "Which publication by 'Tokarski, Walter' has the most citations?",
-    "englishQuestion": "Which publication by 'Tokarski, Walter' has the most citations?",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-100014_Tokarski_Walter> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-100014_Tokarski_Walter> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "author-most-cited-work"
-  },
-  {
-    "id": "q45",
     "question": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
     "englishQuestion": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
     "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
@@ -405,48 +324,129 @@
     "templateId": "organization-top-contributor"
   },
   {
-    "id": "q46",
-    "question": "Who is the top expert on '(B\u00dcRO-KOMMUNIKATION,'?",
-    "englishQuestion": "Who is the top expert on '(B\u00dcRO-KOMMUNIKATION,'?",
-    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"(B\u00dcRO-KOMMUNIKATION,\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"(B\u00dcRO-KOMMUNIKATION,\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"(B\u00dcRO-KOMMUNIKATION,\"))) } } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
+    "id": "q37",
+    "question": "Which researcher has published the most work?",
+    "englishQuestion": "Which researcher has published the most work?",
+    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
     "category": "scholarly",
     "complexity": "advanced",
-    "templateId": "topic-top-expert"
+    "templateId": "most-productive-author"
+  },
+  {
+    "id": "q38",
+    "question": "Which publication by 'Hill, Paul B.' has the most citations?",
+    "englishQuestion": "Which publication by 'Hill, Paul B.' has the most citations?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103607_Hill_Paul_B> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103607_Hill_Paul_B> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "author-most-cited-work"
+  },
+  {
+    "id": "q39",
+    "question": "What is 'Hill, Paul B.''s most influential paper?",
+    "englishQuestion": "What is 'Hill, Paul B.''s most influential paper?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103606_Hill_Paul_B> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103606_Hill_Paul_B> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "author-most-cited-work"
+  },
+  {
+    "id": "q40",
+    "question": "What paper has the largest research team?",
+    "englishQuestion": "What paper has the largest research team?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?author) AS ?authorCount) WHERE { ?publication <https://schema.org/author> ?author . } GROUP BY ?publication ORDER BY DESC(?authorCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "publication-with-most-authors-name"
+  },
+  {
+    "id": "q41",
+    "question": "What is 'Friedrichs, J\u00fcrgen''s most influential paper?",
+    "englishQuestion": "What is 'Friedrichs, J\u00fcrgen''s most influential paper?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-101182_Friedrichs_J%C3%BCrgen> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-101182_Friedrichs_J%C3%BCrgen> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "author-most-cited-work"
+  },
+  {
+    "id": "q42",
+    "question": "What is the most cited work of 'Girtler, Roland'?",
+    "englishQuestion": "What is the most cited work of 'Girtler, Roland'?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-112866_Girtler_Roland> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-112866_Girtler_Roland> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "author-most-cited-work"
+  },
+  {
+    "id": "q43",
+    "question": "What paper has the largest research team?",
+    "englishQuestion": "What paper has the largest research team?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?author) AS ?authorCount) WHERE { ?publication <https://schema.org/author> ?author . } GROUP BY ?publication ORDER BY DESC(?authorCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "publication-with-most-authors-name"
+  },
+  {
+    "id": "q44",
+    "question": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
+    "englishQuestion": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
+    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "organization-top-contributor"
+  },
+  {
+    "id": "q45",
+    "question": "Who has the highest publication count?",
+    "englishQuestion": "Who has the highest publication count?",
+    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "most-productive-author"
+  },
+  {
+    "id": "q46",
+    "question": "Which publication by 'Esser, Elke' has the most citations?",
+    "englishQuestion": "Which publication by 'Esser, Elke' has the most citations?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103605_Esser_Elke> . ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-103605_Esser_Elke> . ?citing <https://schema.org/citation> ?publication . } GROUP BY ?publication ORDER BY DESC(?citationCount) LIMIT 1 } }",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "author-most-cited-work"
   },
   {
     "id": "q47",
-    "question": "Who is the top expert on 'KOMMUNIKATION,'?",
-    "englishQuestion": "Who is the top expert on 'KOMMUNIKATION,'?",
-    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"KOMMUNIKATION,\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"KOMMUNIKATION,\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"KOMMUNIKATION,\"))) } } GROUP BY ?author ORDER BY DESC(?pubCount) LIMIT 1 } }",
+    "question": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
+    "englishQuestion": "Who is the leading researcher at 'GESIS Knowledge Graph Ontology'?",
+    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
     "category": "scholarly",
     "complexity": "advanced",
-    "templateId": "topic-top-expert"
+    "templateId": "organization-top-contributor"
   },
   {
     "id": "q48",
-    "question": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "englishQuestion": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
+    "question": "Who is the most collaborative author?",
+    "englishQuestion": "Who is the most collaborative author?",
+    "sparql": "SELECT ?authorName WHERE { ?author <https://schema.org/name> ?authorName . { SELECT ?author (COUNT(DISTINCT ?coauthor) AS ?coauthorCount) WHERE { ?publication <https://schema.org/author> ?author . ?publication <https://schema.org/author> ?coauthor . FILTER (?author != ?coauthor) } GROUP BY ?author ORDER BY DESC(?coauthorCount) LIMIT 1 } }",
     "category": "scholarly",
     "complexity": "advanced",
-    "templateId": "organization-top-contributor"
+    "templateId": "most-collaborative-author"
   },
   {
     "id": "q49",
-    "question": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "englishQuestion": "Which author publishes most with 'GESIS Knowledge Graph Ontology'?",
-    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
+    "question": "What paper has the largest research team?",
+    "englishQuestion": "What paper has the largest research team?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { SELECT ?publication (COUNT(?author) AS ?authorCount) WHERE { ?publication <https://schema.org/author> ?author . } GROUP BY ?publication ORDER BY DESC(?authorCount) LIMIT 1 } }",
     "category": "scholarly",
     "complexity": "advanced",
-    "templateId": "organization-top-contributor"
+    "templateId": "publication-with-most-authors-name"
   },
   {
     "id": "q50",
-    "question": "Who is the top contributor to 'GESIS Knowledge Graph Ontology'?",
-    "englishQuestion": "Who is the top contributor to 'GESIS Knowledge Graph Ontology'?",
-    "sparql": "SELECT ?contributorName WHERE { ?contributor <https://schema.org/name> ?contributorName . { SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE { ?publication <https://schema.org/publisher> <http://data.gesis.org/gesiskg/schema> . ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor . } GROUP BY ?contributor ORDER BY DESC(?contribCount) LIMIT 1 } }",
+    "question": "Which paper is most related to 'POLITIK-,'?",
+    "englishQuestion": "Which paper is most related to 'POLITIK-,'?",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"POLITIK-,\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"POLITIK-,\"))) } UNION { FILTER (CONTAINS(LCASE(?title), LCASE(\"POLITIK-,\"))) } ?publication <https://schema.org/citation> ?cited . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?cited)) LIMIT 1",
     "category": "scholarly",
     "complexity": "advanced",
-    "templateId": "organization-top-contributor"
+    "templateId": "keyword-most-relevant-publication"
   }
 ]

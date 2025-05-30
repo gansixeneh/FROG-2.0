@@ -479,8 +479,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?publication) AS ?count) WHERE {
-                    ?publication schema:datePublished ?date .
-                    FILTER(CONTAINS(STR(?date), {value}))
+                    ?publication schema:datePublished {value} .
                     }
                 """,
                 "complexity": "intermediate"
@@ -849,6 +848,11 @@ class NL2SPARQLGenerator:
         # Extract placeholders from the template
         placeholders = self.extract_placeholders(template)
         
+        # Special handling for templates without placeholders (like "most-collaborative-author")
+        if not placeholders:
+            print(f"Template {template['id']} has no placeholders, using direct instantiation")
+            return self.instantiate_template_without_placeholders(template)
+        
         # Special handling for keyword-based templates
         if "keyword" in template["id"] and "value" in placeholders:
             # For this template, use the pre-extracted keywords directly
@@ -1011,6 +1015,35 @@ class NL2SPARQLGenerator:
             # Fall back to the old method
             return self.instantiate_template(template)
 
+    def instantiate_template_without_placeholders(self, template):
+        """
+        Special handler for templates without placeholders (like aggregation queries)
+        
+        Args:
+            template (dict): The template to instantiate
+            
+        Returns:
+            dict: The instantiated question and SPARQL query
+        """
+        # Randomly select one of the question templates
+        question_idx = random.randrange(len(template["questionTemplates"]))
+        question_template = template["questionTemplates"][question_idx]
+        english_question_template = template["englishQuestionTemplates"][question_idx]
+        
+        # Use the templates as is (no placeholders to replace)
+        question = question_template.strip()
+        english_question = english_question_template.strip()
+        sparql = template["sparqlTemplate"].strip()
+        
+        # Replace all prefixed URIs with full URIs
+        for prefix, uri in self.prefixes.items():
+            pattern = r'\b' + re.escape(prefix) + r':([a-zA-Z0-9_]+)\b'
+            sparql = re.sub(pattern, r'<' + uri + r'\1>', sparql)
+        
+        # Format the SPARQL query for readability
+        sparql = self.format_sparql(sparql)
+        
+        return {"question": question, "englishQuestion": english_question, "sparql": sparql}
     def instantiate_keyword_template(self, template):
         """
         Special handler for keyword-based templates using pre-extracted keywords
