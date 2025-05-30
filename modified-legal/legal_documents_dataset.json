@@ -1,140 +1,132 @@
 [
   {
     "id": "q1",
-    "question": "Kapan UU tahun 1957 no 27 disahkan?",
-    "englishQuestion": "When was UU tahun 1957 no 27 enacted?",
-    "sparql": "select ?date where { <https://example.org/lex2kg/uu/1957/27> <https://example.org/lex2kg/ontology/disahkanPada> ?date . }",
+    "question": "Siapa yang mengesahkan UU tahun 2009 no 37?",
+    "englishQuestion": "Who enacted UU tahun 2009 no 37?",
+    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2009/37> <https://example.org/lex2kg/ontology/disahkanOleh> ?person . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-enactment-date",
+    "templateId": "law-enactment-person",
     "thoughts": [
-      "1. The question asks for the enactment date of UU tahun 1957 no 27.",
-      "2. The entity '<https://example.org/lex2kg/uu/1957/27>' represents a legal document in the Indonesian legal system.",
-      "3. The property 'lex2kg-o:disahkanPada' links legal documents to their enactment dates.",
-      "4. To solve this, retrieve the date when <https://example.org/lex2kg/uu/1957/27> was enacted via the 'lex2kg-o:disahkanPada' property.",
-      "5. Construct a SPARQL query to retrieve the enactment date for UU tahun 1957 no 27."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
     "entities": [
-      "UU tahun 1957 no 27"
+      "UU tahun 2009 no 37"
     ],
     "properties": [
-      "disahkan pada"
+      "disahkan oleh"
     ],
     "entities_matches": [
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/g/c",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 g c"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0073/versi/20111016/ayat/0002/huruf/b/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 73 versi 16 Oktober 2011 ayat 2 huruf b huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/mengingat/text",
-        "label": "UU tahun 2011 no 15 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0074/versi/20111016/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 74 versi 16 Oktober 2011 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0083/versi/20111016/huruf/a/huruf/0006/text",
-        "label": "UU tahun 2011 no 15 pasal 83 versi 16 Oktober 2011 huruf a huruf 6 text"
+        "id": "https://example.org/lex2kg/uu/1986/5/pasal/0043",
+        "label": "UU tahun 1986 no 5 pasal 43"
       },
       {
         "id": "https://example.org/lex2kg/uu",
         "label": "UU"
       },
       {
+        "id": "https://example.org/lex2kg/uu/1954/30/pasal/0008/versi/19540914/text",
+        "label": "UU tahun 1954 no 30 pasal 8 versi 14 September 1954 text"
+      },
+      {
         "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
         "label": "UU tahun 1982 no 18 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/57",
-        "label": "UU tahun 1957 no 57"
+        "id": "https://example.org/lex2kg/uu/2009/9",
+        "label": "UU tahun 2009 no 9"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/57/mengingat",
-        "label": "UU tahun 1957 no 57 mengingat"
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0009/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 9 versi 16 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1997/27/pasal/0027",
-        "label": "UU tahun 1997 no 27 pasal 27"
+        "id": "https://example.org/lex2kg/uu/2008/37/pasal/0037",
+        "label": "UU tahun 2008 no 37 pasal 37"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2010/10/mengingat/huruf/0027",
-        "label": "UU tahun 2010 no 10 mengingat huruf 27"
+        "id": "https://example.org/lex2kg/uu/2014/37/pasal/0037",
+        "label": "UU tahun 2014 no 37 pasal 37"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
+        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
+        "label": "UU tahun 1994 no 3 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/25/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 25 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0029/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 29 versi 16 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/4/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 4 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2009/2/pasal/0009/versi/20090112",
+        "label": "UU tahun 2009 no 2 pasal 9 versi 12 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27",
-        "label": "UU tahun 1957 no 27"
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0039/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 39 versi 16 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/mengingat",
-        "label": "UU tahun 1957 no 27 mengingat"
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0037/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 37 versi 16 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/pasal/0001/versi/19570814/text",
-        "label": "UU tahun 1957 no 27 pasal 1 versi 14 Agustus 1957 text"
+        "id": "https://example.org/lex2kg/uu/2009/39/pasal/0037/versi/20091014",
+        "label": "UU tahun 2009 no 39 pasal 37 versi 14 Oktober 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/pasal/0002/versi/19570814/text",
-        "label": "UU tahun 1957 no 27 pasal 2 versi 14 Agustus 1957 text"
+        "id": "https://example.org/lex2kg/uu/2009/48/pasal/0037/versi/20091029",
+        "label": "UU tahun 2009 no 48 pasal 37 versi 29 Oktober 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/pasal/0001/versi/19570814",
-        "label": "UU tahun 1957 no 27 pasal 1 versi 14 Agustus 1957"
+        "id": "https://example.org/lex2kg/uu/2003/24/pasal/0041/versi/20030813/ayat/0002/text",
+        "label": "UU tahun 2003 no 24 pasal 41 versi 13 Agustus 2003 ayat 2 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2007/27/pasal/0027",
-        "label": "UU tahun 2007 no 27 pasal 27"
+        "id": "https://example.org/lex2kg/uu/2002/20/pasal/0044/versi/20020923/text",
+        "label": "UU tahun 2002 no 20 pasal 44 versi 23 September 2002 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1997/32/pasal/0027",
-        "label": "UU tahun 1997 no 32 pasal 27"
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0079/versi/20090112/huruf/u/text",
+        "label": "UU tahun 2009 no 4 pasal 79 versi 12 Januari 2009 huruf u text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/mengingat/text",
-        "label": "UU tahun 1957 no 27 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0079/versi/20090112/huruf/u",
+        "label": "UU tahun 2009 no 4 pasal 79 versi 12 Januari 2009 huruf u"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/pasal/0002/versi/19570814",
-        "label": "UU tahun 1957 no 27 pasal 2 versi 14 Agustus 1957"
+        "id": "https://example.org/lex2kg/uu/2009/2/pasal/0037/versi/20090112",
+        "label": "UU tahun 2009 no 2 pasal 37 versi 12 Januari 2009"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/27/pasal/0001",
-        "label": "UU tahun 1957 no 27 pasal 1"
+        "id": "https://example.org/lex2kg/uu/2009/37/mengingat",
+        "label": "UU tahun 2009 no 37 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/22/pasal/0027",
-        "label": "UU tahun 1957 no 22 pasal 27"
+        "id": "https://example.org/lex2kg/uu/2009/37",
+        "label": "UU tahun 2009 no 37"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/28/pasal/0004/versi/20021216/text",
-        "label": "UU tahun 2002 no 28 pasal 4 versi 16 Desember 2002 text"
+        "id": "https://example.org/lex2kg/uu/2002/25/bab/0004",
+        "label": "UU tahun 2002 no 25 bab 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1992/4/pasal/0031/versi/19920310/text",
+        "label": "UU tahun 1992 no 4 pasal 31 versi 10 Maret 1992 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2003/41/bab/0002",
+        "label": "UU tahun 2003 no 41 bab 2"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2002/31/bab/0004",
+        "label": "UU tahun 2002 no 31 bab 4"
       }
     ],
     "properties_matches": [
-      {
-        "id": "lex2kg-o:tanggal",
-        "label": "tanggal"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      },
       {
         "id": "lex2kg-o:tentang",
         "label": "tentang"
@@ -144,47 +136,51 @@
         "label": "judul"
       },
       {
-        "id": "lex2kg-o:nomor",
-        "label": "nomor"
+        "id": "lex2kg-o:disahkanDi",
+        "label": "disahkan di"
       },
       {
         "id": "lex2kg-o:disahkanOleh",
         "label": "disahkan oleh"
       },
       {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
       },
       {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
+        "id": "lex2kg-o:nomor",
+        "label": "nomor"
       },
       {
         "id": "lex2kg-o:jenisPeraturan",
         "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
       }
     ]
   },
   {
     "id": "q2",
-    "question": "Di lokasi mana UU tahun 1991 no 4 disahkan?",
-    "englishQuestion": "At what location was UU tahun 1991 no 4 enacted?",
-    "sparql": "select ?location where { <https://example.org/lex2kg/uu/1991/4> <https://example.org/lex2kg/ontology/disahkanDi> ?location . }",
+    "question": "Apa judul dari UU tahun 2014 no 39 bab 6 bagian 1?",
+    "englishQuestion": "What is the title of UU tahun 2014 no 39 bab 6 bagian 1?",
+    "sparql": "select ?title where { <https://example.org/lex2kg/uu/2014/39/bab/0006/bagian/0001> <https://example.org/lex2kg/ontology/judul> ?title . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-enactment-location",
+    "templateId": "chapter-title",
     "thoughts": [
-      "1. The question asks for the enactment location of UU tahun 1991 no 4.",
-      "2. The entity '<https://example.org/lex2kg/uu/1991/4>' represents a legal document in the Indonesian legal system.",
-      "3. The property 'lex2kg-o:disahkanDi' links legal documents to their enactment locations.",
-      "4. To solve this, retrieve the location where <https://example.org/lex2kg/uu/1991/4> was enacted via the 'lex2kg-o:disahkanDi' property.",
-      "5. Construct a SPARQL query to retrieve the enactment location for UU tahun 1991 no 4."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
     "entities": [
-      "UU tahun 1991 no 4"
+      "UU tahun 2014 no 39 bab 6 bagian 1"
     ],
     "properties": [
-      "disahkan di"
+      "judul"
     ],
     "entities_matches": [
       {
@@ -192,186 +188,270 @@
         "label": "UU"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0008/versi/20111016/ayat/0002/huruf/k/huruf/f/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 8 versi 16 Oktober 2011 ayat 2 huruf k huruf f huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/8/pasal/0072/versi/20101022/ayat/0004/huruf/description",
-        "label": "UU tahun 2010 no 8 pasal 72 versi 22 Oktober 2010 ayat 4 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1973/7/mengingat/text",
-        "label": "UU tahun 1973 no 7 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
+        "label": "UU tahun 2009 no 44 mengingat text"
       },
       {
         "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
         "label": "UU tahun 1982 no 18 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/1/pasal/0002/versi/19910107",
-        "label": "UU tahun 1991 no 1 pasal 2 versi 7 Januari 1991"
+        "id": "https://example.org/lex2kg/uu/2014/14",
+        "label": "UU tahun 2014 no 14"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/1/pasal/0001/versi/19910107",
-        "label": "UU tahun 1991 no 1 pasal 1 versi 7 Januari 1991"
+        "id": "https://example.org/lex2kg/uu/2009/39/pasal/0039",
+        "label": "UU tahun 2009 no 39 pasal 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/5/pasal/0026/versi/19910722",
-        "label": "UU tahun 1991 no 5 pasal 26 versi 22 Juli 1991"
+        "id": "https://example.org/lex2kg/uu/2009/36/pasal/0039",
+        "label": "UU tahun 2009 no 36 pasal 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/2/pasal/0001/versi/19910320",
-        "label": "UU tahun 1991 no 2 pasal 1 versi 20 Maret 1991"
+        "id": "https://example.org/lex2kg/uu/2009/48/pasal/0039",
+        "label": "UU tahun 2009 no 48 pasal 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/5/pasal/0021/versi/19910722",
-        "label": "UU tahun 1991 no 5 pasal 21 versi 22 Juli 1991"
+        "id": "https://example.org/lex2kg/uu/2009/40/pasal/0039",
+        "label": "UU tahun 2009 no 40 pasal 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2010/4/mengingat/huruf/0004",
-        "label": "UU tahun 2010 no 4 mengingat huruf 4"
+        "id": "https://example.org/lex2kg/uu/2009/38/pasal/0039",
+        "label": "UU tahun 2009 no 38 pasal 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
+        "id": "https://example.org/lex2kg/uu/1986/5/menimbang/huruf/b",
+        "label": "UU tahun 1986 no 5 menimbang huruf b"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/25/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 25 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1995/10/menimbang/huruf/b",
+        "label": "UU tahun 1995 no 10 menimbang huruf b"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/4/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 4 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2006/11/mengingat/huruf/0006",
+        "label": "UU tahun 2006 no 11 mengingat huruf 6"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1976/8/mengingat/text",
-        "label": "UU tahun 1976 no 8 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2007/6/mengingat/huruf/0006",
+        "label": "UU tahun 2007 no 6 mengingat huruf 6"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1973/4/pasal/0002/versi/19730608/ayat/0002/text",
-        "label": "UU tahun 1973 no 4 pasal 2 versi 8 Juni 1973 ayat 2 text"
+        "id": "https://example.org/lex2kg/uu/2008/6/mengingat/huruf/0006",
+        "label": "UU tahun 2008 no 6 mengingat huruf 6"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1973/4/pasal/0002/versi/19730608/ayat/0001/huruf/description",
-        "label": "UU tahun 1973 no 4 pasal 2 versi 8 Juni 1973 ayat 1 huruf description"
+        "id": "https://example.org/lex2kg/uu/2013/6/mengingat/huruf/0006",
+        "label": "UU tahun 2013 no 6 mengingat huruf 6"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/1",
-        "label": "UU tahun 1991 no 1"
+        "id": "https://example.org/lex2kg/uu/2010/13/bab/0004/bagian/0002",
+        "label": "UU tahun 2010 no 13 bab 4 bagian 2"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4",
-        "label": "UU tahun 1991 no 4"
+        "id": "https://example.org/lex2kg/uu/1981/8/bab/0010/bagian/0004",
+        "label": "UU tahun 1981 no 8 bab 10 bagian 4"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/2/pasal/0004/versi/19910320",
-        "label": "UU tahun 1991 no 2 pasal 4 versi 20 Maret 1991"
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0004/bagian/0003",
+        "label": "UU tahun 2010 no 8 bab 4 bagian 3"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4/mengingat",
-        "label": "UU tahun 1991 no 4 mengingat"
+        "id": "https://example.org/lex2kg/uu/1997/1/mengingat/huruf/0001",
+        "label": "UU tahun 1997 no 1 mengingat huruf 1"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4/pasal/0001/versi/19910718",
-        "label": "UU tahun 1991 no 4 pasal 1 versi 18 Juli 1991"
+        "id": "https://example.org/lex2kg/uu/2001/4/mengingat/huruf/0001",
+        "label": "UU tahun 2001 no 4 mengingat huruf 1"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4/pasal/0002/versi/19910718",
-        "label": "UU tahun 1991 no 4 pasal 2 versi 18 Juli 1991"
+        "id": "https://example.org/lex2kg/uu/2001/1/mengingat/huruf/0001",
+        "label": "UU tahun 2001 no 1 mengingat huruf 1"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1974/4/bab/0004",
-        "label": "UU tahun 1974 no 4 bab 4"
+        "id": "https://example.org/lex2kg/uu/2004/38/mengingat/text",
+        "label": "UU tahun 2004 no 38 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1994/4/bab/0004",
-        "label": "UU tahun 1994 no 4 bab 4"
+        "id": "https://example.org/lex2kg/uu/1964/35/mengingat/text",
+        "label": "UU tahun 1964 no 35 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1979/4/bab/0004",
-        "label": "UU tahun 1979 no 4 bab 4"
+        "id": "https://example.org/lex2kg/uu/1954/45/mengingat/text",
+        "label": "UU tahun 1954 no 45 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/1/mengingat",
-        "label": "UU tahun 1991 no 1 mengingat"
+        "id": "https://example.org/lex2kg/uu/2004/29/mengingat/text",
+        "label": "UU tahun 2004 no 29 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4/pasal/0002/versi/19910718/text",
-        "label": "UU tahun 1991 no 4 pasal 2 versi 18 Juli 1991 text"
+        "id": "https://example.org/lex2kg/uu/2014/39",
+        "label": "UU tahun 2014 no 39"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1991/4/pasal/0001",
-        "label": "UU tahun 1991 no 4 pasal 1"
+        "id": "https://example.org/lex2kg/uu/2014/25/pasal/0039/versi/20141014/f",
+        "label": "UU tahun 2014 no 25 pasal 39 versi 14 Oktober 2014 f"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/26/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 26 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1999/39/bab/0009",
+        "label": "UU tahun 1999 no 39 bab 9"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/16/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 16 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2009/30/pasal/0039/versi/20090923/huruf/b/text",
+        "label": "UU tahun 2009 no 30 pasal 39 versi 23 September 2009 huruf b text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 23 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2009/39/bab/0003",
+        "label": "UU tahun 2009 no 39 bab 3"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/24/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 24 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1995/6/bab/0006",
+        "label": "UU tahun 1995 no 6 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2006/9/bab/0006",
+        "label": "UU tahun 2006 no 9 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/6/bab/0006",
+        "label": "UU tahun 1990 no 6 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/6/bab/0006",
+        "label": "UU tahun 2008 no 6 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/6/bab/0006",
+        "label": "UU tahun 2014 no 6 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2018/6/bab/0006/bagian/0006",
+        "label": "UU tahun 2018 no 6 bab 6 bagian 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0006/bagian/0006",
+        "label": "UU tahun 2010 no 8 bab 6 bagian 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0006/bagian/0006",
+        "label": "UU tahun 2012 no 8 bab 6 bagian 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1984/6/bab/0006",
+        "label": "UU tahun 1984 no 6 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/25/bab/0006/bagian/0006",
+        "label": "UU tahun 1997 no 25 bab 6 bagian 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2011/3/bab/0001/bagian/0001",
+        "label": "UU tahun 2011 no 3 bab 1 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/1/bab/0001",
+        "label": "UU tahun 1995 no 1 bab 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/2/pasal/0001/versi/19810401/huruf/0001/text",
+        "label": "UU tahun 1981 no 2 pasal 1 versi 1 April 1981 huruf 1 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/2/pasal/0001/versi/19810401/huruf/description",
+        "label": "UU tahun 1981 no 2 pasal 1 versi 1 April 1981 huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/4/mengingat/text",
+        "label": "UU tahun 1995 no 4 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/14/mengingat",
+        "label": "UU tahun 2014 no 14 mengingat"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/mengingat/text",
+        "label": "UU tahun 2014 no 39 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/6/pasal/0039/versi/20140115",
+        "label": "UU tahun 2014 no 6 pasal 39 versi 15 Januari 2014"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/bab/0004",
+        "label": "UU tahun 2014 no 39 bab 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/bab/0001",
+        "label": "UU tahun 2014 no 39 bab 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/39/bab/0006",
+        "label": "UU tahun 2009 no 39 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2006/11/bab/0039",
+        "label": "UU tahun 2006 no 11 bab 39"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1999/39/bab/0006",
+        "label": "UU tahun 1999 no 39 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2006/12/bab/0006",
+        "label": "UU tahun 2006 no 12 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2006/9/bab/0006/bagian/0001",
+        "label": "UU tahun 2006 no 9 bab 6 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2018/6/bab/0006/bagian/0001",
+        "label": "UU tahun 2018 no 6 bab 6 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2011/6/bab/0006/bagian/0001",
+        "label": "UU tahun 2011 no 6 bab 6 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2017/6/bab/0006/bagian/0001",
+        "label": "UU tahun 2017 no 6 bab 6 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/bab/0006/bagian/0001",
+        "label": "UU tahun 2014 no 39 bab 6 bagian 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/bab/0006/bagian/0006",
+        "label": "UU tahun 2014 no 39 bab 6 bagian 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/39/bab/0006/bagian/0002",
+        "label": "UU tahun 2014 no 39 bab 6 bagian 2"
       }
     ],
     "properties_matches": [
       {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
-      },
-      {
-        "id": "lex2kg-o:versi",
-        "label": "versi"
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
       },
       {
         "id": "lex2kg-o:judul",
         "label": "judul"
       },
       {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:menimbang",
-        "label": "menimbang"
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
       },
       {
         "id": "lex2kg-o:nomor",
         "label": "nomor"
       },
       {
-        "id": "lex2kg-o:mengingat",
-        "label": "mengingat"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      },
-      {
-        "id": "lex2kg-o:disahkanOleh",
-        "label": "disahkan oleh"
-      },
-      {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
-      },
-      {
-        "id": "lex2kg-o:merujuk",
-        "label": "merujuk"
+        "id": "lex2kg-o:bab",
+        "label": "bab"
       },
       {
         "id": "lex2kg-o:bagian",
         "label": "bagian"
-      },
-      {
-        "id": "lex2kg-o:tanggal",
-        "label": "tanggal"
       },
       {
         "id": "lex2kg-o:jenisPeraturan",
@@ -381,45 +461,37 @@
   },
   {
     "id": "q3",
-    "question": "Termasuk jenis peraturan apa UU tahun 1989 no 5?",
-    "englishQuestion": "Which type of regulation does UU tahun 1989 no 5 belong to?",
-    "sparql": "select ?type where { <https://example.org/lex2kg/uu/1989/5> <https://example.org/lex2kg/ontology/jenisPeraturan> ?type . }",
+    "question": "Dalam bahasa apa UU tahun 2014 no 35 ditulis?",
+    "englishQuestion": "In what language is UU tahun 2014 no 35 written?",
+    "sparql": "select ?language where { <https://example.org/lex2kg/uu/2014/35> <https://example.org/lex2kg/ontology/bahasa> ?language . }",
     "category": "legal",
     "complexity": "basic",
-    "templateId": "law-type",
+    "templateId": "law-language",
     "thoughts": [
-      "1. The question asks for the type or category of regulation that UU tahun 1989 no 5 represents.",
-      "2. The entity '<https://example.org/lex2kg/uu/1989/5>' represents a legal document in the Indonesian legal system.",
-      "3. The property 'lex2kg-o:jenisPeraturan' links legal documents to their regulation type.",
-      "4. To solve this, retrieve the regulation type of <https://example.org/lex2kg/uu/1989/5> via the 'lex2kg-o:jenisPeraturan' property.",
-      "5. Construct a SPARQL query to retrieve the regulation type for UU tahun 1989 no 5."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
     "entities": [
-      "UU tahun 1989 no 5"
+      "UU tahun 2014 no 35"
     ],
     "properties": [
-      "jenis peraturan"
+      "bahasa"
     ],
     "entities_matches": [
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/huruf/g/huruf/c/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 huruf g huruf c huruf description"
+        "id": "https://example.org/lex2kg/uu/2011/23/mengingat/huruf/description",
+        "label": "UU tahun 2011 no 23 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1974/4/menimbang/huruf/a/text",
+        "label": "UU tahun 1974 no 4 menimbang huruf a text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/4/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 4 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 23 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/16/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 16 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1973/4/menimbang/huruf/a/text",
+        "label": "UU tahun 1973 no 4 menimbang huruf a text"
       },
       {
         "id": "https://example.org/lex2kg/uu",
@@ -430,138 +502,110 @@
         "label": "UU tahun 1982 no 18 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1",
-        "label": "UU tahun 1989 no 1"
+        "id": "https://example.org/lex2kg/uu/2014/14",
+        "label": "UU tahun 2014 no 14"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/7/pasal/0089/versi/19891229",
-        "label": "UU tahun 1989 no 7 pasal 89 versi 29 Desember 1989"
+        "id": "https://example.org/lex2kg/uu/1986/5/pasal/0035",
+        "label": "UU tahun 1986 no 5 pasal 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/5/pasal/0002/versi/19890720",
-        "label": "UU tahun 1989 no 5 pasal 2 versi 20 Juli 1989"
+        "id": "https://example.org/lex2kg/uu/1985/9/pasal/0035",
+        "label": "UU tahun 1985 no 9 pasal 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/7/pasal/0066/versi/19891229",
-        "label": "UU tahun 1989 no 7 pasal 66 versi 29 Desember 1989"
+        "id": "https://example.org/lex2kg/uu/1985/14/pasal/0035",
+        "label": "UU tahun 1985 no 14 pasal 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2005/5/mengingat/huruf/0005",
-        "label": "UU tahun 2005 no 5 mengingat huruf 5"
+        "id": "https://example.org/lex2kg/uu/2009/35/pasal/0035",
+        "label": "UU tahun 2009 no 35 pasal 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2005/4/mengingat/huruf/0005",
-        "label": "UU tahun 2005 no 4 mengingat huruf 5"
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0035",
+        "label": "UU tahun 1950 no 1 pasal 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2003/34/mengingat/huruf/description",
-        "label": "UU tahun 2003 no 34 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2014/37/mengingat/text",
+        "label": "UU tahun 2014 no 37 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2003/14/mengingat/huruf/description",
-        "label": "UU tahun 2003 no 14 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2010/12/mengingat/text",
+        "label": "UU tahun 2010 no 12 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/ontology/jenisPeraturan/UU",
-        "label": "ontology jenis peraturan uu"
+        "id": "https://example.org/lex2kg/uu/1982/18/menimbang/huruf/a/text",
+        "label": "UU tahun 1982 no 18 menimbang huruf a text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2003/12/bab/0017",
-        "label": "UU tahun 2003 no 12 bab 17"
+        "id": "https://example.org/lex2kg/uu/1994/6/menimbang/huruf/description",
+        "label": "UU tahun 1994 no 6 menimbang huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/3/bab/0017",
-        "label": "UU tahun 2014 no 3 bab 17"
+        "id": "https://example.org/lex2kg/uu/1994/3/menimbang/huruf/description",
+        "label": "UU tahun 1994 no 3 menimbang huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1987/1/bab/0004",
-        "label": "UU tahun 1987 no 1 bab 4"
+        "id": "https://example.org/lex2kg/uu/1982/4/menimbang/huruf/a/text",
+        "label": "UU tahun 1982 no 4 menimbang huruf a text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0002/versi/19890327",
-        "label": "UU tahun 1989 no 1 pasal 2 versi 27 Maret 1989"
+        "id": "https://example.org/lex2kg/uu/2014/25/pasal/0035/versi/20141014",
+        "label": "UU tahun 2014 no 25 pasal 35 versi 14 Oktober 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/7/pasal/0009/versi/19891229",
-        "label": "UU tahun 1989 no 7 pasal 9 versi 29 Desember 1989"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0035/versi/20140115",
+        "label": "UU tahun 2014 no 5 pasal 35 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/7/pasal/0039/versi/19891229",
-        "label": "UU tahun 1989 no 7 pasal 39 versi 29 Desember 1989"
+        "id": "https://example.org/lex2kg/uu/2014/35",
+        "label": "UU tahun 2014 no 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/5",
-        "label": "UU tahun 1989 no 5"
+        "id": "https://example.org/lex2kg/uu/2014/6/pasal/0035/versi/20140115",
+        "label": "UU tahun 2014 no 6 pasal 35 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/5/mengingat",
-        "label": "UU tahun 1989 no 5 mengingat"
+        "id": "https://example.org/lex2kg/uu/2014/34/pasal/0035/versi/20141017",
+        "label": "UU tahun 2014 no 34 pasal 35 versi 17 Oktober 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0005/versi/19890327",
-        "label": "UU tahun 1989 no 1 pasal 5 versi 27 Maret 1989"
+        "id": "https://example.org/lex2kg/uu/1985/14/pasal/0035/versi/19851230/text",
+        "label": "UU tahun 1985 no 14 pasal 35 versi 30 Desember 1985 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/2/pasal/0005/versi/19890327",
-        "label": "UU tahun 1989 no 2 pasal 5 versi 27 Maret 1989"
+        "id": "https://example.org/lex2kg/uu/1985/14/pasal/0037/versi/19851230/text",
+        "label": "UU tahun 1985 no 14 pasal 37 versi 30 Desember 1985 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0005/versi/19890327/text",
-        "label": "UU tahun 1989 no 1 pasal 5 versi 27 Maret 1989 text"
+        "id": "https://example.org/lex2kg/uu/1985/9/pasal/0035/versi/19850619/text",
+        "label": "UU tahun 1985 no 9 pasal 35 versi 19 Juni 1985 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0047/versi/20141016/huruf/description",
-        "label": "UU tahun 2002 no 19 pasal 47 versi 16 Oktober 2014 huruf description"
+        "id": "https://example.org/lex2kg/uu/2014/14/mengingat",
+        "label": "UU tahun 2014 no 14 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0001/versi/19890327",
-        "label": "UU tahun 1989 no 1 pasal 1 versi 27 Maret 1989"
+        "id": "https://example.org/lex2kg/uu/2014/3/pasal/0035/versi/20140115",
+        "label": "UU tahun 2014 no 3 pasal 35 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0004/versi/19890327",
-        "label": "UU tahun 1989 no 1 pasal 4 versi 27 Maret 1989"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0034/versi/20140115",
+        "label": "UU tahun 2014 no 5 pasal 34 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1989/4/pasal/0005/versi/19890720/text",
-        "label": "UU tahun 1989 no 4 pasal 5 versi 20 Juli 1989 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/2/pasal/0005/versi/19890327/text",
-        "label": "UU tahun 1989 no 2 pasal 5 versi 27 Maret 1989 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/1/pasal/0005",
-        "label": "UU tahun 1989 no 1 pasal 5"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/5/pasal/0001",
-        "label": "UU tahun 1989 no 5 pasal 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/2/bab/0005",
-        "label": "UU tahun 1989 no 2 bab 5"
+        "id": "https://example.org/lex2kg/uu/2014/35/mengingat",
+        "label": "UU tahun 2014 no 35 mengingat"
       }
     ],
     "properties_matches": [
-      {
-        "id": "lex2kg-o:menyisipkan",
-        "label": "menyisipkan"
-      },
-      {
-        "id": "lex2kg-o:bagian",
-        "label": "bagian"
-      },
       {
         "id": "lex2kg-o:tentang",
         "label": "tentang"
       },
       {
-        "id": "lex2kg-o:jenisVersi",
-        "label": "jenis versi"
-      },
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
+        "id": "lex2kg-o:bahasa",
+        "label": "bahasa"
       },
       {
         "id": "lex2kg-o:judul",
@@ -576,6 +620,14 @@
         "label": "nomor"
       },
       {
+        "id": "lex2kg-o:teks",
+        "label": "teks"
+      },
+      {
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
         "id": "lex2kg-o:disahkanPada",
         "label": "disahkan pada"
       }
@@ -583,138 +635,136 @@
   },
   {
     "id": "q4",
-    "question": "Peraturan apa yang terkait dengan 'KARYA'?",
-    "englishQuestion": "What regulations are associated with 'KARYA'?",
-    "sparql": "select distinct ?law ?title where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"KARYA\"))) }",
+    "question": "Siapa yang mengesahkan UU tahun 2013 no 24?",
+    "englishQuestion": "Who enacted UU tahun 2013 no 24?",
+    "sparql": "select ?person where { <https://example.org/lex2kg/uu/2013/24> <https://example.org/lex2kg/ontology/disahkanOleh> ?person . }",
     "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-by-keyword",
+    "complexity": "basic",
+    "templateId": "law-enactment-person",
     "thoughts": [
-      "1. The question asks for laws related to the keyword 'KARYA'.",
-      "2. In the legal ontology, laws have titles accessible via 'lex2kg-o:tentang' property.",
-      "3. The keyword 'KARYA' should appear in the law's title to be considered related.",
-      "4. To solve this, retrieve all laws whose titles contain the keyword 'KARYA' (case-insensitive).",
-      "5. Construct a SPARQL query using FILTER and CONTAINS to match titles containing the keyword."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
-    "entities": [],
+    "entities": [
+      "UU tahun 2013 no 24"
+    ],
     "properties": [
-      "tentang"
+      "disahkan oleh"
     ],
     "entities_matches": [
       {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 23 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/16/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 16 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1986/5/pasal/0043",
+        "label": "UU tahun 1986 no 5 pasal 43"
       },
       {
         "id": "https://example.org/lex2kg/uu",
         "label": "UU"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
+        "id": "https://example.org/lex2kg/uu/1954/30/pasal/0008/versi/19540914/text",
+        "label": "UU tahun 1954 no 30 pasal 8 versi 14 September 1954 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2009/38/mengingat/text",
-        "label": "UU tahun 2009 no 38 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
+        "label": "UU tahun 1982 no 18 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/38/mengingat/text",
-        "label": "UU tahun 1957 no 38 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/3",
+        "label": "UU tahun 2013 no 3"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/30/mengingat/text",
-        "label": "UU tahun 1957 no 30 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/13",
+        "label": "UU tahun 2013 no 13"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/34/mengingat/text",
-        "label": "UU tahun 1957 no 34 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/3/pasal/0013/versi/20130111",
+        "label": "UU tahun 2013 no 3 pasal 13 versi 11 Januari 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2003/12/bab/0017",
-        "label": "UU tahun 2003 no 12 bab 17"
+        "id": "https://example.org/lex2kg/uu/2013/3/pasal/0003/versi/20130111",
+        "label": "UU tahun 2013 no 3 pasal 3 versi 11 Januari 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/3/bab/0017",
-        "label": "UU tahun 2014 no 3 bab 17"
+        "id": "https://example.org/lex2kg/uu/2013/1/pasal/0013/versi/20130108",
+        "label": "UU tahun 2013 no 1 pasal 13 versi 8 Januari 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1987/1/bab/0004",
-        "label": "UU tahun 1987 no 1 bab 4"
+        "id": "https://example.org/lex2kg/uu/20/24",
+        "label": "UU no 20 no 24"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2004/33/bab/0008/bagian/0002",
-        "label": "UU tahun 2004 no 33 bab 8 bagian 2"
+        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
+        "label": "UU tahun 1994 no 3 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2004/33/bab/0009/bagian/0002",
-        "label": "UU tahun 2004 no 33 bab 9 bagian 2"
+        "id": "https://example.org/lex2kg/uu/2013/9/pasal/0013/versi/20130313",
+        "label": "UU tahun 2013 no 9 pasal 13 versi 13 Maret 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2008/33/bab/0004/bagian/0002",
-        "label": "UU tahun 2008 no 33 bab 4 bagian 2"
+        "id": "https://example.org/lex2kg/uu/2013/1/pasal/0003/versi/20130108",
+        "label": "UU tahun 2013 no 1 pasal 3 versi 8 Januari 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/17/bab/0005/bagian/0009/paragraf/0003",
-        "label": "UU tahun 2014 no 17 bab 5 bagian 9 paragraf 3"
+        "id": "https://example.org/lex2kg/uu/2013/1/pasal/0024/versi/20130108",
+        "label": "UU tahun 2013 no 1 pasal 24 versi 8 Januari 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/19/bab/0005/bagian/0008/paragraf/0002",
-        "label": "UU tahun 2013 no 19 bab 5 bagian 8 paragraf 2"
+        "id": "https://example.org/lex2kg/uu/2013/24/pasal/0001/versi/20131224",
+        "label": "UU tahun 2013 no 24 pasal 1 versi 24 Desember 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2004/38/mengingat/text",
-        "label": "UU tahun 2004 no 38 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/9/pasal/0024/versi/20130313",
+        "label": "UU tahun 2013 no 9 pasal 24 versi 13 Maret 2013"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/37/mengingat/text",
-        "label": "UU tahun 2014 no 37 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/24",
+        "label": "UU tahun 2013 no 24"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/17/bab/0005/bagian/0009/paragraf/0002",
-        "label": "UU tahun 2014 no 17 bab 5 bagian 9 paragraf 2"
+        "id": "https://example.org/lex2kg/uu/2013/24/pasal/0001/versi/20131224/ayat/0003/text",
+        "label": "UU tahun 2013 no 24 pasal 1 versi 24 Desember 2013 ayat 3 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/17/bab/0005/bagian/0009/paragraf/0001",
-        "label": "UU tahun 2014 no 17 bab 5 bagian 9 paragraf 1"
+        "id": "https://example.org/lex2kg/uu/2003/24/pasal/0041/versi/20030813/ayat/0002/text",
+        "label": "UU tahun 2003 no 24 pasal 41 versi 13 Agustus 2003 ayat 2 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/34/menimbang/text",
-        "label": "UU tahun 1957 no 34 menimbang text"
+        "id": "https://example.org/lex2kg/uu/2002/20/pasal/0044/versi/20020923/text",
+        "label": "UU tahun 2002 no 20 pasal 44 versi 23 September 2002 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/43/menimbang/text",
-        "label": "UU tahun 1957 no 43 menimbang text"
+        "id": "https://example.org/lex2kg/uu/2013/13/mengingat",
+        "label": "UU tahun 2013 no 13 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/30/menimbang/text",
-        "label": "UU tahun 1957 no 30 menimbang text"
+        "id": "https://example.org/lex2kg/uu/2013/24/mengingat",
+        "label": "UU tahun 2013 no 24 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
-        "label": "UU tahun 2009 no 44 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2013/9/pasal/0024/versi/20130313/text",
+        "label": "UU tahun 2013 no 9 pasal 24 versi 13 Maret 2013 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
-        "label": "UU tahun 2007 no 24 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2002/25/bab/0004",
+        "label": "UU tahun 2002 no 25 bab 4"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
-        "label": "UU tahun 2010 no 8 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1992/4/pasal/0031/versi/19920310/text",
+        "label": "UU tahun 1992 no 4 pasal 31 versi 10 Maret 1992 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2003/41/bab/0002",
+        "label": "UU tahun 2003 no 41 bab 2"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2002/31/bab/0004",
+        "label": "UU tahun 2002 no 31 bab 4"
       }
     ],
     "properties_matches": [
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
       {
         "id": "lex2kg-o:tentang",
         "label": "tentang"
@@ -724,45 +774,57 @@
         "label": "judul"
       },
       {
-        "id": "lex2kg-o:teks",
-        "label": "teks"
+        "id": "lex2kg-o:disahkanDi",
+        "label": "disahkan di"
       },
       {
-        "id": "lex2kg-o:merujuk",
-        "label": "merujuk"
+        "id": "lex2kg-o:disahkanOleh",
+        "label": "disahkan oleh"
+      },
+      {
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
+      },
+      {
+        "id": "lex2kg-o:nomor",
+        "label": "nomor"
+      },
+      {
+        "id": "lex2kg-o:tanggal",
+        "label": "tanggal"
+      },
+      {
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
       }
     ]
   },
   {
     "id": "q5",
-    "question": "Ada berapa pasal di dalam UU tahun 2008 no 40?",
-    "englishQuestion": "What is the number of articles in UU tahun 2008 no 40?",
-    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2008/40> <https://example.org/lex2kg/ontology/pasal> ?article . }",
+    "question": "Berapa jumlah pasal dalam UU tahun 1985 no 2?",
+    "englishQuestion": "How many articles are in UU tahun 1985 no 2?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/1985/2> <https://example.org/lex2kg/ontology/pasal> ?article . }",
     "category": "legal",
     "complexity": "intermediate",
-    "templateId": "law-articles",
+    "templateId": "law-articles-count",
     "thoughts": [
-      "1. The question asks for the number of articles (pasal) within UU tahun 2008 no 40.",
-      "2. The entity '<https://example.org/lex2kg/uu/2008/40>' represents a legal document in the Indonesian legal system.",
-      "3. The property 'lex2kg-o:pasal' links legal documents to their constituent articles.",
-      "4. To solve this, count all articles linked to <https://example.org/lex2kg/uu/2008/40> via the 'lex2kg-o:pasal' property.",
-      "5. Construct a SPARQL query using the COUNT function to determine the number of articles."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
     "entities": [
-      "UU tahun 2008 no 40"
+      "UU tahun 1985 no 2"
     ],
     "properties": [
       "pasal"
     ],
     "entities_matches": [
-      {
-        "id": "https://example.org/lex2kg/uu/2008/46/menimbang/huruf/a",
-        "label": "UU tahun 2008 no 46 menimbang huruf a"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/8/menimbang/huruf/a",
-        "label": "UU tahun 2006 no 8 menimbang huruf a"
-      },
       {
         "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003/0003",
         "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3 3 3"
@@ -784,366 +846,72 @@
         "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 3 3"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
-        "label": "UU tahun 2009 no 4 pasal 153"
+        "id": "https://example.org/lex2kg/uu/1957/34/mengingat/text",
+        "label": "UU tahun 1957 no 34 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu",
-        "label": "UU"
+        "id": "https://example.org/lex2kg/uu/1997/24/menimbang",
+        "label": "UU tahun 1997 no 24 menimbang"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
+        "label": "UU tahun 2009 no 4 pasal 153"
       },
       {
         "id": "https://example.org/lex2kg/uu/2011/23/mengingat/huruf/description",
         "label": "UU tahun 2011 no 23 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
-        "label": "UU tahun 1982 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/8",
-        "label": "UU tahun 2008 no 8"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/8/mengingat",
-        "label": "UU tahun 2008 no 8 mengingat"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/40/pasal/0040",
-        "label": "UU tahun 2009 no 40 pasal 40"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1947/40",
-        "label": "UU tahun 1947 no 40"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0040",
-        "label": "UU tahun 1950 no 1 pasal 40"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/37/mengingat/0006",
-        "label": "UU tahun 2003 no 37 mengingat 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/14/mengingat/text",
-        "label": "UU tahun 1950 no 14 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/17/pasal/0383",
-        "label": "UU tahun 2014 no 17 pasal 383"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/17/pasal/0248",
-        "label": "UU tahun 2014 no 17 pasal 248"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0224",
-        "label": "UU tahun 1950 no 1 pasal 224"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/15/mengingat/text",
-        "label": "UU tahun 1950 no 15 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/1/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 1 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/15/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 15 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/2/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 2 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/2/pasal/0008/versi/20080104",
-        "label": "UU tahun 2008 no 2 pasal 8 versi 4 Januari 2008"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/8/pasal/0002/versi/20080104",
-        "label": "UU tahun 2008 no 8 pasal 2 versi 4 Januari 2008"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/40",
-        "label": "UU tahun 2008 no 40"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/40/bab/0008",
-        "label": "UU tahun 2008 no 40 bab 8"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/40/pasal/0008",
-        "label": "UU tahun 2008 no 40 pasal 8"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/40/mengingat",
-        "label": "UU tahun 2008 no 40 mengingat"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/37/pasal/0040/versi/20081007",
-        "label": "UU tahun 2008 no 37 pasal 40 versi 7 Oktober 2008"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/17/pasal/0193/versi/20140805/text",
-        "label": "UU tahun 2014 no 17 pasal 193 versi 5 Agustus 2014 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/20/pasal/0062/versi/20140917/text",
-        "label": "UU tahun 2014 no 20 pasal 62 versi 17 September 2014 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/17/pasal/0383/versi/20140805/ayat/0001/text",
-        "label": "UU tahun 2014 no 17 pasal 383 versi 5 Agustus 2014 ayat 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/20/pasal/0061/versi/20140917/text",
-        "label": "UU tahun 2014 no 20 pasal 61 versi 17 September 2014 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/34/mengingat/text",
-        "label": "UU tahun 1957 no 34 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1962/8/mengingat/text",
-        "label": "UU tahun 1962 no 8 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/44/mengingat/text",
-        "label": "UU tahun 1957 no 44 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/58/mengingat/text",
-        "label": "UU tahun 1957 no 58 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/6/pasal/0008/versi/20080104/ayat/0002/huruf/u/text",
-        "label": "UU tahun 2008 no 6 pasal 8 versi 4 Januari 2008 ayat 2 huruf u text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/5/pasal/0008/versi/20080104/ayat/0002/huruf/u/text",
-        "label": "UU tahun 2008 no 5 pasal 8 versi 4 Januari 2008 ayat 2 huruf u text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/4/pasal/0008/versi/20080104/ayat/0002/huruf/u/text",
-        "label": "UU tahun 2008 no 4 pasal 8 versi 4 Januari 2008 ayat 2 huruf u text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/38",
-        "label": "UU tahun 2008 no 38"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "lex2kg-o:bab",
-        "label": "bab"
-      },
-      {
-        "id": "lex2kg-o:nomor",
-        "label": "nomor"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      },
-      {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
-      },
-      {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
-      },
-      {
-        "id": "lex2kg-o:versi",
-        "label": "versi"
-      },
-      {
-        "id": "lex2kg-o:judul",
-        "label": "judul"
-      },
-      {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
-      },
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
-      {
-        "id": "lex2kg-o:disahkanOleh",
-        "label": "disahkan oleh"
-      }
-    ]
-  },
-  {
-    "id": "q6",
-    "question": "Undang-undang apa saja yang disahkan oleh DR. H. Susilo Bambang Yudhoyono?",
-    "englishQuestion": "What laws were enacted by DR. H. Susilo Bambang Yudhoyono?",
-    "sparql": "select ?law ?title ?date where { ?law <https://example.org/lex2kg/ontology/disahkanOleh> \"DR. H. Susilo Bambang Yudhoyono\" . ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/disahkanPada> ?date . } order by DESC(?date)",
-    "category": "legal",
-    "complexity": "intermediate",
-    "templateId": "law-by-enactor",
-    "thoughts": [
-      "1. The question asks for laws enacted by the person DR. H. Susilo Bambang Yudhoyono.",
-      "2. In the legal ontology, 'lex2kg-o:disahkanOleh' links laws to their enactor.",
-      "3. Laws also have titles and enactment dates accessible via respective properties.",
-      "4. To solve this, find all laws enacted by DR. H. Susilo Bambang Yudhoyono and retrieve their titles and dates.",
-      "5. Construct a SPARQL query that filters by enactor and orders results by date (most recent first)."
-    ],
-    "entities": [],
-    "properties": [
-      "disahkan oleh",
-      "tentang",
-      "disahkan pada"
-    ],
-    "entities_matches": [
-      {
         "id": "https://example.org/lex2kg/uu",
         "label": "UU"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/24/pasal/0068",
-        "label": "UU tahun 2013 no 24 pasal 68"
+        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
+        "label": "UU tahun 1982 no 18 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0061",
-        "label": "UU tahun 2013 no 20 pasal 61"
+        "id": "https://example.org/lex2kg/uu/1985/5/mengingat",
+        "label": "UU tahun 1985 no 5 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034/versi/20130806/huruf/a/text",
-        "label": "UU tahun 2013 no 20 pasal 34 versi 6 Agustus 2013 huruf a text"
+        "id": "https://example.org/lex2kg/uu/1985/5",
+        "label": "UU tahun 1985 no 5"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034",
-        "label": "UU tahun 2013 no 20 pasal 34"
+        "id": "https://example.org/lex2kg/uu/1985/15/mengingat",
+        "label": "UU tahun 1985 no 15 mengingat"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
+        "id": "https://example.org/lex2kg/uu/2002/4/mengingat/huruf/0002",
+        "label": "UU tahun 2002 no 4 mengingat huruf 2"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
+        "id": "https://example.org/lex2kg/uu/1995/6/pasal/0014/versi/19950803/text",
+        "label": "UU tahun 1995 no 6 pasal 14 versi 3 Agustus 1995 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/25/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 25 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1996/7/pasal/0038/versi/19961104/text",
+        "label": "UU tahun 1996 no 7 pasal 38 versi 4 November 1996 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/4/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 4 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/1997/32/bab/0006",
+        "label": "UU tahun 1997 no 32 bab 6"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0002/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 2 text"
+        "id": "https://example.org/lex2kg/uu/1990/5/pasal/0042/versi/19900810/text",
+        "label": "UU tahun 1990 no 5 pasal 42 versi 10 Agustus 1990 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0001/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 1 text"
+        "id": "https://example.org/lex2kg/uu/1954/45/mengingat/text",
+        "label": "UU tahun 1954 no 45 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0026/versi/20120511/ayat/0002/huruf/g/huruf/description",
-        "label": "UU tahun 2012 no 8 pasal 26 versi 11 Mei 2012 ayat 2 huruf g huruf description"
+        "id": "https://example.org/lex2kg/uu/1954/21/mengingat/text",
+        "label": "UU tahun 1954 no 21 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2009/32/pasal/0022/versi/20091003/huruf/h/huruf/0001/huruf/h/huruf/c/huruf/description",
-        "label": "UU tahun 2009 no 32 pasal 22 versi 3 Oktober 2009 huruf h huruf 1 huruf h huruf c huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1997/2/pasal/0004/versi/19970103/huruf/h/huruf/0001/huruf/h/huruf/description",
-        "label": "UU tahun 1997 no 2 pasal 4 versi 3 Januari 1997 huruf h huruf 1 huruf h huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/32/pasal/0022/versi/20091003/huruf/h/huruf/0001/huruf/h/huruf/description",
-        "label": "UU tahun 2009 no 32 pasal 22 versi 3 Oktober 2009 huruf h huruf 1 huruf h huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/4/menimbang/huruf/h",
-        "label": "UU tahun 2006 no 4 menimbang huruf h"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/17/menimbang/huruf/h",
-        "label": "UU tahun 2004 no 17 menimbang huruf h"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1986/5/menimbang/huruf/b/text",
-        "label": "UU tahun 1986 no 5 menimbang huruf b text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/30/menimbang/huruf/b/text",
-        "label": "UU tahun 2002 no 30 menimbang huruf b text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/30/menimbang/huruf/b/text",
-        "label": "UU tahun 2003 no 30 menimbang huruf b text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1985/7/mengingat/huruf/description",
-        "label": "UU tahun 1985 no 7 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1985/8/mengingat/huruf/description",
-        "label": "UU tahun 1985 no 8 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/34/mengingat/huruf/0008/text",
-        "label": "UU tahun 2007 no 34 mengingat huruf 8 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/7/mengingat/huruf/description",
-        "label": "UU tahun 1984 no 7 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/44/mengingat/text",
-        "label": "UU tahun 2008 no 44 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
-        "label": "UU tahun 2009 no 44 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1954/18/mengingat/text",
-        "label": "UU tahun 1954 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/43/mengingat/text",
-        "label": "UU tahun 2008 no 43 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/huruf/g/huruf/c/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 huruf g huruf c huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/38/mengingat/text",
-        "label": "UU tahun 2004 no 38 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/0004/text",
-        "label": "UU tahun 2002 no 23 mengingat huruf 4 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/25/bab/0004",
-        "label": "UU tahun 2002 no 25 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1992/4/pasal/0031/versi/19920310/text",
-        "label": "UU tahun 1992 no 4 pasal 31 versi 10 Maret 1992 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/41/bab/0002",
-        "label": "UU tahun 2003 no 41 bab 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/31/bab/0004",
-        "label": "UU tahun 2002 no 31 bab 4"
+        "id": "https://example.org/lex2kg/uu/1957/44/mengingat/text",
+        "label": "UU tahun 1957 no 44 mengingat text"
       },
       {
         "id": "https://example.org/lex2kg/uu/1962/8/mengingat/text",
@@ -1154,60 +922,254 @@
         "label": "UU tahun 1962 no 12 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1962/7/mengingat/text",
-        "label": "UU tahun 1962 no 7 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1985/2/pasal/0001/versi/19850107/0035",
+        "label": "UU tahun 1985 no 2 pasal 1 versi 7 Januari 1985 35"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/26/mengingat/text",
-        "label": "UU tahun 1957 no 26 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1985/2/pasal/0001/versi/19850107/0025",
+        "label": "UU tahun 1985 no 2 pasal 1 versi 7 Januari 1985 25"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1957/36/mengingat/text",
-        "label": "UU tahun 1957 no 36 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1985/2/pasal/0001/versi/19850107/0008",
+        "label": "UU tahun 1985 no 2 pasal 1 versi 7 Januari 1985 8"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1976/8/mengingat/text",
-        "label": "UU tahun 1976 no 8 mengingat text"
+        "id": "https://example.org/lex2kg/uu/1992/21/pasal/0128/versi/19920917/text",
+        "label": "UU tahun 1992 no 21 pasal 128 versi 17 September 1992 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/1",
-        "label": "UU tahun 2013 no 1"
+        "id": "https://example.org/lex2kg/uu/1995/1/pasal/0128/versi/19950307/ayat/0001/text",
+        "label": "UU tahun 1995 no 1 pasal 128 versi 7 Maret 1995 ayat 1 text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2014/33",
-        "label": "UU tahun 2014 no 33"
+        "id": "https://example.org/lex2kg/uu/1954/46/mengingat/text",
+        "label": "UU tahun 1954 no 46 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/1",
-        "label": "UU tahun 2012 no 1"
+        "id": "https://example.org/lex2kg/uu/1957/58/mengingat/text",
+        "label": "UU tahun 1957 no 58 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0094",
-        "label": "UU tahun 2012 no 8 pasal 94"
+        "id": "https://example.org/lex2kg/uu/2014/24/pasal/0003/versi/20140930/ayat/0002/huruf/description",
+        "label": "UU tahun 2014 no 24 pasal 3 versi 30 September 2014 ayat 2 huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0094",
-        "label": "UU tahun 2012 no 11 pasal 94"
+        "id": "https://example.org/lex2kg/uu/1985/2/pasal/0001/versi/19850107/0009",
+        "label": "UU tahun 1985 no 2 pasal 1 versi 7 Januari 1985 9"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0083/versi/20111016/huruf/a/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 83 versi 16 Oktober 2011 huruf a huruf description"
+        "id": "https://example.org/lex2kg/uu/1985/2/pasal/0001/versi/19850107/0032",
+        "label": "UU tahun 1985 no 2 pasal 1 versi 7 Januari 1985 32"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0047/versi/20141016/huruf/a/huruf/description",
-        "label": "UU tahun 2002 no 19 pasal 47 versi 16 Oktober 2014 huruf a huruf description"
+        "id": "https://example.org/lex2kg/uu/1985/2",
+        "label": "UU tahun 1985 no 2"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "lex2kg-o:nomor",
+        "label": "nomor"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0047/versi/20141016/huruf/b/huruf/description",
-        "label": "UU tahun 2002 no 19 pasal 47 versi 16 Oktober 2014 huruf b huruf description"
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/30/bab/0004",
-        "label": "UU tahun 2002 no 30 bab 4"
+        "id": "lex2kg-o:pasal",
+        "label": "pasal"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
+      },
+      {
+        "id": "lex2kg-o:judul",
+        "label": "judul"
+      },
+      {
+        "id": "lex2kg-o:paragraf",
+        "label": "paragraf"
+      },
+      {
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
+      }
+    ]
+  },
+  {
+    "id": "q6",
+    "question": "Berapa jumlah paragraf dalam bagian UU tahun 2014 no 5 bab 8 bagian 4?",
+    "englishQuestion": "How many paragraphs are in section UU tahun 2014 no 5 bab 8 bagian 4?",
+    "sparql": "select (count(?paragraph) as ?count) where { <https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004> <https://example.org/lex2kg/ontology/paragraf> ?paragraph . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "paragraph-count",
+    "thoughts": [
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
+    ],
+    "entities": [
+      "UU tahun 2014 no 5 bab 8 bagian 4"
+    ],
+    "properties": [
+      "paragraf"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/34/mengingat/text",
+        "label": "UU tahun 1957 no 34 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/24/menimbang",
+        "label": "UU tahun 1997 no 24 menimbang"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2015/4/mengingat/huruf/description",
+        "label": "UU tahun 2015 no 4 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/35/mengingat/huruf/description",
+        "label": "UU tahun 2014 no 35 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/4/mengingat/huruf/description",
+        "label": "UU tahun 2014 no 4 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2011/23/mengingat/huruf/description",
+        "label": "UU tahun 2011 no 23 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/13/bab/0004/bagian/0002",
+        "label": "UU tahun 2010 no 13 bab 4 bagian 2"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/bab/0010/bagian/0004",
+        "label": "UU tahun 1981 no 8 bab 10 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0004/bagian/0003",
+        "label": "UU tahun 2010 no 8 bab 4 bagian 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu",
+        "label": "UU"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
+        "label": "UU tahun 1982 no 18 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/14",
+        "label": "UU tahun 2014 no 14"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2005/5/mengingat/huruf/0005",
+        "label": "UU tahun 2005 no 5 mengingat huruf 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2005/4/mengingat/huruf/0005",
+        "label": "UU tahun 2005 no 4 mengingat huruf 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1986/5/menimbang/huruf/b",
+        "label": "UU tahun 1986 no 5 menimbang huruf b"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/10/menimbang/huruf/b",
+        "label": "UU tahun 1995 no 10 menimbang huruf b"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/8/mengingat/huruf/0008",
+        "label": "UU tahun 2008 no 8 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/4/mengingat/huruf/0008",
+        "label": "UU tahun 2010 no 4 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/8/mengingat/huruf/0008",
+        "label": "UU tahun 2013 no 8 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/10/mengingat/huruf/0008",
+        "label": "UU tahun 2010 no 10 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/48/mengingat/huruf/0008",
+        "label": "UU tahun 2008 no 48 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/4/mengingat/huruf/0004",
+        "label": "UU tahun 2010 no 4 mengingat huruf 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/6/pasal/0014/versi/19950803/text",
+        "label": "UU tahun 1995 no 6 pasal 14 versi 3 Agustus 1995 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1996/7/pasal/0038/versi/19961104/text",
+        "label": "UU tahun 1996 no 7 pasal 38 versi 4 November 1996 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/32/bab/0006",
+        "label": "UU tahun 1997 no 32 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/5/pasal/0042/versi/19900810/text",
+        "label": "UU tahun 1990 no 5 pasal 42 versi 10 Agustus 1990 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/45/mengingat/text",
+        "label": "UU tahun 1954 no 45 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/45/menimbang/text",
+        "label": "UU tahun 1954 no 45 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/46/mengingat/text",
+        "label": "UU tahun 1954 no 46 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/24/mengingat/huruf/0006/text",
+        "label": "UU tahun 2014 no 24 mengingat huruf 6 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/31/mengingat/huruf/description",
+        "label": "UU tahun 2014 no 31 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/24/mengingat/huruf/description",
+        "label": "UU tahun 2014 no 24 mengingat huruf description"
       },
       {
         "id": "https://example.org/lex2kg/uu/1993/4/mengingat/huruf/description",
@@ -1218,1354 +1180,436 @@
         "label": "UU tahun 1973 no 4 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2003/34/mengingat/huruf/description",
-        "label": "UU tahun 2003 no 34 mengingat huruf description"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0005/versi/20140115",
+        "label": "UU tahun 2014 no 5 pasal 5 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/1995/1/pasal/0012/versi/19950307/huruf/h/huruf/description",
-        "label": "UU tahun 1995 no 1 pasal 12 versi 7 Maret 1995 huruf h huruf description"
+        "id": "https://example.org/lex2kg/uu/2014/5",
+        "label": "UU tahun 2014 no 5"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2009/32/pasal/0014/versi/20091003/huruf/h/huruf/0001/huruf/description",
-        "label": "UU tahun 2009 no 32 pasal 14 versi 3 Oktober 2009 huruf h huruf 1 huruf description"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0004/versi/20140115",
+        "label": "UU tahun 2014 no 5 pasal 4 versi 15 Januari 2014"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
-        "label": "UU tahun 2007 no 24 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0005",
+        "label": "UU tahun 2014 no 5 pasal 5"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
-        "label": "UU tahun 2010 no 8 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2014/5/pasal/0004/versi/20140115/h",
+        "label": "UU tahun 2014 no 5 pasal 4 versi 15 Januari 2014 h"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/28/pasal/0004/versi/20021216/text",
-        "label": "UU tahun 2002 no 28 pasal 4 versi 16 Desember 2002 text"
+        "id": "https://example.org/lex2kg/uu/1986/5/bab/0005",
+        "label": "UU tahun 1986 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/5/bab/0005",
+        "label": "UU tahun 1985 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1996/5/bab/0005",
+        "label": "UU tahun 1996 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1992/5/bab/0005",
+        "label": "UU tahun 1992 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/5/bab/0005",
+        "label": "UU tahun 1990 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/8/bab/0008",
+        "label": "UU tahun 2008 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/8/bab/0008",
+        "label": "UU tahun 1985 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0008/bagian/0008",
+        "label": "UU tahun 2012 no 8 bab 8 bagian 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/8/bab/0008",
+        "label": "UU tahun 1990 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0008",
+        "label": "UU tahun 2010 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0006/bagian/0008",
+        "label": "UU tahun 2012 no 8 bab 6 bagian 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2016/8/bab/0004/bagian/0008",
+        "label": "UU tahun 2016 no 8 bab 4 bagian 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0008/bagian/0004",
+        "label": "UU tahun 2010 no 8 bab 8 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0007/bagian/0008",
+        "label": "UU tahun 2012 no 8 bab 7 bagian 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1994/4/bab/0004",
+        "label": "UU tahun 1994 no 4 bab 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2011/24/bab/0004/bagian/0004",
+        "label": "UU tahun 2011 no 24 bab 4 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2004/4/bab/0004",
+        "label": "UU tahun 2004 no 4 bab 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1994/4/mengingat/huruf/description",
+        "label": "UU tahun 1994 no 4 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/14/mengingat",
+        "label": "UU tahun 2014 no 14 mengingat"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0005",
+        "label": "UU tahun 2014 no 5 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/14/bab/0005",
+        "label": "UU tahun 2014 no 14 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/34/bab/0005",
+        "label": "UU tahun 2014 no 34 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/25/bab/0005",
+        "label": "UU tahun 2014 no 25 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/15/bab/0005",
+        "label": "UU tahun 2014 no 15 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/5/bab/0008",
+        "label": "UU tahun 2008 no 5 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/5/bab/0008",
+        "label": "UU tahun 1985 no 5 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/8/bab/0005",
+        "label": "UU tahun 2008 no 8 bab 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0008/bagian/0005",
+        "label": "UU tahun 2012 no 8 bab 8 bagian 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/5/mengingat/huruf/0008",
+        "label": "UU tahun 2008 no 5 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0008/bagian/0004",
+        "label": "UU tahun 2012 no 8 bab 8 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/bab/0004/bagian/0004",
+        "label": "UU tahun 2010 no 8 bab 4 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2016/8/bab/0004/bagian/0004",
+        "label": "UU tahun 2016 no 8 bab 4 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004",
+        "label": "UU tahun 2014 no 5 bab 8 bagian 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004/paragraf/0004",
+        "label": "UU tahun 2014 no 5 bab 8 bagian 4 paragraf 4"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004/paragraf/0008",
+        "label": "UU tahun 2014 no 5 bab 8 bagian 4 paragraf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004/paragraf/0005",
+        "label": "UU tahun 2014 no 5 bab 8 bagian 4 paragraf 5"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0008/bagian/0004/paragraf/0001",
+        "label": "UU tahun 2014 no 5 bab 8 bagian 4 paragraf 1"
       }
     ],
     "properties_matches": [
-      {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
-      },
-      {
-        "id": "lex2kg-o:judul",
-        "label": "judul"
-      },
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
-      {
-        "id": "lex2kg-o:merujuk",
-        "label": "merujuk"
-      },
-      {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
-      },
-      {
-        "id": "lex2kg-o:bahasa",
-        "label": "bahasa"
-      },
-      {
-        "id": "lex2kg-o:segmen",
-        "label": "segmen"
-      },
-      {
-        "id": "lex2kg-o:disahkanOleh",
-        "label": "disahkan oleh"
-      },
-      {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
-      },
-      {
-        "id": "lex2kg-o:huruf",
-        "label": "huruf"
-      },
-      {
-        "id": "lex2kg-o:bab",
-        "label": "bab"
-      },
-      {
-        "id": "lex2kg-o:yurisdiksi",
-        "label": "yurisdiksi"
-      },
-      {
-        "id": "lex2kg-o:menyisipkan",
-        "label": "menyisipkan"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      }
-    ]
-  },
-  {
-    "id": "q7",
-    "question": "Peraturan apa yang diamendemen oleh UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12?",
-    "englishQuestion": "What regulations were modified by UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0012> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what",
-    "thoughts": [
-      "1. The question asks for laws that were amended by UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12.",
-      "2. The entity '<https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0012>' represents an amending law in the Indonesian legal system.",
-      "3. Amendments work through versions: <https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0012> changes versions of articles in other laws.",
-      "4. To solve this, trace the chain: UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12 changes versions, which belong to articles, which belong to laws.",
-      "5. Construct a multi-step SPARQL query to follow the amendment relationship through the version mechanism.",
-      "6. The query uses multiple properties: 'lex2kg-o:mengubah', 'lex2kg-o:versi', 'lex2kg-o:pasal', and 'lex2kg-o:tentang'."
-    ],
-    "entities": [
-      "UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12"
-    ],
-    "properties": [
-      "mengubah",
-      "versi",
-      "pasal",
-      "tentang"
-    ],
-    "entities_matches": [
-      {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 23 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/16/mengingat/huruf/description",
-        "label": "UU tahun 2002 no 16 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu",
-        "label": "UU"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/15/pasal/0003/versi/20121005/ayat/0002/huruf/d/huruf/d/huruf/description",
-        "label": "UU tahun 2012 no 15 pasal 3 versi 5 Oktober 2012 ayat 2 huruf d huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/10/menimbang/huruf/d",
-        "label": "UU tahun 2012 no 10 menimbang huruf d"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0002/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0001/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0026/versi/20120511/ayat/0002/huruf/g/huruf/description",
-        "label": "UU tahun 2012 no 8 pasal 26 versi 11 Mei 2012 ayat 2 huruf g huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
-        "label": "UU tahun 1982 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1",
-        "label": "UU tahun 2020 no 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10",
-        "label": "UU tahun 2020 no 10"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/11",
-        "label": "UU no 2 no 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
-        "label": "UU tahun 2009 no 4 pasal 153"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1958/64",
-        "label": "UU tahun 1958 no 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0064",
-        "label": "UU tahun 1950 no 1 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/58/menimbang/text",
-        "label": "UU tahun 1957 no 58 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/34/menimbang/text",
-        "label": "UU tahun 1957 no 34 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/57/menimbang/text",
-        "label": "UU tahun 1957 no 57 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/41/menimbang/text",
-        "label": "UU tahun 1957 no 41 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/43/menimbang/text",
-        "label": "UU tahun 1957 no 43 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/description",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/d/text",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125/h",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011 h"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/46/menimbang/huruf",
-        "label": "UU tahun 2009 no 46 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1985/16/menimbang/huruf/a/text",
-        "label": "UU tahun 1985 no 16 menimbang huruf a text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/16/menimbang/huruf",
-        "label": "UU tahun 2009 no 16 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/12/pasal/0012",
-        "label": "UU tahun 2012 no 12 pasal 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/18/pasal/0012",
-        "label": "UU tahun 2012 no 18 pasal 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/24/pasal/0012",
-        "label": "UU tahun 2012 no 24 pasal 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/12/bab/0017",
-        "label": "UU tahun 2003 no 12 bab 17"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/3/bab/0017",
-        "label": "UU tahun 2014 no 3 bab 17"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1987/1/bab/0004",
-        "label": "UU tahun 1987 no 1 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/29/pasal/0072",
-        "label": "UU tahun 2014 no 29 pasal 72"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/31/menimbang/huruf/d",
-        "label": "UU tahun 2014 no 31 menimbang huruf d"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1995/1/pasal/0028/versi/19950307/ayat/0002/text",
-        "label": "UU tahun 1995 no 1 pasal 28 versi 7 Maret 1995 ayat 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/2",
-        "label": "UU tahun 2020 no 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0010/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 10 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/bab/0011",
-        "label": "UU tahun 2012 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/bab/0011",
-        "label": "UU tahun 2011 no 12 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/14/pasal/0011/versi/20110919/text",
-        "label": "UU tahun 2011 no 14 pasal 11 versi 19 September 2011 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/bab/0011",
-        "label": "UU tahun 2010 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0011",
-        "label": "UU tahun 2012 no 11 pasal 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2016/1/pasal/0064",
-        "label": "UU tahun 2016 no 1 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1964/35/menimbang/text",
-        "label": "UU tahun 1964 no 35 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1964/35/mengingat/text",
-        "label": "UU tahun 1964 no 35 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1997/32/pasal/0064",
-        "label": "UU tahun 1997 no 32 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/2/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 2 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/1/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 1 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/2/mengingat/huruf/0002/text",
-        "label": "UU tahun 2002 no 2 mengingat huruf 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0035/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 35 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10/menimbang/huruf",
-        "label": "UU tahun 2020 no 10 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/menimbang/huruf",
-        "label": "UU tahun 2020 no 1 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/menimbang/huruf",
-        "label": "UU tahun 2020 no 12 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/mengingat/huruf/description",
-        "label": "UU tahun 2020 no 1 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/18/pasal/0024/versi/20121116/huruf",
-        "label": "UU tahun 2012 no 18 pasal 24 versi 16 November 2012 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/12/pasal/0006/versi/20120810/huruf",
-        "label": "UU tahun 2012 no 12 pasal 6 versi 10 Agustus 2012 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0012/versi/20120511/huruf",
-        "label": "UU tahun 2012 no 8 pasal 12 versi 11 Mei 2012 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/10/mengingat/huruf/0012/text",
-        "label": "UU tahun 2010 no 10 mengingat huruf 12 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/12/menimbang/huruf",
-        "label": "UU tahun 2012 no 12 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1992/24/pasal/0031",
-        "label": "UU tahun 1992 no 24 pasal 31"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1992/4/pasal/0031",
-        "label": "UU tahun 1992 no 4 pasal 31"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0154/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 154 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0118/versi/20201102/huruf/description",
-        "label": "UU tahun 2020 no 11 pasal 118 versi 2 November 2020 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0064",
-        "label": "UU tahun 2012 no 11 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/pasal/0064",
-        "label": "UU tahun 2010 no 11 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/11/pasal/0064",
-        "label": "UU tahun 2006 no 11 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/pasal/0064",
-        "label": "UU tahun 2011 no 12 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/6/pasal/0064",
-        "label": "UU tahun 2011 no 6 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2016/8/pasal/0064",
-        "label": "UU tahun 2016 no 8 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2016/7/pasal/0064",
-        "label": "UU tahun 2016 no 7 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1986/2/pasal/0064",
-        "label": "UU tahun 1986 no 2 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2017/2/pasal/0064",
-        "label": "UU tahun 2017 no 2 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1986/2/pasal/0064/versi/19860308/text",
-        "label": "UU tahun 1986 no 2 pasal 64 versi 8 Maret 1986 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0002/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 2 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0113/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 113 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/16/pasal/0011/versi/20201102/huruf",
-        "label": "UU tahun 2012 no 16 pasal 11 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0013/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 13 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0001/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 1 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/mengingat/huruf/description",
-        "label": "UU tahun 2020 no 12 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/mengingat/huruf/0001",
-        "label": "UU tahun 2020 no 12 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/mengingat/huruf/0001/text",
-        "label": "UU tahun 2020 no 12 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/mengingat/huruf",
-        "label": "UU tahun 2020 no 12 mengingat huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0012",
-        "label": "UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0011",
-        "label": "UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0002",
-        "label": "UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102/huruf/0001",
-        "label": "UU tahun 2020 no 11 pasal 64 versi 2 November 2020 huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0064/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 64 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/34/menimbang/huruf/a",
-        "label": "UU tahun 2014 no 34 menimbang huruf a"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
-        "label": "UU tahun 2007 no 24 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
-        "label": "UU tahun 2010 no 8 mengingat text"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
-      {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:segmen",
-        "label": "segmen"
-      },
-      {
-        "id": "lex2kg-o:disahkanOleh",
-        "label": "disahkan oleh"
-      },
-      {
-        "id": "lex2kg-o:judul",
-        "label": "judul"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      },
       {
         "id": "lex2kg-o:nomor",
         "label": "nomor"
       },
       {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
-      },
-      {
-        "id": "lex2kg-o:versi",
-        "label": "versi"
-      },
-      {
-        "id": "lex2kg-o:tanggal",
-        "label": "tanggal"
-      },
-      {
-        "id": "lex2kg-o:huruf",
-        "label": "huruf"
-      },
-      {
-        "id": "lex2kg-o:mengubah",
-        "label": "mengubah"
-      },
-      {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
-      },
-      {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
-      },
-      {
-        "id": "lex2kg-o:jenisVersi",
-        "label": "jenis versi"
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
       },
       {
         "id": "lex2kg-o:paragraf",
         "label": "paragraf"
+      },
+      {
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
       },
       {
         "id": "lex2kg-o:bagian",
         "label": "bagian"
       },
       {
-        "id": "lex2kg-o:menyisipkan",
-        "label": "menyisipkan"
-      }
-    ]
-  },
-  {
-    "id": "q8",
-    "question": "Undang-undang mana yang memiliki pasal terbanyak?",
-    "englishQuestion": "Which law has the most articles?",
-    "sparql": "select ?law ?title (count(?article) as ?articleCount) where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . ?law <https://example.org/lex2kg/ontology/pasal> ?article . } group by ?law ?title order by DESC(?articleCount) limit 1",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "law-with-most-articles",
-    "thoughts": [
-      "1. The question asks for the law with the highest number of articles.",
-      "2. In the legal ontology, laws are linked to their articles via 'lex2kg-o:pasal' property.",
-      "3. Laws also have titles accessible via 'lex2kg-o:tentang' property.",
-      "4. To solve this, count articles for each law, then find the law with the maximum count.",
-      "5. Construct a SPARQL query using GROUP BY to group articles by law and COUNT to count them.",
-      "6. Use ORDER BY DESC to sort by article count in descending order, and LIMIT 1 to get the top result."
-    ],
-    "entities": [],
-    "properties": [
-      "tentang",
-      "pasal"
-    ],
-    "entities_matches": [
-      {
-        "id": "https://example.org/lex2kg/uu",
-        "label": "UU"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1973/7/mengingat/text",
-        "label": "UU tahun 1973 no 7 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/8/pasal/0034",
-        "label": "UU tahun 2010 no 8 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/9/pasal/0034",
-        "label": "UU tahun 2006 no 9 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/15/pasal/0034",
-        "label": "UU tahun 2006 no 15 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
-        "label": "UU tahun 2009 no 4 pasal 153"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/44/mengingat/text",
-        "label": "UU tahun 2008 no 44 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
-        "label": "UU tahun 2009 no 44 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1954/18/mengingat/text",
-        "label": "UU tahun 1954 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1976/9/pasal/0034",
-        "label": "UU tahun 1976 no 9 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1976/9/pasal/0037",
-        "label": "UU tahun 1976 no 9 pasal 37"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1995/9/pasal/0034",
-        "label": "UU tahun 1995 no 9 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1996/7/pasal/0034",
-        "label": "UU tahun 1996 no 7 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1995/1/pasal/0128/versi/19950307/ayat/0001/text",
-        "label": "UU tahun 1995 no 1 pasal 128 versi 7 Maret 1995 ayat 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/17/pasal/0248",
-        "label": "UU tahun 2014 no 17 pasal 248"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0094",
-        "label": "UU tahun 2012 no 8 pasal 94"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/32/pasal/0082A",
-        "label": "UU tahun 2009 no 32 pasal 0082a"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/22/pasal/0148",
-        "label": "UU tahun 2009 no 22 pasal 148"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/17/pasal/0094",
-        "label": "UU tahun 2012 no 17 pasal 94"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0093",
-        "label": "UU tahun 2012 no 8 pasal 93"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/48/pasal/0034",
-        "label": "UU tahun 2009 no 48 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/25/pasal/0034",
-        "label": "UU tahun 2009 no 25 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1995/9/pasal/0037",
-        "label": "UU tahun 1995 no 9 pasal 37"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/33/pasal/0064",
-        "label": "UU tahun 2014 no 33 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1997/32/pasal/0064",
-        "label": "UU tahun 1997 no 32 pasal 64"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0224",
-        "label": "UU tahun 1950 no 1 pasal 224"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
-        "label": "UU tahun 2007 no 24 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
-        "label": "UU tahun 2010 no 8 mengingat text"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:disahkanDi",
-        "label": "disahkan di"
-      },
-      {
         "id": "lex2kg-o:judul",
         "label": "judul"
       },
       {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
-      {
-        "id": "lex2kg-o:merujuk",
-        "label": "merujuk"
-      },
-      {
-        "id": "lex2kg-o:menimbang",
-        "label": "menimbang"
-      },
-      {
-        "id": "lex2kg-o:nomor",
-        "label": "nomor"
-      },
-      {
-        "id": "lex2kg-o:mengingat",
-        "label": "mengingat"
-      },
-      {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      }
-    ]
-  },
-  {
-    "id": "q9",
-    "question": "Apa saja regulasi yang dimodifikasi oleh UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1?",
-    "englishQuestion": "Which legislation was changed by UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0001> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
-    "category": "legal",
-    "complexity": "advanced",
-    "templateId": "laws-amended-what",
-    "thoughts": [
-      "1. The question asks for laws that were amended by UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1.",
-      "2. The entity '<https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0001>' represents an amending law in the Indonesian legal system.",
-      "3. Amendments work through versions: <https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0001> changes versions of articles in other laws.",
-      "4. To solve this, trace the chain: UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1 changes versions, which belong to articles, which belong to laws.",
-      "5. Construct a multi-step SPARQL query to follow the amendment relationship through the version mechanism.",
-      "6. The query uses multiple properties: 'lex2kg-o:mengubah', 'lex2kg-o:versi', 'lex2kg-o:pasal', and 'lex2kg-o:tentang'."
-    ],
-    "entities": [
-      "UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1"
-    ],
-    "properties": [
-      "mengubah",
-      "versi",
-      "pasal",
-      "tentang"
-    ],
-    "entities_matches": [
-      {
-        "id": "https://example.org/lex2kg/uu",
-        "label": "UU"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/24/pasal/0068",
-        "label": "UU tahun 2013 no 24 pasal 68"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0061",
-        "label": "UU tahun 2013 no 20 pasal 61"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034/versi/20130806/huruf/a/text",
-        "label": "UU tahun 2013 no 20 pasal 34 versi 6 Agustus 2013 huruf a text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034",
-        "label": "UU tahun 2013 no 20 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/1/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 1 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/1/menimbang/huruf/description",
-        "label": "UU tahun 1994 no 1 menimbang huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/3/mengingat/huruf/description",
-        "label": "UU tahun 1994 no 3 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1973/4/mengingat/huruf/description",
-        "label": "UU tahun 1973 no 4 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1994/3/menimbang/huruf/description",
-        "label": "UU tahun 1994 no 3 menimbang huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/7/menimbang/huruf/d/huruf/0003/text",
-        "label": "UU tahun 1989 no 7 menimbang huruf d huruf 3 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1973/4/menimbang/huruf/a/text",
-        "label": "UU tahun 1973 no 4 menimbang huruf a text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/34/menimbang/huruf/d/text",
-        "label": "UU tahun 2003 no 34 menimbang huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/34/menimbang/huruf/d/text",
-        "label": "UU tahun 2004 no 34 menimbang huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1974/5/menimbang/huruf/d/text",
-        "label": "UU tahun 1974 no 5 menimbang huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0002/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0001/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0026/versi/20120511/ayat/0002/huruf/g/huruf/description",
-        "label": "UU tahun 2012 no 8 pasal 26 versi 11 Mei 2012 ayat 2 huruf g huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
-        "label": "UU tahun 1982 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1",
-        "label": "UU tahun 2020 no 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10",
-        "label": "UU tahun 2020 no 10"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/11",
-        "label": "UU no 2 no 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
-        "label": "UU tahun 2009 no 4 pasal 153"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1986/5/pasal/0084",
-        "label": "UU tahun 1986 no 5 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0084",
-        "label": "UU tahun 1981 no 8 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1989/7/pasal/0084",
-        "label": "UU tahun 1989 no 7 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/58/menimbang/text",
-        "label": "UU tahun 1957 no 58 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/34/menimbang/text",
-        "label": "UU tahun 1957 no 34 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/57/menimbang/text",
-        "label": "UU tahun 1957 no 57 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/41/menimbang/text",
-        "label": "UU tahun 1957 no 41 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/43/menimbang/text",
-        "label": "UU tahun 1957 no 43 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/description",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/d/text",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125/h",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011 h"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/46/menimbang/huruf",
-        "label": "UU tahun 2009 no 46 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1985/16/menimbang/huruf/a/text",
-        "label": "UU tahun 1985 no 16 menimbang huruf a text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/16/menimbang/huruf",
-        "label": "UU tahun 2009 no 16 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1997/1/mengingat/huruf/0001",
-        "label": "UU tahun 1997 no 1 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2001/4/mengingat/huruf/0001",
-        "label": "UU tahun 2001 no 4 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2001/1/mengingat/huruf/0001",
-        "label": "UU tahun 2001 no 1 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/huruf/g/huruf/c/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 huruf g huruf c huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2018/13/bab/0004",
-        "label": "UU tahun 2018 no 13 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2016/13/bab/0018",
-        "label": "UU tahun 2016 no 13 bab 18"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/11/bab/0034",
-        "label": "UU tahun 2006 no 11 bab 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/23/bab/0004",
-        "label": "UU tahun 2002 no 23 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/18/bab/0004",
-        "label": "UU tahun 2002 no 18 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0037/versi/20141016/text",
-        "label": "UU tahun 2002 no 19 pasal 37 versi 16 Oktober 2014 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0073/versi/20141016/text",
-        "label": "UU tahun 2002 no 19 pasal 73 versi 16 Oktober 2014 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/2",
-        "label": "UU tahun 2020 no 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0010/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 10 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/bab/0011",
-        "label": "UU tahun 2012 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/bab/0011",
-        "label": "UU tahun 2011 no 12 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/14/pasal/0011/versi/20110919/text",
-        "label": "UU tahun 2011 no 14 pasal 11 versi 19 September 2011 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/bab/0011",
-        "label": "UU tahun 2010 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0011",
-        "label": "UU tahun 2012 no 11 pasal 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/29/pasal/0084",
-        "label": "UU tahun 2014 no 29 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/3/pasal/0084",
-        "label": "UU tahun 2014 no 3 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/6/pasal/0024/versi/19840721/text",
-        "label": "UU tahun 1984 no 6 pasal 24 versi 21 Juli 1984 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/4/mengingat/huruf/0006/text",
-        "label": "UU tahun 1984 no 4 mengingat huruf 6 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/2/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 2 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/1/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 1 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/2/mengingat/huruf/0002/text",
-        "label": "UU tahun 2002 no 2 mengingat huruf 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0035/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 35 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10/menimbang/huruf",
-        "label": "UU tahun 2020 no 10 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/menimbang/huruf",
-        "label": "UU tahun 2020 no 1 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/menimbang/huruf",
-        "label": "UU tahun 2020 no 12 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/mengingat/huruf/description",
-        "label": "UU tahun 2020 no 1 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1991/1/mengingat/huruf/0001/text",
-        "label": "UU tahun 1991 no 1 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2001/1/mengingat/huruf/0001/text",
-        "label": "UU tahun 2001 no 1 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2001/9/mengingat/huruf/0001/text",
-        "label": "UU tahun 2001 no 9 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2001/4/mengingat/huruf/0001/text",
-        "label": "UU tahun 2001 no 4 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2018/1/bab/0004",
-        "label": "UU tahun 2018 no 1 bab 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/12/bab/0014",
-        "label": "UU tahun 2003 no 12 bab 14"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/23/bab/0014",
-        "label": "UU tahun 2002 no 23 bab 14"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/34/menimbang/huruf/description",
-        "label": "UU tahun 2014 no 34 menimbang huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/23/menimbang/huruf/description",
-        "label": "UU tahun 2004 no 23 menimbang huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1954/30/menimbang/text",
-        "label": "UU tahun 1954 no 30 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0154/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 154 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0118/versi/20201102/huruf/description",
-        "label": "UU tahun 2020 no 11 pasal 118 versi 2 November 2020 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0084",
-        "label": "UU tahun 2012 no 11 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/pasal/0084",
-        "label": "UU tahun 2010 no 11 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/pasal/0084",
-        "label": "UU tahun 2011 no 12 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0084",
-        "label": "UU tahun 2011 no 15 pasal 84"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/4/pasal/0011",
-        "label": "UU tahun 1984 no 4 pasal 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/2/mengingat/huruf/0004/text",
-        "label": "UU tahun 1984 no 2 mengingat huruf 4 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/4/pasal/0002/versi/19840622/text",
-        "label": "UU tahun 1984 no 4 pasal 2 versi 22 Juni 1984 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/8/pasal/0002/versi/19841027/text",
-        "label": "UU tahun 1984 no 8 pasal 2 versi 27 Oktober 1984 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1984/4/mengingat/huruf/0002/text",
-        "label": "UU tahun 1984 no 4 mengingat huruf 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0002/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 2 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0113/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 113 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/16/pasal/0011/versi/20201102/huruf",
-        "label": "UU tahun 2012 no 16 pasal 11 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0013/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 13 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0001/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 1 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/mengingat/huruf/0001",
-        "label": "UU tahun 2020 no 1 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/mengingat/huruf/0001/text",
-        "label": "UU tahun 2020 no 1 mengingat huruf 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0001",
-        "label": "UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0002",
-        "label": "UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 84 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0004",
-        "label": "UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 4"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0084/versi/20201102/huruf/0003",
-        "label": "UU tahun 2020 no 11 pasal 84 versi 2 November 2020 huruf 3"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/34/menimbang/huruf/a",
-        "label": "UU tahun 2014 no 34 menimbang huruf a"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
-        "label": "UU tahun 2007 no 24 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
-        "label": "UU tahun 2010 no 8 mengingat text"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "lex2kg-o:tentang",
-        "label": "tentang"
-      },
-      {
-        "id": "lex2kg-o:judul",
-        "label": "judul"
-      },
-      {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
-      },
-      {
-        "id": "lex2kg-o:bahasa",
-        "label": "bahasa"
-      },
-      {
-        "id": "lex2kg-o:segmen",
-        "label": "segmen"
-      },
-      {
-        "id": "lex2kg-o:jenisPeraturan",
-        "label": "jenis peraturan"
-      },
-      {
-        "id": "lex2kg-o:mengubah",
-        "label": "mengubah"
-      },
-      {
-        "id": "lex2kg-o:disahkanOleh",
-        "label": "disahkan oleh"
-      },
-      {
-        "id": "lex2kg-o:tahun",
-        "label": "tahun"
-      },
-      {
-        "id": "lex2kg-o:nomor",
-        "label": "nomor"
-      },
-      {
-        "id": "lex2kg-o:versi",
-        "label": "versi"
+        "id": "lex2kg-o:bab",
+        "label": "bab"
       },
       {
         "id": "lex2kg-o:tanggal",
         "label": "tanggal"
       },
       {
-        "id": "lex2kg-o:huruf",
-        "label": "huruf"
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
+      }
+    ]
+  },
+  {
+    "id": "q7",
+    "question": "Berapa jumlah pasal dalam UU tahun 2009 no 21?",
+    "englishQuestion": "How many articles are in UU tahun 2009 no 21?",
+    "sparql": "select (count(?article) as ?count) where { <https://example.org/lex2kg/uu/2009/21> <https://example.org/lex2kg/ontology/pasal> ?article . }",
+    "category": "legal",
+    "complexity": "intermediate",
+    "templateId": "law-articles-count",
+    "thoughts": [
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
+    ],
+    "entities": [
+      "UU tahun 2009 no 21"
+    ],
+    "properties": [
+      "pasal"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0004/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 4 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1950/1/pasal/0070/versi/19500506/0004/0004/0004/0003/0003",
+        "label": "UU tahun 1950 no 1 pasal 70 versi 6 Mei 1950 4 4 4 3 3"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/34/mengingat/text",
+        "label": "UU tahun 1957 no 34 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/24/menimbang",
+        "label": "UU tahun 1997 no 24 menimbang"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
+        "label": "UU tahun 2009 no 4 pasal 153"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2011/23/mengingat/huruf/description",
+        "label": "UU tahun 2011 no 23 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu",
+        "label": "UU"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
+        "label": "UU tahun 1982 no 18 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/9",
+        "label": "UU tahun 2009 no 9"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0009/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 9 versi 16 Januari 2009"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/20/21",
+        "label": "UU no 20 no 21"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/6/pasal/0014/versi/19950803/text",
+        "label": "UU tahun 1995 no 6 pasal 14 versi 3 Agustus 1995 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1996/7/pasal/0038/versi/19961104/text",
+        "label": "UU tahun 1996 no 7 pasal 38 versi 4 November 1996 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/32/bab/0006",
+        "label": "UU tahun 1997 no 32 bab 6"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/5/pasal/0042/versi/19900810/text",
+        "label": "UU tahun 1990 no 5 pasal 42 versi 10 Agustus 1990 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/45/mengingat/text",
+        "label": "UU tahun 1954 no 45 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/21/mengingat/text",
+        "label": "UU tahun 1954 no 21 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/44/mengingat/text",
+        "label": "UU tahun 1957 no 44 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1962/8/mengingat/text",
+        "label": "UU tahun 1962 no 8 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1962/12/mengingat/text",
+        "label": "UU tahun 1962 no 12 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0029/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 29 versi 16 Januari 2009"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/2/pasal/0009/versi/20090112",
+        "label": "UU tahun 2009 no 2 pasal 9 versi 12 Januari 2009"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0039/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 39 versi 16 Januari 2009"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/9/pasal/0021/versi/20090116",
+        "label": "UU tahun 2009 no 9 pasal 21 versi 16 Januari 2009"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1992/21/pasal/0128/versi/19920917/text",
+        "label": "UU tahun 1992 no 21 pasal 128 versi 17 September 1992 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/1/pasal/0128/versi/19950307/ayat/0001/text",
+        "label": "UU tahun 1995 no 1 pasal 128 versi 7 Maret 1995 ayat 1 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/46/mengingat/text",
+        "label": "UU tahun 1954 no 46 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/58/mengingat/text",
+        "label": "UU tahun 1957 no 58 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/24/pasal/0003/versi/20140930/ayat/0002/huruf/description",
+        "label": "UU tahun 2014 no 24 pasal 3 versi 30 September 2014 ayat 2 huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0079/versi/20090112/huruf/u/text",
+        "label": "UU tahun 2009 no 4 pasal 79 versi 12 Januari 2009 huruf u text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0079/versi/20090112/huruf/u",
+        "label": "UU tahun 2009 no 4 pasal 79 versi 12 Januari 2009 huruf u"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/21",
+        "label": "UU tahun 2009 no 21"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "lex2kg-o:nomor",
+        "label": "nomor"
+      },
+      {
+        "id": "lex2kg-o:tahun",
+        "label": "tahun"
+      },
+      {
+        "id": "lex2kg-o:pasal",
+        "label": "pasal"
+      },
+      {
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
+      },
+      {
+        "id": "lex2kg-o:judul",
+        "label": "judul"
+      },
+      {
+        "id": "lex2kg-o:tanggal",
+        "label": "tanggal"
       },
       {
         "id": "lex2kg-o:paragraf",
         "label": "paragraf"
       },
       {
-        "id": "lex2kg-o:jenisVersi",
-        "label": "jenis versi"
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
       },
       {
-        "id": "lex2kg-o:teks",
-        "label": "teks"
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
       }
     ]
   },
   {
-    "id": "q10",
-    "question": "Undang-undang apa saja yang diubah oleh UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6?",
-    "englishQuestion": "Which laws were amended by UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6?",
-    "sparql": "select distinct ?amendedLaw ?title where { <https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0006> <https://example.org/lex2kg/ontology/mengubah> ?versi . ?pasal <https://example.org/lex2kg/ontology/versi> ?versi . ?amendedLaw <https://example.org/lex2kg/ontology/pasal> ?pasal . ?amendedLaw <https://example.org/lex2kg/ontology/tentang> ?title . }",
+    "id": "q8",
+    "question": "Undang-undang apa yang berhubungan dengan 'MENETAPKAN:'?",
+    "englishQuestion": "Which law is related to 'MENETAPKAN:'?",
+    "sparql": "select ?law where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"MENETAPKAN:\"))) } limit 1",
     "category": "legal",
     "complexity": "advanced",
-    "templateId": "laws-amended-what",
+    "templateId": "law-by-keyword",
     "thoughts": [
-      "1. The question asks for laws that were amended by UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6.",
-      "2. The entity '<https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0006>' represents an amending law in the Indonesian legal system.",
-      "3. Amendments work through versions: <https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0006> changes versions of articles in other laws.",
-      "4. To solve this, trace the chain: UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6 changes versions, which belong to articles, which belong to laws.",
-      "5. Construct a multi-step SPARQL query to follow the amendment relationship through the version mechanism.",
-      "6. The query uses multiple properties: 'lex2kg-o:mengubah', 'lex2kg-o:versi', 'lex2kg-o:pasal', and 'lex2kg-o:tentang'."
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
     ],
-    "entities": [
-      "UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6"
-    ],
+    "entities": [],
     "properties": [
-      "mengubah",
-      "versi",
-      "pasal",
       "tentang"
     ],
     "entities_matches": [
@@ -2574,152 +1618,20 @@
         "label": "UU"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/24/pasal/0068",
-        "label": "UU tahun 2013 no 24 pasal 68"
+        "id": "https://example.org/lex2kg/uu/1994/5/mengingat/text",
+        "label": "UU tahun 1994 no 5 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0061",
-        "label": "UU tahun 2013 no 20 pasal 61"
+        "id": "https://example.org/lex2kg/uu/2012/23/mengingat/huruf/description",
+        "label": "UU tahun 2012 no 23 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034/versi/20130806/huruf/a/text",
-        "label": "UU tahun 2013 no 20 pasal 34 versi 6 Agustus 2013 huruf a text"
+        "id": "https://example.org/lex2kg/uu/1992/24/mengingat/huruf/description",
+        "label": "UU tahun 1992 no 24 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2013/20/pasal/0034",
-        "label": "UU tahun 2013 no 20 pasal 34"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0099/versi/20111016/huruf/d/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 99 versi 16 Oktober 2011 huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/34/menimbang/huruf/d/text",
-        "label": "UU tahun 2004 no 34 menimbang huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0002/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0264/versi/20120511/ayat/0001/text",
-        "label": "UU tahun 2012 no 8 pasal 264 versi 11 Mei 2012 ayat 1 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0026/versi/20120511/ayat/0002/huruf/g/huruf/description",
-        "label": "UU tahun 2012 no 8 pasal 26 versi 11 Mei 2012 ayat 2 huruf g huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
-        "label": "UU tahun 1982 no 18 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1",
-        "label": "UU tahun 2020 no 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10",
-        "label": "UU tahun 2020 no 10"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/11",
-        "label": "UU no 2 no 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
-        "label": "UU tahun 2009 no 4 pasal 153"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/33/pasal/0033",
-        "label": "UU tahun 2014 no 33 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2004/33/pasal/0033",
-        "label": "UU tahun 2004 no 33 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1953/25/pasal/0033",
-        "label": "UU tahun 1953 no 25 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1983/6/pasal/0033",
-        "label": "UU tahun 1983 no 6 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/19/pasal/0033",
-        "label": "UU tahun 2013 no 19 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/58/menimbang/text",
-        "label": "UU tahun 1957 no 58 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/34/menimbang/text",
-        "label": "UU tahun 1957 no 34 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/57/menimbang/text",
-        "label": "UU tahun 1957 no 57 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/41/menimbang/text",
-        "label": "UU tahun 1957 no 41 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1957/43/menimbang/text",
-        "label": "UU tahun 1957 no 43 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2/12",
-        "label": "UU no 2 no 12"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/description",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/24/pasal/0011/versi/20111125/huruf/d/text",
-        "label": "UU tahun 2011 no 24 pasal 11 versi 25 November 2011 huruf d text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/22/pasal/0011/versi/20111125/h",
-        "label": "UU tahun 2011 no 22 pasal 11 versi 25 November 2011 h"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/46/menimbang/huruf",
-        "label": "UU tahun 2009 no 46 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1985/16/menimbang/huruf/a/text",
-        "label": "UU tahun 1985 no 16 menimbang huruf a text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/16/menimbang/huruf",
-        "label": "UU tahun 2009 no 16 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/6/mengingat/huruf/0006",
-        "label": "UU tahun 2007 no 6 mengingat huruf 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2006/11/mengingat/huruf/0006",
-        "label": "UU tahun 2006 no 11 mengingat huruf 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/6/mengingat/huruf/0006",
-        "label": "UU tahun 2008 no 6 mengingat huruf 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/6/mengingat/huruf/0006",
-        "label": "UU tahun 2013 no 6 mengingat huruf 6"
+        "id": "https://example.org/lex2kg/uu/1982/14/mengingat/huruf/description",
+        "label": "UU tahun 1982 no 14 mengingat huruf description"
       },
       {
         "id": "https://example.org/lex2kg/uu/2008/44/mengingat/text",
@@ -2738,120 +1650,28 @@
         "label": "UU tahun 2008 no 43 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0027/versi/20111016/huruf/g/huruf/c/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 27 versi 16 Oktober 2011 huruf g huruf c huruf description"
+        "id": "https://example.org/lex2kg/uu/1997/4/mengingat/text",
+        "label": "UU tahun 1997 no 4 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2004/38/mengingat/text",
-        "label": "UU tahun 2004 no 38 mengingat text"
+        "id": "https://example.org/lex2kg/uu/2009/24/mengingat/text",
+        "label": "UU tahun 2009 no 24 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2002/23/mengingat/huruf/0004/text",
-        "label": "UU tahun 2002 no 23 mengingat huruf 4 text"
+        "id": "https://example.org/lex2kg/uu/1995/4/mengingat/text",
+        "label": "UU tahun 1995 no 4 mengingat text"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2004/34/menimbang/huruf/a/text",
-        "label": "UU tahun 2004 no 34 menimbang huruf a text"
+        "id": "https://example.org/lex2kg/uu/1997/5/pasal/0034",
+        "label": "UU tahun 1997 no 5 pasal 34"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2020/2",
-        "label": "UU tahun 2020 no 2"
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0025",
+        "label": "UU tahun 2012 no 8 bab 25"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0011/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 11 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0010/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 10 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/bab/0011",
-        "label": "UU tahun 2012 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/bab/0011",
-        "label": "UU tahun 2011 no 12 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/14/pasal/0011/versi/20110919/text",
-        "label": "UU tahun 2011 no 14 pasal 11 versi 19 September 2011 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/bab/0011",
-        "label": "UU tahun 2010 no 11 bab 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0011",
-        "label": "UU tahun 2012 no 11 pasal 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2013/23/pasal/0033",
-        "label": "UU tahun 2013 no 23 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1953/33/mengingat/text",
-        "label": "UU tahun 1953 no 33 mengingat text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1953/33/menimbang/text",
-        "label": "UU tahun 1953 no 33 menimbang text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/2/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 2 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2015/1/pasal/0002/versi/20150202/text",
-        "label": "UU tahun 2015 no 1 pasal 2 versi 2 Februari 2015 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/2/mengingat/huruf/0002/text",
-        "label": "UU tahun 2002 no 2 mengingat huruf 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0035/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 35 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/10/menimbang/huruf",
-        "label": "UU tahun 2020 no 10 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/menimbang/huruf",
-        "label": "UU tahun 2020 no 1 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/12/menimbang/huruf",
-        "label": "UU tahun 2020 no 12 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/1/mengingat/huruf/description",
-        "label": "UU tahun 2020 no 1 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/1978/6/mengingat/huruf/0006/text",
-        "label": "UU tahun 1978 no 6 mengingat huruf 6 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2008/6/mengingat/huruf/0006/text",
-        "label": "UU tahun 2008 no 6 mengingat huruf 6 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2007/6/mengingat/huruf/0006/text",
-        "label": "UU tahun 2007 no 6 mengingat huruf 6 text"
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0024",
+        "label": "UU tahun 2012 no 8 bab 24"
       },
       {
         "id": "https://example.org/lex2kg/uu/2013/1",
@@ -2866,124 +1686,16 @@
         "label": "UU tahun 2012 no 1"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/8/pasal/0094",
-        "label": "UU tahun 2012 no 8 pasal 94"
+        "id": "https://example.org/lex2kg/uu/2013/16",
+        "label": "UU tahun 2013 no 16"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0094",
-        "label": "UU tahun 2012 no 11 pasal 94"
+        "id": "https://example.org/lex2kg/uu/1983/4/mengingat/huruf/description",
+        "label": "UU tahun 1983 no 4 mengingat huruf description"
       },
       {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0083/versi/20111016/huruf/a/huruf/description",
-        "label": "UU tahun 2011 no 15 pasal 83 versi 16 Oktober 2011 huruf a huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0047/versi/20141016/huruf/a/huruf/description",
-        "label": "UU tahun 2002 no 19 pasal 47 versi 16 Oktober 2014 huruf a huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2002/19/pasal/0047/versi/20141016/huruf/b/huruf/description",
-        "label": "UU tahun 2002 no 19 pasal 47 versi 16 Oktober 2014 huruf b huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/24/menimbang/huruf/d/huruf/description",
-        "label": "UU tahun 2003 no 24 menimbang huruf d huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0110/versi/20201102/text",
-        "label": "UU tahun 2020 no 11 pasal 110 versi 2 November 2020 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0154/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 154 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0118/versi/20201102/huruf/description",
-        "label": "UU tahun 2020 no 11 pasal 118 versi 2 November 2020 huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/11/pasal/0033",
-        "label": "UU tahun 2012 no 11 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2010/11/pasal/0033",
-        "label": "UU tahun 2010 no 11 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2009/11/pasal/0033",
-        "label": "UU tahun 2009 no 11 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/12/pasal/0033",
-        "label": "UU tahun 2011 no 12 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2011/15/pasal/0033",
-        "label": "UU tahun 2011 no 15 pasal 33"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2003/33/mengingat/huruf/0002/text",
-        "label": "UU tahun 2003 no 33 mengingat huruf 2 text"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0002/versi/20201102",
-        "label": "UU tahun 2020 no 11 pasal 2 versi 2 November 2020"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0113/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 113 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2012/16/pasal/0011/versi/20201102/huruf",
-        "label": "UU tahun 2012 no 16 pasal 11 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0013/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 13 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0034/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 34 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0001/versi/20201102/huruf",
-        "label": "UU tahun 2020 no 11 pasal 1 versi 2 November 2020 huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/6/menimbang/huruf",
-        "label": "UU tahun 2020 no 6 menimbang huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/6/mengingat/huruf/description",
-        "label": "UU tahun 2020 no 6 mengingat huruf description"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/8/mengingat/huruf/0006",
-        "label": "UU tahun 2020 no 8 mengingat huruf 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/6/mengingat/huruf",
-        "label": "UU tahun 2020 no 6 mengingat huruf"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/6/mengingat/huruf/0001",
-        "label": "UU tahun 2020 no 6 mengingat huruf 1"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0006",
-        "label": "UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 6"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0011",
-        "label": "UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 11"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2020/11/pasal/0033/versi/20201102/huruf/0002",
-        "label": "UU tahun 2020 no 11 pasal 33 versi 2 November 2020 huruf 2"
-      },
-      {
-        "id": "https://example.org/lex2kg/uu/2014/34/menimbang/huruf/a",
-        "label": "UU tahun 2014 no 34 menimbang huruf a"
+        "id": "https://example.org/lex2kg/uu/1982/13/mengingat/huruf/0004/text",
+        "label": "UU tahun 1982 no 13 mengingat huruf 4 text"
       },
       {
         "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
@@ -3016,16 +1728,419 @@
         "label": "merujuk"
       },
       {
-        "id": "lex2kg-o:pasal",
-        "label": "pasal"
+        "id": "lex2kg-o:disahkanOleh",
+        "label": "disahkan oleh"
       },
       {
-        "id": "lex2kg-o:bahasa",
-        "label": "bahasa"
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
       },
       {
-        "id": "lex2kg-o:segmen",
-        "label": "segmen"
+        "id": "lex2kg-o:mengubah",
+        "label": "mengubah"
+      },
+      {
+        "id": "lex2kg-o:menyisipkan",
+        "label": "menyisipkan"
+      }
+    ]
+  },
+  {
+    "id": "q9",
+    "question": "Undang-undang apa yang berhubungan dengan 'REPUBLI'?",
+    "englishQuestion": "Which law is related to 'REPUBLI'?",
+    "sparql": "select ?law where { ?law <https://example.org/lex2kg/ontology/tentang> ?title . filter (CONTAINS(LCASE(?title), LCASE(\"REPUBLI\"))) } limit 1",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-by-keyword",
+    "thoughts": [
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
+    ],
+    "entities": [],
+    "properties": [
+      "tentang"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://example.org/lex2kg/uu",
+        "label": "UU"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1994/5/mengingat/text",
+        "label": "UU tahun 1994 no 5 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1989/4/mengingat/huruf/description",
+        "label": "UU tahun 1989 no 4 mengingat huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/44/mengingat/text",
+        "label": "UU tahun 2008 no 44 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
+        "label": "UU tahun 2009 no 44 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/18/mengingat/text",
+        "label": "UU tahun 1954 no 18 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/43/mengingat/text",
+        "label": "UU tahun 2008 no 43 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/4/mengingat/text",
+        "label": "UU tahun 1997 no 4 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/24/mengingat/text",
+        "label": "UU tahun 2009 no 24 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/4/mengingat/text",
+        "label": "UU tahun 1995 no 4 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1997/5/pasal/0034",
+        "label": "UU tahun 1997 no 5 pasal 34"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/1",
+        "label": "UU tahun 2013 no 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/33",
+        "label": "UU tahun 2014 no 33"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/1",
+        "label": "UU tahun 2012 no 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/16",
+        "label": "UU tahun 2013 no 16"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2007/24/mengingat/text",
+        "label": "UU tahun 2007 no 24 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/8/mengingat/text",
+        "label": "UU tahun 2010 no 8 mengingat text"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
+      },
+      {
+        "id": "lex2kg-o:disahkanDi",
+        "label": "disahkan di"
+      },
+      {
+        "id": "lex2kg-o:judul",
+        "label": "judul"
+      },
+      {
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:merujuk",
+        "label": "merujuk"
+      },
+      {
+        "id": "lex2kg-o:versi",
+        "label": "versi"
+      }
+    ]
+  },
+  {
+    "id": "q10",
+    "question": "Undang-undang apa yang diubah oleh UU tahun 1981 no 8 bab 15?",
+    "englishQuestion": "Which law was amended by UU tahun 1981 no 8 bab 15?",
+    "sparql": "select distinct ?amendedLaw where { <https://example.org/lex2kg/uu/1981/8/bab/0015> <https://example.org/lex2kg/ontology/pasal> ?article . ?article <https://example.org/lex2kg/ontology/versi> ?articleVersion . ?articleVersion <https://example.org/lex2kg/ontology/huruf> ?letter . ?letter <https://example.org/lex2kg/ontology/mengubah> ?amendedArticleVersion . ?amendedArticleVersion <https://example.org/lex2kg/ontology/bagianDari> ?amendedArticle . ?amendedArticle <https://example.org/lex2kg/ontology/bagianDari> ?amendedLaw . } limit 1",
+    "category": "legal",
+    "complexity": "advanced",
+    "templateId": "law-amendment",
+    "thoughts": [
+      "1. The question seeks specific information from the Indonesian legal knowledge graph.",
+      "2. The query involves entities and relationships defined in the legal domain ontology.",
+      "3. Properties in the knowledge graph connect legal documents to their various attributes and relationships.",
+      "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+      "5. The result provides valuable insights for legal research and document analysis."
+    ],
+    "entities": [
+      "UU tahun 1981 no 8 bab 15"
+    ],
+    "properties": [
+      "pasal",
+      "versi",
+      "huruf",
+      "mengubah",
+      "bagian dari",
+      "bagian dari"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://example.org/lex2kg/uu",
+        "label": "UU"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2004/34/menimbang/huruf/d/text",
+        "label": "UU tahun 2004 no 34 menimbang huruf d text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1982/18/mengingat/text",
+        "label": "UU tahun 1982 no 18 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0081/versi/19811231/text",
+        "label": "UU tahun 1981 no 8 pasal 81 versi 31 Desember 1981 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0081/versi/19811231",
+        "label": "UU tahun 1981 no 8 pasal 81 versi 31 Desember 1981"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/8/mengingat/huruf/0008",
+        "label": "UU tahun 2008 no 8 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/4/mengingat/huruf/0008",
+        "label": "UU tahun 2010 no 4 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/8/mengingat/huruf/0008",
+        "label": "UU tahun 2013 no 8 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/10/mengingat/huruf/0008",
+        "label": "UU tahun 2010 no 10 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/48/mengingat/huruf/0008",
+        "label": "UU tahun 2008 no 48 mengingat huruf 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1986/5/menimbang/huruf/b",
+        "label": "UU tahun 1986 no 5 menimbang huruf b"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1995/10/menimbang/huruf/b",
+        "label": "UU tahun 1995 no 10 menimbang huruf b"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/15/pasal/0015",
+        "label": "UU tahun 1985 no 15 pasal 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/10/mengingat/huruf/0015",
+        "label": "UU tahun 2010 no 10 mengingat huruf 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/44/mengingat/text",
+        "label": "UU tahun 2008 no 44 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/44/mengingat/text",
+        "label": "UU tahun 2009 no 44 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1954/18/mengingat/text",
+        "label": "UU tahun 1954 no 18 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/43/mengingat/text",
+        "label": "UU tahun 2008 no 43 mengingat text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2004/34/menimbang/huruf/a/text",
+        "label": "UU tahun 2004 no 34 menimbang huruf a text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0031/versi/19811231",
+        "label": "UU tahun 1981 no 8 pasal 31 versi 31 Desember 1981"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/1",
+        "label": "UU tahun 1981 no 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0083/versi/19811231",
+        "label": "UU tahun 1981 no 8 pasal 83 versi 31 Desember 1981"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0008/versi/19811231",
+        "label": "UU tahun 1981 no 8 pasal 8 versi 31 Desember 1981"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/8/bab/0008",
+        "label": "UU tahun 1985 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1990/8/bab/0008",
+        "label": "UU tahun 1990 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/bab/0008",
+        "label": "UU tahun 1981 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2008/8/bab/0008",
+        "label": "UU tahun 2008 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2016/8/bab/0008",
+        "label": "UU tahun 2016 no 8 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1992/15/bab/0015",
+        "label": "UU tahun 1992 no 15 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/5/bab/0015",
+        "label": "UU tahun 2014 no 5 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/11/bab/0015",
+        "label": "UU tahun 2014 no 11 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/1",
+        "label": "UU tahun 2013 no 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/33",
+        "label": "UU tahun 2014 no 33"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/1",
+        "label": "UU tahun 2012 no 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2013/16",
+        "label": "UU tahun 2013 no 16"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2003/24/menimbang/huruf/d/huruf/description",
+        "label": "UU tahun 2003 no 24 menimbang huruf d huruf description"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2007/34/menimbang/huruf/d/text",
+        "label": "UU tahun 2007 no 34 menimbang huruf d text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/1/pasal/0001/versi/19810314",
+        "label": "UU tahun 1981 no 1 pasal 1 versi 14 Maret 1981"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/bab/0001",
+        "label": "UU tahun 1981 no 8 bab 1"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0085/versi/19811231/text",
+        "label": "UU tahun 1981 no 8 pasal 85 versi 31 Desember 1981 text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/15/bab/0008",
+        "label": "UU tahun 2014 no 15 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/15/bab/0008",
+        "label": "UU tahun 1985 no 15 bab 8"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2012/8/bab/0015",
+        "label": "UU tahun 2012 no 8 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1999/8/bab/0015",
+        "label": "UU tahun 1999 no 8 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/8/pasal/0015",
+        "label": "UU tahun 1985 no 8 pasal 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/bab/0015",
+        "label": "UU tahun 1981 no 8 bab 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1981/8/pasal/0015",
+        "label": "UU tahun 1981 no 8 pasal 15"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/4/pasal/0153",
+        "label": "UU tahun 2009 no 4 pasal 153"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/58/menimbang/text",
+        "label": "UU tahun 1957 no 58 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/34/menimbang/text",
+        "label": "UU tahun 1957 no 34 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/57/menimbang/text",
+        "label": "UU tahun 1957 no 57 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/41/menimbang/text",
+        "label": "UU tahun 1957 no 41 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1957/43/menimbang/text",
+        "label": "UU tahun 1957 no 43 menimbang text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/46/menimbang/huruf",
+        "label": "UU tahun 2009 no 46 menimbang huruf"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/1985/16/menimbang/huruf/a/text",
+        "label": "UU tahun 1985 no 16 menimbang huruf a text"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2009/16/menimbang/huruf",
+        "label": "UU tahun 2009 no 16 menimbang huruf"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2014/34/menimbang/huruf/a",
+        "label": "UU tahun 2014 no 34 menimbang huruf a"
+      },
+      {
+        "id": "https://example.org/lex2kg/uu/2010/13/bab/0004/bagian/0001",
+        "label": "UU tahun 2010 no 13 bab 4 bagian 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "lex2kg-o:tentang",
+        "label": "tentang"
+      },
+      {
+        "id": "lex2kg-o:disahkanDi",
+        "label": "disahkan di"
+      },
+      {
+        "id": "lex2kg-o:judul",
+        "label": "judul"
+      },
+      {
+        "id": "lex2kg-o:jenisPeraturan",
+        "label": "jenis peraturan"
+      },
+      {
+        "id": "lex2kg-o:merujuk",
+        "label": "merujuk"
       },
       {
         "id": "lex2kg-o:mengubah",
@@ -3044,32 +2159,32 @@
         "label": "nomor"
       },
       {
-        "id": "lex2kg-o:versi",
-        "label": "versi"
+        "id": "lex2kg-o:bab",
+        "label": "bab"
       },
       {
         "id": "lex2kg-o:tanggal",
         "label": "tanggal"
       },
       {
+        "id": "lex2kg-o:disahkanPada",
+        "label": "disahkan pada"
+      },
+      {
+        "id": "lex2kg-o:pasal",
+        "label": "pasal"
+      },
+      {
+        "id": "lex2kg-o:versi",
+        "label": "versi"
+      },
+      {
         "id": "lex2kg-o:huruf",
         "label": "huruf"
       },
       {
-        "id": "lex2kg-o:paragraf",
-        "label": "paragraf"
-      },
-      {
-        "id": "lex2kg-o:jenisVersi",
-        "label": "jenis versi"
-      },
-      {
-        "id": "lex2kg-o:teks",
-        "label": "teks"
-      },
-      {
-        "id": "lex2kg-o:disahkanPada",
-        "label": "disahkan pada"
+        "id": "lex2kg-o:bagian",
+        "label": "bagian"
       }
     ]
   }
