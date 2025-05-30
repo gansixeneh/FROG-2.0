@@ -25,7 +25,29 @@ import os
 import logging
 from collections import defaultdict, Counter
 from SPARQLWrapper import SPARQLWrapper, JSON  # Using SPARQLWrapper instead of requests
-from property_retrieval import UniversityPropertyRetrieval  # Import PropertyRetrieval
+from datetime import datetime
+import sys
+
+# Add NLTK imports for improved text processing
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
+from nltk import ngrams
+
+# Download required NLTK data
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords')
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from property_retrieval import LegalPropertyRetrieval  # Import PropertyRetrieval
+from kg_schema_extractor import legal_entity_label, legal_property_label, separate_camel_case
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -93,8 +115,7 @@ class PatternBasedSPARQLGenerator:
     def __init__(
         self, 
         endpoint_url="http://localhost:3030/modified-lex2kg/query", 
-        prefixes=None,
-        turtle_file_path="final_result.ttl"  # Path to the RDF turtle file for PropertyRetrieval
+        prefixes=None
     ):
         """
         Initialize the pattern-based generator
@@ -102,10 +123,8 @@ class PatternBasedSPARQLGenerator:
         Args:
             endpoint_url (str): SPARQL endpoint URL
             prefixes (dict): Namespace prefixes
-            turtle_file_path (str): Path to the turtle file for property retrieval
         """
         self.client = SPARQLWrapperClient(endpoint_url)
-        self.turtle_file_path = turtle_file_path
 
         if prefixes is None:
             self.prefixes = {
@@ -144,16 +163,22 @@ class PatternBasedSPARQLGenerator:
 
         # Initialize property retrieval system for entity and property matching
         try:
-            self.property_retrieval = UniversityPropertyRetrieval(
-                turtle_file_path=turtle_file_path,
+            self.property_retrieval = LegalPropertyRetrieval(
+                endpoint_url=endpoint_url,
                 embedding_model_name="jinaai/jina-embeddings-v3",
                 is_local_client=True,
                 weaviate_host="localhost",
                 weaviate_port=8080,
             )
-            print("Initialized UniversityPropertyRetrieval successfully")
+            print("Initialized LegalPropertyRetrieval successfully")
+            
+            # Test the connection and data availability
+            self._test_weaviate_connection()
+            
         except Exception as e:
             print(f"Error initializing PropertyRetrieval: {e}")
+            import traceback
+            traceback.print_exc()
             self.property_retrieval = None
 
         # Get total triple count
@@ -162,6 +187,35 @@ class PatternBasedSPARQLGenerator:
         print(
             f"Found {len(self.entities)} entities and {len(self.properties)} properties"
         )
+
+    def _test_weaviate_connection(self):
+        """Test Weaviate connection and data availability"""
+        if self.property_retrieval is None:
+            print("Cannot test Weaviate - PropertyRetrieval is None")
+            return
+            
+        try:
+            # Test entity collection
+            if hasattr(self.property_retrieval, 'df_entities'):
+                entity_count = len(self.property_retrieval.df_entities)
+                print(f"PropertyRetrieval loaded {entity_count} entities from SPARQL")
+            
+            # Test property collection  
+            if hasattr(self.property_retrieval, 'df_properties'):
+                property_count = len(self.property_retrieval.df_properties)
+                print(f"PropertyRetrieval loaded {property_count} properties from SPARQL")
+            
+            # Test a simple search
+            test_results = self.property_retrieval.search_entities("test", k=1)
+            print(f"Test entity search returned {len(test_results)} results")
+            
+            test_results = self.property_retrieval.search_properties("test", k=1)
+            print(f"Test property search returned {len(test_results)} results")
+            
+        except Exception as e:
+            print(f"Error testing Weaviate connection: {e}")
+            import traceback
+            traceback.print_exc()
 
     def _get_property_exclusion_filters(self):
         """Generate SPARQL FILTER clauses to exclude low-quality properties"""
@@ -282,7 +336,7 @@ class PatternBasedSPARQLGenerator:
 
     def _extract_entities_and_properties_from_sparql(self, sparql):
         """
-        Extract entity URIs and property URIs from a SPARQL query
+        Extract entity URIs and property URIs from a SPARQL query (improved version)
 
         Args:
             sparql (str): SPARQL query to analyze
@@ -290,15 +344,14 @@ class PatternBasedSPARQLGenerator:
         Returns:
             tuple: (entity_uris, property_uris)
         """
-        # Extract URIs in angle brackets
         entity_uris = []
         property_uris = []
 
-        # Match URIs in angle brackets
+        # Extract URIs in angle brackets
         uri_pattern = r'<([^>]+)>'
         angle_bracket_uris = re.findall(uri_pattern, sparql)
 
-        # Match prefixed URIs (like lex2kg-o:propertyName)
+        # Extract prefixed URIs (like lex2kg-o:propertyName)
         prefixed_pattern = r'lex2kg-o:(\w+)'
         prefixed_properties = re.findall(prefixed_pattern, sparql)
 
@@ -307,82 +360,108 @@ class PatternBasedSPARQLGenerator:
             full_uri = f"https://example.org/lex2kg/ontology/{prop_name}"
             property_uris.append(full_uri)
 
-        # Classify URIs from angle brackets as entities or properties
+        # Classify URIs from angle brackets as entities or properties based on structure
         for uri in angle_bracket_uris:
-            if uri.startswith("https://example.org/lex2kg/ontology/"):
+            if self._is_property_uri(uri):
                 property_uris.append(uri)
             else:
                 entity_uris.append(uri)
 
         return entity_uris, property_uris
 
-    def _get_entity_labels(self, entity_uris):
-        """
-        Get labels for entity URIs using SPARQL queries
-
-        Args:
-            entity_uris (list): List of entity URIs
-
-        Returns:
-            list: List of entity labels
-        """
-        entity_labels = []
+    def _is_property_uri(self, uri):
+        """Check if a URI is a property URI based on patterns"""
+        # Legal ontology properties start with the ontology namespace
+        if uri.startswith("https://example.org/lex2kg/ontology/"):
+            return True
         
+        # Common property indicators
+        property_indicators = ['has_', 'is_', 'contains', 'relates']
+        
+        for indicator in property_indicators:
+            if indicator in uri.lower():
+                return True
+                
+        return False
+
+    def get_entities_and_properties(self, question, sparql):
+        """Extract entities and properties from SPARQL query and get their labels (improved version)"""
+        # Extract actual URIs from SPARQL query
+        entity_uris, property_uris = self._extract_entities_and_properties_from_sparql(sparql)
+        
+        # Get labels for entities and properties using legal-specific functions
+        entities_list = []
+        properties_list = []
+        
+        # Get entity labels using legal_entity_label function
         for uri in entity_uris:
-            # Query for label using rdfs:label
-            query = f"""
-                SELECT ?label WHERE {{
-                    <{uri}> rdfs:label ?label .
-                }}
-                LIMIT 1
-            """
-            
-            result = self.client.query(query)
-            if result and result["results"]["bindings"] and len(result["results"]["bindings"]) > 0:
-                label = result["results"]["bindings"][0]["label"]["value"]
-                entity_labels.append(label)
-            else:
-                # Fallback: extract label from URI
-                label = self._extract_label_from_uri(uri)
-                entity_labels.append(label)
-                
-        return entity_labels
-
-    def _get_property_labels(self, property_uris):
-        """
-        Get labels for property URIs using SPARQL queries
-
-        Args:
-            property_uris (list): List of property URIs
-
-        Returns:
-            list: List of property labels
-        """
-        property_labels = []
+            try:
+                label = legal_entity_label(uri)
+                entities_list.append(label)
+                print(f"Entity: {label} (from {uri})")
+            except Exception as e:
+                print(f"Error generating label for entity {uri}: {e}")
+                # Fallback to simple extraction
+                fallback_label = self._extract_label_from_uri(str(uri))
+                entities_list.append(fallback_label)
+                print(f"Entity (fallback): {fallback_label} (from {uri})")
         
+        # Get property labels using legal_property_label function
         for uri in property_uris:
-            # Query for label using rdfs:label
-            query = f"""
-                SELECT ?label WHERE {{
-                    <{uri}> rdfs:label ?label .
-                }}
-                LIMIT 1
-            """
-            
-            result = self.client.query(query)
-            if result and result["results"]["bindings"] and len(result["results"]["bindings"]) > 0:
-                label = result["results"]["bindings"][0]["label"]["value"]
-                property_labels.append(label)
-            else:
-                # Fallback: extract label from URI
-                label = self._extract_label_from_uri(uri)
-                property_labels.append(label)
-                
-        return property_labels
+            try:
+                label = legal_property_label(uri)
+                properties_list.append(label)
+                print(f"Property: {label} (from {uri})")
+            except Exception as e:
+                print(f"Error generating label for property {uri}: {e}")
+                # Fallback to simple extraction
+                fallback_label = self._extract_label_from_uri(str(uri))
+                properties_list.append(fallback_label)
+                print(f"Property (fallback): {fallback_label} (from {uri})")
+        
+        # Get entity and property candidates for Weaviate matching
+        print(f"Searching Weaviate for question: '{question}'")
+        print(f"With entities: {entities_list}")
+        print(f"With properties: {properties_list}")
+        
+        property_candidates = entities_list + properties_list
+        related_candidates = self.get_related_candidates(
+            question, 
+            property_candidates=property_candidates,
+            threshold=0.4,  # Lower threshold
+            k=5
+        )
+        
+        # Format entity matches
+        entity_matches = []
+        if "entities" in related_candidates:
+            for entity in related_candidates["entities"]:
+                if isinstance(entity, dict) and 'short' in entity and 'label' in entity:
+                    entity_matches.append({
+                        "id": entity['short'],
+                        "label": entity['label'],
+                    })
+                    print(f"Entity match: {entity['label']} ({entity['short']})")
+        
+        # Format property matches
+        property_matches = []
+        if "properties" in related_candidates:
+            for property in related_candidates["properties"]:
+                if isinstance(property, dict) and 'short' in property and 'label' in property:
+                    property_matches.append({
+                        "id": property['short'],
+                        "label": property['label'],
+                    })
+                    print(f"Property match: {property['label']} ({property['short']})")
+        
+        print(f"Final results: {len(entities_list)} entities, {len(properties_list)} properties")
+        print(f"Weaviate matches: {len(entity_matches)} entity matches, {len(property_matches)} property matches")
+        
+        return entities_list, properties_list, entity_matches, property_matches
 
     def _extract_label_from_uri(self, uri):
         """
-        Extract a human-readable label from a URI
+        Extract a human-readable label from a URI using legal-specific functions
 
         Args:
             uri (str): URI to extract label from
@@ -390,67 +469,144 @@ class PatternBasedSPARQLGenerator:
         Returns:
             str: Human-readable label
         """
-        # Extract the last part of the URI
-        last_part = uri.split('/')[-1].split('#')[-1]
-        
-        # Convert camelCase or snake_case to spaces
-        if '_' in last_part:
-            # Replace underscores with spaces
-            with_spaces = last_part.replace('_', ' ')
-            # Capitalize each word
-            return ' '.join(word.capitalize() for word in with_spaces.split())
-        else:
-            # Convert camelCase to spaces
-            return re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
-
-    def _get_entity_and_property_matches(self, entity_labels, property_labels):
-        """
-        Get entity and property matches using PropertyRetrieval
-
-        Args:
-            entity_labels (list): List of entity labels
-            property_labels (list): List of property labels
-
-        Returns:
-            tuple: (entity_matches, property_matches)
-        """
-        entity_matches = []
-        property_matches = []
-        
-        if self.property_retrieval is None:
-            return entity_matches, property_matches
-            
         try:
-            # Search for entity matches
-            for label in entity_labels:
-                results = self.property_retrieval.search_entities(label, k=5)
-                if not results.empty:
-                    for _, row in results.iterrows():
-                        if row['score'] >= 0.6:  # Threshold for relevance
-                            entity_matches.append({
-                                "id": row['short'],
-                                "label": row['label'],
-                            })
-                            
-            # Search for property matches
-            for label in property_labels:
-                results = self.property_retrieval.search_properties(label, k=5)
-                if not results.empty:
-                    for _, row in results.iterrows():
-                        if row['score'] >= 0.6:  # Threshold for relevance
-                            property_matches.append({
-                                "id": row['short'],
-                                "label": row['label'],
-                            })
-                            
-            # Remove duplicates
-            entity_matches = [dict(t) for t in {tuple(d.items()) for d in entity_matches}]
-            property_matches = [dict(t) for t in {tuple(d.items()) for d in property_matches}]
-            
+            # Check if it's a property URI
+            if self._is_property_uri(uri):
+                return legal_property_label(uri)
+            else:
+                return legal_entity_label(uri)
         except Exception as e:
-            print(f"Error getting entity and property matches: {e}")
+            print(f"Error using legal label functions for {uri}: {e}")
+            # Fallback to simple extraction
+            last_part = uri.split('/')[-1].split('#')[-1]
             
-        return entity_matches, property_matches
+            # Legal document specific handling (simple fallback)
+            if '_' in last_part:
+                with_spaces = last_part.replace('_', ' ')
+                return ' '.join(word.capitalize() for word in with_spaces.split())
+            elif last_part.isdigit():
+                return f"Item {last_part}"
+            else:
+                result = re.sub(r'([a-z])([A-Z])', r'\1 \2', last_part)
+                
+                # Handle common legal abbreviations and terms
+                legal_terms = {
+                    'uu': 'UU',
+                    'pasal': 'Pasal',
+                    'ayat': 'Ayat',
+                    'huruf': 'Huruf',
+                    'bab': 'Bab',
+                    'bagian': 'Bagian',
+                    'versi': 'Versi',
+                    'tahun': 'Tahun'
+                }
+                
+                words = result.split()
+                processed_words = []
+                for word in words:
+                    lower_word = word.lower()
+                    if lower_word in legal_terms:
+                        processed_words.append(legal_terms[lower_word])
+                    else:
+                        processed_words.append(word.capitalize())
+                
+                return ' '.join(processed_words)
+
+    def _preprocess_into_tokens(self, q: str) -> list[str]:
+        """Preprocess question into tokens using NLTK RegexpTokenizer"""
+        from nltk.tokenize import RegexpTokenizer
+        from nltk.corpus import stopwords
+        
+        tok_pattern = r"\w+"
+        tokenizer = RegexpTokenizer(tok_pattern)
+        tokenized = tokenizer.tokenize(q)
+        stopwords_set = set(stopwords.words('english'))
+        
+        result = []
+        for tok in tokenized:
+            tok = tok.lower()
+            if tok not in stopwords_set:
+                result.append(tok)
+        return result
+
+    def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+        """Generate n-grams from tokens using NLTK"""
+        from nltk import ngrams
+        
+        result = []
+        
+        # Generate unigrams, bigrams, and trigrams using NLTK
+        for n in range(1, min(max_n + 1, len(tokens) + 1)):
+            n_grams = ngrams(tokens, n)
+            result.extend([" ".join(ng) for ng in n_grams])
+        
+        return result
+
+    def get_related_candidates(
+        self,
+        q: str,
+        property_candidates: list[str] = [],
+        threshold: float = 0.4,
+        k: int = 5,
+    ) -> dict[str, list[str]]:
+        """Get related entity and property candidates using n-grams (improved version)"""
+        tokens = self._preprocess_into_tokens(q)
+        ngrams = self._generate_ngrams(tokens)
+        result = {"entities": [], "properties": []}
+
+        def search(ngram, search_type, threshold=threshold):
+            """Search for entities or properties and format results"""
+            try:
+                # Search using the appropriate method
+                if search_type == "entities":
+                    df_res = self.property_retrieval.search_entities(ngram, k=k)
+                else:
+                    df_res = self.property_retrieval.search_properties(ngram, k=k)
+                
+                # Filter by threshold and format results
+                filtered_results = []
+                if not df_res.empty:
+                    for _, row in df_res.iterrows():
+                        score = row.get('score', 0)
+                        if score >= threshold:
+                            filtered_results.append({
+                                'short': row.get('short', ''),
+                                'label': row.get('label', ''),
+                                'score': score
+                            })
+                            print(f"  Found {search_type[:-1]}: {row.get('label', '')} (score: {score:.3f})")
+                
+                return search_type, filtered_results
+            except Exception as e:
+                print(f"Error in search for '{ngram}' in {search_type}: {e}")
+                return search_type, []
+
+        # Search using n-grams and property candidates
+        search_terms = ngrams + property_candidates
+        print(f"Searching with terms: {search_terms}")
+        
+        for term in search_terms:
+            print(f"Searching for: '{term}'")
+            for search_type in result.keys():
+                search_result_type, df_res = search(term, search_type)
+                if df_res:
+                    extracted_items = [{'short': item['short'], 'label': item['label']} for item in df_res]
+                    result[search_result_type].extend(extracted_items)
+                    
+        # Remove duplicates at the end
+        for key in result.keys():
+            # Convert to list of tuples, use set for deduplication, then back to dicts
+            seen = set()
+            unique_items = []
+            for item in result[key]:
+                item_tuple = (item['short'], item['label'])
+                if item_tuple not in seen:
+                    seen.add(item_tuple)
+                    unique_items.append(item)
+            result[key] = unique_items
+            
+        print(f"Total unique results: {len(result['entities'])} entities, {len(result['properties'])} properties")
+        return result
 
     def generate_1_property_patterns(self, count=100):
         """
@@ -1071,16 +1227,16 @@ class PatternBasedSPARQLGenerator:
 
             # Convert to final format and assign sequential IDs
             for i, pattern in enumerate(all_patterns[:size]):
-                # Extract entities and properties from the SPARQL query
+                print(f"\n--- Processing pattern {i+1}/{min(size, len(all_patterns))} ---")
+                
+                # Generate a simple question for the pattern
+                question = self._generate_simple_question(pattern)
+                
+                # Extract entities and properties from the SPARQL query with Weaviate search
                 sparql = pattern["sparql"]
-                entity_uris, property_uris = self._extract_entities_and_properties_from_sparql(sparql)
+                print(f"SPARQL: {sparql}")
                 
-                # Get labels for entities and properties
-                entity_labels = self._get_entity_labels(entity_uris)
-                property_labels = self._get_property_labels(property_uris)
-                
-                # Get entity and property matches
-                entity_matches, property_matches = self._get_entity_and_property_matches(entity_labels, property_labels)
+                entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(question, sparql)
                 
                 # Add to dataset with enhanced fields
                 dataset.append(
@@ -1090,21 +1246,45 @@ class PatternBasedSPARQLGenerator:
                         "pattern_type": pattern["pattern_type"],
                         "complexity": pattern["complexity"],
                         "category": "legal",  # Fixed category for legal domain
-                        "entities": entity_labels,
-                        "properties": property_labels,
+                        "entities": entities_list,
+                        "properties": properties_list,
                         "entities_matches": entity_matches,
                         "properties_matches": property_matches
                     }
                 )
                 
-                # Print progress every 10 items
-                if (i + 1) % 10 == 0:
+                # Print progress every 5 items
+                if (i + 1) % 5 == 0:
                     print(f"Processed {i + 1}/{min(size, len(all_patterns))} patterns")
                     
         except Exception as e:
             print(f"Error in dataset generation: {e}")
 
         return dataset
+
+    def _generate_simple_question(self, pattern):
+        """Generate a simple question based on the pattern type"""
+        pattern_type = pattern.get("pattern_type", "unknown")
+        
+        if "1_prop" in pattern_type:
+            if "subject_target" in pattern_type:
+                return "What entities are related through this property?"
+            else:
+                return "What is the value of this property for this entity?"
+        elif "2_prop" in pattern_type:
+            if "middle_target" in pattern_type:
+                return "What is the intermediate entity connecting these two entities?"
+            else:
+                return "What entities are connected through this two-hop relationship?"
+        elif "3_prop" in pattern_type:
+            if "linear_end" in pattern_type:
+                return "What is at the end of this three-step path?"
+            elif "linear_middle" in pattern_type:
+                return "What is the middle entity in this three-step relationship?"
+            else:
+                return "What is the central hub in this star pattern relationship?"
+        else:
+            return "What is the result of this query pattern?"
 
     def export_json(self, dataset, output_path="pattern_based_dataset.json"):
         """Export dataset to JSON"""
@@ -1141,7 +1321,6 @@ class PatternBasedSPARQLGenerator:
 def main():
     """Main function to generate enhanced pattern-based dataset"""
     endpoint_url = "http://localhost:3030/modified-lex2kg/query"
-    turtle_file_path = "final_result.ttl"  # Path to the RDF turtle file
 
     # Define custom prefixes for the legal knowledge graph
     custom_prefixes = {
@@ -1150,22 +1329,21 @@ def main():
         "xsd": "http://www.w3.org/2001/XMLSchema#",
     }
 
-    # Initialize generator with custom prefixes and turtle file path
+    # Initialize generator with custom prefixes
     print("Initializing enhanced pattern-based SPARQL generator...")
     generator = PatternBasedSPARQLGenerator(
         endpoint_url, 
-        custom_prefixes,
-        turtle_file_path=turtle_file_path
+        custom_prefixes
     )
 
     # Generate dataset with enhanced fields
     print("Generating enhanced pattern-based dataset...")
-    dataset = generator.generate_dataset(size=200)
+    dataset = generator.generate_dataset(size=20)
 
     # Export results
     try:
-        generator.export_json(dataset, "enhanced_pattern_based_dataset.json")
-        generator.export_csv(dataset, "enhanced_pattern_based_dataset.csv")
+        generator.export_json(dataset, "legal.json")
+        generator.export_csv(dataset, "legal.csv")
     except Exception as e:
         print(f"Error exporting results: {e}")
 
