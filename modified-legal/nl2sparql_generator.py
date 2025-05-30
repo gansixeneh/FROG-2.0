@@ -585,17 +585,17 @@ class NL2SPARQLGenerator:
                 "complexity": "intermediate"
             },
             {
-                "id": "law-amended-by",
+                "id": "article-reference",
                 "category": "legal",
-                "questionTemplate": "Peraturan-peraturan mana yang mengubah {entity}?",
-                "englishQuestion": "Which regulations amended {entity}?",
+                "questionTemplate": "Pasal-pasal mana yang merujuk ke {entity}?",
+                "englishQuestion": "Which articles reference {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?amendment WHERE {
-                    ?article lex2kg-o:mengubah {entity} .
-                    ?article lex2kg-o:bagianDari ?amendment .
+                    SELECT ?referringArticle WHERE {
+                    ?textSegment lex2kg-o:merujuk {entity} .
+                    ?referringArticle lex2kg-o:versi ?textSegment .
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "advanced"
             },
             {
                 "id": "latest-law-in-year",
@@ -639,22 +639,23 @@ class NL2SPARQLGenerator:
             
             # Advanced: Complex relationships and analytics
             {
-                "id": "article-reference",
+                "id": "law-amended-by",
                 "category": "legal",
-                "questionTemplate": "Pasal-pasal mana yang merujuk ke {entity}?",
-                "englishQuestion": "Which articles reference {entity}?",
+                "questionTemplate": "Pasal-pasal mana yang mengubah {entity}?",
+                "englishQuestion": "Which law amended {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?referringArticle WHERE {
-                    ?textSegment lex2kg-o:merujuk {entity} .
-                    ?textSegment lex2kg-o:bagianDari ?referringArticle .
+                    SELECT ?amendment WHERE {
+                    ?letter lex2kg-o:mengubah {entity} .
+                    ?version lex2kg-o:huruf ?letter .
+  					?amendment lex2kg-o:versi ?version .
                     }
                 """,
-                "complexity": "advanced"
+                "complexity": "intermediate"
             },
             {
                 "id": "law-amendment",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
+                "questionTemplate": "Pasal-pasal apa saja yang diubah oleh {entity}?",
                 "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?amendedLaw WHERE {
@@ -662,8 +663,9 @@ class NL2SPARQLGenerator:
                         ?article lex2kg-o:versi ?articleVersion .
                         ?articleVersion lex2kg-o:huruf ?letter .
                         ?letter lex2kg-o:mengubah ?amendedArticleVersion .
-                        ?amendedArticleVersion lex2kg-o:bagianDari ?amendedArticle .
-                        ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
+                        ?amendedArticle lex2kg-o:versi ?amendedArticleVersion .
+                        ?amendedLaw lex2kg-o:pasal ?amendedArticle .
+                        ?amendedLaw a lex2kg-o:Peraturan
                     }
                 """,
                 "complexity": "advanced"
