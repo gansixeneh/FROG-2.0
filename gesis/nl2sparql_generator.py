@@ -710,8 +710,8 @@ class NL2SPARQLGenerator:
         # Use scholarly templates for GESIS KG
         return scholarly_templates
 
-    def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
-                    variations_per_question=3, validate_queries=False, max_attempts_per_template=15):
+    def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True, 
+                    validate_queries=False, max_attempts_per_template=15):
         """
         Generate dataset based on GESIS knowledge graph
         
@@ -719,7 +719,6 @@ class NL2SPARQLGenerator:
             size (int): Total number of question-query pairs to generate
             complexity_distribution (dict): Distribution of complexity levels
             include_variations (bool): Whether to include variations of questions
-            variations_per_question (int): Number of variations per question
             validate_queries (bool): Whether to validate SPARQL queries
             max_attempts_per_template (int): Maximum number of attempts to instantiate a template
             
@@ -791,33 +790,6 @@ class NL2SPARQLGenerator:
                             successful_generations += 1
                             success_templates[template_id] += 1
                             success = True
-                            
-                            # Add variations if requested
-                            if include_variations and instance["question"]:
-                                # Generate completely new instantiations of the template for each variation
-                                for v in range(variations_per_question):
-                                    if len(dataset) >= size:
-                                        break
-                                        
-                                    # Create a completely new instantiation of the template with a different entity
-                                    variation_instance = self.instantiate_template_with_discovery(template)
-                                    
-                                    # Skip if we couldn't create a valid instantiation
-                                    if not variation_instance:
-                                        continue
-                                    
-                                    # Add this new instantiation as a variation
-                                    dataset.append({
-                                        "id": f"q{id_counter}",
-                                        "question": variation_instance["question"],
-                                        "englishQuestion": variation_instance["englishQuestion"],
-                                        "sparql": variation_instance["sparql"],
-                                        "category": template["category"],
-                                        "complexity": template["complexity"],
-                                        "templateId": template["id"],
-                                        "isVariation": True
-                                    })
-                                    id_counter += 1
                     except Exception as e:
                         print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
                 
