@@ -181,13 +181,6 @@ class VariationGenerator:
         """
         variations = []
         
-        # Add please
-        if question.endswith('?'):
-            variations.append({
-                "text": question.replace('?', ' please?'),
-                "english": english_question.replace('?', ' please?')
-            })
-        
         # Could you tell me...
         variations.append({
             "text": f"Could you tell me {question.lower()}",
