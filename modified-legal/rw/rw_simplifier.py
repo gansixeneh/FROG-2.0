@@ -20,9 +20,15 @@ def extract_entities_and_properties(sparql_query):
 def filter_matches(entities_matches, properties_matches, entity_uris, property_names):
     """Filter entities and properties matches based on what's used in the SPARQL query."""
     filtered_entities = [match for match in entities_matches if match['id'] in entity_uris]
-    filtered_properties = [match for match in properties_matches 
-                           if match['label'] in property_names]
     
+    filtered_properties = []
+    for match in properties_matches:
+        if match['label'] in property_names:
+            # Create a copy of the match and modify the id to use lex2kg-o: prefix
+            modified_match = match.copy()
+            modified_match['id'] = f"lex2kg-o:{match['label']}"
+            filtered_properties.append(modified_match)
+            
     return filtered_entities, filtered_properties
 
 def process_json_file(input_file, output_file):
@@ -38,7 +44,7 @@ def process_json_file(input_file, output_file):
         
         # Filter entities_matches and properties_matches
         filtered_entities, filtered_properties = filter_matches(
-            item['entities_matches'], 
+            item['entities_matches'],
             item['properties_matches'],
             entity_uris,
             property_names
@@ -51,7 +57,6 @@ def process_json_file(input_file, output_file):
             'entities_matches': filtered_entities,
             'properties_matches': filtered_properties
         }
-        
         results.append(filtered_item)
     
     # Output the filtered results
@@ -64,7 +69,6 @@ def main():
     # Process the file
     input_file = 'legal.json'
     output_file = 'legal_filter.json'
-    
     process_json_file(input_file, output_file)
 
 if __name__ == "__main__":
