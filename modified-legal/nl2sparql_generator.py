@@ -429,8 +429,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-title",
                 "category": "legal",
-                "questionTemplate": "Apa judul dari {entity}?",
-                "englishQuestion": "What is the title of {entity}?",
+                "questionTemplates": [
+                    "Apa judul dari {entity}?",
+                    "Apa nama dari {entity}?", 
+                    "Bagaimana judul dari {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the title of {entity}?",
+                    "What is the name of {entity}?",
+                    "How is the title of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
                     {entity} lex2kg-o:tentang ?title .
@@ -441,8 +449,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-enactment-date",
                 "category": "legal",
-                "questionTemplate": "Kapan {entity} disahkan?",
-                "englishQuestion": "When was {entity} enacted?",
+                "questionTemplates": [
+                    "Kapan {entity} disahkan?",
+                    "Pada tanggal berapa {entity} disahkan?",
+                    "Tanggal berapa {entity} disahkan?"
+                ],
+                "englishQuestionTemplates": [
+                    "When was {entity} enacted?",
+                    "On what date was {entity} enacted?",
+                    "What date was {entity} enacted?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
                     {entity} lex2kg-o:disahkanPada ?date .
@@ -453,8 +469,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-enactment-location",
                 "category": "legal",
-                "questionTemplate": "Di mana {entity} disahkan?",
-                "englishQuestion": "Where was {entity} enacted?",
+                "questionTemplates": [
+                    "Di mana {entity} disahkan?",
+                    "Di kota mana {entity} disahkan?",
+                    "Di tempat mana {entity} disahkan?"
+                ],
+                "englishQuestionTemplates": [
+                    "Where was {entity} enacted?",
+                    "In which city was {entity} enacted?",
+                    "In what place was {entity} enacted?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?location WHERE {
                     {entity} lex2kg-o:disahkanDi ?location .
@@ -465,8 +489,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-enactment-person",
                 "category": "legal",
-                "questionTemplate": "Siapa yang mengesahkan {entity}?",
-                "englishQuestion": "Who enacted {entity}?",
+                "questionTemplates": [
+                    "Siapa yang mengesahkan {entity}?",
+                    "Siapa nama orang yang mengesahkan {entity}?",
+                    "Oleh siapa {entity} disahkan?"
+                ],
+                "englishQuestionTemplates": [
+                    "Who enacted {entity}?",
+                    "What is the name of the person who enacted {entity}?",
+                    "By whom was {entity} signed?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?person WHERE {
                     {entity} lex2kg-o:disahkanOleh ?person .
@@ -477,8 +509,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-enactment-position",
                 "category": "legal",
-                "questionTemplate": "Apa jabatan pengesah {entity}?",
-                "englishQuestion": "What is the position of the person who enacted {entity}?",
+                "questionTemplates": [
+                    "Apa jabatan pengesah {entity}?",
+                    "Apa posisi pengesah {entity}?",
+                    "Jabatan apa yang dimiliki oleh pengesah {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the position of the person who enacted {entity}?",
+                    "What is the role of the person who enacted {entity}?",
+                    "What position does the enactor of {entity} hold?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?position WHERE {
                     {entity} lex2kg-o:jabatanPengesah ?position .
@@ -489,8 +529,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-type",
                 "category": "legal",
-                "questionTemplate": "Apa jenis peraturan dari {entity}?",
-                "englishQuestion": "What type of regulation is {entity}?",
+                "questionTemplates": [
+                    "Apa jenis peraturan dari {entity}?",
+                    "Apa kategori peraturan dari {entity}?",
+                    "Termasuk jenis peraturan apa {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What type of regulation is {entity}?",
+                    "What category of regulation is {entity}?",
+                    "Which type of regulation is {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?type WHERE {
                     {entity} lex2kg-o:jenisPeraturan ?type .
@@ -501,8 +549,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "article-text",
                 "category": "legal",
-                "questionTemplate": "Apa isi dari {entity}?",
-                "englishQuestion": "What is the content of {entity}?",
+                "questionTemplates": [
+                    "Apa isi dari {entity}?",
+                    "Apa konten dari {entity}?",
+                    "Bagaimana bunyi dari {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the content of {entity}?",
+                    "What is the text of {entity}?",
+                    "How does the text read for {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?text WHERE {
                     {entity} lex2kg-o:teks ?text .
@@ -513,8 +569,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "article-version",
                 "category": "legal",
-                "questionTemplate": "Apa versi terbaru dari {entity}?",
-                "englishQuestion": "What is the latest version of {entity}?",
+                "questionTemplates": [
+                    "Apa versi terbaru dari {entity}?",
+                    "Versi terbaru apa dari {entity}?",
+                    "Bagaimana versi terkini dari {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the latest version of {entity}?",
+                    "What latest version of {entity} exists?",
+                    "How is the current version of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?version WHERE {
                     {entity} lex2kg-o:versi ?version .
@@ -525,8 +589,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "chapter-title",
                 "category": "legal",
-                "questionTemplate": "Apa judul dari {entity}?",
-                "englishQuestion": "What is the title of {entity}?",
+                "questionTemplates": [
+                    "Apa judul dari {entity}?",
+                    "Apa nama dari {entity}?",
+                    "Bagaimana judul dari {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the title of {entity}?",
+                    "What is the name of {entity}?",
+                    "How is the title of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
                     {entity} lex2kg-o:judul ?title .
@@ -537,8 +609,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-language",
                 "category": "legal",
-                "questionTemplate": "Dalam bahasa apa {entity} ditulis?",
-                "englishQuestion": "In what language is {entity} written?",
+                "questionTemplates": [
+                    "Dalam bahasa apa {entity} ditulis?",
+                    "Bahasa apa yang digunakan dalam {entity}?",
+                    "Apa bahasa penulisan {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "In what language is {entity} written?",
+                    "What language is used in {entity}?",
+                    "What is the writing language of {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?language WHERE {
                     {entity} lex2kg-o:bahasa ?language .
@@ -551,8 +631,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-articles-count",
                 "category": "legal",
-                "questionTemplate": "Berapa jumlah pasal dalam {entity}?",
-                "englishQuestion": "How many articles are in {entity}?",
+                "questionTemplates": [
+                    "Berapa jumlah pasal dalam {entity}?",
+                    "Ada berapa pasal dalam {entity}?",
+                    "Jumlah pasal dalam {entity} ada berapa?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many articles are in {entity}?",
+                    "What is the number of articles in {entity}?",
+                    "How many articles does {entity} contain?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?article) AS ?count) WHERE {
                     {entity} lex2kg-o:pasal ?article .
@@ -563,8 +651,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-chapters-count",
                 "category": "legal",
-                "questionTemplate": "Berapa jumlah bab dalam {entity}?",
-                "englishQuestion": "How many chapters are in {entity}?",
+                "questionTemplates": [
+                    "Berapa jumlah bab dalam {entity}?",
+                    "Ada berapa bab dalam {entity}?",
+                    "Jumlah bab dalam {entity} ada berapa?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many chapters are in {entity}?",
+                    "What is the number of chapters in {entity}?",
+                    "How many chapters does {entity} contain?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?chapter) AS ?count) WHERE {
                     {entity} lex2kg-o:bab ?chapter .
@@ -575,8 +671,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "article-sections-count",
                 "category": "legal",
-                "questionTemplate": "Berapa jumlah ayat dalam {entity}?",
-                "englishQuestion": "How many sections are in {entity}?",
+                "questionTemplates": [
+                    "Berapa jumlah ayat dalam {entity}?",
+                    "Ada berapa ayat dalam {entity}?",
+                    "Jumlah ayat dalam {entity} ada berapa?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many sections are in {entity}?",
+                    "What is the number of sections in {entity}?",
+                    "How many sections does {entity} contain?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?section) AS ?count) WHERE {
                     {entity} lex2kg-o:ayat ?section .
@@ -587,8 +691,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "article-reference",
                 "category": "legal",
-                "questionTemplate": "Pasal-pasal mana yang merujuk ke {entity}?",
-                "englishQuestion": "Which articles reference {entity}?",
+                "questionTemplates": [
+                    "Pasal-pasal mana yang merujuk ke {entity}?",
+                    "Pasal apa saja yang merujuk ke {entity}?",
+                    "Rujukan ke {entity} ada di pasal mana saja?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which articles reference {entity}?",
+                    "What articles refer to {entity}?",
+                    "Where are references to {entity} found in articles?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?referringArticle WHERE {
                     ?textSegment lex2kg-o:merujuk {entity} .
@@ -600,8 +712,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "latest-law-in-year",
                 "category": "legal",
-                "questionTemplate": "Undang-undang terakhir yang disahkan pada tahun {value}?",
-                "englishQuestion": "What was the latest law enacted in the year {value}?",
+                "questionTemplates": [
+                    "Undang-undang terakhir yang disahkan pada tahun {value}?",
+                    "Peraturan terakhir yang disahkan di tahun {value}?",
+                    "Apa UU terakhir yang disahkan tahun {value}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What was the latest law enacted in the year {value}?",
+                    "What was the last regulation passed in {value}?",
+                    "Which law was enacted last in {value}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:tahun {value} .
@@ -615,8 +735,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "paragraph-count",
                 "category": "legal",
-                "questionTemplate": "Berapa jumlah paragraf dalam bagian {entity}?",
-                "englishQuestion": "How many paragraphs are in section {entity}?",
+                "questionTemplates": [
+                    "Berapa jumlah paragraf dalam bagian {entity}?",
+                    "Ada berapa paragraf dalam bagian {entity}?",
+                    "Jumlah paragraf dalam bagian {entity} ada berapa?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many paragraphs are in section {entity}?",
+                    "What is the number of paragraphs in section {entity}?",
+                    "How many paragraphs does section {entity} contain?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?paragraph) AS ?count) WHERE {
                     {entity} lex2kg-o:paragraf ?paragraph .
@@ -627,8 +755,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "specific-year-law-count",
                 "category": "legal",
-                "questionTemplate": "Berapa undang-undang yang disahkan pada tahun {value}?",
-                "englishQuestion": "How many laws were enacted in the year {value}?",
+                "questionTemplates": [
+                    "Berapa undang-undang yang disahkan pada tahun {value}?",
+                    "Ada berapa undang-undang yang disahkan tahun {value}?",
+                    "Jumlah undang-undang yang disahkan tahun {value} ada berapa?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many laws were enacted in the year {value}?",
+                    "What is the number of laws passed in {value}?",
+                    "How many laws were passed during {value}?"
+                ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?law) AS ?count) WHERE {
                     ?law lex2kg-o:tahun {value} .
@@ -641,13 +777,21 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-amended-by",
                 "category": "legal",
-                "questionTemplate": "Pasal-pasal mana yang mengubah {entity}?",
-                "englishQuestion": "Which law amended {entity}?",
+                "questionTemplates": [
+                    "Pasal-pasal mana yang mengubah {entity}?",
+                    "Pasal apa saja yang mengubah {entity}?",
+                    "Perubahan terhadap {entity} terdapat di pasal mana?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which law amended {entity}?",
+                    "What laws made changes to {entity}?",
+                    "Where are amendments to {entity} found?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?amendment WHERE {
                     ?letter lex2kg-o:mengubah {entity} .
                     ?version lex2kg-o:huruf ?letter .
-  					?amendment lex2kg-o:versi ?version .
+                    ?amendment lex2kg-o:versi ?version .
                     }
                 """,
                 "complexity": "intermediate"
@@ -655,8 +799,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-amendment",
                 "category": "legal",
-                "questionTemplate": "Pasal-pasal apa saja yang diubah oleh {entity}?",
-                "englishQuestion": "Which laws were amended by {entity}?",
+                "questionTemplates": [
+                    "Pasal-pasal apa saja yang diubah oleh {entity}?",
+                    "Pasal mana saja yang diamendemen oleh {entity}?",
+                    "Apa saja pasal yang mengalami perubahan oleh {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which laws were amended by {entity}?",
+                    "What articles were changed by {entity}?",
+                    "Which sections underwent modifications by {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?amendedLaw WHERE {
                         {entity} lex2kg-o:pasal ?article .
@@ -673,8 +825,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-by-keyword",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa saja yang berhubungan dengan '{value}'?",
-                "englishQuestion": "Which laws are related to '{value}'?",
+                "questionTemplates": [
+                    "Undang-undang apa saja yang berhubungan dengan '{value}'?",
+                    "Peraturan apa saja yang terkait dengan '{value}'?",
+                    "Regulasi mana yang membahas tentang '{value}'?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which laws are related to '{value}'?",
+                    "What regulations are associated with '{value}'?",
+                    "Which legal documents discuss '{value}'?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:tentang ?title .
@@ -686,8 +846,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-with-most-articles",
                 "category": "legal",
-                "questionTemplate": "Undang-undang dengan jumlah pasal terbanyak?",
-                "englishQuestion": "Which law has the most articles?",
+                "questionTemplates": [
+                    "Undang-undang dengan jumlah pasal terbanyak?",
+                    "Peraturan mana yang memiliki pasal terbanyak?",
+                    "UU dengan jumlah pasal paling banyak?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which law has the most articles?",
+                    "What regulation contains the highest number of articles?",
+                    "Which legal document has the largest article count?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:pasal ?article .
@@ -701,8 +869,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-by-enactor",
                 "category": "legal",
-                "questionTemplate": "Undang-undang terbaru yang disahkan oleh {value}?",
-                "englishQuestion": "What is the most recent law enacted by {value}?",
+                "questionTemplates": [
+                    "Undang-undang terbaru yang disahkan oleh {value}?",
+                    "Peraturan terkini yang ditandatangani oleh {value}?",
+                    "UU terakhir yang disahkan oleh {value}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the most recent law enacted by {value}?",
+                    "What is the latest regulation signed by {value}?",
+                    "Which was the last law passed by {value}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:disahkanOleh {value} .
@@ -716,8 +892,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-deletion",
                 "category": "legal",
-                "questionTemplate": "Apa saja pasal yang dihapus oleh {entity}?",
-                "englishQuestion": "Which articles were deleted by {entity}?",
+                "questionTemplates": [
+                    "Apa saja pasal yang dihapus oleh {entity}?",
+                    "Pasal mana saja yang dihapuskan oleh {entity}?",
+                    "Bagian mana yang dihilangkan oleh {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which articles were deleted by {entity}?",
+                    "What sections were removed by {entity}?",
+                    "Which parts were eliminated by {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?deletedArticle WHERE {
                     {entity} lex2kg-o:menghapus ?deletedArticle .
@@ -728,8 +912,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-insertion",
                 "category": "legal",
-                "questionTemplate": "Apa saja pasal yang disisipkan oleh {entity}?",
-                "englishQuestion": "Which articles were inserted by {entity}?",
+                "questionTemplates": [
+                    "Apa saja pasal yang disisipkan oleh {entity}?",
+                    "Pasal mana saja yang ditambahkan oleh {entity}?",
+                    "Bagian baru apa yang dimasukkan oleh {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which articles were inserted by {entity}?",
+                    "What sections were added by {entity}?",
+                    "Which new parts were introduced by {entity}?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?insertedArticle WHERE {
                     {entity} lex2kg-o:menyisipkan ?insertedArticle .
@@ -740,8 +932,16 @@ class NL2SPARQLGenerator:
             {
                 "id": "oldest-law",
                 "category": "legal",
-                "questionTemplate": "Undang-undang tertua dalam sistem?",
-                "englishQuestion": "What is the oldest law in the system?",
+                "questionTemplates": [
+                    "Undang-undang tertua dalam sistem?",
+                    "Peraturan paling lama dalam database?",
+                    "UU dengan tanggal paling awal dalam sistem?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the oldest law in the system?",
+                    "Which is the earliest regulation in the database?",
+                    "What is the first law recorded in the system?"
+                ],
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:disahkanPada ?date .
@@ -1491,18 +1691,9 @@ class NL2SPARQLGenerator:
                 return self.instantiate_template(template)
 
             # Randomly select one of the question templates
-            if "questionTemplates" in template and template["questionTemplates"]:
-                idx = random.randrange(len(template["questionTemplates"]))
-                question_template = template["questionTemplates"][idx]
-                english_question_template = (
-                    template["englishQuestions"][idx]
-                    if idx < len(template["englishQuestions"])
-                    else template["englishQuestions"][0]
-                )
-            else:
-                # Fallback to single template for backward compatibility
-                question_template = template.get("questionTemplate", "")
-                english_question_template = template.get("englishQuestion", "")
+            idx = random.randrange(len(template["questionTemplates"]))
+            question_template = template["questionTemplates"][idx]
+            english_question_template = template["englishQuestionTemplates"][idx]
 
             # Apply replacements to the question template
             question = question_template.strip()
@@ -1567,14 +1758,9 @@ class NL2SPARQLGenerator:
         replacements = {"value": keyword}
         
         # Randomly select one of the question templates
-        if "questionTemplates" in template and template["questionTemplates"]:
-            idx = random.randrange(len(template["questionTemplates"]))
-            question_template = template["questionTemplates"][idx]
-            english_question_template = template["englishQuestions"][idx] if idx < len(template["englishQuestions"]) else template["englishQuestions"][0]
-        else:
-            # Fallback to single template for backward compatibility
-            question_template = template.get("questionTemplate", "")
-            english_question_template = template.get("englishQuestion", "")
+        idx = random.randrange(len(template["questionTemplates"]))
+        question_template = template["questionTemplates"][idx]
+        english_question_template = template["englishQuestionTemplates"][idx]
         
         # Apply replacements to the question template
         question = question_template.strip()
@@ -1706,18 +1892,9 @@ class NL2SPARQLGenerator:
             return None
 
         # Randomly select one of the question templates
-        if "questionTemplates" in template and template["questionTemplates"]:
-            idx = random.randrange(len(template["questionTemplates"]))
-            question_template = template["questionTemplates"][idx]
-            english_question_template = (
-                template["englishQuestions"][idx]
-                if idx < len(template["englishQuestions"])
-                else template["englishQuestions"][0]
-            )
-        else:
-            # Fallback to single template for backward compatibility
-            question_template = template.get("questionTemplate", "")
-            english_question_template = template.get("englishQuestion", "")
+        idx = random.randrange(len(template["questionTemplates"]))
+        question_template = template["questionTemplates"][idx]
+        english_question_template = template["englishQuestionTemplates"][idx]
 
         # Apply replacements to the question template
         question = question_template.strip()
@@ -1773,14 +1950,9 @@ class NL2SPARQLGenerator:
         """
         placeholders = set()
 
-        # Check if we have multiple question templates or a single one
-        if "questionTemplates" in template and template["questionTemplates"]:
-            question_templates = template["questionTemplates"]
-            english_templates = template.get("englishQuestions", [])
-        else:
-            # Fallback to single template
-            question_templates = [template.get("questionTemplate", "")]
-            english_templates = [template.get("englishQuestion", "")]
+        # Check if we have multiple question templates
+        question_templates = template["questionTemplates"]
+        english_templates = template["englishQuestionTemplates"]
 
         # For Python triple-quoted strings, we need to handle whitespace
         # First, normalize the SPARQL template
