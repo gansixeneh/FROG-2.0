@@ -1,46 +1,17 @@
 [
   {
     "id": "q1",
-    "question": "Which organization published Deutsches Forschungshandbuch 2016 - 17 : F\u00f6rderinstitutionen, F\u00f6derprogramme und Drittmittel f\u00fcr die Wissenschaft?",
-    "englishQuestion": "Which organization published Deutsches Forschungshandbuch 2016 - 17 : F\u00f6rderinstitutionen, F\u00f6derprogramme und Drittmittel f\u00fcr die Wissenschaft?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-148549> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher"
-  },
-  {
-    "id": "q2",
-    "question": "Which organization published Familie, Geschlechterverh\u00e4ltnis, Alter und Migration : Wissen, Einstellungen und W\u00fcnsche der \u00d6stereicherinnen und \u00d6sterreicher. Tabellenband und Zusammenfassung ausgew\u00e4hlter Ergebnisse?",
-    "englishQuestion": "Which organization published Familie, Geschlechterverh\u00e4ltnis, Alter und Migration : Wissen, Einstellungen und W\u00fcnsche der \u00d6stereicherinnen und \u00d6sterreicher. Tabellenband und Zusammenfassung ausgew\u00e4hlter Ergebnisse?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-104601> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher",
-    "isVariation": true
-  },
-  {
-    "id": "q3",
-    "question": "What is the publisher of Zwischenauswertung einer ASA-Erhebung \u00fcber technologieorientierte Sozialforschung?",
-    "englishQuestion": "What is the publisher of Zwischenauswertung einer ASA-Erhebung \u00fcber technologieorientierte Sozialforschung?",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-104915> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher",
-    "isVariation": true
-  },
-  {
-    "id": "q4",
-    "question": "Who is the author of Methoden der empirischen Sozialforschung?",
-    "englishQuestion": "Who is the author of Methoden der empirischen Sozialforschung?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103606> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "question": "Who wrote 'Viehbestand in Deutschland, 1873 bis 2000.'?",
+    "englishQuestion": "Who wrote 'Viehbestand in Deutschland, 1873 bis 2000.'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8308> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-author"
   },
   {
-    "id": "q5",
-    "question": "Who created Die Abgrenzung homogener st\u00e4dtischer Teilgebiete?",
-    "englishQuestion": "Who created Die Abgrenzung homogener st\u00e4dtischer Teilgebiete?",
+    "id": "q2",
+    "question": "Who is the author of 'Die Abgrenzung homogener st\u00e4dtischer Teilgebiete'?",
+    "englishQuestion": "Who is the author of 'Die Abgrenzung homogener st\u00e4dtischer Teilgebiete'?",
     "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-123707> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
@@ -48,51 +19,467 @@
     "isVariation": true
   },
   {
-    "id": "q6",
-    "question": "Who wrote Introduction?",
-    "englishQuestion": "Who wrote Introduction?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-129782> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "id": "q3",
+    "question": "Who created 'Statistics on yearly and quarterly electricity production of public and industrial power stations and of the German Bahn AG (German railroad company) as well as the total electric power consumption, 1950-2000'?",
+    "englishQuestion": "Who created 'Statistics on yearly and quarterly electricity production of public and industrial power stations and of the German Bahn AG (German railroad company) as well as the total electric power consumption, 1950-2000'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8610> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-author",
     "isVariation": true
   },
   {
+    "id": "q4",
+    "question": "What is the publication date of 'Parteien und Wahlen in Nordrhein-Westfalen'?",
+    "englishQuestion": "What is the publication date of 'Parteien und Wahlen in Nordrhein-Westfalen'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100924> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q5",
+    "question": "When was 'Unternehmensf\u00fchrung vor neuen gesellschaftlichen Herausforderungen : Ergebnisse einer gemeinsamen Arbeitstagung der Bertelsmann Stiftung, G\u00fctersloh, und des Instituts f\u00fcr Wirtschafts- und Gesellschaftspolitik e.V. - IWG - Bonn, am 23. und 24. April 1985 in Hamburg ; Zusammenfassung der Diskussionen: Hannelore Burmann, IWG.' published?",
+    "englishQuestion": "When was 'Unternehmensf\u00fchrung vor neuen gesellschaftlichen Herausforderungen : Ergebnisse einer gemeinsamen Arbeitstagung der Bertelsmann Stiftung, G\u00fctersloh, und des Instituts f\u00fcr Wirtschafts- und Gesellschaftspolitik e.V. - IWG - Bonn, am 23. und 24. April 1985 in Hamburg ; Zusammenfassung der Diskussionen: Hannelore Burmann, IWG.' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103200> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q6",
+    "question": "In what year was 'Germany today. A personal report' published?",
+    "englishQuestion": "In what year was 'Germany today. A personal report' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102143> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
     "id": "q7",
-    "question": "What is the main theme of Climate negotiations in times of multiple crises: credibility and trust in international climate politics after COP 27?",
-    "englishQuestion": "What is the main theme of Climate negotiations in times of multiple crises: credibility and trust in international climate politics after COP 27?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-86804> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "question": "Who is the author of 'Wholesale price index, Germany 1880 to 1999.'?",
+    "englishQuestion": "Who is the author of 'Wholesale price index, Germany 1880 to 1999.'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8299> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author"
+  },
+  {
+    "id": "q8",
+    "question": "Who created 'Geldbest\u00e4nde, Wertpapiermarkt, Bargeldumlauf, Zinsen und Renditen in der Bundesrepublik Deutschland 1950 bis 2000'?",
+    "englishQuestion": "Who created 'Geldbest\u00e4nde, Wertpapiermarkt, Bargeldumlauf, Zinsen und Renditen in der Bundesrepublik Deutschland 1950 bis 2000'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8372> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q9",
+    "question": "Who is the author of 'Methoden der empirischen Sozialforschung'?",
+    "englishQuestion": "Who is the author of 'Methoden der empirischen Sozialforschung'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-104288> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q10",
+    "question": "What is the publisher of 'Economic inequality, the German left, and the politics of economic redistribution'?",
+    "englishQuestion": "What is the publisher of 'Economic inequality, the German left, and the politics of economic redistribution'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-136550> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher"
+  },
+  {
+    "id": "q11",
+    "question": "Who published 'Tendenzen und Perspektiven kultureller Entwicklung in der DDR im \u00dcbergang zu den 90er Jahren : Studie'?",
+    "englishQuestion": "Who published 'Tendenzen und Perspektiven kultureller Entwicklung in der DDR im \u00dcbergang zu den 90er Jahren : Studie'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142753> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "isVariation": true
+  },
+  {
+    "id": "q12",
+    "question": "What is the publisher of 'Die Handlochkarte : Technik und Anwendung in Wirtschaft und Verwaltung'?",
+    "englishQuestion": "What is the publisher of 'Die Handlochkarte : Technik und Anwendung in Wirtschaft und Verwaltung'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-88325> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "isVariation": true
+  },
+  {
+    "id": "q13",
+    "question": "What is the publication date of 'Das Berliner Abgeordnetenhaus im Netzwerk gesellschaftlicher Interessen : ein Forschungsbericht'?",
+    "englishQuestion": "What is the publication date of 'Das Berliner Abgeordnetenhaus im Netzwerk gesellschaftlicher Interessen : ein Forschungsbericht'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102859> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q14",
+    "question": "When was 'The age of access : Information technology and social revolution' published?",
+    "englishQuestion": "When was 'The age of access : Information technology and social revolution' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102096> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q15",
+    "question": "What is the publication date of 'Unternehmensf\u00fchrung vor neuen gesellschaftlichen Herausforderungen : Ergebnisse einer gemeinsamen Arbeitstagung der Bertelsmann Stiftung, G\u00fctersloh, und des Instituts f\u00fcr Wirtschafts- und Gesellschaftspolitik e.V. - IWG - Bonn, am 23. und 24. April 1985 in Hamburg ; Zusammenfassung der Diskussionen: Hannelore Burmann, IWG.'?",
+    "englishQuestion": "What is the publication date of 'Unternehmensf\u00fchrung vor neuen gesellschaftlichen Herausforderungen : Ergebnisse einer gemeinsamen Arbeitstagung der Bertelsmann Stiftung, G\u00fctersloh, und des Instituts f\u00fcr Wirtschafts- und Gesellschaftspolitik e.V. - IWG - Bonn, am 23. und 24. April 1985 in Hamburg ; Zusammenfassung der Diskussionen: Hannelore Burmann, IWG.'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103200> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q16",
+    "question": "What is the main theme of 'The society of the Muslim Brothers: an\nislamist political party?; participation in a confined political system'?",
+    "englishQuestion": "What is the main theme of 'The society of the Muslim Brothers: an\nislamist political party?; participation in a confined political system'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-51662> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic"
   },
   {
-    "id": "q8",
-    "question": "What is the subject of Political Participation and Power Relations in Egypt: The Scope of Newspapers and Social Network Sites?",
-    "englishQuestion": "What is the subject of Political Participation and Power Relations in Egypt: The Scope of Newspapers and Social Network Sites?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-55259> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "id": "q17",
+    "question": "What is the main theme of 'The Traps of International Scripts: Making a Case for a Critical Anthropology of Gender and Sexuality in Development'?",
+    "englishQuestion": "What is the main theme of 'The Traps of International Scripts: Making a Case for a Critical Anthropology of Gender and Sexuality in Development'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-60620> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic",
     "isVariation": true
   },
   {
-    "id": "q9",
-    "question": "What is the main theme of Climate negotiations in times of multiple crises: credibility and trust in international climate politics after COP 27?",
-    "englishQuestion": "What is the main theme of Climate negotiations in times of multiple crises: credibility and trust in international climate politics after COP 27?",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-86804> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "id": "q18",
+    "question": "What is the topic of 'Vierzig Jahre Sechstagekrieg: strukturelle Pr\u00e4gekraft f\u00fcr den Nahen Osten'?",
+    "englishQuestion": "What is the topic of 'Vierzig Jahre Sechstagekrieg: strukturelle Pr\u00e4gekraft f\u00fcr den Nahen Osten'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-28650> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic",
     "isVariation": true
   },
   {
-    "id": "q10",
-    "question": "Who created paper presented at the annual meeting of Eastern American Sociological Society?",
-    "englishQuestion": "Who created paper presented at the annual meeting of Eastern American Sociological Society?",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-107307> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "id": "q19",
+    "question": "What is the publication date of 'Die Vielseher : Fernseh-Zuschauerforschung in Deutschland ; Theorie, Praxis, Ergebnisse'?",
+    "englishQuestion": "What is the publication date of 'Die Vielseher : Fernseh-Zuschauerforschung in Deutschland ; Theorie, Praxis, Ergebnisse'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103343> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q20",
+    "question": "When was 'Theory of subject analysis : a sourcebook' published?",
+    "englishQuestion": "When was 'Theory of subject analysis : a sourcebook' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-101869> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q21",
+    "question": "In what year was 'West German politics in the mid-eighties : crisis and continuity' published?",
+    "englishQuestion": "In what year was 'West German politics in the mid-eighties : crisis and continuity' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102083> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q22",
+    "question": "When was 'Soziale Bewegungen : ein historisch-systematischer Grundri\u00df' published?",
+    "englishQuestion": "When was 'Soziale Bewegungen : ein historisch-systematischer Grundri\u00df' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102088> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q23",
+    "question": "What is the publication date of 'Racial attitudes in America : trends and interpretations'?",
+    "englishQuestion": "What is the publication date of 'Racial attitudes in America : trends and interpretations'?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102641> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q24",
+    "question": "In what year was 'Ten European elections : campaigns and results of the 1979/81 first direct elections to the European Parliament' published?",
+    "englishQuestion": "In what year was 'Ten European elections : campaigns and results of the 1979/81 first direct elections to the European Parliament' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103096> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q25",
+    "question": "Who is the author of 'Reviving the coffee-house culture'?",
+    "englishQuestion": "Who is the author of 'Reviving the coffee-house culture'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-119551> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-author"
+  },
+  {
+    "id": "q26",
+    "question": "Who created 'Die Abgrenzung homogener st\u00e4dtischer Teilgebiete'?",
+    "englishQuestion": "Who created 'Die Abgrenzung homogener st\u00e4dtischer Teilgebiete'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-123707> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q27",
+    "question": "Who is the author of 'Hauptarten der Bodennutzung und landwirtschaftlich genutzte Fl\u00e4che in Deutschland 1883 bis 2001'?",
+    "englishQuestion": "Who is the author of 'Hauptarten der Bodennutzung und landwirtschaftlich genutzte Fl\u00e4che in Deutschland 1883 bis 2001'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8309> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q28",
+    "question": "Who created '50 Jahre Deutsche Mark. Monet\u00e4re Statistiken von 1948 bis 1997'?",
+    "englishQuestion": "Who created '50 Jahre Deutsche Mark. Monet\u00e4re Statistiken von 1948 bis 1997'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA8186> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author"
+  },
+  {
+    "id": "q29",
+    "question": "Who is the author of 'Integration in Baden-W\u00fcrttemberg 2012 - comparative study for the Federal Republic'?",
+    "englishQuestion": "Who is the author of 'Integration in Baden-W\u00fcrttemberg 2012 - comparative study for the Federal Republic'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA5580> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q30",
+    "question": "Who created 'KPD und Wissenschaftsentwicklung 1919-1945 : Theorienchaos und Ideologieproduktion'?",
+    "englishQuestion": "Who created 'KPD und Wissenschaftsentwicklung 1919-1945 : Theorienchaos und Ideologieproduktion'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-10699> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q31",
+    "question": "When was 'Building regional data files in the Federal Republic of Germany. Some experiences and problems' published?",
+    "englishQuestion": "When was 'Building regional data files in the Federal Republic of Germany. Some experiences and problems' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102032> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q32",
+    "question": "In what year was 'Wissenschaftstheorie f\u00fcr Sozialwissenschaftler. Eine problemorientierte Einf\u00fchrung' published?",
+    "englishQuestion": "In what year was 'Wissenschaftstheorie f\u00fcr Sozialwissenschaftler. Eine problemorientierte Einf\u00fchrung' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100974> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q33",
+    "question": "In what year was 'Krankheitsarten- und Arbeitsunfallstatistik '84' published?",
+    "englishQuestion": "In what year was 'Krankheitsarten- und Arbeitsunfallstatistik '84' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102313> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q34",
+    "question": "When was 'Wirtschaftspsychologie. Arbeitslosenforschung, Schattenwirtschaft, Steuerpsychologie' published?",
+    "englishQuestion": "When was 'Wirtschaftspsychologie. Arbeitslosenforschung, Schattenwirtschaft, Steuerpsychologie' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102091> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q35",
+    "question": "When was 'Wahlen und W\u00e4hler: Munter wie die Fische. Meinungsforschung in der Krise? Nach Misserfolgen in Berlin und an der Saar Test in NRW : Sonderdruck aus: SPIEGEL, 1985, Nr. 17.' published?",
+    "englishQuestion": "When was 'Wahlen und W\u00e4hler: Munter wie die Fische. Meinungsforschung in der Krise? Nach Misserfolgen in Berlin und an der Saar Test in NRW : Sonderdruck aus: SPIEGEL, 1985, Nr. 17.' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100566> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q36",
+    "question": "When was 'Nachdenken \u00fcber Deutschland : Materialien zur politischen Kultur der deutschen Frage' published?",
+    "englishQuestion": "When was 'Nachdenken \u00fcber Deutschland : Materialien zur politischen Kultur der deutschen Frage' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100807> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q37",
+    "question": "In what year was 'Betriebliche Altersversorgung in mittelst\u00e4ndischen Unternehmen' published?",
+    "englishQuestion": "In what year was 'Betriebliche Altersversorgung in mittelst\u00e4ndischen Unternehmen' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102098> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date"
+  },
+  {
+    "id": "q38",
+    "question": "In what year was 'Familienentwicklung in Nordrhein-Westfalen. Generatives Verhalten im sozialen und regionalen Kontext' published?",
+    "englishQuestion": "In what year was 'Familienentwicklung in Nordrhein-Westfalen. Generatives Verhalten im sozialen und regionalen Kontext' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102122> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q39",
+    "question": "In what year was 'Ten European elections : campaigns and results of the 1979/81 first direct elections to the European Parliament' published?",
+    "englishQuestion": "In what year was 'Ten European elections : campaigns and results of the 1979/81 first direct elections to the European Parliament' published?",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103096> <https://schema.org/datePublished> ?date . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-date",
+    "isVariation": true
+  },
+  {
+    "id": "q40",
+    "question": "Who published 'Kirchenbindung im gesellschaftlichen Wandel : eine empirische Untersuchung pluraler Bindungsmuster von Kirchenmitgliedern'?",
+    "englishQuestion": "Who published 'Kirchenbindung im gesellschaftlichen Wandel : eine empirische Untersuchung pluraler Bindungsmuster von Kirchenmitgliedern'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-125719> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher"
+  },
+  {
+    "id": "q41",
+    "question": "What is the publisher of 'Die Wirtschaftsstruktur der Stadt und der goldenen Mark Duderstadt in vergleichender Darstellung zu der Struktur der St\u00e4dte und der Landkreise G\u00f6ttingen und Northeim'?",
+    "englishQuestion": "What is the publisher of 'Die Wirtschaftsstruktur der Stadt und der goldenen Mark Duderstadt in vergleichender Darstellung zu der Struktur der St\u00e4dte und der Landkreise G\u00f6ttingen und Northeim'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-89108> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "isVariation": true
+  },
+  {
+    "id": "q42",
+    "question": "Who published 'Soziale Bewegungen und social media : Handbuch f\u00fcr den Einsatz von Web 2.0'?",
+    "englishQuestion": "Who published 'Soziale Bewegungen und social media : Handbuch f\u00fcr den Einsatz von Web 2.0'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-129185> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "isVariation": true
+  },
+  {
+    "id": "q43",
+    "question": "Who created 'Church Membership Survey of the Evangelical Church in Germany (EKD) 1982'?",
+    "englishQuestion": "Who created 'Church Membership Survey of the Evangelical Church in Germany (EKD) 1982'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA2420> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author"
+  },
+  {
+    "id": "q44",
+    "question": "Who created 'Seniors 1992'?",
+    "englishQuestion": "Who created 'Seniors 1992'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/ZA6405> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q45",
+    "question": "Who created 'paper presented at the annual meeting of Eastern American Sociological Society'?",
+    "englishQuestion": "Who created 'paper presented at the annual meeting of Eastern American Sociological Society'?",
+    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-107307> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-author",
+    "isVariation": true
+  },
+  {
+    "id": "q46",
+    "question": "What is the topic of 'The society of the Muslim Brothers: an\nislamist political party?; participation in a confined political system'?",
+    "englishQuestion": "What is the topic of 'The society of the Muslim Brothers: an\nislamist political party?; participation in a confined political system'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-51662> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic"
+  },
+  {
+    "id": "q47",
+    "question": "What is the main theme of 'Leading the counter-revolution: Saudi Arabia and the Arab Spring'?",
+    "englishQuestion": "What is the main theme of 'Leading the counter-revolution: Saudi Arabia and the Arab Spring'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-39644> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic",
+    "isVariation": true
+  },
+  {
+    "id": "q48",
+    "question": "What is the main theme of 'Egypt's armed forces cement economic power: military business expansion impedes structural reforms'?",
+    "englishQuestion": "What is the main theme of 'Egypt's armed forces cement economic power: military business expansion impedes structural reforms'?",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-ssoar-51006> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic",
+    "isVariation": true
+  },
+  {
+    "id": "q49",
+    "question": "Which organization published 'Standards for educational and psychological testing'?",
+    "englishQuestion": "Which organization published 'Standards for educational and psychological testing'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-144919> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher"
+  },
+  {
+    "id": "q50",
+    "question": "Which organization published 'Standards for educational and psychological testing'?",
+    "englishQuestion": "Which organization published 'Standards for educational and psychological testing'?",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-144919> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "isVariation": true
   }
 ]

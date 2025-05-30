@@ -1004,8 +1004,14 @@ class NL2SPARQLGenerator:
                 
                 # Replace in question
                 replacement_text = replacement.get("label", replacement.get("value", ""))
-                question = re.sub(pattern, replacement_text, question)
-                english_question = re.sub(pattern, replacement_text, english_question)
+                # Add quotes around entity placeholders, but not other placeholders like 'value'
+                if placeholder.startswith('entity'):
+                    quoted_replacement = f"'{replacement_text}'"
+                    question = re.sub(pattern, quoted_replacement, question)
+                    english_question = re.sub(pattern, quoted_replacement, english_question)
+                else:
+                    question = re.sub(pattern, replacement_text, question)
+                    english_question = re.sub(pattern, replacement_text, english_question)
                 
                 # Replace in SPARQL
                 if "uri" in replacement:
@@ -1064,6 +1070,8 @@ class NL2SPARQLGenerator:
         
         # Replace in question
         replacement_text = keyword.get("label", keyword.get("value", ""))
+        # For keyword templates, the quotes are already included in the template
+        # so we don't need to add them here
         question = re.sub(pattern, replacement_text, question)
         english_question = re.sub(pattern, replacement_text, english_question)
         
@@ -1222,8 +1230,14 @@ class NL2SPARQLGenerator:
             
             # Replace in question
             replacement_text = replacement.get("label", replacement.get("value", ""))
-            question = re.sub(pattern, replacement_text, question)
-            english_question = re.sub(pattern, replacement_text, english_question)
+            # Add quotes around entity placeholders, but not other placeholders like 'value'
+            if placeholder.startswith('entity'):
+                quoted_replacement = f"'{replacement_text}'"
+                question = re.sub(pattern, quoted_replacement, question)
+                english_question = re.sub(pattern, quoted_replacement, english_question)
+            else:
+                question = re.sub(pattern, replacement_text, question)
+                english_question = re.sub(pattern, replacement_text, english_question)
             
             # Replace in SPARQL
             if "uri" in replacement:
