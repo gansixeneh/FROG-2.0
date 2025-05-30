@@ -245,6 +245,7 @@ class NL2SPARQLGenerator:
             query = """
             SELECT ?title
             WHERE {
+                ?resource a <https://schema.org/ScholarlyArticle> .
                 ?resource <https://schema.org/name> ?title .
             }
             LIMIT 1000
