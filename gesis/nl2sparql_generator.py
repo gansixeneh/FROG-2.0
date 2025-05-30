@@ -794,22 +794,24 @@ class NL2SPARQLGenerator:
                             
                             # Add variations if requested
                             if include_variations and instance["question"]:
-                                variations = self.variation_generator.generate_variations(
-                                    instance["question"],
-                                    instance["englishQuestion"],
-                                    template["category"],
-                                    min(variations_per_question, 5)
-                                )
-                                
-                                for variation in variations:
+                                # Generate completely new instantiations of the template for each variation
+                                for v in range(variations_per_question):
                                     if len(dataset) >= size:
                                         break
+                                        
+                                    # Create a completely new instantiation of the template with a different entity
+                                    variation_instance = self.instantiate_template_with_discovery(template)
                                     
+                                    # Skip if we couldn't create a valid instantiation
+                                    if not variation_instance:
+                                        continue
+                                    
+                                    # Add this new instantiation as a variation
                                     dataset.append({
                                         "id": f"q{id_counter}",
-                                        "question": variation["text"],
-                                        "englishQuestion": variation["english"],
-                                        "sparql": instance["sparql"],
+                                        "question": variation_instance["question"],
+                                        "englishQuestion": variation_instance["englishQuestion"],
+                                        "sparql": variation_instance["sparql"],
                                         "category": template["category"],
                                         "complexity": template["complexity"],
                                         "templateId": template["id"],
