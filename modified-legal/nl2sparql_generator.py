@@ -587,14 +587,13 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-amended-by",
                 "category": "legal",
-                "questionTemplate": "Peraturan mana yang mengubah {entity}?",
-                "englishQuestion": "Which regulation amended {entity}?",
+                "questionTemplate": "Peraturan-peraturan mana yang mengubah {entity}?",
+                "englishQuestion": "Which regulations amended {entity}?",
                 "sparqlTemplate": """
                     SELECT ?amendment WHERE {
                     ?article lex2kg-o:mengubah {entity} .
                     ?article lex2kg-o:bagianDari ?amendment .
                     }
-                    LIMIT 1
                 """,
                 "complexity": "intermediate"
             },
@@ -642,22 +641,21 @@ class NL2SPARQLGenerator:
             {
                 "id": "article-reference",
                 "category": "legal",
-                "questionTemplate": "Pasal mana yang merujuk ke {entity}?",
-                "englishQuestion": "Which article references {entity}?",
+                "questionTemplate": "Pasal-pasal mana yang merujuk ke {entity}?",
+                "englishQuestion": "Which articles reference {entity}?",
                 "sparqlTemplate": """
                     SELECT ?referringArticle WHERE {
                     ?textSegment lex2kg-o:merujuk {entity} .
                     ?textSegment lex2kg-o:bagianDari ?referringArticle .
                     }
-                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
             {
                 "id": "law-amendment",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa yang diubah oleh {entity}?",
-                "englishQuestion": "Which law was amended by {entity}?",
+                "questionTemplate": "Undang-undang apa saja yang diubah oleh {entity}?",
+                "englishQuestion": "Which laws were amended by {entity}?",
                 "sparqlTemplate": """
                     SELECT DISTINCT ?amendedLaw WHERE {
                         {entity} lex2kg-o:pasal ?article .
@@ -667,21 +665,19 @@ class NL2SPARQLGenerator:
                         ?amendedArticleVersion lex2kg-o:bagianDari ?amendedArticle .
                         ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
                     }
-                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
             {
                 "id": "law-by-keyword",
                 "category": "legal",
-                "questionTemplate": "Undang-undang apa yang berhubungan dengan '{value}'?",
-                "englishQuestion": "Which law is related to '{value}'?",
+                "questionTemplate": "Undang-undang apa saja yang berhubungan dengan '{value}'?",
+                "englishQuestion": "Which laws are related to '{value}'?",
                 "sparqlTemplate": """
                     SELECT ?law WHERE {
                     ?law lex2kg-o:tentang ?title .
                     FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
-                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -718,26 +714,24 @@ class NL2SPARQLGenerator:
             {
                 "id": "law-deletion",
                 "category": "legal",
-                "questionTemplate": "Apa pasal yang dihapus oleh {entity}?",
-                "englishQuestion": "Which article was deleted by {entity}?",
+                "questionTemplate": "Apa saja pasal yang dihapus oleh {entity}?",
+                "englishQuestion": "Which articles were deleted by {entity}?",
                 "sparqlTemplate": """
                     SELECT ?deletedArticle WHERE {
                     {entity} lex2kg-o:menghapus ?deletedArticle .
                     }
-                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
             {
                 "id": "law-insertion",
                 "category": "legal",
-                "questionTemplate": "Apa pasal yang disisipkan oleh {entity}?",
-                "englishQuestion": "Which article was inserted by {entity}?",
+                "questionTemplate": "Apa saja pasal yang disisipkan oleh {entity}?",
+                "englishQuestion": "Which articles were inserted by {entity}?",
                 "sparqlTemplate": """
                     SELECT ?insertedArticle WHERE {
                     {entity} lex2kg-o:menyisipkan ?insertedArticle .
                     }
-                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
