@@ -92,9 +92,9 @@ def generate_legal_document_dataset(
         dataset = generator.generate_dataset(
             size=10,  # Smaller size for debugging
             complexity_distribution={
-                "basic": 0.3,
+                "basic": 0.4,
                 "intermediate": 0.3,
-                "advanced": 0.4,
+                "advanced": 0.3,
             },
             include_variations=False,
             variations_per_question=2,

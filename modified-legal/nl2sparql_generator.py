@@ -418,470 +418,347 @@ class NL2SPARQLGenerator:
 
     def initialize_templates(self):
         """
-        Initialize question-query template pairs for legal document data with multiple question variations
-        Enhanced with thoughts templates for chain of reasoning.
-
+        Initialize question-query template pairs for legal document data
+        
         Returns:
             list: Templates for different question types and complexity levels
         """
-        # Legal document specific templates - ORGANIZED BY COMPLEXITY
+        # Legal document specific templates
         legal_templates = [
-            # ==================== BASIC TEMPLATES ====================
-            # Direct property retrieval (single triple pattern)
+            # Basic information about laws (UU)
             {
                 "id": "law-title",
                 "category": "legal",
-                "questionTemplates": [
-                    "Apa judul dari {entity}?",
-                    "Apa nama dari {entity}?",
-                    "Bagaimana judul dari {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the title of {entity}?",
-                    "What is the name of {entity}?",
-                    "How is the title of {entity}?",
-                ],
+                "questionTemplate": "Apa judul dari {entity}?",
+                "englishQuestion": "What is the title of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
                     {entity} lex2kg-o:tentang ?title .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the title of {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:tentang' links legal documents to their titles.",
-                    "4. To solve this, retrieve the title linked to {entity} via the 'lex2kg-o:tentang' property.",
-                    "5. Construct a SPARQL query to retrieve the title for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "law-enactment-date",
                 "category": "legal",
-                "questionTemplates": [
-                    "Kapan {entity} disahkan?",
-                    "Pada tanggal berapa {entity} disahkan?",
-                    "Tanggal berapakah {entity} disahkan?",
-                ],
-                "englishQuestions": [
-                    "When was {entity} enacted?",
-                    "On what date was {entity} enacted?",
-                    "What date was {entity} enacted on?",
-                ],
+                "questionTemplate": "Kapan {entity} disahkan?",
+                "englishQuestion": "When was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
                     {entity} lex2kg-o:disahkanPada ?date .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the enactment date of {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:disahkanPada' links legal documents to their enactment dates.",
-                    "4. To solve this, retrieve the date when {entity} was enacted via the 'lex2kg-o:disahkanPada' property.",
-                    "5. Construct a SPARQL query to retrieve the enactment date for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "law-enactment-location",
                 "category": "legal",
-                "questionTemplates": [
-                    "Di mana {entity} disahkan?",
-                    "Di kota manakah {entity} disahkan?",
-                    "Di lokasi mana {entity} disahkan?",
-                ],
-                "englishQuestions": [
-                    "Where was {entity} enacted?",
-                    "In which city was {entity} enacted?",
-                    "At what location was {entity} enacted?",
-                ],
+                "questionTemplate": "Di mana {entity} disahkan?",
+                "englishQuestion": "Where was {entity} enacted?",
                 "sparqlTemplate": """
                     SELECT ?location WHERE {
                     {entity} lex2kg-o:disahkanDi ?location .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the enactment location of {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:disahkanDi' links legal documents to their enactment locations.",
-                    "4. To solve this, retrieve the location where {entity} was enacted via the 'lex2kg-o:disahkanDi' property.",
-                    "5. Construct a SPARQL query to retrieve the enactment location for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "law-enactment-person",
                 "category": "legal",
-                "questionTemplates": [
-                    "Siapa yang mengesahkan {entity}?",
-                    "Oleh siapa {entity} disahkan?",
-                    "Siapa pengesah {entity}?",
-                ],
-                "englishQuestions": [
-                    "Who enacted {entity}?",
-                    "By whom was {entity} enacted?",
-                    "Who was the enactor of {entity}?",
-                ],
+                "questionTemplate": "Siapa yang mengesahkan {entity}?",
+                "englishQuestion": "Who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?person WHERE {
                     {entity} lex2kg-o:disahkanOleh ?person .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the person who enacted {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:disahkanOleh' links legal documents to the person who enacted them.",
-                    "4. To solve this, retrieve the person who enacted {entity} via the 'lex2kg-o:disahkanOleh' property.",
-                    "5. Construct a SPARQL query to retrieve the enactor for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "law-enactment-position",
                 "category": "legal",
-                "questionTemplates": [
-                    "Apa jabatan pengesah {entity}?",
-                    "Apa posisi orang yang mengesahkan {entity}?",
-                    "Jabatan apa yang dimiliki pengesah {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the position of the person who enacted {entity}?",
-                    "What role did the enactor of {entity} hold?",
-                    "What was the official title of the person who enacted {entity}?",
-                ],
+                "questionTemplate": "Apa jabatan pengesah {entity}?",
+                "englishQuestion": "What is the position of the person who enacted {entity}?",
                 "sparqlTemplate": """
                     SELECT ?position WHERE {
                     {entity} lex2kg-o:jabatanPengesah ?position .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the official position of the person who enacted {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:jabatanPengesah' links legal documents to the official position of their enactor.",
-                    "4. To solve this, retrieve the position of the person who enacted {entity} via the 'lex2kg-o:jabatanPengesah' property.",
-                    "5. Construct a SPARQL query to retrieve the enactor's position for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "law-type",
                 "category": "legal",
-                "questionTemplates": [
-                    "Apa jenis peraturan dari {entity}?",
-                    "Termasuk jenis peraturan apa {entity}?",
-                    "Kategori peraturan apa {entity}?",
-                ],
-                "englishQuestions": [
-                    "What type of regulation is {entity}?",
-                    "Which type of regulation does {entity} belong to?",
-                    "What category of regulation is {entity}?",
-                ],
+                "questionTemplate": "Apa jenis peraturan dari {entity}?",
+                "englishQuestion": "What type of regulation is {entity}?",
                 "sparqlTemplate": """
                     SELECT ?type WHERE {
                     {entity} lex2kg-o:jenisPeraturan ?type .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the type or category of regulation that {entity} represents.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:jenisPeraturan' links legal documents to their regulation type.",
-                    "4. To solve this, retrieve the regulation type of {entity} via the 'lex2kg-o:jenisPeraturan' property.",
-                    "5. Construct a SPARQL query to retrieve the regulation type for {entity}."
-                ],
-                "complexity": "basic",
-            },
-            {
-                "id": "law-year",
-                "category": "legal",
-                "questionTemplates": [
-                    "Pada tahun berapa {entity} disahkan?",
-                    "Tahun berapakah {entity} disahkan?",
-                    "Kapan tahun pengesahan {entity}?",
-                ],
-                "englishQuestions": [
-                    "In what year was {entity} enacted?",
-                    "Which year was {entity} enacted in?",
-                    "When was the year of {entity}'s enactment?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?year WHERE {
-                    {entity} lex2kg-o:tahun ?year .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the year when {entity} was enacted.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:tahun' links legal documents to the year of their enactment.",
-                    "4. To solve this, retrieve the year when {entity} was enacted via the 'lex2kg-o:tahun' property.",
-                    "5. Construct a SPARQL query to retrieve the enactment year for {entity}."
-                ],
-                "complexity": "basic",
-            },
-            {
-                "id": "law-number",
-                "category": "legal",
-                "questionTemplates": [
-                    "Berapa nomor dari {entity}?",
-                    "Nomor berapakah {entity}?",
-                    "Apa nomor {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the number of {entity}?",
-                    "Which number is {entity}?",
-                    "What number was assigned to {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?number WHERE {
-                    {entity} lex2kg-o:nomor ?number .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the official number assigned to {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:nomor' links legal documents to their official numbers.",
-                    "4. To solve this, retrieve the number assigned to {entity} via the 'lex2kg-o:nomor' property.",
-                    "5. Construct a SPARQL query to retrieve the official number for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
             {
                 "id": "article-text",
                 "category": "legal",
-                "questionTemplates": [
-                    "Apa isi dari {entity}?",
-                    "Bagaimana bunyi {entity}?",
-                    "Apa konten dari {entity}?",
-                ],
-                "englishQuestions": [
-                    "What is the content of {entity}?",
-                    "How does {entity} read?",
-                    "What is the text of {entity}?",
-                ],
+                "questionTemplate": "Apa isi dari {entity}?",
+                "englishQuestion": "What is the content of {entity}?",
                 "sparqlTemplate": """
                     SELECT ?text WHERE {
                     {entity} lex2kg-o:teks ?text .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the textual content of {entity}.",
-                    "2. The entity '{entity}' represents a legal document or article in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:teks' links legal documents to their textual content.",
-                    "4. To solve this, retrieve the text content of {entity} via the 'lex2kg-o:teks' property.",
-                    "5. Construct a SPARQL query to retrieve the text content for {entity}."
-                ],
-                "complexity": "basic",
+                "complexity": "basic"
             },
-            # ==================== INTERMEDIATE TEMPLATES ====================
-            # Counting, filtering, simple joins, or multiple patterns
             {
-                "id": "law-articles",
+                "id": "article-version",
                 "category": "legal",
-                "questionTemplates": [
-                    "Berapa jumlah pasal dalam {entity}?",
-                    "Ada berapa pasal di dalam {entity}?",
-                    "Berapa banyak pasal yang terdapat dalam {entity}?",
-                ],
-                "englishQuestions": [
-                    "How many articles are in {entity}?",
-                    "What is the number of articles in {entity}?",
-                    "How many articles does {entity} contain?",
-                ],
+                "questionTemplate": "Apa versi terbaru dari {entity}?",
+                "englishQuestion": "What is the latest version of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?version WHERE {
+                    {entity} lex2kg-o:versi ?version .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "chapter-title",
+                "category": "legal",
+                "questionTemplate": "Apa judul dari {entity}?",
+                "englishQuestion": "What is the title of {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?title WHERE {
+                    {entity} lex2kg-o:judul ?title .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            {
+                "id": "law-language",
+                "category": "legal",
+                "questionTemplate": "Dalam bahasa apa {entity} ditulis?",
+                "englishQuestion": "In what language is {entity} written?",
+                "sparqlTemplate": """
+                    SELECT ?language WHERE {
+                    {entity} lex2kg-o:bahasa ?language .
+                    }
+                """,
+                "complexity": "basic"
+            },
+            
+            # Intermediate: Structure and relationships
+            {
+                "id": "law-articles-count",
+                "category": "legal",
+                "questionTemplate": "Berapa jumlah pasal dalam {entity}?",
+                "englishQuestion": "How many articles are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?article) AS ?count) WHERE {
                     {entity} lex2kg-o:pasal ?article .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the number of articles (pasal) within {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:pasal' links legal documents to their constituent articles.",
-                    "4. To solve this, count all articles linked to {entity} via the 'lex2kg-o:pasal' property.",
-                    "5. Construct a SPARQL query using the COUNT function to determine the number of articles."
-                ],
-                "complexity": "intermediate",
+                "complexity": "intermediate"
             },
             {
-                "id": "law-chapters",
+                "id": "law-chapters-count",
                 "category": "legal",
-                "questionTemplates": [
-                    "Berapa jumlah bab dalam {entity}?",
-                    "Ada berapa bab di dalam {entity}?",
-                    "Berapa banyak bab yang terdapat dalam {entity}?",
-                ],
-                "englishQuestions": [
-                    "How many chapters are in {entity}?",
-                    "What is the number of chapters in {entity}?",
-                    "How many chapters does {entity} contain?",
-                ],
+                "questionTemplate": "Berapa jumlah bab dalam {entity}?",
+                "englishQuestion": "How many chapters are in {entity}?",
                 "sparqlTemplate": """
                     SELECT (COUNT(?chapter) AS ?count) WHERE {
                     {entity} lex2kg-o:bab ?chapter .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the number of chapters (bab) within {entity}.",
-                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
-                    "3. The property 'lex2kg-o:bab' links legal documents to their constituent chapters.",
-                    "4. To solve this, count all chapters linked to {entity} via the 'lex2kg-o:bab' property.",
-                    "5. Construct a SPARQL query using the COUNT function to determine the number of chapters."
-                ],
-                "complexity": "intermediate",
+                "complexity": "intermediate"
             },
             {
-                "id": "laws-enacted-in-year",
+                "id": "article-sections-count",
                 "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang disahkan pada tahun {value}?",
-                    "Peraturan apa saja yang dibuat pada tahun {value}?",
-                    "Apa saja perundangan yang ditetapkan di tahun {value}?",
-                ],
-                "englishQuestions": [
-                    "What laws were enacted in the year {value}?",
-                    "Which regulations were created in {value}?",
-                    "What legislation was established in the year {value}?",
-                ],
+                "questionTemplate": "Berapa jumlah ayat dalam {entity}?",
+                "englishQuestion": "How many sections are in {entity}?",
                 "sparqlTemplate": """
-                    SELECT ?law ?title WHERE {
-                    ?law lex2kg-o:tahun {value} .
-                    ?law lex2kg-o:tentang ?title .
+                    SELECT (COUNT(?section) AS ?count) WHERE {
+                    {entity} lex2kg-o:ayat ?section .
                     }
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for all laws enacted in the year {value}.",
-                    "2. In the legal ontology, laws are linked to their enactment year via 'lex2kg-o:tahun'.",
-                    "3. Laws also have titles accessible via 'lex2kg-o:tentang' property.",
-                    "4. To solve this, find all laws with {value} as their enactment year and retrieve their titles.",
-                    "5. Construct a SPARQL query that filters laws by year and returns both the law entity and its title."
-                ],
-                "complexity": "intermediate",
+                "complexity": "intermediate"
+            },
+            {
+                "id": "law-amended-by",
+                "category": "legal",
+                "questionTemplate": "Peraturan mana yang mengubah {entity}?",
+                "englishQuestion": "Which regulation amended {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?amendment WHERE {
+                    ?article lex2kg-o:mengubah {entity} .
+                    ?article lex2kg-o:bagianDari ?amendment .
+                    }
+                    LIMIT 1
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "latest-law-in-year",
+                "category": "legal",
+                "questionTemplate": "Undang-undang terakhir yang disahkan pada tahun {value}?",
+                "englishQuestion": "What was the latest law enacted in the year {value}?",
+                "sparqlTemplate": """
+                    SELECT ?law WHERE {
+                    ?law lex2kg-o:tahun {value} .
+                    ?law lex2kg-o:disahkanPada ?date .
+                    }
+                    ORDER BY DESC(?date)
+                    LIMIT 1
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "paragraph-count",
+                "category": "legal",
+                "questionTemplate": "Berapa jumlah paragraf dalam bagian {entity}?",
+                "englishQuestion": "How many paragraphs are in section {entity}?",
+                "sparqlTemplate": """
+                    SELECT (COUNT(?paragraph) AS ?count) WHERE {
+                    {entity} lex2kg-o:paragraf ?paragraph .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "specific-year-law-count",
+                "category": "legal",
+                "questionTemplate": "Berapa undang-undang yang disahkan pada tahun {value}?",
+                "englishQuestion": "How many laws were enacted in the year {value}?",
+                "sparqlTemplate": """
+                    SELECT (COUNT(?law) AS ?count) WHERE {
+                    ?law lex2kg-o:tahun {value} .
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            
+            # Advanced: Complex relationships and analytics
+            {
+                "id": "article-reference",
+                "category": "legal",
+                "questionTemplate": "Pasal mana yang merujuk ke {entity}?",
+                "englishQuestion": "Which article references {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?referringArticle WHERE {
+                    ?textSegment lex2kg-o:merujuk {entity} .
+                    ?textSegment lex2kg-o:bagianDari ?referringArticle .
+                    }
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "law-amendment",
+                "category": "legal",
+                "questionTemplate": "Undang-undang apa yang diubah oleh {entity}?",
+                "englishQuestion": "Which law was amended by {entity}?",
+                "sparqlTemplate": """
+                    SELECT DISTINCT ?amendedLaw WHERE {
+                        {entity} lex2kg-o:pasal ?article .
+                        ?article lex2kg-o:versi ?articleVersion .
+                        ?articleVersion lex2kg-o:huruf ?letter .
+                        ?letter lex2kg-o:mengubah ?amendedArticleVersion .
+                        ?amendedArticleVersion lex2kg-o:bagianDari ?amendedArticle .
+                        ?amendedArticle lex2kg-o:bagianDari ?amendedLaw .
+                    }
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
             },
             {
                 "id": "law-by-keyword",
                 "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang berhubungan dengan '{value}'?",
-                    "Peraturan apa yang terkait dengan '{value}'?",
-                    "Apa saja regulasi mengenai '{value}'?",
-                ],
-                "englishQuestions": [
-                    "Which laws are related to '{value}'?",
-                    "What regulations are associated with '{value}'?",
-                    "What are the regulations concerning '{value}'?",
-                ],
+                "questionTemplate": "Undang-undang apa yang berhubungan dengan '{value}'?",
+                "englishQuestion": "Which law is related to '{value}'?",
                 "sparqlTemplate": """
-                    SELECT DISTINCT ?law ?title WHERE {
+                    SELECT ?law WHERE {
                     ?law lex2kg-o:tentang ?title .
                     FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
+                    LIMIT 1
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for laws related to the keyword '{value}'.",
-                    "2. In the legal ontology, laws have titles accessible via 'lex2kg-o:tentang' property.",
-                    "3. The keyword '{value}' should appear in the law's title to be considered related.",
-                    "4. To solve this, retrieve all laws whose titles contain the keyword '{value}' (case-insensitive).",
-                    "5. Construct a SPARQL query using FILTER and CONTAINS to match titles containing the keyword."
-                ],
-                "complexity": "intermediate",
-            },
-            {
-                "id": "law-by-enactor",
-                "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang disahkan oleh {value}?",
-                    "Peraturan apa yang ditandatangani oleh {value}?",
-                    "Apa saja regulasi yang disahkan {value}?",
-                ],
-                "englishQuestions": [
-                    "What laws were enacted by {value}?",
-                    "Which regulations were signed by {value}?",
-                    "What regulations did {value} enact?",
-                ],
-                "sparqlTemplate": """
-                    SELECT ?law ?title ?date WHERE {
-                    ?law lex2kg-o:disahkanOleh {value} .
-                    ?law lex2kg-o:tentang ?title .
-                    ?law lex2kg-o:disahkanPada ?date .
-                    }
-                    ORDER BY DESC(?date)
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for laws enacted by the person {value}.",
-                    "2. In the legal ontology, 'lex2kg-o:disahkanOleh' links laws to their enactor.",
-                    "3. Laws also have titles and enactment dates accessible via respective properties.",
-                    "4. To solve this, find all laws enacted by {value} and retrieve their titles and dates.",
-                    "5. Construct a SPARQL query that filters by enactor and orders results by date (most recent first)."
-                ],
-                "complexity": "intermediate",
-            },
-            # ==================== ADVANCED TEMPLATES ====================
-            # Complex joins, aggregations, or multi-step queries
-            {
-                "id": "laws-amended-what",
-                "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang apa saja yang diubah oleh {entity}?",
-                    "Peraturan apa yang diamendemen oleh {entity}?",
-                    "Apa saja regulasi yang dimodifikasi oleh {entity}?",
-                ],
-                "englishQuestions": [
-                    "Which laws were amended by {entity}?",
-                    "What regulations were modified by {entity}?",
-                    "Which legislation was changed by {entity}?",
-                ],
-                "sparqlTemplate": """
-                    SELECT DISTINCT ?amendedLaw ?title WHERE {
-                    {entity} lex2kg-o:mengubah ?versi .
-                    ?pasal lex2kg-o:versi ?versi .
-                    ?amendedLaw lex2kg-o:pasal ?pasal .
-                    ?amendedLaw lex2kg-o:tentang ?title .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for laws that were amended by {entity}.",
-                    "2. The entity '{entity}' represents an amending law in the Indonesian legal system.",
-                    "3. Amendments work through versions: {entity} changes versions of articles in other laws.",
-                    "4. To solve this, trace the chain: {entity} changes versions, which belong to articles, which belong to laws.",
-                    "5. Construct a multi-step SPARQL query to follow the amendment relationship through the version mechanism.",
-                    "6. The query uses multiple properties: 'lex2kg-o:mengubah', 'lex2kg-o:versi', 'lex2kg-o:pasal', and 'lex2kg-o:tentang'."
-                ],
-                "complexity": "advanced",
+                "complexity": "advanced"
             },
             {
                 "id": "law-with-most-articles",
                 "category": "legal",
-                "questionTemplates": [
-                    "Undang-undang mana yang memiliki pasal terbanyak?",
-                    "Peraturan apa yang mempunyai jumlah pasal paling banyak?",
-                    "UU mana dengan jumlah pasal terbesar?",
-                ],
-                "englishQuestions": [
-                    "Which law has the most articles?",
-                    "What regulation has the highest number of articles?",
-                    "Which legislation contains the greatest number of articles?",
-                ],
+                "questionTemplate": "Undang-undang dengan jumlah pasal terbanyak?",
+                "englishQuestion": "Which law has the most articles?",
                 "sparqlTemplate": """
-                    SELECT ?law ?title (COUNT(?article) AS ?articleCount) WHERE {
-                    ?law lex2kg-o:tentang ?title .
+                    SELECT ?law WHERE {
                     ?law lex2kg-o:pasal ?article .
                     }
-                    GROUP BY ?law ?title
-                    ORDER BY DESC(?articleCount)
+                    GROUP BY ?law
+                    ORDER BY DESC(COUNT(?article))
                     LIMIT 1
                 """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the law with the highest number of articles.",
-                    "2. In the legal ontology, laws are linked to their articles via 'lex2kg-o:pasal' property.",
-                    "3. Laws also have titles accessible via 'lex2kg-o:tentang' property.",
-                    "4. To solve this, count articles for each law, then find the law with the maximum count.",
-                    "5. Construct a SPARQL query using GROUP BY to group articles by law and COUNT to count them.",
-                    "6. Use ORDER BY DESC to sort by article count in descending order, and LIMIT 1 to get the top result."
-                ],
-                "complexity": "advanced",
+                "complexity": "advanced"
             },
+            {
+                "id": "law-by-enactor",
+                "category": "legal",
+                "questionTemplate": "Undang-undang terbaru yang disahkan oleh {value}?",
+                "englishQuestion": "What is the most recent law enacted by {value}?",
+                "sparqlTemplate": """
+                    SELECT ?law WHERE {
+                    ?law lex2kg-o:disahkanOleh {value} .
+                    ?law lex2kg-o:disahkanPada ?date .
+                    }
+                    ORDER BY DESC(?date)
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "law-deletion",
+                "category": "legal",
+                "questionTemplate": "Apa pasal yang dihapus oleh {entity}?",
+                "englishQuestion": "Which article was deleted by {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?deletedArticle WHERE {
+                    {entity} lex2kg-o:menghapus ?deletedArticle .
+                    }
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "law-insertion",
+                "category": "legal",
+                "questionTemplate": "Apa pasal yang disisipkan oleh {entity}?",
+                "englishQuestion": "Which article was inserted by {entity}?",
+                "sparqlTemplate": """
+                    SELECT ?insertedArticle WHERE {
+                    {entity} lex2kg-o:menyisipkan ?insertedArticle .
+                    }
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "oldest-law",
+                "category": "legal",
+                "questionTemplate": "Undang-undang tertua dalam sistem?",
+                "englishQuestion": "What is the oldest law in the system?",
+                "sparqlTemplate": """
+                    SELECT ?law WHERE {
+                    ?law lex2kg-o:disahkanPada ?date .
+                    ?law lex2kg-o:jenisPeraturan ?type .
+                    FILTER(?type = <https://example.org/lex2kg/ontology/jenisPeraturan/UU>)
+                    }
+                    ORDER BY ?date
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            }
         ]
-
-        # Only use legal templates, ignoring any custom templates
-        # to focus specifically on legal document data
+        
         return legal_templates
 
     def generate_chain_of_thoughts(self, question, sparql, template):

@@ -70,9 +70,9 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
         dataset = generator.generate_dataset(
             size=200,  # Smaller size for debugging
             complexity_distribution={
-                "basic": 0.3,
+                "basic": 0.4,
                 "intermediate": 0.3,
-                "advanced": 0.4,
+                "advanced": 0.3,
             },
             include_variations=True,
             variations_per_question=2,
