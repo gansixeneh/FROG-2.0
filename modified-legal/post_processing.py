@@ -6,7 +6,7 @@ def upper_case_sparql(sparql_query):
     """Convert SPARQL keywords to uppercase."""
     # Define a list of SPARQL keywords
     keywords = [
-        "SELECT", "WHERE", "FILTER", "BIND", "UNION", "ORDER BY", "COUNT", "AS",
+        "SELECT", "WHERE", "FILTER", "BIND", "UNION", "ORDER BY", "COUNT",
         "GROUP BY", "LIMIT", "OFFSET", "DISTINCT", "ASK"
     ]
     
@@ -19,7 +19,7 @@ def upper_case_sparql(sparql_query):
 def replace_uri_with_prefix(sparql_query):
     """Replace URIs in the SPARQL query with a prefix."""
     # Replace the URI with a prefix
-    sparql_query = re.sub(r'<http://example\.org/([^>]+)>', r'ns1:\1', sparql_query)
+    sparql_query = re.sub(r'<https://example\.org/lex2kg/ontology/([^>]+)>', r'lex2kg-o:\1', sparql_query)
     return sparql_query
 
 def remove_spaces_before_chars(sparql_query):
@@ -216,7 +216,7 @@ def format_ask_query(query):
     # Fallback
     return query
 
-def process_json(json_data, ttl_content):
+def process_json(json_data):
     """Process the JSON data and add entity and property labels."""
     for item in json_data:
         if 'sparql' in item:
@@ -230,15 +230,11 @@ def process_json(json_data, ttl_content):
 # Main function to process the files
 def main():
     # Load the JSON file
-    with open('curi.json', 'r') as f:
+    with open('legal.json', 'r') as f:
         json_data = json.load(f)
 
-    # Load the TTL file
-    with open('final_result.ttl', 'r') as f:
-        ttl_content = f.read()
-
     # Process the data
-    result = process_json(json_data, ttl_content)
+    result = process_json(json_data)
     
     # Handle more than 150 rows by randomly sampling
     if len(result) > 150:
@@ -252,12 +248,12 @@ def main():
     test_data = result[100:150]
     
     # Save training data
-    train_file = 'curi_train.json'
+    train_file = 'legal_train.json'
     with open(train_file, 'w') as f:
         json.dump(train_data, f, indent=2)
     
     # Save test data
-    test_file = 'curi_test.json'
+    test_file = 'legal_test.json'
     with open(test_file, 'w') as f:
         json.dump(test_data, f, indent=2)
 

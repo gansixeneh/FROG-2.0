@@ -119,8 +119,8 @@ def generate_legal_document_dataset(
                 print(f"    Properties matches: {len(q.get('properties_matches', []))}")
 
         # Write to files
-        output_json_path = "legal_documents_dataset.json"
-        output_csv_path = "legal_documents_dataset.csv"
+        output_json_path = "legal.json"
+        output_csv_path = "legal.csv"
 
         with open(output_json_path, "w", encoding="utf-8") as f:
             f.write(generator.export_json(dataset))

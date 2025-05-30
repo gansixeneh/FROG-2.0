@@ -26,7 +26,7 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
     """
     # Default output path if not specified
     if output_json_path is None:
-        output_json_path = f"legal_sparql_results.json"
+        output_json_path = f"legal_validation.json"
 
     print(f"Connecting to Fuseki server at http://localhost:3030/modified-lex2kg...")
     # Initialize the SPARQL executor
@@ -118,7 +118,7 @@ def main():
     if len(sys.argv) > 1:
         input_json_path = sys.argv[1]
     else:
-        input_json_path = "legal_documents_dataset.json"
+        input_json_path = "legal.json"
 
     if not os.path.exists(input_json_path):
         print(f"Error: Input JSON file '{input_json_path}' not found!")
