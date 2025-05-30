@@ -268,7 +268,7 @@ class NL2SPARQLGenerator:
             word_counts = Counter(all_words)
             
             # Select words that appear at least twice (more meaningful)
-            common_words = [word for word, count in word_counts.items() if count >= 2]
+            common_words = [word for word, count in word_counts.items() if count >= 5]
             
             # If we don't have enough common words, include all words
             if len(common_words) < 10:
@@ -626,7 +626,8 @@ class NL2SPARQLGenerator:
                         ?publication schema:keywords ?keyword .
                         FILTER(CONTAINS(LCASE(?keyword), LCASE({value})))
                     } UNION {
-                        FILTER(CONTAINS(LCASE(?title), LCASE({value})))
+                        ?publication schema:name ?titleForFilter .
+                        FILTER(CONTAINS(LCASE(?titleForFilter), LCASE({value})))
                     }
                     ?publication schema:citation ?cited .
                     }
