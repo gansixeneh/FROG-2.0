@@ -102,6 +102,7 @@ class KGSchemaExtractor:
                 "owl": "http://www.w3.org/2002/07/owl#",
                 "xsd": "http://www.w3.org/2001/XMLSchema#",
                 "lex2kg-o": "https://example.org/lex2kg/ontology/",  # Added legal ontology prefix
+                "lex2kg": "https://example.org/lex2kg/",  # Added legal knowledge graph prefix
             },
         }
 

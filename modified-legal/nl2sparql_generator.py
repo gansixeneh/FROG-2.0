@@ -949,6 +949,7 @@ class NL2SPARQLGenerator:
             for placeholder, mapping in all_mappings.items():
                 pattern = r'\{' + re.escape(placeholder) + r'\}'
                 replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+                # print(f"Replacing {pattern} with {replacement_value} in thought: {processed_thought}")
                 processed_thought = re.sub(pattern, replacement_value, processed_thought)
             
             # Special handling for first entity: check if {entity} exists, if not try {entity1}
@@ -990,7 +991,11 @@ class NL2SPARQLGenerator:
             "using",
             "through"
         ]):
-            # Use prefixed form if available, otherwise full URI  
+            # For entity placeholders (typically starting with "entity"), use full URI
+            if placeholder.startswith('entity') and 'uri' in mapping and mapping['uri'].startswith('http'):
+                return f"<{mapping['uri']}>"
+            
+            # For property placeholders or other placeholders, keep using prefixed form
             return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
         
         # Use label form in these contexts:
@@ -1060,13 +1065,6 @@ class NL2SPARQLGenerator:
         # Check if it's from the ontology namespace (properties)
         if "ontology/" in uri:
             return True
-        
-        # Common property indicators for legal domain
-        property_indicators = ['tentang', 'disahkan', 'pasal', 'bab', 'teks', 'tahun', 'nomor', 'jenis']
-        
-        for indicator in property_indicators:
-            if indicator in uri:
-                return True
                 
         return False
 
@@ -1211,8 +1209,9 @@ class NL2SPARQLGenerator:
         entity_matches = []
         if "entities" in related_candidates:
             for entity in related_candidates["entities"]:
+                expanded_id = self.expand_uri(entity['short'])
                 entity_matches.append({
-                    "id": entity['short'],
+                    "id": expanded_id,
                     "label": entity['label'],
                 })
         
@@ -1226,6 +1225,27 @@ class NL2SPARQLGenerator:
                 })
         
         return entities_list, properties_list, entity_matches, property_matches
+    
+    def expand_uri(self, shortened_uri):
+        """
+        Expand a shortened URI back to its full form
+        
+        Args:
+            shortened_uri (str): Shortened URI with prefix (e.g., lex2kg:uu/2010/8)
+            
+        Returns:
+            str: Full URI (e.g., https://example.org/lex2kg/uu/2010/8)
+        """
+        # Check if the URI has a prefix
+        if ":" in shortened_uri:
+            prefix, path = shortened_uri.split(":", 1)
+            
+            # If the prefix is in our known prefixes, expand it
+            if prefix in self.prefixes:
+                return f"{self.prefixes[prefix]}{path}"
+        
+        # Return as is if it doesn't have a recognized prefix or is already a full URI
+        return shortened_uri
 
     def get_related_candidates(
         self,
