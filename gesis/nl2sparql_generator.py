@@ -313,26 +313,6 @@ class NL2SPARQLGenerator:
                 "complexity": "basic"
             },
             {
-                "id": "publication-title",
-                "category": "scholarly",
-                "questionTemplates": [
-                    "What is the title of {entity}?",
-                    "What is the name of {entity}?",
-                    "What is {entity} called?"
-                ],
-                "englishQuestionTemplates": [
-                    "What is the title of {entity}?",
-                    "What is the name of {entity}?",
-                    "What is {entity} called?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?title WHERE {
-                    {entity} schema:name ?title .
-                    }
-                """,
-                "complexity": "basic"
-            },
-            {
                 "id": "publication-date",
                 "category": "scholarly",
                 "questionTemplates": [
