@@ -6,7 +6,7 @@ def upper_case_sparql(sparql_query):
     """Convert SPARQL keywords to uppercase."""
     # Define a list of SPARQL keywords
     keywords = [
-        "SELECT", "WHERE", "FILTER", "BIND", "UNION", "ORDER BY", "COUNT",
+        "SELECT", "WHERE", "FILTER", "BIND", "UNION", "ORDER BY", "COUNT", "AS",
         "GROUP BY", "LIMIT", "OFFSET", "DISTINCT", "ASK"
     ]
     
