@@ -61,7 +61,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?value WHERE {
-                      {entity} ns1:has_credits ?value .
+                    {entity} ns1:has_credits ?value .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -83,7 +83,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?code WHERE {
-                      {entity} ns1:has_course_code ?code .
+                    {entity} ns1:has_course_code ?code .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -105,7 +105,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?category WHERE {
-                      {entity} ns1:has_course_category ?category .
+                    {entity} ns1:has_course_category ?category .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -127,7 +127,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?prereq WHERE {
-                      {entity} ns1:has_prerequisite_course ?prereq .
+                    {entity} ns1:has_prerequisite_course ?prereq .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -149,7 +149,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?method WHERE {
-                      {entity} ns1:has_evaluation_method ?method .
+                    {entity} ns1:has_evaluation_method ?method .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -171,7 +171,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?group WHERE {
-                      {entity} ns1:has_research_group ?group .
+                    {entity} ns1:has_research_group ?group .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -193,7 +193,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?nickname WHERE {
-                      {entity} ns1:also_known_as ?nickname .
+                    {entity} ns1:also_known_as ?nickname .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -219,7 +219,7 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?prereq) AS ?count) WHERE {
-                      {entity} ns1:has_prerequisite_course ?prereq .
+                    {entity} ns1:has_prerequisite_course ?prereq .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -228,28 +228,6 @@ class NL2SPARQLGenerator:
                     "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
                     "4. To solve this, count all prerequisite courses linked to {entity} via the 'ns1:has_prerequisite_course' property.",
                     "5. Construct a SPARQL query using the COUNT function to determine the number of prerequisites."
-                ],
-                "complexity": "intermediate"
-            },
-            {
-                "id": "count-evaluation-methods",
-                "category": "university",
-                "questionTemplates": [
-                    "How many evaluation methods are associated with {entity}?",
-                    "What is the count of assessment techniques used in {entity}?",
-                    "How many different ways are students evaluated in {entity}?"
-                ],
-                "sparqlTemplate": """
-                    SELECT (COUNT(?method) AS ?count) WHERE {
-                      {entity} ns1:has_evaluation_method ?method .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the number of evaluation methods used in {entity}.",
-                    "2. The entity '{entity}' represents a course in the university domain.",
-                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                    "4. To solve this, count all evaluation methods linked to {entity} via the 'ns1:has_evaluation_method' property.",
-                    "5. Construct a SPARQL query using the COUNT function to determine the number of evaluation methods."
                 ],
                 "complexity": "intermediate"
             },
@@ -263,8 +241,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_credits {value} .
+                    ?course a ns1:course .
+                    ?course ns1:has_credits {value} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -286,8 +264,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_research_group {entity} .
+                    ?course a ns1:course .
+                    ?course ns1:has_research_group {entity} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -296,29 +274,6 @@ class NL2SPARQLGenerator:
                     "3. The property 'ns1:has_research_group' links a course to its research group.",
                     "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_research_group' property.",
                     "5. Construct a SPARQL query to list all courses associated with this research group."
-                ],
-                "complexity": "intermediate"
-            },
-            {
-                "id": "courses-by-evaluation",
-                "category": "university",
-                "questionTemplates": [
-                    "Which courses are evaluated using {entity}?",
-                    "What courses use {entity} as an assessment method?",
-                    "List all courses that employ {entity} for student evaluation."
-                ],
-                "sparqlTemplate": """
-                    SELECT ?course WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_evaluation_method {entity} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for courses that use '{entity}' as an evaluation method.",
-                    "2. The entity '{entity}' represents the evaluation method in question.",
-                    "3. The property 'ns1:has_evaluation_method' links a course to its evaluation methods.",
-                    "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_evaluation_method' property.",
-                    "5. Construct a SPARQL query to list all courses using this evaluation method."
                 ],
                 "complexity": "intermediate"
             },
@@ -332,8 +287,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT (COUNT(?course) AS ?count) WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_course_category {entity} .
+                    ?course a ns1:course .
+                    ?course ns1:has_course_category {entity} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -346,53 +301,34 @@ class NL2SPARQLGenerator:
                 "complexity": "intermediate"
             },
             {
-                "id": "courses-by-prerequisite",
+                "id": "courses-with-same-category",
                 "category": "university",
                 "questionTemplates": [
-                    "What courses have {entity} as a prerequisite course?",
-                    "Which courses require {entity} to be completed first?",
-                    "List all courses that need {entity} as a prerequisite."
+                    "What other courses are in the same category as {entity}?",
+                    "Which courses belong to the same category as {entity}?",
+                    "List all courses that share the same category as {entity}."
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course {entity} .
+                    {entity} ns1:has_course_category ?category .
+                    ?course ns1:has_course_category ?category .
+                    FILTER(?course != {entity})
                     }
                 """,
                 "thoughtsTemplate": [
-                    "1. The question asks for courses that have '{entity}' as a prerequisite.",
-                    "2. The entity '{entity}' represents the prerequisite course in question.",
-                    "3. The property 'ns1:has_prerequisite_course' links a course to its prerequisite courses.",
-                    "4. To solve this, retrieve all courses linked to '{entity}' via the 'ns1:has_prerequisite_course' property.",
-                    "5. Construct a SPARQL query to list all courses with this prerequisite."
-                ],
-                "complexity": "intermediate"
-            },
-            {
-                "id": "count-courses-by-prerequisite",
-                "category": "university",
-                "questionTemplates": [
-                    "How many courses have {entity} as a prerequisite course?",
-                    "What is the count of courses requiring {entity} as a prerequisite?",
-                    "How many courses need {entity} to be completed first?"
-                ],
-                "sparqlTemplate": """
-                    SELECT (COUNT(?course) AS ?count) WHERE {
-                      ?course ns1:has_prerequisite_course {entity} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for the number of courses that have '{entity}' as a prerequisite.",
-                    "2. The entity '{entity}' represents the prerequisite course in question.",
-                    "3. The property 'ns1:has_prerequisite_course' links a course to its prerequisite courses.",
-                    "4. To solve this, count all courses linked to '{entity}' via the 'ns1:has_prerequisite_course' property.",
-                    "5. Construct a SPARQL query using the COUNT function to determine the number of such courses."
+                    "1. The question asks for courses in the same category as {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_course_category' links courses to their categories.",
+                    "4. To solve this, first find the category of {entity}, then find other courses with the same category.",
+                    "5. Construct a SPARQL query using a pattern to match courses with the same category.",
+                    "6. Use FILTER to exclude {entity} from the results to show only other courses."
                 ],
                 "complexity": "intermediate"
             },
         ]
         
         # Advanced templates - with multiple question variations
-        original_advanced_templates = [
+        advanced_templates = [
             {
                 "id": "courses-with-same-prerequisites",
                 "category": "university",
@@ -403,9 +339,9 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT DISTINCT ?course WHERE {
-                      {entity} ns1:has_prerequisite_course ?prereq .
-                      ?course ns1:has_prerequisite_course ?prereq .
-                      FILTER(?course != {entity})
+                    {entity} ns1:has_prerequisite_course ?prereq .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    FILTER(?course != {entity})
                     }
                 """,
                 "thoughtsTemplate": [
@@ -427,19 +363,23 @@ class NL2SPARQLGenerator:
                     "Which course offers the most credits?"
                 ],
                 "sparqlTemplate": """
-                    SELECT ?course ?credits WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_credits ?credits .
+                    SELECT ?course WHERE {
+                    ?course a ns1:course .
+                    ?course ns1:has_credits ?credits .
+                    FILTER NOT EXISTS {
+                        ?other a ns1:course .
+                        ?other ns1:has_credits ?otherCredits .
+                        FILTER(?otherCredits > ?credits)
                     }
-                    ORDER BY DESC(?credits)
+                    }
                     LIMIT 1
                 """,
                 "thoughtsTemplate": [
                     "1. The question asks for the course with the highest credit value.",
                     "2. In the ontology, 'ns1:course' represents all course entities.",
                     "3. The property 'ns1:has_credits' links courses to their credit values.",
-                    "4. To solve this, retrieve all courses and their credit values, then order by credits in descending order.",
-                    "5. Construct a SPARQL query using ORDER BY DESC to sort by credits and LIMIT 1 to get the highest."
+                    "4. To solve this, we need to find a course such that no other course has a higher credit value.",
+                    "5. We can use the FILTER NOT EXISTS pattern to select courses where no other course has more credits."
                 ],
                 "complexity": "advanced"
             },
@@ -452,21 +392,32 @@ class NL2SPARQLGenerator:
                     "Which research team has created the most courses?"
                 ],
                 "sparqlTemplate": """
-                    SELECT ?group (COUNT(?course) as ?count) WHERE {
-                      ?course a ns1:course .
-                      ?course ns1:has_research_group ?group .
+                    SELECT ?group WHERE {
+                    {
+                        SELECT ?group (COUNT(?course) as ?count) WHERE {
+                        ?course a ns1:course .
+                        ?course ns1:has_research_group ?group .
+                        }
+                        GROUP BY ?group
                     }
-                    GROUP BY ?group
-                    ORDER BY DESC(?count)
+                    FILTER NOT EXISTS {
+                        SELECT ?otherGroup (COUNT(?otherCourse) as ?otherCount) WHERE {
+                        ?otherCourse a ns1:course .
+                        ?otherCourse ns1:has_research_group ?otherGroup .
+                        }
+                        GROUP BY ?otherGroup
+                        HAVING(?otherCount > ?count)
+                    }
+                    }
                     LIMIT 1
                 """,
                 "thoughtsTemplate": [
                     "1. The question asks for the research group with the most associated courses.",
                     "2. In the ontology, 'ns1:course' represents all course entities.",
                     "3. The property 'ns1:has_research_group' links courses to their research groups.",
-                    "4. To solve this, count courses for each research group using GROUP BY and COUNT.",
-                    "5. Construct a SPARQL query using GROUP BY to group by research groups and COUNT to count courses.",
-                    "6. Use ORDER BY DESC to sort by count in descending order, and LIMIT 1 to return only the top research group."
+                    "4. To solve this, we first count the number of courses for each research group.",
+                    "5. Then, we select a research group such that no other group has a higher course count.",
+                    "6. We can use a nested query with FILTER NOT EXISTS to find the group with the maximum count."
                 ],
                 "complexity": "advanced"
             },
@@ -474,31 +425,37 @@ class NL2SPARQLGenerator:
                 "id": "common-prerequisites",
                 "category": "university",
                 "questionTemplates": [
-                    "What are the 5 most common prerequisite courses?",
-                    "Which 5 courses are most frequently required as prerequisites?",
-                    "List the top 5 courses that appear as prerequisites."
+                    "What is the most common prerequisite course?",
+                    "Which course is most frequently required as a prerequisite?",
+                    "What prerequisite appears most often in course requirements?"
                 ],
                 "sparqlTemplate": """
-                    SELECT ?prereq (COUNT(?course) as ?count) WHERE {
-                      ?course ns1:has_prerequisite_course ?prereq .
+                    SELECT ?prereq WHERE {
+                    {
+                        SELECT ?prereq (COUNT(?course) as ?count) WHERE {
+                        ?course ns1:has_prerequisite_course ?prereq .
+                        }
+                        GROUP BY ?prereq
                     }
-                    GROUP BY ?prereq
-                    ORDER BY DESC(?count)
-                    LIMIT 5
+                    FILTER NOT EXISTS {
+                        SELECT ?otherPrereq (COUNT(?otherCourse) as ?otherCount) WHERE {
+                        ?otherCourse ns1:has_prerequisite_course ?otherPrereq .
+                        }
+                        GROUP BY ?otherPrereq
+                        HAVING(?otherCount > ?count)
+                    }
+                    }
+                    LIMIT 1
                 """,
                 "thoughtsTemplate": [
-                    "1. The question asks for the most commonly used prerequisite courses.",
+                    "1. The question asks for the most commonly used prerequisite course.",
                     "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-                    "3. To solve this, count how many times each course appears as a prerequisite.",
-                    "4. Construct a SPARQL query using GROUP BY to group by prerequisite courses and COUNT to count occurrences.",
-                    "5. Use ORDER BY DESC to sort by count in descending order, and LIMIT 5 to return the top 5 prerequisites."
+                    "3. To solve this, we first count how many times each course appears as a prerequisite.",
+                    "4. Then, we select a prerequisite such that no other prerequisite has a higher count.",
+                    "5. We can use a nested query with FILTER NOT EXISTS to find the prerequisite with the maximum count."
                 ],
                 "complexity": "advanced"
             },
-        ]
-        
-        # Enhanced advanced templates - with multiple question variations
-        enhanced_advanced_templates = [
             {
                 "id": "courses-with-triple-condition",
                 "category": "university",
@@ -509,9 +466,9 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_research_group {entity1} .
-                      ?course ns1:has_course_category {entity2} .
-                      ?course ns1:has_evaluation_method {entity3} .
+                    ?course ns1:has_research_group {entity1} .
+                    ?course ns1:has_course_category {entity2} .
+                    ?course ns1:has_evaluation_method {entity3} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -525,105 +482,6 @@ class NL2SPARQLGenerator:
                 "complexity": "advanced"
             },
             {
-                "id": "courses-with-triple-condition-code",
-                "category": "university",
-                "questionTemplates": [
-                    "What course has the evaluation method of {entity1} and is a {entity2} with the course code '{value}'?",
-                    "Find the course that uses {entity1} for assessment, belongs to {entity2} category, and has code '{value}'.",
-                    "Which course is evaluated using {entity1}, categorized as {entity2}, and identified by code '{value}'?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?course WHERE {
-                      ?course ns1:has_evaluation_method {entity1} .
-                      ?course ns1:has_course_category {entity2} .
-                      ?course ns1:has_course_code {value} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for a course with evaluation method '{entity1}', category '{entity2}', and course code '{value}'.",
-                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                    "3. The property 'ns1:has_course_category' links courses to their categories.",
-                    "4. The property 'ns1:has_course_code' links courses to their unique identifiers.",
-                    "5. To solve this, find the course that satisfies all three conditions.",
-                    "6. Construct a SPARQL query with multiple constraints to find the course matching all conditions."
-                ],
-                "complexity": "advanced"
-            },
-            {
-                "id": "courses-with-double-evaluation-code",
-                "category": "university",
-                "questionTemplates": [
-                    "What courses have '{entity1}' and '{entity2}' as evaluation methods and have the course code '{value}'?",
-                    "Find courses that use both '{entity1}' and '{entity2}' for assessment and are coded as '{value}'.",
-                    "Which courses employ '{entity1}' and '{entity2}' for evaluation and have '{value}' as their code?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?course WHERE {
-                      ?course ns1:has_evaluation_method {entity1} .
-                      ?course ns1:has_evaluation_method {entity2} .
-                      ?course ns1:has_course_code {value} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for courses with both '{entity1}' and '{entity2}' as evaluation methods and course code '{value}'.",
-                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                    "3. The property 'ns1:has_course_code' links courses to their unique identifiers.",
-                    "4. To solve this, find courses that have both evaluation methods and the specified course code.",
-                    "5. Construct a SPARQL query with multiple evaluation method constraints and a course code constraint."
-                ],
-                "complexity": "advanced"
-            },
-            {
-                "id": "courses-with-research-eval-code",
-                "category": "university",
-                "questionTemplates": [
-                    "What courses have the evaluation method '{entity1}' and are associated with the research group '{entity2}' and have the course code '{value}'?",
-                    "Find courses that use '{entity1}' for assessment, belong to '{entity2}' research team, and have code '{value}'.",
-                    "Which courses are evaluated using '{entity1}', connected to '{entity2}' research group, and identified by '{value}'?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?course WHERE {
-                      ?course ns1:has_evaluation_method {entity1} .
-                      ?course ns1:has_research_group {entity2} .
-                      ?course ns1:has_course_code {value} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for courses with evaluation method '{entity1}', research group '{entity2}', and course code '{value}'.",
-                    "2. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                    "3. The property 'ns1:has_research_group' links courses to their research groups.",
-                    "4. The property 'ns1:has_course_code' links courses to their unique identifiers.",
-                    "5. To solve this, find courses that satisfy all three conditions.",
-                    "6. Construct a SPARQL query with constraints for evaluation method, research group, and course code."
-                ],
-                "complexity": "advanced"
-            },
-            {
-                "id": "courses-with-prereq-eval-category",
-                "category": "university",
-                "questionTemplates": [
-                    "What courses have {entity1} as a prerequisite and {entity2} as an evaluation method, and are {entity3}?",
-                    "Find courses that require {entity1} as prerequisite, use {entity2} for assessment, and belong to {entity3} category.",
-                    "Which courses need {entity1} completed first, employ {entity2} for evaluation, and are classified as {entity3}?"
-                ],
-                "sparqlTemplate": """
-                    SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course {entity1} .
-                      ?course ns1:has_evaluation_method {entity2} .
-                      ?course ns1:has_course_category {entity3} .
-                    }
-                """,
-                "thoughtsTemplate": [
-                    "1. The question asks for courses with prerequisite '{entity1}', evaluation method '{entity2}', and category '{entity3}'.",
-                    "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-                    "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                    "4. The property 'ns1:has_course_category' links courses to their categories.",
-                    "5. To solve this, find courses that satisfy all three conditions.",
-                    "6. Construct a SPARQL query with constraints for prerequisite, evaluation method, and category."
-                ],
-                "complexity": "advanced"
-            },
-            {
                 "id": "courses-with-prerequisite-eval",
                 "category": "university",
                 "questionTemplates": [
@@ -633,8 +491,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course ?prereq .
-                      ?prereq ns1:has_evaluation_method {entity} .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    ?prereq ns1:has_evaluation_method {entity} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -656,8 +514,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course ?prereq .
-                      ?prereq ns1:has_course_category {entity} .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    ?prereq ns1:has_course_category {entity} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -679,8 +537,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course ?prereq .
-                      ?prereq ns1:has_credits {value} .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    ?prereq ns1:has_credits {value} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -702,8 +560,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?course WHERE {
-                      ?course ns1:has_prerequisite_course ?prereq .
-                      ?prereq ns1:has_prerequisite_course {entity} .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    ?prereq ns1:has_prerequisite_course {entity} .
                     }
                 """,
                 "thoughtsTemplate": [
@@ -715,10 +573,37 @@ class NL2SPARQLGenerator:
                 ],
                 "complexity": "advanced"
             },
+            {
+                "id": "courses-with-prerequisites-in-same-category",
+                "category": "university",
+                "questionTemplates": [
+                    "Which courses have prerequisites in the same category as {entity}?",
+                    "What courses require prerequisites from the same category as {entity}?",
+                    "List courses that need prerequisites from the category of {entity}."
+                ],
+                "sparqlTemplate": """
+                    SELECT ?course WHERE {
+                    {entity} ns1:has_course_category ?category .
+                    ?prereq ns1:has_course_category ?category .
+                    ?course ns1:has_prerequisite_course ?prereq .
+                    FILTER(?course != {entity} && ?prereq != {entity})
+                    }
+                """,
+                "thoughtsTemplate": [
+                    "1. The question asks for courses with prerequisites in the same category as {entity}.",
+                    "2. The entity '{entity}' represents a course in the university domain.",
+                    "3. The property 'ns1:has_course_category' links courses to their categories.",
+                    "4. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
+                    "5. To solve this, first find the category of {entity}, then find courses that have prerequisites in that category.",
+                    "6. Construct a SPARQL query that connects courses to their prerequisites and filters for the right category.",
+                    "7. Use FILTER to ensure we're not including {entity} itself in the results."
+                ],
+                "complexity": "advanced"
+            },
         ]
         
         # Combine all templates
-        all_templates = basic_templates + intermediate_templates + original_advanced_templates + enhanced_advanced_templates
+        all_templates = basic_templates + intermediate_templates + advanced_templates
         
         return all_templates
 
