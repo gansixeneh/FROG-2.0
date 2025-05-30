@@ -27,6 +27,7 @@ class SparqlExecutor:
         Returns:
             Results in the specified format
         """
+        query = "PREFIX lex2kg-o:  <https://example.org/lex2kg/ontology/> \n" + query.strip()
         self.endpoint.setQuery(query)
         results = self.endpoint.query().convert()
         return self._format_results(results, return_format)
