@@ -306,6 +306,37 @@ class PatternBasedSPARQLGenerator:
         # For entities (which contain forward slashes), keep as full URI in angle brackets
         return f"<{uri_str}>"
 
+    def _expand_uri(self, shortened_uri):
+        """Convert shortened URI back to full URI"""
+        shortened_str = str(shortened_uri)
+        
+        # Handle lex2kg-o prefixed properties
+        if shortened_str.startswith("lex2kg-o:"):
+            property_name = shortened_str[len("lex2kg-o:"):]
+            return f"https://example.org/lex2kg/ontology/{property_name}"
+        
+        # Handle lex2kg prefixed entities
+        if shortened_str.startswith("lex2kg:"):
+            entity_path = shortened_str[len("lex2kg:"):]
+            return f"https://example.org/lex2kg/{entity_path}"
+        
+        # Handle other prefixes
+        for prefix, namespace in self.prefixes.items():
+            if shortened_str.startswith(f"{prefix}:"):
+                suffix = shortened_str[len(f"{prefix}:"):]
+                return f"{namespace}{suffix}"
+        
+        # If already a full URI (in angle brackets), remove brackets
+        if shortened_str.startswith("<") and shortened_str.endswith(">"):
+            return shortened_str[1:-1]
+        
+        # If already a full URI without brackets, return as is
+        if shortened_str.startswith("http"):
+            return shortened_str
+            
+        # Default: return as is
+        return shortened_str
+
     def _format_sparql(self, sparql):
         """Format SPARQL query for readability"""
         # Clean up spacing
@@ -437,22 +468,26 @@ class PatternBasedSPARQLGenerator:
         if "entities" in related_candidates:
             for entity in related_candidates["entities"]:
                 if isinstance(entity, dict) and 'short' in entity and 'label' in entity:
+                    # Convert shortened URI to full URI
+                    full_uri = self._expand_uri(entity['short'])
                     entity_matches.append({
-                        "id": entity['short'],
+                        "id": full_uri,
                         "label": entity['label'],
                     })
-                    print(f"Entity match: {entity['label']} ({entity['short']})")
+                    print(f"Entity match: {entity['label']} ({full_uri})")
         
         # Format property matches
         property_matches = []
         if "properties" in related_candidates:
             for property in related_candidates["properties"]:
                 if isinstance(property, dict) and 'short' in property and 'label' in property:
+                    # Convert shortened URI to full URI
+                    full_uri = self._expand_uri(property['short'])
                     property_matches.append({
-                        "id": property['short'],
+                        "id": full_uri,
                         "label": property['label'],
                     })
-                    print(f"Property match: {property['label']} ({property['short']})")
+                    print(f"Property match: {property['label']} ({full_uri})")
         
         print(f"Final results: {len(entities_list)} entities, {len(properties_list)} properties")
         print(f"Weaviate matches: {len(entity_matches)} entity matches, {len(property_matches)} property matches")
@@ -1338,7 +1373,7 @@ def main():
 
     # Generate dataset with enhanced fields
     print("Generating enhanced pattern-based dataset...")
-    dataset = generator.generate_dataset(size=20)
+    dataset = generator.generate_dataset(size=250)
 
     # Export results
     try:
