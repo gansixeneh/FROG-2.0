@@ -374,6 +374,26 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic"
             },
+            {
+                "id": "publication-language",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "What language is {entity} written in?",
+                    "What is the language of {entity}?",
+                    "In which language was {entity} published?"
+                ],
+                "englishQuestionTemplates": [
+                    "What language is {entity} written in?",
+                    "What is the language of {entity}?",
+                    "In which language was {entity} published?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?language WHERE {
+                    {entity} schema:inLanguage ?language .
+                    }
+                """,
+                "complexity": "basic"
+            },
             
             # Intermediate: Structure and relationships
             {
@@ -390,8 +410,12 @@ class NL2SPARQLGenerator:
                     "How many works did {entity} create?"
                 ],
                 "sparqlTemplate": """
-                    SELECT (COUNT(DISTINCT ?publication) AS ?count) WHERE {
-                    ?publication schema:author {entity} .
+                    SELECT ?count WHERE {
+                    {
+                        SELECT (COUNT(DISTINCT ?publication) AS ?count) WHERE {
+                        ?publication schema:author {entity} .
+                        }
+                    }
                     }
                 """,
                 "complexity": "intermediate"
@@ -434,8 +458,12 @@ class NL2SPARQLGenerator:
                     "How many researchers contributed to {entity}?"
                 ],
                 "sparqlTemplate": """
-                    SELECT (COUNT(DISTINCT ?collaborator) AS ?count) WHERE {
-                    {entity} schema:author ?collaborator .
+                    SELECT ?count WHERE {
+                    {
+                        SELECT (COUNT(DISTINCT ?collaborator) AS ?count) WHERE {
+                        {entity} schema:author ?collaborator .
+                        }
+                    }
                     }
                 """,
                 "complexity": "intermediate"
@@ -454,11 +482,15 @@ class NL2SPARQLGenerator:
                     "How many works has {entity} published?"
                 ],
                 "sparqlTemplate": """
-                    SELECT (COUNT(DISTINCT ?publication) AS ?count) WHERE {
+                    SELECT ?count WHERE {
                     {
-                        ?publication schema:publisher {entity} .
-                    } UNION {
-                        ?publication schema:contributor {entity} .
+                        SELECT (COUNT(DISTINCT ?publication) AS ?count) WHERE {
+                        {
+                            ?publication schema:publisher {entity} .
+                        } UNION {
+                            ?publication schema:contributor {entity} .
+                        }
+                        }
                     }
                     }
                 """,
@@ -478,8 +510,67 @@ class NL2SPARQLGenerator:
                     "How many works were released in {value}?"
                 ],
                 "sparqlTemplate": """
-                    SELECT (COUNT(?publication) AS ?count) WHERE {
-                    ?publication schema:datePublished {value} .
+                    SELECT ?count WHERE {
+                    {
+                        SELECT (COUNT(?publication) AS ?count) WHERE {
+                        ?publication schema:datePublished {value} .
+                        }
+                    }
+                    }
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "person-first-publication",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "What was the first publication by {entity}?",
+                    "What is {entity}'s earliest work?",
+                    "What did {entity} publish first?"
+                ],
+                "englishQuestionTemplates": [
+                    "What was the first publication by {entity}?",
+                    "What is {entity}'s earliest work?",
+                    "What did {entity} publish first?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?title WHERE {
+                    ?publication schema:author {entity} .
+                    ?publication schema:name ?title .
+                    ?publication schema:datePublished ?date .
+                    }
+                    ORDER BY ASC(?date)
+                    LIMIT 1
+                """,
+                "complexity": "intermediate"
+            },
+            {
+                "id": "topic-publication-count",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "How many publications are about '{value}'?",
+                    "What is the number of works on '{value}'?",
+                    "How many research papers discuss '{value}'?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many publications are about '{value}'?",
+                    "What is the number of works on '{value}'?",
+                    "How many research papers discuss '{value}'?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?count WHERE {
+                    {
+                        SELECT (COUNT(DISTINCT ?publication) AS ?count) WHERE {
+                        {
+                            ?publication schema:about ?topic .
+                            ?topic schema:name ?topicName .
+                            FILTER(CONTAINS(LCASE(?topicName), LCASE({value})))
+                        } UNION {
+                            ?publication schema:keywords ?keyword .
+                            FILTER(CONTAINS(LCASE(?keyword), LCASE({value})))
+                        }
+                        }
+                    }
                     }
                 """,
                 "complexity": "intermediate"
@@ -503,16 +594,11 @@ class NL2SPARQLGenerator:
                     SELECT ?title WHERE {
                     ?publication schema:author {entity} .
                     ?publication schema:name ?title .
-                    {
-                        SELECT ?publication (COUNT(?citing) AS ?citationCount) WHERE {
-                        ?publication schema:author {entity} .
-                        ?citing schema:citation ?publication .
-                        }
-                        GROUP BY ?publication
-                        ORDER BY DESC(?citationCount)
-                        LIMIT 1
+                    ?citing schema:citation ?publication .
                     }
-                    }
+                    GROUP BY ?publication ?title
+                    ORDER BY DESC(COUNT(?citing))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -566,26 +652,22 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
                     ?author schema:name ?authorName .
+                    ?publication schema:author ?author .
                     {
-                        SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE {
-                        ?publication schema:author ?author .
-                        {
-                            ?publication schema:about ?topic .
-                            ?topic schema:name ?topicName .
-                            FILTER(CONTAINS(LCASE(?topicName), LCASE({value})))
-                        } UNION {
-                            ?publication schema:keywords ?keyword .
-                            FILTER(CONTAINS(LCASE(?keyword), LCASE({value})))
-                        } UNION {
-                            ?publication schema:name ?title .
-                            FILTER(CONTAINS(LCASE(?title), LCASE({value})))
-                        }
-                        }
-                        GROUP BY ?author
-                        ORDER BY DESC(?pubCount)
-                        LIMIT 1
+                        ?publication schema:about ?topic .
+                        ?topic schema:name ?topicName .
+                        FILTER(CONTAINS(LCASE(?topicName), LCASE({value})))
+                    } UNION {
+                        ?publication schema:keywords ?keyword .
+                        FILTER(CONTAINS(LCASE(?keyword), LCASE({value})))
+                    } UNION {
+                        ?publication schema:name ?title .
+                        FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
                     }
+                    GROUP BY ?author ?authorName
+                    ORDER BY DESC(COUNT(?publication))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -605,21 +687,17 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT ?contributorName WHERE {
                     ?contributor schema:name ?contributorName .
-                    {
-                        SELECT ?contributor (COUNT(?publication) AS ?contribCount) WHERE {
-                        ?publication schema:publisher {entity} .
-                        ?publication schema:author|schema:contributor ?contributor .
-                        }
-                        GROUP BY ?contributor
-                        ORDER BY DESC(?contribCount)
-                        LIMIT 1
+                    ?publication schema:publisher {entity} .
+                    ?publication schema:author|schema:contributor ?contributor .
                     }
-                    }
+                    GROUP BY ?contributor ?contributorName
+                    ORDER BY DESC(COUNT(?publication))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
             {
-                "id": "publication-with-most-authors-name",
+                "id": "publication-with-most-authors",
                 "category": "scholarly",
                 "questionTemplates": [
                     "Which publication has the most authors?",
@@ -634,15 +712,11 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
                     ?publication schema:name ?title .
-                    {
-                        SELECT ?publication (COUNT(?author) AS ?authorCount) WHERE {
-                        ?publication schema:author ?author .
-                        }
-                        GROUP BY ?publication
-                        ORDER BY DESC(?authorCount)
-                        LIMIT 1
+                    ?publication schema:author ?author .
                     }
-                    }
+                    GROUP BY ?publication ?title
+                    ORDER BY DESC(COUNT(?author))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -662,15 +736,11 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
                     ?author schema:name ?authorName .
-                    {
-                        SELECT ?author (COUNT(?publication) AS ?pubCount) WHERE {
-                        ?publication schema:author ?author .
-                        }
-                        GROUP BY ?author
-                        ORDER BY DESC(?pubCount)
-                        LIMIT 1
+                    ?publication schema:author ?author .
                     }
-                    }
+                    GROUP BY ?author ?authorName
+                    ORDER BY DESC(COUNT(?publication))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             },
@@ -690,17 +760,85 @@ class NL2SPARQLGenerator:
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
                     ?author schema:name ?authorName .
-                    {
-                        SELECT ?author (COUNT(DISTINCT ?coauthor) AS ?coauthorCount) WHERE {
-                        ?publication schema:author ?author .
-                        ?publication schema:author ?coauthor .
-                        FILTER(?author != ?coauthor)
-                        }
-                        GROUP BY ?author
-                        ORDER BY DESC(?coauthorCount)
-                        LIMIT 1
+                    ?publication schema:author ?author .
+                    ?publication schema:author ?coauthor .
+                    FILTER(?author != ?coauthor)
                     }
+                    GROUP BY ?author ?authorName
+                    ORDER BY DESC(COUNT(DISTINCT ?coauthor))
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "publications-by-year-trend",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Which year had the most publications?",
+                    "What was the most productive year for research publications?",
+                    "In which year were the most papers published?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which year had the most publications?",
+                    "What was the most productive year for research publications?",
+                    "In which year were the most papers published?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?year WHERE {
+                    ?publication schema:datePublished ?fullDate .
+                    BIND(SUBSTR(STR(?fullDate), 0, 5) AS ?year)
                     }
+                    GROUP BY ?year
+                    ORDER BY DESC(COUNT(?publication))
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "most-cited-publication",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "What is the most cited publication?",
+                    "Which paper has received the most citations?",
+                    "What is the most referenced research work?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the most cited publication?",
+                    "Which paper has received the most citations?",
+                    "What is the most referenced research work?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?title WHERE {
+                    ?publication schema:name ?title .
+                    ?citing schema:citation ?publication .
+                    }
+                    GROUP BY ?publication ?title
+                    ORDER BY DESC(COUNT(?citing))
+                    LIMIT 1
+                """,
+                "complexity": "advanced"
+            },
+            {
+                "id": "most-diverse-publication",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Which publication covers the most diverse topics?",
+                    "What paper addresses the widest range of subjects?",
+                    "Which research work has the most varied themes?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which publication covers the most diverse topics?",
+                    "What paper addresses the widest range of subjects?",
+                    "Which research work has the most varied themes?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?title WHERE {
+                    ?publication schema:name ?title .
+                    ?publication schema:about ?topic .
+                    }
+                    GROUP BY ?publication ?title
+                    ORDER BY DESC(COUNT(DISTINCT ?topic))
+                    LIMIT 1
                 """,
                 "complexity": "advanced"
             }
