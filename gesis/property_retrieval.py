@@ -27,22 +27,12 @@ SELECT DISTINCT ?entity
 WHERE {
   { 
     ?entity ?predicate ?object. 
-    FILTER(isIRI(?entity) && (
-      STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/") ||
-      STRSTARTS(STR(?entity), "https://schema.org/") ||
-      STRSTARTS(STR(?entity), "https://rdf-vocabulary.ddialliance.org/") ||
-      STRSTARTS(STR(?entity), "https://nfdi.fiz-karlsruhe.de/")
-    ))
+    FILTER(isIRI(?entity))
   }
   UNION
   { 
     ?subject ?predicate ?entity. 
-    FILTER(isIRI(?entity) && (
-      STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/") ||
-      STRSTARTS(STR(?entity), "https://schema.org/") ||
-      STRSTARTS(STR(?entity), "https://rdf-vocabulary.ddialliance.org/") ||
-      STRSTARTS(STR(?entity), "https://nfdi.fiz-karlsruhe.de/")
-    ))
+    FILTER(isIRI(?entity))
   }
 }
 """
@@ -126,7 +116,9 @@ WHERE {
     def _extract_entities(self):
         """Extract entities from the SPARQL endpoint using the provided SPARQL query"""
         try:
+            print("Extracting entities from SPARQL endpoint...")
             results = self.execute_sparql_query(self.get_entities_query)
+            print("Results received from SPARQL endpoint")
             entities_data = []
             
             if results.get("results") and results["results"].get("bindings"):
