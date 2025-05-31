@@ -1700,10 +1700,12 @@ class NL2SPARQLGenerator:
             # For top expert queries, use keywords
             return None  # Will fall back to keyword selection
         elif "top-contributor" in template_id:
-            # For top contributor queries
+            # For top contributor queries - only select organizations that have publications WITH authors/contributors
             return """
                 SELECT DISTINCT ?entity ?entityLabel WHERE {
                     ?publication <https://schema.org/publisher> ?entity .
+                    ?publication <https://schema.org/author>|<https://schema.org/contributor> ?contributor .
+                    ?contributor <https://schema.org/name> ?contributorName .
                     OPTIONAL { ?entity rdfs:label ?entityLabel }
                     OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
                 } LIMIT 50
