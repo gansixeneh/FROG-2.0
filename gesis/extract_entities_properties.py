@@ -12,8 +12,9 @@ import os
 import sys
 import logging
 import requests
+import re
 from SPARQLWrapper import SPARQLWrapper, JSON
-from kg_schema_extractor import gesis_entity_label, gesis_property_label, separate_camel_case
+from kg_schema_extractor import separate_camel_case
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -25,7 +26,7 @@ class GesisKGExtractor:
     and stores them in CSV files for faster access.
     """
     
-    # SPARQL query to get all entities
+    # SPARQL query to get all entities with their schema:name
     get_entities_query = """
     PREFIX schema: <https://schema.org/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -34,11 +35,12 @@ class GesisKGExtractor:
     PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-    SELECT DISTINCT ?entity ?type
+    SELECT DISTINCT ?entity ?type ?name
     WHERE {
       { 
         ?entity ?predicate ?object. 
         OPTIONAL { ?entity rdf:type ?type }
+        OPTIONAL { ?entity schema:name ?name }
         FILTER(isIRI(?entity))
       }
     }
@@ -110,38 +112,30 @@ class GesisKGExtractor:
             logger.error(f"Error executing SPARQL query: {e}")
             raise e
     
-    def get_name_for_uri(self, uri, is_property=False):
-        """Get the schema:name or rdfs:label for a URI"""
+    def get_property_label(self, uri):
+        """
+        Extract property label from URI by taking the last part after '/' 
+        and converting from camelCase to space-separated words
+        
+        Args:
+            uri (str): Property URI
+            
+        Returns:
+            str: Human-readable property label
+        """
         try:
-            query = f"""
-            PREFIX schema: <https://schema.org/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?name WHERE {{
-                {{
-                    <{uri}> schema:name ?name .
-                }} UNION {{
-                    <{uri}> rdfs:label ?name .
-                }}
-            }}
-            LIMIT 1
-            """
-            results = self.execute_sparql_query(query)
+            # Get the last part of the URI
+            last_part = uri.split('/')[-1]
             
-            if results.get("results") and results["results"].get("bindings"):
-                name_binding = results["results"]["bindings"][0]
-                return name_binding.get("name", {}).get("value")
+            # If there are fragments, get the part after #
+            if '#' in last_part:
+                last_part = last_part.split('#')[-1]
             
-            # Fallback to label generation
-            if is_property:
-                return gesis_property_label(uri)
-            else:
-                return gesis_entity_label(uri)
+            # Convert camelCase to words with spaces
+            return separate_camel_case(last_part)
         except Exception as e:
-            logger.error(f"Error getting name for {uri}: {e}")
-            if is_property:
-                return gesis_property_label(uri)
-            else:
-                return gesis_entity_label(uri)
+            logger.error(f"Error extracting property label from {uri}: {e}")
+            return uri
     
     def shorten_uri(self, uri):
         """Shorten a URI using known prefixes"""
@@ -172,10 +166,11 @@ class GesisKGExtractor:
                     
                     entity_uri = binding.get("entity", {}).get("value")
                     entity_type = binding.get("type", {}).get("value")
+                    entity_name = binding.get("name", {}).get("value")
                     
                     if entity_uri:
-                        # Get name/label
-                        label = self.get_name_for_uri(entity_uri)
+                        # Use name from query or generate a default label
+                        label = entity_name if entity_name else entity_uri.split('/')[-1]
                         
                         # Generate short form using prefixes
                         short = self.shorten_uri(entity_uri)
@@ -215,8 +210,8 @@ class GesisKGExtractor:
                     property_uri = binding.get("property", {}).get("value")
                     
                     if property_uri:
-                        # Get name/label
-                        label = self.get_name_for_uri(property_uri, is_property=True)
+                        # Get label by extracting from URI and formatting
+                        label = self.get_property_label(property_uri)
                         
                         # Generate short form using prefixes
                         short = self.shorten_uri(property_uri)
@@ -254,10 +249,10 @@ class GesisKGExtractor:
                     type_uri = binding.get("type", {}).get("value")
                     
                     if type_uri:
-                        # Get label if available
-                        label = binding.get("label", {}).get("value")
+                        # Get name if available or extract from URI
+                        label = binding.get("name", {}).get("value")
                         if not label:
-                            label = self.get_name_for_uri(type_uri)
+                            label = type_uri.split('/')[-1]
                         
                         # Generate short form using prefixes
                         short = self.shorten_uri(type_uri)
