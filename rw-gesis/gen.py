@@ -375,11 +375,11 @@ class PatternBasedSPARQLGenerator:
     def generate_2_property_patterns(self, count=100):
         """
         Generate 2-property patterns using discovery-first approach for GESIS KG
-        Modified to allow literals in the ?entity position of branching patterns
-
+        Modified to ensure literals are always set as the target
+        
         Args:
             count (int): Number of patterns to generate
-
+            
         Returns:
             list: List of pattern dictionaries
         """
@@ -392,45 +392,72 @@ class PatternBasedSPARQLGenerator:
 
         exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
-        # Discovery query for branching pattern: ?target prop1 ?hidden . ?hidden prop2 entity
-        # Modified to allow literals for ?entity by removing FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
-        branching_discovery_query = f"""
+        # Discovery query for branching pattern with literals
+        # We get subject-property paths that lead to literals
+        literal_discovery_query = f"""
+            SELECT DISTINCT ?prop1 ?prop2 ?subject WHERE {{
+                ?subject ?prop1 ?hidden .
+                ?hidden ?prop2 ?literal .
+                FILTER(?prop1 != ?prop2)
+                FILTER({exclusion_filter_str})
+                FILTER(ISLITERAL(?literal))
+            }}
+            LIMIT 500
+        """
+        
+        # Discovery query for regular URI-based patterns
+        uri_discovery_query = f"""
             SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {{
-                ?target ?prop1 ?hidden .
+                ?s ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
                 FILTER(?prop1 != ?prop2)
                 FILTER({exclusion_filter_str})
+                FILTER(ISURI(?entity))
+                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
             }}
-            LIMIT 1000
+            LIMIT 500
         """
 
-        print("Executing discovery query for 2-property patterns...")
+        print("Executing discovery queries for 2-property patterns...")
 
         try:
-            # Get branching combinations
-            branching_result = self.client.query(branching_discovery_query)
-            branching_results = []
-            if branching_result and branching_result["results"]["bindings"]:
-                branching_results = [
-                    (
-                        binding["prop1"]["value"],
-                        binding["prop2"]["value"],
-                        binding["entity"]["value"],
-                    )
-                    for binding in branching_result["results"]["bindings"]
-                ]
-            print(f"Found {len(branching_results)} valid branching combinations")
-
             all_combinations = []
-
-            # Process branching results
-            for result in branching_results:
-                all_combinations.append({"type": "branching", "data": result})
+            
+            # Get literal patterns first
+            literal_result = self.client.query(literal_discovery_query)
+            if literal_result and literal_result["results"]["bindings"]:
+                for binding in literal_result["results"]["bindings"]:
+                    all_combinations.append({
+                        "type": "literal_target",
+                        "data": (
+                            binding["prop1"]["value"],
+                            binding["prop2"]["value"],
+                            binding["subject"]["value"]
+                        )
+                    })
+            
+            print(f"Found {len(all_combinations)} literal target combinations")
+            
+            # Get URI patterns if we need more
+            if len(all_combinations) < count:
+                uri_result = self.client.query(uri_discovery_query)
+                if uri_result and uri_result["results"]["bindings"]:
+                    for binding in uri_result["results"]["bindings"]:
+                        all_combinations.append({
+                            "type": "uri_entity",
+                            "data": (
+                                binding["prop1"]["value"],
+                                binding["prop2"]["value"],
+                                binding["entity"]["value"]
+                            )
+                        })
+                
+                print(f"Found {len(all_combinations) - len(all_combinations)} URI entity combinations")
 
             if not all_combinations:
                 return patterns
 
-            # Generate patterns by randomly selecting from valid combinations
+            # Generate patterns
             attempts = 0
             max_attempts = count * 3
 
@@ -438,9 +465,11 @@ class PatternBasedSPARQLGenerator:
                 attempts += 1
 
                 combination = random.choice(all_combinations)
-                pattern = self._create_branching_pattern(
-                    combination["data"], len(patterns)
-                )
+                
+                if combination["type"] == "literal_target":
+                    pattern = self._create_literal_target_pattern(combination["data"], len(patterns))
+                else:
+                    pattern = self._create_uri_entity_pattern(combination["data"], len(patterns))
 
                 if pattern:
                     patterns.append(pattern)
@@ -449,20 +478,44 @@ class PatternBasedSPARQLGenerator:
             print(f"Error in 2-property pattern discovery: {e}")
 
         return patterns
+    
+    def _create_literal_target_pattern(self, data, pattern_index):
+        """Create pattern where a literal is the target variable"""
+        prop1, prop2, subject = data
 
-    def _create_branching_pattern(self, data, pattern_index):
-        """Create branching pattern from discovery data"""
+        prop1_str = self._shorten_uri(prop1)
+        prop2_str = self._shorten_uri(prop2)
+        subject_str = self._shorten_uri(subject)
+
+        # For literal targets, we always structure the query as:
+        # fixed_entity prop1 ?hidden . ?hidden prop2 ?target
+        # Where ?target will match literals
+        sparql = f"""
+            SELECT ?target WHERE {{
+                {subject_str} {prop1_str} ?hidden .
+                ?hidden {prop2_str} ?target .
+                FILTER(ISLITERAL(?target))
+            }}
+        """
+
+        if self._validate_pattern(sparql):
+            return {
+                "id": f"2p_literal_target_{pattern_index}",
+                "sparql": self._format_sparql(sparql),
+                "pattern_type": "2_prop_literal_target",
+                "complexity": "intermediate",
+                "properties": [prop1_str, prop2_str],
+                "fixed_entity": subject_str,
+            }
+        return None
+
+    def _create_uri_entity_pattern(self, data, pattern_index):
+        """Create pattern with URI entity (renamed from _create_branching_pattern)"""
         prop1, prop2, entity = data
 
         prop1_str = self._shorten_uri(prop1)
         prop2_str = self._shorten_uri(prop2)
-        
-        # Check if entity is a URI or a literal and format accordingly
-        if entity.startswith("http"):
-            entity_str = self._shorten_uri(entity)
-        else:
-            # For literals, just wrap with quotes
-            entity_str = f'"{entity}"'
+        entity_str = self._shorten_uri(entity)
 
         # Generate random variation (4 possibilities)
         variation = random.randint(0, 3)
