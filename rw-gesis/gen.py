@@ -948,7 +948,7 @@ def main():
 
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
-    dataset = generator.generate_dataset(size=200)
+    dataset = generator.generate_dataset(size=265)
 
     # Export results
     try:
