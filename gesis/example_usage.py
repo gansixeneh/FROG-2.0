@@ -4,6 +4,7 @@ Example usage of the NL2SPARQL Generator with GESIS Knowledge Graph Data
 
 This example focuses on generating NL2SPARQL pairs from the GESIS knowledge graph
 using a Fuseki server endpoint.
+Enhanced with entity/property matching using Weaviate.
 """
 
 import json
@@ -11,6 +12,7 @@ import os
 import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
+from property_retrieval import GesisPropertyRetrieval
 
 
 def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
@@ -63,8 +65,28 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
         print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
         print("Date properties:", schema["schemaInfo"]["dateProperties"])
 
-        # Generate dataset using extracted schema
-        generator = NL2SPARQLGenerator(schema)
+        # Initialize the property retrieval system for entity/property matching
+        print("\nInitializing property retrieval system...")
+        try:
+            property_retrieval = GesisPropertyRetrieval(
+                endpoint_url=endpoint_url + "/query",  # Add /query for SPARQL endpoint
+                embedding_model_name="jinaai/jina-embeddings-v3",
+                is_local_client=True,
+                weaviate_host="localhost",
+                weaviate_port=8080
+            )
+            print("Property retrieval system initialized successfully!")
+        except Exception as e:
+            print(f"Warning: Could not initialize property retrieval system: {e}")
+            print("Continuing without entity/property matching...")
+            property_retrieval = None
+
+        # Generate dataset using extracted schema with property retrieval
+        generator = NL2SPARQLGenerator(
+            schema, 
+            endpoint_url=endpoint_url + "/query",
+            property_retrieval=property_retrieval
+        )
 
         print("\nGenerating question-SPARQL pairs for GESIS knowledge graph...")
         dataset = generator.generate_dataset(
@@ -74,7 +96,8 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
                 "intermediate": 0.3,
                 "advanced": 0.3,
             },
-            # include_variations=True
+            include_variations=True,
+            variations_per_question=2
         )
 
         print(f"Generated {len(dataset)} question-SPARQL pairs about scholarly resources")
@@ -92,6 +115,9 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
                 print(
                     f"    SPARQL: {q['sparql'].replace('{', '{{').replace('}', '}}')[:80]}..."
                 )
+                print(f"    Entities matches: {len(q.get('entities_matches', []))}")
+                print(f"    Properties matches: {len(q.get('properties_matches', []))}")
+
         # Write to files
         output_json_path = "gesis_dataset.json"
         output_csv_path = "gesis_dataset.csv"
@@ -102,9 +128,17 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
         with open(output_csv_path, "w", encoding="utf-8") as f:
             f.write(generator.export_csv(dataset))
 
-        print(f"\nLeGESIS dataset exported to:")
+        print(f"\nGESIS dataset exported to:")
         print(f"  - JSON: {output_json_path}")
         print(f"  - CSV: {output_csv_path}")
+
+        # Clean up property retrieval system
+        if property_retrieval:
+            try:
+                property_retrieval.close()
+                print("Property retrieval system closed.")
+            except Exception as e:
+                print(f"Warning: Error closing property retrieval system: {e}")
 
         return dataset
     except Exception as e:
@@ -116,14 +150,51 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
 
 
 def main():
-    """Main function to run the legal documents example"""
+    """Main function to run the GESIS example"""
     try:
         # Define the Fuseki endpoint URL
         endpoint_url = "http://localhost:3030/gesis"
         
+        # Check if Fuseki server is accessible
+        import requests
+
+        try:
+            response = requests.get(endpoint_url)
+            if response.status_code != 200:
+                print(
+                    f"Warning: Fuseki endpoint at {endpoint_url} returned status code {response.status_code}"
+                )
+                print("Make sure the Fuseki server is running.")
+                proceed = input("Do you want to proceed anyway? (y/n): ")
+                if proceed.lower() != "y":
+                    sys.exit(1)
+        except requests.exceptions.RequestException:
+            print(f"Warning: Could not connect to Fuseki endpoint at {endpoint_url}")
+            print("Make sure the Fuseki server is running.")
+            proceed = input("Do you want to proceed anyway? (y/n): ")
+            if proceed.lower() != "y":
+                sys.exit(1)
+
+        # Check if Weaviate is running
+        try:
+            import requests
+            weaviate_response = requests.get("http://localhost:8080/v1/.well-known/ready")
+            if weaviate_response.status_code != 200:
+                print("Warning: Weaviate server may not be running at localhost:8080")
+                print("Entity/property matching may not work properly.")
+                proceed = input("Do you want to proceed anyway? (y/n): ")
+                if proceed.lower() != "y":
+                    sys.exit(1)
+        except requests.exceptions.RequestException:
+            print("Warning: Could not connect to Weaviate at localhost:8080")
+            print("Entity/property matching may not work properly.")
+            proceed = input("Do you want to proceed anyway? (y/n): ")
+            if proceed.lower() != "y":
+                sys.exit(1)
+        
         # Generate dataset from Fuseki endpoint
         dataset = generate_gesis_kg_dataset(endpoint_url)
-        print("\GESIS example completed successfully!")
+        print("\nGESIS example completed successfully!")
     except Exception as e:
         print(f"Error in GESIS example: {e}")
 

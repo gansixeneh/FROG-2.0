@@ -3,6 +3,7 @@ NL2SPARQL - Natural Language to SPARQL Dataset Generator for GESIS Knowledge Gra
 
 This version generates query templates based on the GESIS Knowledge Graph schema,
 focusing on scholarly resources, publications, and research data.
+Enhanced with entity/property matching similar to the legal approach.
 """
 
 import json
@@ -14,6 +15,9 @@ import io
 from SPARQLWrapper import SPARQLWrapper, JSON
 from collections import Counter
 from kg_schema_extractor import gesis_entity_label
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
+from nltk import ngrams
 
 class SparqlExecutor:
     """A class to execute SPARQL queries against the Fuseki server."""
@@ -204,13 +208,14 @@ class VariationGenerator:
 class NL2SPARQLGenerator:
     """Generator for natural language to SPARQL query pairs for GESIS Knowledge Graph."""
     
-    def __init__(self, config, endpoint_url="http://localhost:3030/gesis/query"):
+    def __init__(self, config, endpoint_url="http://localhost:3030/gesis/query", property_retrieval=None):
         """
         Initialize the generator with knowledge graph schema information
         
         Args:
             config (dict): Configuration with prefixes, entity examples, and schema info
             endpoint_url (str): URL of the Fuseki SPARQL endpoint
+            property_retrieval: Property retrieval system for Weaviate-based search
         """
         self.config = config
         self.prefixes = config.get("prefixes", {})
@@ -218,6 +223,10 @@ class NL2SPARQLGenerator:
         self.schema_info = config.get("schemaInfo", {})
         self.templates = self.initialize_templates()
         self.variation_generator = VariationGenerator()
+        self.property_retrieval = property_retrieval
+        
+        # Initialize stopwords
+        self.stopwords = set(stopwords.words('english'))
         
         # Create a SPARQL executor to connect to Fuseki
         self.sparql_exec = SparqlExecutor(endpoint_url)
@@ -281,6 +290,357 @@ class NL2SPARQLGenerator:
         except Exception as e:
             print(f"Error extracting keywords from knowledge graph: {e}")
             return []
+
+    def _preprocess_into_tokens(self, q: str) -> list[str]:
+        """
+        Preprocess question into tokens using NLTK RegexpTokenizer
+        
+        Args:
+            q (str): Question string
+            
+        Returns:
+            list[str]: List of tokens
+        """
+        tok_pattern = r"\w+"
+        tokenizer = RegexpTokenizer(tok_pattern)
+        tokenized = tokenizer.tokenize(q)
+        result = []
+        for tok in tokenized:
+            tok = tok.lower()
+            if tok not in self.stopwords:
+                result.append(tok)
+        return result
+
+    def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+        """
+        Generate n-grams from tokens using NLTK
+        
+        Args:
+            tokens (list[str]): List of tokens
+            max_n (int): Maximum n-gram size
+            
+        Returns:
+            list[str]: List of n-grams
+        """
+        result = []
+        
+        # Generate unigrams, bigrams, and trigrams using NLTK
+        for n in range(1, min(max_n + 1, len(tokens) + 1)):
+            n_grams = ngrams(tokens, n)
+            result.extend([" ".join(ng) for ng in n_grams])
+        
+        return result
+
+    def _search_entities_weaviate(self, query: str, k: int = 5) -> list[dict]:
+        """
+        Search entities using Weaviate-based approach
+        
+        Args:
+            query (str): Search query
+            k (int): Number of results to return
+            
+        Returns:
+            list[dict]: List of entity results with scores
+        """
+        if self.property_retrieval:
+            try:
+                df_result = self.property_retrieval.search_entities(query, k=k)
+                results = []
+                
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0)
+                    })
+                
+                return results
+            except Exception as e:
+                print(f"Error searching entities with Weaviate: {e}")
+        
+        return []
+
+    def _search_properties_weaviate(self, query: str, k: int = 5) -> list[dict]:
+        """
+        Search properties using Weaviate-based approach
+        
+        Args:
+            query (str): Search query
+            k (int): Number of results to return
+            
+        Returns:
+            list[dict]: List of property results with scores
+        """
+        if self.property_retrieval:
+            try:
+                df_result = self.property_retrieval.search_properties(query, k=k)
+                results = []
+                
+                for _, row in df_result.iterrows():
+                    results.append({
+                        'short': row.get('short', ''),
+                        'label': row.get('label', ''),
+                        'score': row.get('score', 0.0)
+                    })
+                
+                return results
+            except Exception as e:
+                print(f"Error searching properties with Weaviate: {e}")
+        
+        return []
+
+    def get_entities_and_properties(self, question, sparql):
+        """
+        Extract entities and properties from SPARQL query and get their labels using schema:name
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entities_list, properties_list, entity_matches, property_matches)
+        """
+        # Extract actual URIs from SPARQL query
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+        
+        # Get labels for entities and properties
+        entities_list = []
+        properties_list = []
+        
+        # Get entity labels using schema:name
+        for uri in entity_uris:
+            label = self._get_entity_name_from_kg(uri)
+            if not label:
+                # Fallback to gesis_entity_label function
+                label = gesis_entity_label(uri)
+            if label:
+                entities_list.append(label)
+        
+        # Get property labels using schema:name
+        for uri in property_uris:
+            label = self._get_property_name_from_kg(uri)
+            if not label:
+                # Extract from URI if not found
+                label = uri.split('/')[-1] if '/' in uri else uri.split(':')[-1]
+            if label:
+                properties_list.append(label)
+        
+        # Get entity and property candidates for entities_matches and properties_matches
+        property_candidates = entities_list + properties_list
+        related_candidates = self.get_related_candidates(
+            question, 
+            property_candidates=property_candidates,
+            threshold=0.6,
+            k=5
+        )
+        
+        # Format entity matches
+        entity_matches = []
+        if "entities" in related_candidates:
+            for entity in related_candidates["entities"]:
+                expanded_id = self.expand_uri(entity['short'])
+                entity_matches.append({
+                    "id": expanded_id,
+                    "label": entity['label'],
+                })
+        
+        # Format property matches
+        property_matches = []
+        if "properties" in related_candidates:
+            for property in related_candidates["properties"]:
+                property_matches.append({
+                    "id": property['short'],
+                    "label": property['label'],
+                })
+        
+        return entities_list, properties_list, entity_matches, property_matches
+
+    def _get_entity_name_from_kg(self, entity_uri):
+        """Get the schema:name for an entity from the knowledge graph"""
+        try:
+            query = f"""
+            PREFIX schema: <https://schema.org/>
+            SELECT ?name WHERE {{
+                <{entity_uri}> schema:name ?name .
+            }}
+            LIMIT 1
+            """
+            results = self.sparql_exec.execute_query(query)
+            
+            if results and len(results) > 0:
+                return results[0].get("name")
+            
+            return None
+        except Exception:
+            return None
+
+    def _get_property_name_from_kg(self, property_uri):
+        """Get the schema:name or rdfs:label for a property from the knowledge graph"""
+        try:
+            query = f"""
+            PREFIX schema: <https://schema.org/>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?name WHERE {{
+                {{
+                    <{property_uri}> schema:name ?name .
+                }} UNION {{
+                    <{property_uri}> rdfs:label ?name .
+                }}
+            }}
+            LIMIT 1
+            """
+            results = self.sparql_exec.execute_query(query)
+            
+            if results and len(results) > 0:
+                return results[0].get("name")
+            
+            return None
+        except Exception:
+            return None
+    
+    def expand_uri(self, shortened_uri):
+        """
+        Expand a shortened URI back to its full form
+        
+        Args:
+            shortened_uri (str): Shortened URI with prefix (e.g., schema:Publication)
+            
+        Returns:
+            str: Full URI (e.g., https://schema.org/Publication)
+        """
+        # Check if the URI has a prefix
+        if ":" in shortened_uri:
+            prefix, path = shortened_uri.split(":", 1)
+            
+            # If the prefix is in our known prefixes, expand it
+            if prefix in self.prefixes:
+                return f"{self.prefixes[prefix]}{path}"
+        
+        # Return as is if it doesn't have a recognized prefix or is already a full URI
+        return shortened_uri
+
+    def get_related_candidates(
+        self,
+        q: str,
+        property_candidates: list[str] = [],
+        threshold: float = 0.6,
+        k: int = 5,
+    ) -> dict[str, list[str]]:
+        """
+        Get related entity and property candidates using n-grams and property candidates
+        
+        Args:
+            q (str): Question string
+            property_candidates (list[str]): List of property candidates (entities and properties)
+            threshold (float): Score threshold for relevance
+            k (int): Number of results per search
+            
+        Returns:
+            dict[str, list[str]]: Dictionary with 'entities' and 'properties' lists
+        """
+        tokens = self._preprocess_into_tokens(q)
+        ngrams = self._generate_ngrams(tokens)
+        result = {"entities": [], "properties": []}
+
+        def search(ngram, search_type, threshold=threshold):
+            """Search for entities or properties and format results"""
+
+            # Search using the appropriate method
+            if search_type == "entities":
+                df_res = self._search_entities_weaviate(ngram, k=k)
+            else:
+                df_res = self._search_properties_weaviate(ngram, k=k)
+            
+            # Filter by threshold and format results
+            filtered_results = []
+            for result_item in df_res:
+                if result_item['score'] >= threshold:
+                    filtered_results.append(result_item)
+            
+            return search_type, filtered_results
+
+        # Search using n-grams and property candidates
+        search_terms = ngrams + property_candidates
+        
+        for term in search_terms:
+            for search_type in result.keys():
+                search_result_type, df_res = search(term, search_type)
+                if df_res:
+                    extracted_items = [{'short': item['short'], 'label': item['label']} for item in df_res]
+                    result[search_result_type].extend(extracted_items)
+                    
+        # Remove duplicates at the end
+        for key in result.keys():
+            # Convert to list of tuples, use set for deduplication, then back to dicts
+            seen = set()
+            unique_items = []
+            for item in result[key]:
+                item_tuple = (item['short'], item['label'])
+                if item_tuple not in seen:
+                    seen.add(item_tuple)
+                    unique_items.append(item)
+            result[key] = unique_items
+        return result
+
+    def _extract_uris_from_sparql(self, sparql):
+        """
+        Extract entity and property URIs from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_uris, property_uris)
+        """
+        entity_uris = []
+        property_uris = []
+        
+        # Extract URIs in angle brackets
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Extract prefixed names (schema:something)
+        prefixed_pattern = r'schema:([a-zA-Z_][a-zA-Z0-9_]*)'
+        prefixed_names = re.findall(prefixed_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        schema_prefix = self.prefixes.get('schema', 'https://schema.org/')
+        for name in prefixed_names:
+            full_uri = f"{schema_prefix}{name}"
+            uris.append(full_uri)
+        
+        # Classify URIs as entities or properties
+        for uri in uris:
+            if self.is_property_uri(uri):
+                property_uris.append(uri)
+            else:
+                entity_uris.append(uri)
+        
+        return entity_uris, property_uris
+
+    def is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # For schema.org, properties typically have a pattern like "https://schema.org/propertyName"
+        # Entities might have a pattern like "https://data.gesis.org/gesiskg/resource/..."
+        
+        # Check if it's from schema.org (properties)
+        if "schema.org/" in uri and "resource/" not in uri:
+            return True
+        
+        # Check if it's a specific property from GESIS ontology
+        for prop in self.schema_info.get("properties", []):
+            if prop.get("uri") == uri:
+                return True
+                
+        return False
     
     def initialize_templates(self):
         """
@@ -982,66 +1342,6 @@ class NL2SPARQLGenerator:
         
         return processed_thoughts
 
-    def _extract_uris_from_sparql(self, sparql):
-        """
-        Extract entity and property URIs from SPARQL query
-        
-        Args:
-            sparql (str): SPARQL query
-            
-        Returns:
-            tuple: (entity_uris, property_uris)
-        """
-        entity_uris = []
-        property_uris = []
-        
-        # Extract URIs in angle brackets
-        uri_pattern = r'<([^>]+)>'
-        uris = re.findall(uri_pattern, sparql)
-        
-        # Extract prefixed names (schema:something)
-        prefixed_pattern = r'schema:([a-zA-Z_][a-zA-Z0-9_]*)'
-        prefixed_names = re.findall(prefixed_pattern, sparql)
-        
-        # Convert prefixed names to full URIs
-        schema_prefix = self.prefixes.get('schema', 'https://schema.org/')
-        for name in prefixed_names:
-            full_uri = f"{schema_prefix}{name}"
-            uris.append(full_uri)
-        
-        # Classify URIs as entities or properties
-        for uri in uris:
-            if self.is_property_uri(uri):
-                property_uris.append(uri)
-            else:
-                entity_uris.append(uri)
-        
-        return entity_uris, property_uris
-
-    def is_property_uri(self, uri):
-        """
-        Check if a URI is a property URI
-        
-        Args:
-            uri (str): URI to check
-            
-        Returns:
-            bool: True if it's a property URI
-        """
-        # For schema.org, properties typically have a pattern like "https://schema.org/propertyName"
-        # Entities might have a pattern like "https://data.gesis.org/gesiskg/resource/..."
-        
-        # Check if it's from schema.org (properties)
-        if "schema.org/" in uri and "resource/" not in uri:
-            return True
-        
-        # Check if it's a specific property from GESIS ontology
-        for prop in self.schema_info.get("properties", []):
-            if prop.get("uri") == uri:
-                return True
-                
-        return False
-
     def get_appropriate_replacement(self, thought_text, placeholder, mapping):
         """
         Determine whether to use URI or label based on the context in the thought
@@ -1094,6 +1394,7 @@ class NL2SPARQLGenerator:
         return mapping.get('label', mapping.get('value', placeholder))
 
     def generate_dataset(self, size=1000, complexity_distribution=None, 
+                    include_variations=True, variations_per_question=3,
                     validate_queries=False, max_attempts_per_template=15):
         """
         Generate dataset based on GESIS knowledge graph
@@ -1101,6 +1402,8 @@ class NL2SPARQLGenerator:
         Args:
             size (int): Total number of question-query pairs to generate
             complexity_distribution (dict): Distribution of complexity levels
+            include_variations (bool): Whether to include variations of questions
+            variations_per_question (int): Number of variations per question
             validate_queries (bool): Whether to validate SPARQL queries
             max_attempts_per_template (int): Maximum number of attempts to instantiate a template
             
@@ -1165,7 +1468,10 @@ class NL2SPARQLGenerator:
                                 template
                             )
                             
-                            # Success! Add the question-query pair with thoughts
+                            # Get entity matches and property matches
+                            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
+                            
+                            # Success! Add the question-query pair with thoughts and matches
                             dataset.append({
                                 "id": f"q{id_counter}",
                                 "question": instance["question"],
@@ -1174,49 +1480,50 @@ class NL2SPARQLGenerator:
                                 "category": template["category"],
                                 "complexity": template["complexity"],
                                 "templateId": template["id"],
-                                "thoughts": thoughts
+                                "thoughts": thoughts,
+                                "entities": entities_list,
+                                "properties": properties_list,
+                                "entities_matches": entity_matches,
+                                "properties_matches": property_matches
                             })
                             id_counter += 1
                             successful_generations += 1
                             success_templates[template_id] += 1
                             success = True
                             
-                            # Generate additional query instances from the same template
-                            additional_attempts = 0
-                            max_additional = 3  # Generate up to 3 additional instances per successful template
-                            
-                            while additional_attempts < max_additional and successful_generations < count and len(dataset) < size:
-                                additional_attempts += 1
-                                
-                                try:
-                                    # Generate a new instance with different entities/values
-                                    new_instance = self.instantiate_template_with_discovery(template)
-                                    
-                                    if new_instance and new_instance["question"] != instance["question"]:
-                                        # Generate thoughts for the new instance
-                                        new_thoughts = self.generate_chain_of_thoughts(
-                                            new_instance["question"], 
-                                            new_instance["sparql"], 
-                                            template
-                                        )
-                                        
-                                        dataset.append({
-                                            "id": f"q{id_counter}",
-                                            "question": new_instance["question"],
-                                            "englishQuestion": new_instance["englishQuestion"],
-                                            "sparql": new_instance["sparql"],
-                                            "category": template["category"],
-                                            "complexity": template["complexity"],
-                                            "templateId": template["id"],
-                                            "thoughts": new_thoughts
-                                        })
-                                        id_counter += 1
-                                        successful_generations += 1
-                                        
-                                except Exception as e:
-                                    # If generating additional instance fails, continue
-                                    print(f"Error generating additional instance for template {template['id']}: {e}")
-                                    break
+                            # Add variations if requested
+                            if include_variations and instance["question"]:
+                                variations = self.variation_generator.generate_variations(
+                                    instance["question"],
+                                    instance["englishQuestion"],
+                                    template["category"],
+                                    min(variations_per_question, 5),
+                                )
+
+                                for variation in variations:
+                                    if len(dataset) >= size:
+                                        break
+
+                                    # Generate thoughts for variation too
+                                    var_thoughts = self.generate_chain_of_thoughts(variation["text"], instance["sparql"], template)
+                                    var_entities_list, var_properties_list, var_entity_matches, var_property_matches = self.get_entities_and_properties(variation["text"], instance["sparql"])
+
+                                    dataset.append({
+                                        "id": f"q{id_counter}",
+                                        "question": variation["text"],
+                                        "englishQuestion": variation["english"],
+                                        "sparql": instance["sparql"],
+                                        "category": template["category"],
+                                        "complexity": template["complexity"],
+                                        "templateId": template["id"],
+                                        "isVariation": True,
+                                        "thoughts": var_thoughts,
+                                        "entities": var_entities_list,
+                                        "properties": var_properties_list,
+                                        "entities_matches": var_entity_matches,
+                                        "properties_matches": var_property_matches
+                                    })
+                                    id_counter += 1
                             
                     except Exception as e:
                         print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
@@ -2381,13 +2688,23 @@ class NL2SPARQLGenerator:
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_ALL)
         
-        # Write header - updated to include thoughts
-        writer.writerow(['id', 'question', 'englishQuestion', 'sparql', 'category', 'complexity', 'templateId', 'thoughts'])
+        # Write header - updated to include new fields
+        writer.writerow([
+            'id', 'question', 'englishQuestion', 'sparql', 'category', 
+            'complexity', 'templateId', 'thoughts', 'entities', 'properties',
+            'entities_matches', 'properties_matches'
+        ])
         
         # Write rows
         for item in dataset:
             sparql_escaped = item["sparql"].replace("\n", " ")
-            thoughts_json = json.dumps(item.get("thoughts", []))
+            
+            # Convert complex fields to JSON strings for CSV
+            thoughts_str = json.dumps(item.get("thoughts", []))
+            entities_str = json.dumps(item.get("entities", []))
+            properties_str = json.dumps(item.get("properties", []))
+            entities_matches_str = json.dumps(item.get("entities_matches", []))
+            properties_matches_str = json.dumps(item.get("properties_matches", []))
             
             writer.writerow([
                 item["id"],
@@ -2397,9 +2714,13 @@ class NL2SPARQLGenerator:
                 item["category"],
                 item["complexity"],
                 item["templateId"],
-                thoughts_json
+                thoughts_str,
+                entities_str,
+                properties_str,
+                entities_matches_str,
+                properties_matches_str
             ])
-        
+
         return output.getvalue()
 
     def export_jsonl(self, dataset):
