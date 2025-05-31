@@ -113,9 +113,9 @@ class PatternBasedSPARQLGenerator:
         self.excluded_properties = {
             # Very common properties that might not be interesting for queries
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-            "https://schema.org/url",  # URLs are usually not interesting targets
+            # "https://schema.org/url",  # URLs are usually not interesting targets
             "https://schema.org/hasPart",
-            "https://schema.org/name",
+            # "https://schema.org/name",
             "https://schema.org/mainEntity",
             "https://data.gesis.org/gesiskg/schema/duplicate",
             "https://data.gesis.org/gesiskg/schema/referenceMetadata",
