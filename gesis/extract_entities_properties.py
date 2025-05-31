@@ -33,13 +33,11 @@ class GesisKGExtractor:
     PREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>
     PREFIX disco: <https://rdf-vocabulary.ddialliance.org/discovery.html#>
     PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-    SELECT DISTINCT ?entity ?type ?name
+    SELECT DISTINCT ?entity ?name
     WHERE {
       { 
-        ?entity ?predicate ?object. 
-        OPTIONAL { ?entity rdf:type ?type }
+        ?entity ?predicate ?object.
         OPTIONAL { ?entity schema:name ?name }
         FILTER(isIRI(?entity))
       }
@@ -97,7 +95,6 @@ class GesisKGExtractor:
         # Define CSV file paths
         self.entities_csv_path = os.path.join(output_dir, "gesis_entities.csv")
         self.properties_csv_path = os.path.join(output_dir, "gesis_properties.csv")
-        self.types_csv_path = os.path.join(output_dir, "gesis_types.csv")
         self.schema_info_csv_path = os.path.join(output_dir, "gesis_schema_info.csv")
     
     def execute_sparql_query(self, query):
@@ -165,7 +162,6 @@ class GesisKGExtractor:
                         logger.info(f"Processed {i}/{total_entities} entities")
                     
                     entity_uri = binding.get("entity", {}).get("value")
-                    entity_type = binding.get("type", {}).get("value")
                     entity_name = binding.get("name", {}).get("value")
                     
                     if entity_uri:
@@ -174,13 +170,11 @@ class GesisKGExtractor:
                         
                         # Generate short form using prefixes
                         short = self.shorten_uri(entity_uri)
-                        short_type = self.shorten_uri(entity_type) if entity_type else ""
                         
                         entities_data.append({
                             'label': label,
                             'short': short,
-                            'uri': entity_uri,
-                            'type': short_type
+                            'uri': entity_uri
                         })
             
             df = pd.DataFrame(entities_data)
@@ -189,7 +183,7 @@ class GesisKGExtractor:
             
         except Exception as e:
             logger.error(f"Error extracting entities: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri', 'type'])
+            return pd.DataFrame(columns=['label', 'short', 'uri'])
     
     def extract_properties(self):
         """Extract properties from the SPARQL endpoint"""
@@ -228,47 +222,6 @@ class GesisKGExtractor:
             
         except Exception as e:
             logger.error(f"Error extracting properties: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri'])
-    
-    def extract_types(self):
-        """Extract types/classes from the SPARQL endpoint"""
-        try:
-            logger.info("Extracting types from SPARQL endpoint...")
-            results = self.execute_sparql_query(self.get_types_query)
-            logger.info("Results received from SPARQL endpoint")
-            types_data = []
-            
-            if results.get("results") and results["results"].get("bindings"):
-                total_types = len(results["results"]["bindings"])
-                logger.info(f"Processing {total_types} types...")
-                
-                for i, binding in enumerate(results["results"]["bindings"]):
-                    if i % 100 == 0:
-                        logger.info(f"Processed {i}/{total_types} types")
-                    
-                    type_uri = binding.get("type", {}).get("value")
-                    
-                    if type_uri:
-                        # Get name if available or extract from URI
-                        label = binding.get("name", {}).get("value")
-                        if not label:
-                            label = type_uri.split('/')[-1]
-                        
-                        # Generate short form using prefixes
-                        short = self.shorten_uri(type_uri)
-                        
-                        types_data.append({
-                            'label': label,
-                            'short': short,
-                            'uri': type_uri
-                        })
-            
-            df = pd.DataFrame(types_data)
-            logger.info(f"Extracted {len(df)} types from SPARQL endpoint")
-            return df
-            
-        except Exception as e:
-            logger.error(f"Error extracting types: {e}")
             return pd.DataFrame(columns=['label', 'short', 'uri'])
     
     def extract_property_types(self):
