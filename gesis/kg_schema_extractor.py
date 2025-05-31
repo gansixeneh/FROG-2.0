@@ -101,7 +101,6 @@ class KGSchemaExtractor:
             # Default CSV file paths
             "entities_csv_path": "gesis_entities.csv",
             "properties_csv_path": "gesis_properties.csv",
-            "types_csv_path": "gesis_types.csv",
             "schema_info_csv_path": "gesis_schema_info.csv",
             # Use CSV files if available
             "use_csv": True
@@ -157,7 +156,7 @@ class KGSchemaExtractor:
             return False
             
         # Check if all required CSV files exist
-        for file_key in ["entities_csv_path", "properties_csv_path", "types_csv_path", "schema_info_csv_path"]:
+        for file_key in ["entities_csv_path", "properties_csv_path", "schema_info_csv_path"]:
             if not os.path.exists(self.options[file_key]):
                 if self.options["debug"]:
                     logger.warning(f"CSV file {self.options[file_key]} not found")
