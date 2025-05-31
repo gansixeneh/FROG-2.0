@@ -37,8 +37,7 @@ class GesisKGExtractor:
     SELECT DISTINCT ?entity ?name
     WHERE {
       { 
-        ?entity ?predicate ?object.
-        OPTIONAL { ?entity schema:name ?name }
+        ?entity schema:name ?name
         FILTER(isIRI(?entity))
       }
     }
@@ -74,7 +73,7 @@ class GesisKGExtractor:
         "http://rdfs.org/ns/void#": "void:"
     }
     
-    def __init__(self, endpoint_url="http://localhost:3030/gesis/query", output_dir="."):
+    def __init__(self, endpoint_url="http://localhost:3030/gesis/query", output_dir="data"):
         """
         Initialize the extractor with a SPARQL endpoint and output directory
         
