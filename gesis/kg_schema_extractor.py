@@ -13,6 +13,7 @@ import re
 import os
 import pandas as pd
 import logging
+import sys  # Add sys import for exiting program
 from urllib.parse import urlencode
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -121,9 +122,34 @@ class KGSchemaExtractor:
         self.entity_examples = []
         self.csv_available = self._check_csv_availability()
 
-        # Initialize the SPARQL client (as fallback)
+        # Initialize the SPARQL client
         self.sparql_client = SPARQLWrapper(self.options["sparql_endpoint"])
         self.sparql_client.setReturnFormat(JSON)
+        
+        # Check if endpoint is accessible
+        if not self.csv_available:
+            self._check_endpoint_accessibility()
+
+    def _check_endpoint_accessibility(self):
+        """
+        Check if the SPARQL endpoint is accessible. If not, raise an error and exit.
+        """
+        try:
+            # Simple test query to check endpoint accessibility
+            test_query = """
+            SELECT * WHERE {
+                ?s ?p ?o .
+            } LIMIT 1
+            """
+            self.sparql_client.setQuery(test_query)
+            self.sparql_client.query().convert()
+            
+            logger.info(f"SPARQL endpoint {self.options['sparql_endpoint']} is accessible.")
+        except Exception as e:
+            logger.error(f"SPARQL endpoint {self.options['sparql_endpoint']} is not accessible: {e}")
+            # Exit the program immediately with an error
+            print(f"ERROR: SPARQL endpoint {self.options['sparql_endpoint']} is not accessible. Stopping program.")
+            sys.exit(1)
 
     def _check_csv_availability(self):
         """Check if CSV files are available for use"""
@@ -212,9 +238,9 @@ class KGSchemaExtractor:
             
         except Exception as e:
             logger.error(f"Error loading schema from CSV files: {e}")
-            # Fall back to SPARQL extraction
-            logger.warning("Falling back to SPARQL extraction")
-            self._extract_from_sparql()
+            # Instead of falling back, exit with error
+            print(f"ERROR: Failed to load schema from CSV files: {e}")
+            sys.exit(1)
 
     def _extract_from_sparql(self):
         """Extract schema information from SPARQL endpoint"""
@@ -225,7 +251,9 @@ class KGSchemaExtractor:
             self.extract_entity_examples()
         except Exception as e:
             logger.error(f"Error extracting schema from SPARQL: {e}")
-            raise e
+            # Exit with error instead of just raising
+            print(f"ERROR: Failed to extract schema from SPARQL endpoint: {e}")
+            sys.exit(1)
 
     def execute_sparql_query(self, query):
         """
@@ -243,7 +271,9 @@ class KGSchemaExtractor:
             return results
         except Exception as e:
             logger.error(f"Error executing SPARQL query: {e}")
-            raise e
+            # Exit program instead of just raising exception
+            print(f"ERROR: Failed to execute SPARQL query: {e}")
+            sys.exit(1)
 
     def extract_classes(self):
         """
