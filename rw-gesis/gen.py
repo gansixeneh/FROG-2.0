@@ -82,6 +82,7 @@ class SPARQLWrapperClient:
             return results  # Returns JSON format
         except Exception as e:
             print(f"Error querying SPARQL endpoint: {e}")
+            print(f"Query: {sparql_query}")
             return None
 
 
