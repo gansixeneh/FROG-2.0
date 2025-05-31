@@ -386,7 +386,7 @@ WHERE {
 
         def search(ngram, search_type, threshold=threshold):
             def format_result(x):
-                return x  # Simplified - no domain/range needed
+                return x  # No domain/range needed
 
             if search_type == "entities":
                 df_res = self.search_entities(ngram, k=k)

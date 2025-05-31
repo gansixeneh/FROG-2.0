@@ -168,21 +168,9 @@ class KGSchemaExtractor:
                 property_info = {
                     "value": row.get("short", ""),
                     "label": row.get("label", ""),
-                    "uri": row.get("uri", ""),
-                    "domain": row.get("domain", ""),
-                    "range": row.get("range", "")
-                }
-                self.schema_info["properties"].append(property_info)
-            
-            # Load types
-            types_df = pd.read_csv(self.options["types_csv_path"])
-            for _, row in types_df.iterrows():
-                type_info = {
-                    "value": row.get("short", ""),
-                    "label": row.get("label", ""),
                     "uri": row.get("uri", "")
                 }
-                self.schema_info["types"].append(type_info)
+                self.schema_info["properties"].append(property_info)
             
             # Load schema info (property categories)
             schema_info_df = pd.read_csv(self.options["schema_info_csv_path"])
@@ -220,7 +208,7 @@ class KGSchemaExtractor:
                     self.entity_examples.append(entity_info)
             
             logger.info(f"Loaded schema from CSV files: {len(self.schema_info['properties'])} properties, "
-                       f"{len(self.schema_info['types'])} types, {len(self.entity_examples)} entity examples")
+                    f"{len(self.entity_examples)} entity examples")
             
         except Exception as e:
             logger.error(f"Error loading schema from CSV files: {e}")
@@ -312,18 +300,16 @@ class KGSchemaExtractor:
         PREFIX owl: <http://www.w3.org/2002/07/owl#>
         PREFIX schema: <https://schema.org/>
         
-        SELECT DISTINCT ?property ?label ?domain ?range
+        SELECT DISTINCT ?property ?label
         WHERE {
-          { ?property a rdf:Property }
-          UNION
-          { ?property a owl:ObjectProperty }
-          UNION
-          { ?property a owl:DatatypeProperty }
-          UNION
-          { ?s ?property ?o }
-          OPTIONAL { ?property rdfs:label ?label }
-          OPTIONAL { ?property rdfs:domain ?domain }
-          OPTIONAL { ?property rdfs:range ?range }
+        { ?property a rdf:Property }
+        UNION
+        { ?property a owl:ObjectProperty }
+        UNION
+        { ?property a owl:DatatypeProperty }
+        UNION
+        { ?s ?property ?o }
+        OPTIONAL { ?property rdfs:label ?label }
         }
         LIMIT 1000
         """
@@ -342,10 +328,8 @@ class KGSchemaExtractor:
                     ):
                         continue
 
-                    # Get label, domain, and range if available
+                    # Get label if available
                     label = binding.get("label", {}).get("value")
-                    domain = binding.get("domain", {}).get("value")
-                    range_uri = binding.get("range", {}).get("value")
 
                     if not label:
                         label = gesis_property_label(property_uri)
@@ -355,9 +339,7 @@ class KGSchemaExtractor:
                         {
                             "value": self.shorten_uri(property_uri),
                             "label": label,
-                            "uri": property_uri,
-                            "domain": domain,
-                            "range": range_uri,
+                            "uri": property_uri
                         }
                     )
 

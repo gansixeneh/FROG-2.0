@@ -54,38 +54,11 @@ class GesisKGExtractor:
     PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-    SELECT DISTINCT ?property ?domain ?range
+    SELECT DISTINCT ?property
     WHERE {
-      ?subject ?property ?object.
-      OPTIONAL { ?property rdfs:domain ?domain }
-      OPTIONAL { ?property rdfs:range ?range }
-      FILTER(
-        STRSTARTS(STR(?property), "https://schema.org/") ||
-        STRSTARTS(STR(?property), "https://data.gesis.org/gesiskg/schema/") ||
-        STRSTARTS(STR(?property), "https://rdf-vocabulary.ddialliance.org/") ||
-        STRSTARTS(STR(?property), "https://nfdi.fiz-karlsruhe.de/")
-      )
+    ?subject ?property ?object.
     }
     LIMIT 5000
-    """
-    
-    # Query to get all types/classes
-    get_types_query = """
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX schema: <https://schema.org/>
-    
-    SELECT DISTINCT ?type ?label
-    WHERE {
-      { ?type a rdfs:Class }
-      UNION
-      { ?type a owl:Class }
-      UNION
-      { ?s a ?type }
-      OPTIONAL { ?type rdfs:label ?label }
-    }
-    LIMIT 1000
     """
     
     # Known prefixes for URI shortening
@@ -240,8 +213,6 @@ class GesisKGExtractor:
                         logger.info(f"Processed {i}/{total_properties} properties")
                     
                     property_uri = binding.get("property", {}).get("value")
-                    domain = binding.get("domain", {}).get("value")
-                    range_uri = binding.get("range", {}).get("value")
                     
                     if property_uri:
                         # Get name/label
@@ -249,15 +220,11 @@ class GesisKGExtractor:
                         
                         # Generate short form using prefixes
                         short = self.shorten_uri(property_uri)
-                        short_domain = self.shorten_uri(domain) if domain else ""
-                        short_range = self.shorten_uri(range_uri) if range_uri else ""
                         
                         properties_data.append({
                             'label': label,
                             'short': short,
-                            'uri': property_uri,
-                            'domain': short_domain,
-                            'range': short_range
+                            'uri': property_uri
                         })
             
             df = pd.DataFrame(properties_data)
@@ -266,7 +233,7 @@ class GesisKGExtractor:
             
         except Exception as e:
             logger.error(f"Error extracting properties: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri', 'domain', 'range'])
+            return pd.DataFrame(columns=['label', 'short', 'uri'])
     
     def extract_types(self):
         """Extract types/classes from the SPARQL endpoint"""
@@ -462,12 +429,6 @@ class GesisKGExtractor:
         properties_df.to_csv(self.properties_csv_path, index=False)
         logger.info(f"Saved {len(properties_df)} properties to {self.properties_csv_path}")
         
-        # Extract and save types
-        logger.info("Extracting and saving types...")
-        types_df = self.extract_types()
-        types_df.to_csv(self.types_csv_path, index=False)
-        logger.info(f"Saved {len(types_df)} types to {self.types_csv_path}")
-        
         # Categorize properties and save schema info
         logger.info("Categorizing properties and saving schema info...")
         self.extract_property_types()
@@ -476,7 +437,6 @@ class GesisKGExtractor:
         return {
             "entities_path": self.entities_csv_path,
             "properties_path": self.properties_csv_path,
-            "types_path": self.types_csv_path,
             "schema_info_path": self.schema_info_csv_path
         }
 
