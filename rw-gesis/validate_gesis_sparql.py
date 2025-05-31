@@ -71,7 +71,7 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
 
             # Add the results to the result item
             result_item["success"] = True
-            result_item["results"] = query_results
+            result_item["results"] = query_results[:5]
             result_item["result_count"] = len(query_results)
 
             if len(query_results) > 0:
