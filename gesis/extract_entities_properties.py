@@ -101,8 +101,10 @@ class GesisKGExtractor:
     def execute_sparql_query(self, query):
         """Execute a SPARQL query against the configured endpoint"""
         try:
+            print(f"Executing SPARQL query: {query}")
             self.sparql_client.setQuery(query)
             results = self.sparql_client.query().convert()
+            print("SPARQL query executed successfully")
             return results
         except Exception as e:
             logger.error(f"Error executing SPARQL query: {e}")
