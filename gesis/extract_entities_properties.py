@@ -26,18 +26,20 @@ class GesisKGExtractor:
     and stores them in CSV files for faster access.
     """
     
-    # SPARQL query to get all entities with their schema:name
+    # SPARQL query to get all entities with their schema:name and type
     get_entities_query = """
     PREFIX schema: <https://schema.org/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>
     PREFIX disco: <https://rdf-vocabulary.ddialliance.org/discovery.html#>
     PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
 
-    SELECT DISTINCT ?entity ?name
+    SELECT DISTINCT ?entity ?name ?type
     WHERE {
       { 
-        ?entity schema:name ?name
+        ?entity schema:name ?name .
+        OPTIONAL { ?entity rdf:type ?type }
         FILTER(isIRI(?entity))
       }
     }
@@ -176,10 +178,15 @@ class GesisKGExtractor:
                         # Generate short form using prefixes
                         short = self.shorten_uri(entity_uri)
                         
+                        # Get entity type if available
+                        entity_type = binding.get("type", {}).get("value", "")
+                        type_short = self.shorten_uri(entity_type) if entity_type else ""
+                        
                         entities_data.append({
                             'label': label,
                             'short': short,
-                            'uri': entity_uri
+                            'uri': entity_uri,
+                            'type': type_short
                         })
             
             df = pd.DataFrame(entities_data)
@@ -188,7 +195,7 @@ class GesisKGExtractor:
             
         except Exception as e:
             logger.error(f"Error extracting entities: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri'])
+            return pd.DataFrame(columns=['label', 'short', 'uri', 'type'])
     
     def extract_properties(self):
         """Extract properties from the SPARQL endpoint"""
