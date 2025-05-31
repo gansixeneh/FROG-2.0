@@ -65,8 +65,8 @@ WHERE {
         weaviate_host: str = "localhost",
         weaviate_port: int = 8080,
         weaviate_client=None,
-        entities_csv_path: str = "gesis_entities.csv",
-        properties_csv_path: str = "gesis_properties.csv"
+        entities_csv_path: str = "data/gesis_entities.csv",
+        properties_csv_path: str = "data/gesis_properties.csv"
     ) -> None:
         self.endpoint_url = endpoint_url
         self.entities_csv_path = entities_csv_path
