@@ -6,6 +6,7 @@ It first discovers valid property combinations through discovery queries, then s
 This ensures that generated queries always have at least 1 result.
 
 Modified for GESIS Knowledge Graph with schema.org vocabulary.
+All RDFS properties are excluded from generation.
 
 Patterns:
 - O = Fixed entity (known)
@@ -121,6 +122,11 @@ class PatternBasedSPARQLGenerator:
             "https://data.gesis.org/gesiskg/schema/referenceMetadata",
             # Add other properties that might be too generic or technical
         }
+        
+        # Excluded namespaces - exclude all RDFS properties
+        self.excluded_namespaces = {
+            "http://www.w3.org/2000/01/rdf-schema#"
+        }
 
         # Extract entities and properties from endpoint
         self.entities = self._extract_entities()
@@ -140,14 +146,32 @@ class PatternBasedSPARQLGenerator:
             f"Found {len(self.entities)} entities and {len(self.properties)} properties"
         )
 
-    def _get_property_exclusion_filters(self):
-        """Generate SPARQL FILTER clauses to exclude low-quality properties"""
+    def _get_property_exclusion_filters(self, prop_vars=None):
+        """Generate SPARQL FILTER clauses to exclude low-quality properties
+        
+        Args:
+            prop_vars (list): List of property variable names to include in filters (without '?')
+                             Example: ['prop'] or ['prop1', 'prop2', 'prop3']
+        
+        Returns:
+            str: SPARQL FILTER expression
+        """
         filters = []
-        for prop in self.excluded_properties:
-            filters.append(f"?prop != <{prop}>")
-            filters.append(f"?prop1 != <{prop}>")
-            filters.append(f"?prop2 != <{prop}>")
-            filters.append(f"?prop3 != <{prop}>")
+        
+        # Default to just 'prop' if no variables specified
+        if prop_vars is None:
+            prop_vars = ['prop']
+        
+        # Add specific property exclusions
+        for prop_var in prop_vars:
+            for excluded_prop in self.excluded_properties:
+                filters.append(f"?{prop_var} != <{excluded_prop}>")
+        
+        # Add namespace exclusions
+        for prop_var in prop_vars:
+            for namespace in self.excluded_namespaces:
+                filters.append(f"!STRSTARTS(STR(?{prop_var}), \"{namespace}\")")
+            
         return " && ".join(set(filters))  # Remove duplicates with set()
 
     def _get_total_triples(self):
@@ -185,11 +209,15 @@ class PatternBasedSPARQLGenerator:
         return entities
 
     def _extract_properties(self):
-        """Extract meaningful properties from schema.org and GESIS vocabularies"""
+        """Extract meaningful properties from schema.org and GESIS vocabularies, excluding RDFS properties"""
         # Build exclusion filters for the query
         exclusion_filters = []
         for prop in self.excluded_properties:
             exclusion_filters.append(f"?property != <{prop}>")
+            
+        # Add namespace exclusions
+        for namespace in self.excluded_namespaces:
+            exclusion_filters.append(f"!STRSTARTS(STR(?property), \"{namespace}\")")
 
         exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
@@ -274,12 +302,8 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
 
-        # Build exclusion filters for the query
-        exclusion_filters = []
-        for prop in self.excluded_properties:
-            exclusion_filters.append(f"?prop != <{prop}>")
-
-        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
+        # Get property exclusion filters for the 'prop' variable
+        exclusion_filter_str = self._get_property_exclusion_filters(prop_vars=['prop'])
 
         # Discovery query to find all valid property-entity combinations for GESIS
         discovery_query = f"""
@@ -385,12 +409,8 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
 
-        # Build exclusion filters for the query
-        exclusion_filters = []
-        for prop in self.excluded_properties:
-            exclusion_filters.extend([f"?prop1 != <{prop}>", f"?prop2 != <{prop}>"])
-
-        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
+        # Get property exclusion filters specific to the variables used in these queries
+        exclusion_filter_str = self._get_property_exclusion_filters(prop_vars=['prop1', 'prop2'])
 
         # Discovery query for branching pattern with literals
         # We get subject-property paths that lead to literals
@@ -552,14 +572,8 @@ class PatternBasedSPARQLGenerator:
         """
         patterns = []
 
-        # Build exclusion filters for the query
-        exclusion_filters = []
-        for prop in self.excluded_properties:
-            exclusion_filters.extend(
-                [f"?prop1 != <{prop}>", f"?prop2 != <{prop}>", f"?prop3 != <{prop}>"]
-            )
-
-        exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
+        # Get property exclusion filters specific to 3-property patterns
+        exclusion_filter_str = self._get_property_exclusion_filters(prop_vars=['prop1', 'prop2', 'prop3'])
 
         # Simplified property filter for readability
         prop_filter = """
@@ -567,6 +581,11 @@ class PatternBasedSPARQLGenerator:
             (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/")) &&
             (STRSTARTS(STR(?prop3), "https://schema.org/") || STRSTARTS(STR(?prop3), "https://data.gesis.org/gesiskg/schema/"))
         """
+        
+        # Additional RDFS namespace exclusion for all three properties
+        rdfs_exclusion = " && ".join(f"!STRSTARTS(STR(?prop{i}), \"{ns}\")" 
+                                    for i in range(1, 4) 
+                                    for ns in self.excluded_namespaces)
 
         # Discovery query for linear end pattern: entity prop1 ?h1 . ?h1 prop2 ?h2 . ?h2 prop3 ?target
         linear_end_query = f"""
@@ -578,6 +597,7 @@ class PatternBasedSPARQLGenerator:
                 FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER({exclusion_filter_str})
+                FILTER({rdfs_exclusion})
             }}
             LIMIT 200
         """
@@ -595,6 +615,7 @@ class PatternBasedSPARQLGenerator:
                 )
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER({exclusion_filter_str})
+                FILTER({rdfs_exclusion})
             }}
             LIMIT 200
         """
@@ -613,6 +634,7 @@ class PatternBasedSPARQLGenerator:
                 FILTER(?prop1 != ?prop2 && ?prop2 != ?prop3 && ?prop1 != ?prop3)
                 FILTER(?entity1 != ?entity2)
                 FILTER({exclusion_filter_str})
+                FILTER({rdfs_exclusion})
             }}
             LIMIT 200
         """
