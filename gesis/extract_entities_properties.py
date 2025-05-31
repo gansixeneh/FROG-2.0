@@ -371,10 +371,10 @@ class GesisKGExtractor:
     def extract_and_save_all(self):
         """Extract all data and save to CSV files"""
         # Extract and save entities
-        # logger.info("Extracting and saving entities...")
-        # entities_df = self.extract_entities()
-        # entities_df.to_csv(self.entities_csv_path, index=False)
-        # logger.info(f"Saved {len(entities_df)} entities to {self.entities_csv_path}")
+        logger.info("Extracting and saving entities...")
+        entities_df = self.extract_entities()
+        entities_df.to_csv(self.entities_csv_path, index=False)
+        logger.info(f"Saved {len(entities_df)} entities to {self.entities_csv_path}")
         
         # Extract and save properties
         logger.info("Extracting and saving properties...")
