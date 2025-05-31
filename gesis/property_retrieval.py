@@ -6,6 +6,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 import weaviate
 import logging
+import os
 from SPARQLWrapper import SPARQLWrapper, JSON
 from kg_schema_extractor import gesis_entity_label, gesis_property_label
 
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class GesisPropertyRetrieval:
     """Class for managing GESIS knowledge graph properties and entities retrieval and search"""
     
-    # Define SPARQL queries for entities and properties
+    # Define SPARQL queries as fallbacks when CSV files are not available
     get_entities_query = """
 PREFIX schema: <https://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -63,23 +64,27 @@ WHERE {
         is_local_client: bool = True,
         weaviate_host: str = "localhost",
         weaviate_port: int = 8080,
-        weaviate_client=None
+        weaviate_client=None,
+        entities_csv_path: str = "gesis_entities.csv",
+        properties_csv_path: str = "gesis_properties.csv"
     ) -> None:
         self.endpoint_url = endpoint_url
+        self.entities_csv_path = entities_csv_path
+        self.properties_csv_path = properties_csv_path
         
         # Initialize the embedding model
         self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
         self.stopwords = set(stopwords.words("english"))
         
-        # Initialize SPARQL client
+        # Initialize SPARQL client (for fallback if CSV files not available)
         self.sparql_client = SPARQLWrapper(endpoint_url)
         self.sparql_client.setReturnFormat(JSON)
         
-        # Extract entities and properties from the endpoint
-        self.df_entities = self._extract_entities()
-        self.df_properties = self._extract_properties()
+        # Load entities and properties from CSV files
+        self.df_entities = self._load_entities()
+        self.df_properties = self._load_properties()
         
-        logger.info(f"Extracted {len(self.df_entities)} entities and {len(self.df_properties)} properties")
+        logger.info(f"Loaded {len(self.df_entities)} entities and {len(self.df_properties)} properties")
         
         # Connect to Weaviate
         if weaviate_client:
@@ -103,6 +108,36 @@ WHERE {
         self.entities_collection = self._setup_collection("gesis_entities_db", self.df_entities)
         self.properties_collection = self._setup_collection("gesis_properties_db", self.df_properties)
 
+    def _load_entities(self):
+        """Load entities from CSV file or fall back to SPARQL endpoint"""
+        try:
+            if os.path.exists(self.entities_csv_path):
+                logger.info(f"Loading entities from {self.entities_csv_path}")
+                return pd.read_csv(self.entities_csv_path)
+            else:
+                logger.warning(f"Entities CSV file {self.entities_csv_path} not found")
+                logger.warning("Falling back to extracting entities from SPARQL endpoint")
+                return self._extract_entities()
+        except Exception as e:
+            logger.error(f"Error loading entities from CSV: {e}")
+            logger.warning("Falling back to extracting entities from SPARQL endpoint")
+            return self._extract_entities()
+
+    def _load_properties(self):
+        """Load properties from CSV file or fall back to SPARQL endpoint"""
+        try:
+            if os.path.exists(self.properties_csv_path):
+                logger.info(f"Loading properties from {self.properties_csv_path}")
+                return pd.read_csv(self.properties_csv_path)
+            else:
+                logger.warning(f"Properties CSV file {self.properties_csv_path} not found")
+                logger.warning("Falling back to extracting properties from SPARQL endpoint")
+                return self._extract_properties()
+        except Exception as e:
+            logger.error(f"Error loading properties from CSV: {e}")
+            logger.warning("Falling back to extracting properties from SPARQL endpoint")
+            return self._extract_properties()
+
     def execute_sparql_query(self, query):
         """Execute a SPARQL query against the configured endpoint"""
         try:
@@ -114,11 +149,11 @@ WHERE {
             raise e
 
     def _extract_entities(self):
-        """Extract entities from the SPARQL endpoint using the provided SPARQL query"""
+        """Extract entities from the SPARQL endpoint (fallback method)"""
         try:
-            print("Extracting entities from SPARQL endpoint...")
+            logger.info("Extracting entities from SPARQL endpoint...")
             results = self.execute_sparql_query(self.get_entities_query)
-            print("Results received from SPARQL endpoint")
+            logger.info("Results received from SPARQL endpoint")
             entities_data = []
             
             if results.get("results") and results["results"].get("bindings"):
@@ -150,9 +185,11 @@ WHERE {
             return pd.DataFrame(columns=['label', 'short', 'uri'])
 
     def _extract_properties(self):
-        """Extract properties from the SPARQL endpoint using the provided SPARQL query"""
+        """Extract properties from the SPARQL endpoint (fallback method)"""
         try:
+            logger.info("Extracting properties from SPARQL endpoint...")
             results = self.execute_sparql_query(self.get_properties_query)
+            logger.info("Results received from SPARQL endpoint")
             properties_data = []
             
             if results.get("results") and results["results"].get("bindings"):

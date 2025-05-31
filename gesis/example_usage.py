@@ -3,7 +3,7 @@
 Example usage of the NL2SPARQL Generator with GESIS Knowledge Graph Data
 
 This example focuses on generating NL2SPARQL pairs from the GESIS knowledge graph
-using a Fuseki server endpoint.
+using a Fuseki server endpoint and CSV files for faster processing.
 Enhanced with entity/property matching using Weaviate.
 """
 
@@ -13,25 +13,79 @@ import sys
 from kg_schema_extractor import KGSchemaExtractor
 from nl2sparql_generator import NL2SPARQLGenerator
 from property_retrieval import GesisPropertyRetrieval
+from extract_entities_properties import GesisKGExtractor
 
 
-def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
+def check_and_extract_kg_data(endpoint_url="http://localhost:3030/gesis", force_extract=False):
     """
-    Extract schema from the Fuseki server and generate question-SPARQL dataset for GESIS KG
+    Check if CSV files exist for the KG data, extract them if they don't exist or if forced
 
     Args:
         endpoint_url (str): URL of the Fuseki SPARQL endpoint
+        force_extract (bool): Force extraction even if CSV files exist
+
+    Returns:
+        dict: Paths to the extracted CSV files
+    """
+    # Define CSV file paths
+    csv_paths = {
+        "entities_csv_path": "gesis_entities.csv",
+        "properties_csv_path": "gesis_properties.csv",
+        "types_csv_path": "gesis_types.csv",
+        "schema_info_csv_path": "gesis_schema_info.csv"
+    }
+    
+    # Check if files exist
+    files_exist = all(os.path.exists(path) for path in csv_paths.values())
+    
+    if not files_exist or force_extract:
+        print("Extracting KG data to CSV files...")
+        # Create extractor and extract data
+        extractor = GesisKGExtractor(endpoint_url + "/query")
+        extracted_paths = extractor.extract_and_save_all()
+        print("KG data extraction completed!")
+        return extracted_paths
+    else:
+        print("Using existing CSV files for KG data")
+        return csv_paths
+
+
+def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis", use_csv=True, force_extract=False):
+    """
+    Extract schema from the Fuseki server (or CSV files) and generate question-SPARQL dataset for GESIS KG
+
+    Args:
+        endpoint_url (str): URL of the Fuseki SPARQL endpoint
+        use_csv (bool): Whether to use CSV files for schema extraction
+        force_extract (bool): Force extraction of CSV files even if they already exist
 
     Returns:
         list: Generated dataset
     """
     try:
         print(f"Connecting to Fuseki server at: {endpoint_url}")
+        
+        # Check if CSV files exist and extract them if needed
+        if use_csv:
+            csv_paths = check_and_extract_kg_data(endpoint_url, force_extract)
+            print(f"Using CSV files for schema extraction: {csv_paths}")
+        else:
+            csv_paths = {}
 
-        # Create a schema extractor that connects to Fuseki
-        extractor = KGSchemaExtractor({"debug": True, "sparql_endpoint": endpoint_url})
+        # Create a schema extractor
+        extractor_options = {
+            "debug": True, 
+            "sparql_endpoint": endpoint_url,
+            "use_csv": use_csv
+        }
+        
+        # Add CSV paths if using CSV files
+        if use_csv:
+            extractor_options.update(csv_paths)
+            
+        extractor = KGSchemaExtractor(extractor_options)
 
-        # Extract schema from the Fuseki server
+        # Extract schema
         schema = extractor.extract_schema()
 
         print(
@@ -62,8 +116,8 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
         if len(schema["entityExamples"]) > 10:
             print(f"  ... and {len(schema['entityExamples']) - 10} more")
 
-        print("Numeric properties:", schema["schemaInfo"]["numericProperties"])
-        print("Date properties:", schema["schemaInfo"]["dateProperties"])
+        print("Numeric properties:", [p["value"] for p in schema["schemaInfo"]["numericProperties"]])
+        print("Date properties:", [p["value"] for p in schema["schemaInfo"]["dateProperties"]])
 
         # Initialize the property retrieval system for entity/property matching
         print("\nInitializing property retrieval system...")
@@ -73,7 +127,10 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
                 embedding_model_name="jinaai/jina-embeddings-v3",
                 is_local_client=True,
                 weaviate_host="localhost",
-                weaviate_port=8080
+                weaviate_port=8080,
+                # Use CSV file paths if available
+                entities_csv_path=csv_paths.get("entities_csv_path") if use_csv else None,
+                properties_csv_path=csv_paths.get("properties_csv_path") if use_csv else None
             )
             print("Property retrieval system initialized successfully!")
         except Exception as e:
@@ -192,8 +249,20 @@ def main():
             if proceed.lower() != "y":
                 sys.exit(1)
         
-        # Generate dataset from Fuseki endpoint
-        dataset = generate_gesis_kg_dataset(endpoint_url)
+        # Ask if we should use CSV files
+        use_csv = True  # Default to using CSV for efficiency
+        force_extract = False
+        
+        if os.path.exists("gesis_entities.csv"):
+            use_existing = input("CSV files found. Use existing files? (y/n, default: y): ")
+            if use_existing.lower() == "n":
+                force_extract = True
+                print("Will re-extract data to CSV files.")
+        else:
+            print("No CSV files found. Will extract data from SPARQL endpoint.")
+        
+        # Generate dataset
+        dataset = generate_gesis_kg_dataset(endpoint_url, use_csv=use_csv, force_extract=force_extract)
         print("\nGESIS example completed successfully!")
     except Exception as e:
         print(f"Error in GESIS example: {e}")

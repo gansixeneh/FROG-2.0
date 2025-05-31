@@ -2,14 +2,23 @@
 """
 Knowledge Graph Schema Extractor - Modified for GESIS Knowledge Graph
 
-This utility extracts schema information from the GESIS Knowledge Graph using a Fuseki server.
+This utility extracts schema information from the GESIS Knowledge Graph using either:
+1. CSV files (preferred for efficiency)
+2. Fuseki server SPARQL endpoint (fallback)
 """
 
 import requests
 import json
 import re
+import os
+import pandas as pd
+import logging
 from urllib.parse import urlencode
 from SPARQLWrapper import SPARQLWrapper, JSON
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def separate_camel_case(text):
@@ -61,7 +70,8 @@ def gesis_property_label(x):
 
 class KGSchemaExtractor:
     """
-    Extract schema information from the GESIS knowledge graph using Fuseki server.
+    Extract schema information from the GESIS knowledge graph using either CSV files
+    or Fuseki server.
     """
 
     def __init__(self, options=None):
@@ -87,6 +97,13 @@ class KGSchemaExtractor:
                 "skos": "http://www.w3.org/2004/02/skos/core#",
                 "void": "http://rdfs.org/ns/void#",
             },
+            # Default CSV file paths
+            "entities_csv_path": "gesis_entities.csv",
+            "properties_csv_path": "gesis_properties.csv",
+            "types_csv_path": "gesis_types.csv",
+            "schema_info_csv_path": "gesis_schema_info.csv",
+            # Use CSV files if available
+            "use_csv": True
         }
 
         if options:
@@ -102,35 +119,124 @@ class KGSchemaExtractor:
         }
 
         self.entity_examples = []
+        self.csv_available = self._check_csv_availability()
 
-        # Initialize the SPARQL client
+        # Initialize the SPARQL client (as fallback)
         self.sparql_client = SPARQLWrapper(self.options["sparql_endpoint"])
         self.sparql_client.setReturnFormat(JSON)
 
+    def _check_csv_availability(self):
+        """Check if CSV files are available for use"""
+        if not self.options["use_csv"]:
+            return False
+            
+        # Check if all required CSV files exist
+        for file_key in ["entities_csv_path", "properties_csv_path", "types_csv_path", "schema_info_csv_path"]:
+            if not os.path.exists(self.options[file_key]):
+                if self.options["debug"]:
+                    logger.warning(f"CSV file {self.options[file_key]} not found")
+                return False
+        
+        return True
+
     def extract_schema(self):
         """
-        Extract schema information from the Fuseki SPARQL endpoint
+        Extract schema information from CSV files or the Fuseki SPARQL endpoint
 
         Returns:
             dict: Extracted schema info
         """
-        print(
-            f"Extracting schema from SPARQL endpoint: {self.options['sparql_endpoint']}"
-        )
+        if self.csv_available:
+            logger.info(f"Extracting schema from CSV files")
+            self._extract_from_csv()
+        else:
+            logger.info(f"Extracting schema from SPARQL endpoint: {self.options['sparql_endpoint']}")
+            self._extract_from_sparql()
 
+        return {
+            "schemaInfo": self.schema_info,
+            "entityExamples": self.entity_examples,
+            "prefixes": self.options["prefixes"],
+        }
+
+    def _extract_from_csv(self):
+        """Extract schema information from CSV files"""
+        try:
+            # Load properties
+            properties_df = pd.read_csv(self.options["properties_csv_path"])
+            for _, row in properties_df.iterrows():
+                property_info = {
+                    "value": row.get("short", ""),
+                    "label": row.get("label", ""),
+                    "uri": row.get("uri", ""),
+                    "domain": row.get("domain", ""),
+                    "range": row.get("range", "")
+                }
+                self.schema_info["properties"].append(property_info)
+            
+            # Load types
+            types_df = pd.read_csv(self.options["types_csv_path"])
+            for _, row in types_df.iterrows():
+                type_info = {
+                    "value": row.get("short", ""),
+                    "label": row.get("label", ""),
+                    "uri": row.get("uri", "")
+                }
+                self.schema_info["types"].append(type_info)
+            
+            # Load schema info (property categories)
+            schema_info_df = pd.read_csv(self.options["schema_info_csv_path"])
+            # Group by category
+            for category, group in schema_info_df.groupby("category"):
+                # Find the property info for each property in this category
+                for _, row in group.iterrows():
+                    prop_short = row.get("property", "")
+                    # Find the property info from the properties list
+                    prop_info = next((p for p in self.schema_info["properties"] if p["value"] == prop_short), None)
+                    if prop_info and category in self.schema_info:
+                        self.schema_info[category].append(prop_info)
+            
+            # Load entity examples
+            entities_df = pd.read_csv(self.options["entities_csv_path"])
+            # Take a sample of entities for each type
+            entity_types = entities_df["type"].unique()
+            for type_value in entity_types:
+                if not type_value or pd.isna(type_value):
+                    continue
+                    
+                # Get entities of this type
+                type_entities = entities_df[entities_df["type"] == type_value]
+                # Take a sample
+                sample_size = min(20, len(type_entities))
+                sample = type_entities.sample(n=sample_size) if sample_size > 0 else type_entities
+                
+                for _, row in sample.iterrows():
+                    entity_info = {
+                        "value": row.get("short", ""),
+                        "label": row.get("label", ""),
+                        "uri": row.get("uri", ""),
+                        "type": type_value
+                    }
+                    self.entity_examples.append(entity_info)
+            
+            logger.info(f"Loaded schema from CSV files: {len(self.schema_info['properties'])} properties, "
+                       f"{len(self.schema_info['types'])} types, {len(self.entity_examples)} entity examples")
+            
+        except Exception as e:
+            logger.error(f"Error loading schema from CSV files: {e}")
+            # Fall back to SPARQL extraction
+            logger.warning("Falling back to SPARQL extraction")
+            self._extract_from_sparql()
+
+    def _extract_from_sparql(self):
+        """Extract schema information from SPARQL endpoint"""
         try:
             self.extract_classes()
             self.extract_properties()
             self.extract_property_types()
             self.extract_entity_examples()
-
-            return {
-                "schemaInfo": self.schema_info,
-                "entityExamples": self.entity_examples,
-                "prefixes": self.options["prefixes"],
-            }
         except Exception as e:
-            print(f"Error extracting schema: {e}")
+            logger.error(f"Error extracting schema from SPARQL: {e}")
             raise e
 
     def execute_sparql_query(self, query):
@@ -148,7 +254,7 @@ class KGSchemaExtractor:
             results = self.sparql_client.query().convert()
             return results
         except Exception as e:
-            print(f"Error executing SPARQL query: {e}")
+            logger.error(f"Error executing SPARQL query: {e}")
             raise e
 
     def extract_classes(self):
@@ -450,6 +556,9 @@ class KGSchemaExtractor:
         Returns:
             str: Shortened URI
         """
+        if not uri:
+            return ""
+            
         for prefix, namespace in self.options["prefixes"].items():
             if uri.startswith(namespace):
                 return f"{prefix}:{uri[len(namespace):]}"
