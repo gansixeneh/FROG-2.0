@@ -311,7 +311,14 @@ class NL2SPARQLGenerator:
                     ?author schema:name ?authorName .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks for the author of a specific scholarly resource {entity}.",
+                    "2. In the GESIS knowledge graph, authorship is represented by the schema:author property.",
+                    "3. First, I need to find the author entity related to {entity} using the schema:author property.",
+                    "4. Then I retrieve the human-readable name of the author using the schema:name property.",
+                    "5. The query returns the name(s) of the author(s) who created {entity}."
+                ]
             },
             {
                 "id": "publication-date",
@@ -331,7 +338,14 @@ class NL2SPARQLGenerator:
                     {entity} schema:datePublished ?date .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks when a specific scholarly resource {entity} was published.",
+                    "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
+                    "3. To answer this question, I need to query for the value of the schema:datePublished property of {entity}.",
+                    "4. The query directly retrieves the publication date without needing additional joins or transformations.",
+                    "5. The result provides the publication date of {entity} in the format stored in the knowledge graph."
+                ]
             },
             {
                 "id": "publication-publisher",
@@ -352,7 +366,14 @@ class NL2SPARQLGenerator:
                     ?publisher schema:name ?publisherName .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks about the organization that published {entity}.",
+                    "2. In the GESIS knowledge graph, publishers are linked to publications via the schema:publisher property.",
+                    "3. I need to first find the publisher entity related to {entity} using schema:publisher.",
+                    "4. Then I retrieve the name of the publisher organization using the schema:name property.",
+                    "5. The query returns the name of the organization that published {entity}."
+                ]
             },
             {
                 "id": "publication-topic",
@@ -373,7 +394,14 @@ class NL2SPARQLGenerator:
                     ?topic schema:name ?topicName .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks about the topic or subject of {entity}.",
+                    "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
+                    "3. I first need to find the topic entity that {entity} is about using schema:about.",
+                    "4. Then I retrieve the name of the topic using the schema:name property.",
+                    "5. The query returns the name of the topic that {entity} is about."
+                ]
             },
             {
                 "id": "publication-language",
@@ -393,7 +421,14 @@ class NL2SPARQLGenerator:
                     {entity} schema:inLanguage ?language .
                     }
                 """,
-                "complexity": "basic"
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks about the language in which {entity} was written or published.",
+                    "2. In the GESIS knowledge graph, the language of a publication is represented by the schema:inLanguage property.",
+                    "3. To answer this question, I need to query for the value of the schema:inLanguage property of {entity}.",
+                    "4. The query directly retrieves the language without needing additional joins or transformations.",
+                    "5. The result provides the language of {entity} as stored in the knowledge graph."
+                ]
             },
             
             # Intermediate: Structure and relationships
@@ -419,7 +454,14 @@ class NL2SPARQLGenerator:
                     }
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of publications authored by {entity}.",
+                    "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+                    "3. To count the publications, I need to find all resources that have {entity} as their author.",
+                    "4. I use COUNT(DISTINCT ?publication) to avoid counting the same publication multiple times.",
+                    "5. The query uses a nested SELECT with aggregation to return the total count of publications authored by {entity}."
+                ]
             },
             {
                 "id": "person-latest-publication",
@@ -443,7 +485,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?date)
                     LIMIT 1
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the most recent publication by {entity}.",
+                    "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
+                    "3. I need to find all publications that have {entity} as their author and retrieve their titles and dates.",
+                    "4. I sort the results by publication date in descending order (most recent first) using ORDER BY DESC(?date).",
+                    "5. The LIMIT 1 clause ensures only the most recent publication is returned."
+                ]
             },
             {
                 "id": "publication-collaborator-count",
@@ -467,7 +516,14 @@ class NL2SPARQLGenerator:
                     }
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of authors or collaborators who worked on {entity}.",
+                    "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+                    "3. To count the collaborators, I need to find all authors that are linked to {entity}.",
+                    "4. I use COUNT(DISTINCT ?collaborator) to count each collaborator only once.",
+                    "5. The query uses a nested SELECT with aggregation to return the total count of distinct authors of {entity}."
+                ]
             },
             {
                 "id": "organization-publication-count",
@@ -495,7 +551,14 @@ class NL2SPARQLGenerator:
                     }
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of publications associated with {entity}, which appears to be an organization.",
+                    "2. In the GESIS knowledge graph, organizations can be linked to publications in two ways: as publishers (schema:publisher) or as contributors (schema:contributor).",
+                    "3. I need to find all publications where {entity} is either the publisher or a contributor using a UNION pattern.",
+                    "4. I use COUNT(DISTINCT ?publication) to ensure each publication is counted only once, even if it relates to {entity} in multiple ways.",
+                    "5. The query returns the total count of distinct publications associated with {entity}."
+                ]
             },
             {
                 "id": "year-publication-count",
@@ -519,7 +582,14 @@ class NL2SPARQLGenerator:
                     }
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of publications published in a specific year ({value}).",
+                    "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
+                    "3. I need to find all publications with a datePublished value matching {value}.",
+                    "4. The COUNT(?publication) aggregation function gives us the total number of such publications.",
+                    "5. The query returns the count of publications published in the year {value}."
+                ]
             },
             {
                 "id": "person-first-publication",
@@ -543,7 +613,14 @@ class NL2SPARQLGenerator:
                     ORDER BY ASC(?date)
                     LIMIT 1
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the earliest publication by {entity}.",
+                    "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
+                    "3. I need to find all publications that have {entity} as their author and retrieve their titles and dates.",
+                    "4. I sort the results by publication date in ascending order (oldest first) using ORDER BY ASC(?date).",
+                    "5. The LIMIT 1 clause ensures only the earliest publication is returned."
+                ]
             },
             {
                 "id": "topic-publication-count",
@@ -574,7 +651,14 @@ class NL2SPARQLGenerator:
                     }
                     }
                 """,
-                "complexity": "intermediate"
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of publications about a specific topic ('{value}').",
+                    "2. In the GESIS knowledge graph, a publication can be related to a topic in two ways: through schema:about pointing to a topic entity, or through schema:keywords containing the topic as a keyword.",
+                    "3. I need to find publications where either the linked topic's name contains '{value}' or where a keyword contains '{value}'.",
+                    "4. I use CONTAINS with LCASE to perform case-insensitive matching, ensuring we find all relevant publications regardless of capitalization.",
+                    "5. COUNT(DISTINCT ?publication) ensures each publication is counted only once, even if it matches multiple times."
+                ]
             },
             
             # Advanced: Complex relationships and analytics
@@ -611,7 +695,15 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?publication))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks who is the top expert or most prolific researcher on the topic '{value}'.",
+                    "2. To determine expertise, I need to count how many publications each author has on this topic.",
+                    "3. A publication can relate to '{value}' in three ways: through a topic entity's name, through keywords, or through the publication's title.",
+                    "4. I use UNION to combine these three patterns and CONTAINS with LCASE for case-insensitive matching.",
+                    "5. I group the results by author and count their publications on this topic.",
+                    "6. Ordering by the publication count in descending order and limiting to 1 result gives us the top expert."
+                ]
             },
             {
                 "id": "organization-top-contributor",
@@ -636,7 +728,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?publication))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks who is the top contributor or most prolific author associated with {entity}, which appears to be an organization.",
+                    "2. I need to find publications where {entity} is the publisher and then identify the most frequent author of these publications.",
+                    "3. Authors can be linked to publications via either schema:author or schema:contributor, so I use the property path schema:author|schema:contributor to check both.",
+                    "4. I group by contributor and count how many publications they have with {entity} as publisher.",
+                    "5. Ordering by publication count in descending order and limiting to 1 result gives us the top contributor."
+                ]
             },
             {
                 "id": "publication-with-most-authors",
@@ -660,7 +759,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?author))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the publication with the highest number of authors or collaborators.",
+                    "2. I need to count how many authors are associated with each publication.",
+                    "3. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+                    "4. I group the results by publication and title, then count the number of authors for each.",
+                    "5. Ordering by the author count in descending order and limiting to 1 result gives us the publication with the most authors."
+                ]
             },
             {
                 "id": "most-productive-author",
@@ -684,7 +790,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?publication))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the most productive author, defined as the one with the most publications.",
+                    "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+                    "3. I need to count how many publications are associated with each author.",
+                    "4. I group the results by author and author name, then count the number of publications for each.",
+                    "5. Ordering by publication count in descending order and limiting to 1 result gives us the most productive author."
+                ]
             },
             {
                 "id": "most-collaborative-author",
@@ -710,7 +823,15 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(DISTINCT ?coauthor))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the most collaborative author, defined as the one who works with the most co-authors.",
+                    "2. To determine collaboration, I need to count unique co-authors for each author.",
+                    "3. I find publications with the author, then find other authors (co-authors) of the same publications.",
+                    "4. The FILTER(?author != ?coauthor) ensures we don't count the author as their own co-author.",
+                    "5. I group by author and count distinct co-authors using COUNT(DISTINCT ?coauthor).",
+                    "6. Ordering by co-author count in descending order and limiting to 1 result gives us the most collaborative author."
+                ]
             },
             {
                 "id": "publications-by-year-trend",
@@ -734,7 +855,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?publication))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the year with the highest number of publications.",
+                    "2. In the GESIS knowledge graph, publication dates are stored in the schema:datePublished property.",
+                    "3. I extract just the year part from the full date using SUBSTR(STR(?fullDate), 0, 5) which gives the first 4 characters of the string representation.",
+                    "4. I group the results by year and count the number of publications for each year.",
+                    "5. Ordering by publication count in descending order and limiting to 1 result gives us the year with the most publications."
+                ]
             },
             {
                 "id": "most-diverse-publication",
@@ -758,12 +886,212 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(DISTINCT ?topic))
                     LIMIT 1
                 """,
-                "complexity": "advanced"
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the publication that covers the most diverse range of topics.",
+                    "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+                    "3. I need to count how many distinct topics each publication covers.",
+                    "4. I group the results by publication and title, then count the number of distinct topics for each using COUNT(DISTINCT ?topic).",
+                    "5. Ordering by topic count in descending order and limiting to 1 result gives us the publication with the most diverse topics."
+                ]
             }
         ]
         
         # Use scholarly templates for GESIS KG
         return scholarly_templates
+
+    def generate_chain_of_thoughts(self, question, sparql, template):
+        """
+        Generate a chain of thoughts explaining how to translate the question to SPARQL
+        
+        Args:
+            question (str): Natural language question
+            sparql (str): SPARQL query
+            template (dict): Template used to generate the question-query pair
+            
+        Returns:
+            list: List of thought steps
+        """
+        if "thoughtsTemplate" not in template:
+            # Fallback for templates without thoughtsTemplate
+            return [
+                "1. The question seeks specific information from the GESIS knowledge graph.",
+                "2. The query involves entities and relationships defined in the scholarly domain.",
+                "3. Properties in the knowledge graph connect scholarly resources to their various attributes and relationships.",
+                "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+                "5. The result provides valuable insights for scholarly research and analysis."
+            ]
+        
+        # Get the thoughts template
+        thoughts_template = template["thoughtsTemplate"]
+        
+        # Extract entity and property URIs from SPARQL
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+        
+        # Create mappings for replacement
+        all_mappings = {}
+        
+        # Add entity mappings
+        for i, uri in enumerate(entity_uris):
+            key = "entity" if i == 0 else f"entity{i+1}"
+            label = self.extract_label_from_uri(uri)
+            all_mappings[key] = {
+                'uri': uri,
+                'label': label,
+                'prefixed': self.shorten_uri(uri)
+            }
+        
+        # Add value mappings from SPARQL
+        numeric_pattern = r'\b(\d+)\b'
+        numeric_values = re.findall(numeric_pattern, sparql)
+        string_pattern = r'"([^"]+)"'
+        string_values = re.findall(string_pattern, sparql)
+        
+        if numeric_values:
+            all_mappings['value'] = {
+                'value': numeric_values[0],
+                'label': numeric_values[0]
+            }
+        elif string_values:
+            all_mappings['value'] = {
+                'value': string_values[0],
+                'label': string_values[0]
+            }
+        
+        # Replace placeholders in thoughts
+        processed_thoughts = []
+        for thought in thoughts_template:
+            processed_thought = thought
+            
+            # Replace each placeholder with the appropriate value
+            for placeholder, mapping in all_mappings.items():
+                pattern = r'\{' + re.escape(placeholder) + r'\}'
+                replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+                processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            # Special handling for first entity: check if {entity} exists, if not try {entity1}
+            if 'entity' in all_mappings:
+                entity_mapping = all_mappings['entity']
+                
+                if '{entity}' not in processed_thought and '{entity1}' in processed_thought:
+                    pattern = r'\{entity1\}'
+                    replacement_value = self.get_appropriate_replacement(thought, 'entity1', entity_mapping)
+                    processed_thought = re.sub(pattern, replacement_value, processed_thought)
+            
+            processed_thoughts.append(processed_thought)
+        
+        return processed_thoughts
+
+    def _extract_uris_from_sparql(self, sparql):
+        """
+        Extract entity and property URIs from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_uris, property_uris)
+        """
+        entity_uris = []
+        property_uris = []
+        
+        # Extract URIs in angle brackets
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Extract prefixed names (schema:something)
+        prefixed_pattern = r'schema:([a-zA-Z_][a-zA-Z0-9_]*)'
+        prefixed_names = re.findall(prefixed_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        schema_prefix = self.prefixes.get('schema', 'https://schema.org/')
+        for name in prefixed_names:
+            full_uri = f"{schema_prefix}{name}"
+            uris.append(full_uri)
+        
+        # Classify URIs as entities or properties
+        for uri in uris:
+            if self.is_property_uri(uri):
+                property_uris.append(uri)
+            else:
+                entity_uris.append(uri)
+        
+        return entity_uris, property_uris
+
+    def is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # For schema.org, properties typically have a pattern like "https://schema.org/propertyName"
+        # Entities might have a pattern like "https://data.gesis.org/gesiskg/resource/..."
+        
+        # Check if it's from schema.org (properties)
+        if "schema.org/" in uri and "resource/" not in uri:
+            return True
+        
+        # Check if it's a specific property from GESIS ontology
+        for prop in self.schema_info.get("properties", []):
+            if prop.get("uri") == uri:
+                return True
+                
+        return False
+
+    def get_appropriate_replacement(self, thought_text, placeholder, mapping):
+        """
+        Determine whether to use URI or label based on the context in the thought
+        
+        Args:
+            thought_text (str): The thought text containing the placeholder
+            placeholder (str): The placeholder being replaced
+            mapping (dict): The mapping containing uri, label, and prefixed forms
+            
+        Returns:
+            str: The appropriate replacement value
+        """
+        # Check context around the placeholder to determine appropriate replacement
+        thought_lower = thought_text.lower()
+        
+        # Use URI/prefixed form in these contexts:
+        if any(phrase in thought_lower for phrase in [
+            "in the ontology",
+            "represents the",
+            "schema:",
+            "property '",
+            "entity '",
+            "via the '",
+            "using",
+            "through"
+        ]):
+            # For entity placeholders (typically starting with "entity"), use full URI
+            if placeholder.startswith('entity') and 'uri' in mapping and mapping['uri'].startswith('http'):
+                return f"<{mapping['uri']}>"
+            
+            # For property placeholders or other placeholders, keep using prefixed form
+            return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
+        
+        # Use label form in these contexts:
+        elif any(phrase in thought_lower for phrase in [
+            "categorized as",
+            "belonging to", 
+            "classified as",
+            "of the '",
+            "as a '",
+            "category '",
+            "group '",
+            "method '",
+            "article '",
+            "document '"
+        ]):
+            return mapping.get('label', mapping.get('value', placeholder))
+        
+        # Default to label for most contexts
+        return mapping.get('label', mapping.get('value', placeholder))
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True, 
                     validate_queries=False, max_attempts_per_template=15):
@@ -831,7 +1159,14 @@ class NL2SPARQLGenerator:
                         instance = self.instantiate_template_with_discovery(template)
                         
                         if instance:
-                            # Success! Add the question-query pair
+                            # Generate thoughts about the translation from NL to SPARQL
+                            thoughts = self.generate_chain_of_thoughts(
+                                instance["question"], 
+                                instance["sparql"], 
+                                template
+                            )
+                            
+                            # Success! Add the question-query pair with thoughts
                             dataset.append({
                                 "id": f"q{id_counter}",
                                 "question": instance["question"],
@@ -839,12 +1174,46 @@ class NL2SPARQLGenerator:
                                 "sparql": instance["sparql"],
                                 "category": template["category"],
                                 "complexity": template["complexity"],
-                                "templateId": template["id"]
+                                "templateId": template["id"],
+                                "thoughts": thoughts
                             })
                             id_counter += 1
                             successful_generations += 1
                             success_templates[template_id] += 1
                             success = True
+                            
+                            # Add variations if requested
+                            if include_variations and instance["question"]:
+                                variations = self.variation_generator.generate_variations(
+                                    instance["question"],
+                                    instance["englishQuestion"],
+                                    template["category"]
+                                )
+                                
+                                for variation in variations:
+                                    if len(dataset) >= size:
+                                        break
+                                    
+                                    # Generate thoughts for the variation
+                                    var_thoughts = self.generate_chain_of_thoughts(
+                                        variation["text"], 
+                                        instance["sparql"], 
+                                        template
+                                    )
+                                    
+                                    dataset.append({
+                                        "id": f"q{id_counter}",
+                                        "question": variation["text"],
+                                        "englishQuestion": variation["english"],
+                                        "sparql": instance["sparql"],
+                                        "category": template["category"],
+                                        "complexity": template["complexity"],
+                                        "templateId": template["id"],
+                                        "isVariation": True,
+                                        "thoughts": var_thoughts
+                                    })
+                                    id_counter += 1
+                            
                     except Exception as e:
                         print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
                 
@@ -1100,6 +1469,7 @@ class NL2SPARQLGenerator:
         sparql = self.format_sparql(sparql)
         
         return {"question": question, "englishQuestion": english_question, "sparql": sparql}
+    
     def instantiate_keyword_template(self, template):
         """
         Special handler for keyword-based templates using pre-extracted keywords
@@ -1897,12 +2267,14 @@ class NL2SPARQLGenerator:
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_ALL)
         
-        # Write header
-        writer.writerow(['id', 'question', 'englishQuestion', 'sparql', 'category', 'complexity', 'templateId'])
+        # Write header - updated to include thoughts
+        writer.writerow(['id', 'question', 'englishQuestion', 'sparql', 'category', 'complexity', 'templateId', 'thoughts'])
         
         # Write rows
         for item in dataset:
             sparql_escaped = item["sparql"].replace("\n", " ")
+            thoughts_json = json.dumps(item.get("thoughts", []))
+            
             writer.writerow([
                 item["id"],
                 item["question"],
@@ -1910,7 +2282,8 @@ class NL2SPARQLGenerator:
                 sparql_escaped,
                 item["category"],
                 item["complexity"],
-                item["templateId"]
+                item["templateId"],
+                thoughts_json
             ])
         
         return output.getvalue()
