@@ -1,23 +1,3 @@
-"""
-Pattern-based SPARQL Query Generator using SPARQLWrapper for GESIS Knowledge Graph
-
-This generator creates SPARQL queries based on graph patterns using a discovery-first approach.
-It first discovers valid property combinations through discovery queries, then selects from them.
-This ensures that generated queries always have at least 1 result.
-
-Modified for GESIS Knowledge Graph with schema.org vocabulary.
-All RDFS properties are excluded from generation.
-
-Patterns:
-- O = Fixed entity (known)
-- X = Hidden variable (connects but not asked about)
-- ? = Target variable (what we're asking for)
-
-Case 1 (1 property): ? — O, O — ?
-Case 2 (2 properties): O—?—O, ?—X—O
-Case 3 (3 properties): O—X—X—?, O—X—?—O, X branches to O,O,?
-"""
-
 import json
 import random
 import re
@@ -507,14 +487,12 @@ class PatternBasedSPARQLGenerator:
         prop2_str = self._shorten_uri(prop2)
         subject_str = self._shorten_uri(subject)
 
-        # For literal targets, we always structure the query as:
+        # For literal targets, we structure the query without the ISLITERAL filter:
         # fixed_entity prop1 ?hidden . ?hidden prop2 ?target
-        # Where ?target will match literals
         sparql = f"""
             SELECT ?target WHERE {{
                 {subject_str} {prop1_str} ?hidden .
                 ?hidden {prop2_str} ?target .
-                FILTER(ISLITERAL(?target))
             }}
         """
 

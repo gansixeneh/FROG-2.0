@@ -1,194 +1,200 @@
 id,sparql,pattern_type,complexity
-q1,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden gesiskg:sourceInfo ?target . },3_prop_star_v1,advanced
-q2,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100071> schema:author ?target . },1_prop_object_target,basic
-q3,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100007> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q4,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q5,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:publisher ?target . },1_prop_object_target,basic
-q6,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100013> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q7,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100251_Oppenheimer_Joe_A> . },1_prop_subject_target,basic
-q8,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100013> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q9,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q10,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100229_Hoschka_Peter> . },1_prop_subject_target,basic
-q11,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100004> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q12,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100108> schema:contributor ?target . },1_prop_object_target,basic
-q13,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100046> schema:publisher ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q14,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.016> . },1_prop_subject_target,basic
-q15,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q16,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100010> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q17,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100007> schema:contributor ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q18,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:about ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q19,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100052> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q20,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100028> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q21,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Akad._Verl.-Ges.> . },1_prop_subject_target,basic
-q22,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100203> schema:publisher ?target . },1_prop_object_target,basic
-q23,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100251> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q24,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100309_Segal_David_R> . },1_prop_subject_target,basic
-q25,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100291> schema:author ?target . },1_prop_object_target,basic
-q26,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100170_Chelune_Gordon_J> . },1_prop_subject_target,basic
-q27,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.058> . },1_prop_subject_target,basic
-q28,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100021> schema:contributor ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q29,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:datePublished ?target . },3_prop_star_v1,advanced
-q30,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:isPartOf ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q31,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100073> schema:editor ?target . },1_prop_object_target,basic
-q32,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100267_Mair_Peter> . },1_prop_subject_target,basic
-q33,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100241> schema:editor ?target . },1_prop_object_target,basic
-q34,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100109_Bergler_Reinhold> . },1_prop_subject_target,basic
-q35,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100050> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q36,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q37,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100259> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q38,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100147> schema:publisher ?target . },1_prop_object_target,basic
-q39,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100241_Polsby_Nelson_W> . },1_prop_subject_target,basic
-q40,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100111_Rokeach_Milton> . },1_prop_subject_target,basic
-q41,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100264> schema:author ?target . },1_prop_object_target,basic
-q42,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_076-073.001> . },1_prop_subject_target,basic
-q43,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100076_Lambert_William_W> . },1_prop_subject_target,basic
-q44,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100051_McClelland_David_C> . },1_prop_subject_target,basic
-q45,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:contributor ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q46,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-072> . },1_prop_subject_target,basic
-q47,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100251_Oppenheimer_Joe_A> . },1_prop_subject_target,basic
-q48,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100134> schema:publisher ?target . },1_prop_object_target,basic
-q49,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100073> schema:contributor ?target . },1_prop_object_target,basic
-q50,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100221_Schmid_G%C3%BCnther> . },1_prop_subject_target,basic
-q51,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q52,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:editor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q53,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q54,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:editor ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q55,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/RAND_MCNALLY> . },1_prop_subject_target,basic
-q56,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100237> schema:editor ?target . },1_prop_object_target,basic
-q57,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/Mannheim_080-015> . },1_prop_subject_target,basic
-q58,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100183_Lippmann_Walter> . },1_prop_subject_target,basic
-q59,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Institutspublikation> . ?hidden gesiskg:hasFulltext ?target . },3_prop_star_v1,advanced
-q60,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q61,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100051> schema:author ?target . },1_prop_object_target,basic
-q62,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100218> schema:contributor ?target . },1_prop_object_target,basic
-q63,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100181> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q64,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100138> schema:author ?target . },1_prop_object_target,basic
-q65,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100076> schema:contributor ?target . },1_prop_object_target,basic
-q66,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100028> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q67,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100012> schema:author ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q68,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100201> schema:contributor ?target . },1_prop_object_target,basic
-q69,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100285> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q70,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:contributor ?target . },3_prop_star_v1,advanced
-q71,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100127> schema:author ?target . },1_prop_object_target,basic
-q72,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100222_Neubauer_Deane_E> . },1_prop_subject_target,basic
-q73,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/KLETT> . },1_prop_subject_target,basic
-q74,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q75,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> schema:editor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q76,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100204> schema:author ?target . },1_prop_object_target,basic
-q77,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Brooks.Cole> . },1_prop_subject_target,basic
-q78,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100254> schema:contributor ?target . },1_prop_object_target,basic
-q79,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100247> schema:about ?target . },1_prop_object_target,basic
-q80,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:author ?target . },1_prop_object_target,basic
-q81,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100133> schema:isPartOf ?target . },1_prop_object_target,basic
-q82,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100004> schema:provider ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q83,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100006> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q84,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100073> schema:editor ?target . },1_prop_object_target,basic
-q85,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100066> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q86,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:about ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q87,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100108> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q88,SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Sport> . },1_prop_subject_target,basic
-q89,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100280> schema:editor ?target . },1_prop_object_target,basic
-q90,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100012> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q91,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100205_Senghaas_Dieter> . },1_prop_subject_target,basic
-q92,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100116_NORMAN_DONALD_A> . },1_prop_subject_target,basic
-q93,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100050> schema:contributor ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q94,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100187> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q95,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100172> schema:contributor ?target . },1_prop_object_target,basic
-q96,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> schema:publisher ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q97,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100067> schema:publisher ?target . },1_prop_object_target,basic
-q98,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-040> . },1_prop_subject_target,basic
-q99,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100309> schema:publisher ?target . },1_prop_object_target,basic
-q100,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q101,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q102,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-1> schema:editor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q103,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100235> schema:editor ?target . },1_prop_object_target,basic
-q104,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q105,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100010> schema:publisher ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q106,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> schema:contributor ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q107,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100189> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q108,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Monographie> . ?hidden schema:isPartOf ?target . },3_prop_star_v1,advanced
-q109,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_081-002.001> . },1_prop_subject_target,basic
-q110,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q111,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> schema:contributor ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q112,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-10001> schema:contributor ?target . },1_prop_object_target,basic
-q113,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100292> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q114,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:author ?target . },3_prop_star_v1,advanced
-q115,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:contributor ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q116,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100175_Fiske_Susan_T> . },1_prop_subject_target,basic
-q117,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100238_Polsby_Nelson_W> . },1_prop_subject_target,basic
-q118,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100047> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q119,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:about ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q120,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Sch%C3%B6ningh> . },1_prop_subject_target,basic
-q121,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100174> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q122,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Macmillan> . },1_prop_subject_target,basic
-q123,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100238_Polsby_Nelson_W> . },1_prop_subject_target,basic
-q124,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100063_Kirscht_John_P> . },1_prop_subject_target,basic
-q125,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q126,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-067> . },1_prop_subject_target,basic
-q127,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100203> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q128,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100050> schema:author ?target . },1_prop_object_target,basic
-q129,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100238_Greenstein_Fred_I> . },1_prop_subject_target,basic
-q130,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100013> schema:contributor ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q131,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100052> schema:author ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q132,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.056> . },1_prop_subject_target,basic
-q133,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100212_Garceau_Oliver> . },1_prop_subject_target,basic
-q134,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100095> schema:author ?target . },1_prop_object_target,basic
-q135,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100206> schema:contributor ?target . },1_prop_object_target,basic
-q136,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:about ?target . },3_prop_star_v1,advanced
-q137,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100237> schema:contributor ?target . },1_prop_object_target,basic
-q138,SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Planung> . },1_prop_subject_target,basic
-q139,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_081-010> . },1_prop_subject_target,basic
-q140,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100234> schema:isPartOf ?target . },1_prop_object_target,basic
-q141,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q142,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100252_Schneider_Friedrich> . },1_prop_subject_target,basic
-q143,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q144,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:abstract ?target . },3_prop_star_v1,advanced
-q145,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100050> schema:publisher ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q146,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100014> schema:author ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q147,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100111> schema:author ?target . },1_prop_object_target,basic
-q148,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q149,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:publisher ?target . },1_prop_object_target,basic
-q150,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:about ?target . },3_prop_star_v1,advanced
-q151,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100272_Taylor_Charles_Lewis> . },1_prop_subject_target,basic
-q152,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q153,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100133_Benninghaus_Hans> . },1_prop_subject_target,basic
-q154,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100125> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q155,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> schema:contributor ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q156,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100021> schema:about ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q157,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q158,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100133> schema:about ?target . },1_prop_object_target,basic
-q159,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q160,SELECT ?target WHERE { ?target gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_ZA0150> . },1_prop_subject_target,basic
-q161,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Aldine> . },1_prop_subject_target,basic
-q162,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100223_Rush_Michael> . },1_prop_subject_target,basic
-q163,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Monographie> . ?hidden gesiskg:sourceInfo ?target . },3_prop_star_v1,advanced
-q164,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100232> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
-q165,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:contributor ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q166,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100189_Meeham_Eugene_J> . },1_prop_subject_target,basic
-q167,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100011> schema:provider ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q168,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100180_Welz_Rainer> . },1_prop_subject_target,basic
-q169,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100020> schema:author ?hidden . ?hidden schema:familyName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q170,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:editor ?target . },3_prop_star_v1,advanced
-q171,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q172,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100080> schema:author ?target . },1_prop_object_target,basic
-q173,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100125_Sinha_Durganand> . },1_prop_subject_target,basic
-q174,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Monographie> . ?hidden schema:inLanguage ?target . },3_prop_star_v1,advanced
-q175,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:url ?target . },3_prop_star_v1,advanced
-q176,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100118> schema:contributor ?target . },1_prop_object_target,basic
-q177,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100223> schema:contributor ?target . },1_prop_object_target,basic
-q178,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100231> schema:isPartOf ?target . },1_prop_object_target,basic
-q179,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:provider ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q180,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100248> schema:contributor ?target . },1_prop_object_target,basic
-q181,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100007> schema:author ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q182,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100051> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q183,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100234> schema:editor ?target . },1_prop_object_target,basic
-q184,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100057> schema:publisher ?target . },1_prop_object_target,basic
-q185,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q186,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100051> schema:author ?hidden . ?hidden schema:givenName ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q187,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100196_Friedrich_Carl_Joachim> . },1_prop_subject_target,basic
-q188,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100193_Dahl_Robert_A> . },1_prop_subject_target,basic
-q189,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100052> schema:author ?hidden . ?hidden schema:name ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q190,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . FILTER(ISLITERAL(?target)) },2_prop_literal_target,intermediate
-q191,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:editor ?target . },3_prop_star_v1,advanced
-q192,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100181_Parsons_Talcott> . },1_prop_subject_target,basic
-q193,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100237> schema:contributor ?target . },1_prop_object_target,basic
+q1,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:editor ?target . },1_prop_object_target,basic
+q2,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:isPartOf ?target . },3_prop_star_v1,advanced
+q3,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100006> schema:contributor ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q4,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-10001> schema:contributor ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q5,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100238_Greenstein_Fred_I> . },1_prop_subject_target,basic
+q6,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . },1_prop_subject_target,basic
+q7,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:isPartOf ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q8,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100020> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q9,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q10,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100219> schema:contributor ?target . },1_prop_object_target,basic
+q11,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100189> schema:publisher ?target . },1_prop_object_target,basic
+q12,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden gesiskg:linksLabel ?target . },3_prop_star_v1,advanced
+q13,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100118_INSKO_CHESTER_A> . },1_prop_subject_target,basic
+q14,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100000> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q15,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100158_Geiter_Ulfried> . },1_prop_subject_target,basic
+q16,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100298> schema:contributor ?target . },1_prop_object_target,basic
+q17,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100186_HEBERLE_RUDOLF> . },1_prop_subject_target,basic
+q18,SELECT ?target WHERE { ?target gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_ZA0757> . },1_prop_subject_target,basic
+q19,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:publisher ?target . },3_prop_star_v1,advanced
+q20,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100280_Dierkes_Meinolf> . },1_prop_subject_target,basic
+q21,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden gesiskg:linksLabel ?target . },3_prop_star_v1,advanced
+q22,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100050_Bettelheim_Bruno> . },1_prop_subject_target,basic
+q23,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:editor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q24,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-039> . },1_prop_subject_target,basic
+q25,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:publisher ?target . },3_prop_star_v1,advanced
+q26,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> schema:author ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q27,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100013> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q28,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100252> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q29,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q30,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100010_Opaschowski_Horst_W> . },1_prop_subject_target,basic
+q31,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q32,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100199_HIRSCH-WEBER_WOLFGANG> . },1_prop_subject_target,basic
+q33,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100012> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q34,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q35,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100140_Leinhardt_Samuel> . },1_prop_subject_target,basic
+q36,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:editor ?target . },3_prop_star_v1,advanced
+q37,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100110_Bruner_Jerome_S> . },1_prop_subject_target,basic
+q38,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100298> schema:contributor ?target . },1_prop_object_target,basic
+q39,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:author ?target . },3_prop_star_v1,advanced
+q40,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100046> schema:contributor ?target . },1_prop_object_target,basic
+q41,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100152_Wakenhut_Roland> . },1_prop_subject_target,basic
+q42,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100236> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q43,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100052> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q44,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100156> schema:author ?target . },1_prop_object_target,basic
+q45,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q46,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100185> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q47,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100242> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q48,SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/%28Grundfragen_der_Soziologie_%3B_14%29> . },1_prop_subject_target,basic
+q49,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100217> schema:author ?target . },1_prop_object_target,basic
+q50,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . },2_prop_literal_target,intermediate
+q51,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_076-509> . },1_prop_subject_target,basic
+q52,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100080> schema:author ?target . },1_prop_object_target,basic
+q53,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q54,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-038> . },1_prop_subject_target,basic
+q55,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100295_Allardt_Erik> . },1_prop_subject_target,basic
+q56,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100195> schema:author ?target . },1_prop_object_target,basic
+q57,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:publicationType ?target . },3_prop_star_v1,advanced
+q58,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q59,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100120> schema:publisher ?target . },1_prop_object_target,basic
+q60,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100071_Durkheim_Emile> . },1_prop_subject_target,basic
+q61,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100071> schema:author ?target . },1_prop_object_target,basic
+q62,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100050> schema:about ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q63,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100258_Kohnstamm_Max> . },1_prop_subject_target,basic
+q64,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100243_Schmutzer_Manfred> . },1_prop_subject_target,basic
+q65,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100207> schema:editor ?target . },1_prop_object_target,basic
+q66,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Steinkopff> . },1_prop_subject_target,basic
+q67,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> schema:contributor ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q68,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100046> schema:editor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q69,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100144_Ooskamp_Stuart> . },1_prop_subject_target,basic
+q70,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100277> schema:publisher ?target . },1_prop_object_target,basic
+q71,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-063> . },1_prop_subject_target,basic
+q72,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> schema:editor ?hidden . ?hidden gesiskg:initsFirst ?target . },2_prop_literal_target,intermediate
+q73,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:provider ?target . },3_prop_star_v1,advanced
+q74,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Pergamon_Press> . },1_prop_subject_target,basic
+q75,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Mentoring> . ?hidden schema:inLanguage ?target . },3_prop_star_v1,advanced
+q76,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100220> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q77,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100109_Bergler_Reinhold> . },1_prop_subject_target,basic
+q78,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:contributor ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q79,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:contributor ?target . },3_prop_star_v1,advanced
+q80,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:author ?target . },1_prop_object_target,basic
+q81,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/K%C3%B6sel> . },1_prop_subject_target,basic
+q82,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100309> schema:publisher ?target . },1_prop_object_target,basic
+q83,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100011> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q84,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q85,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100000> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q86,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:isPartOf ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q87,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100039> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q88,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q89,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100014> schema:author ?target . },1_prop_object_target,basic
+q90,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100218> schema:contributor ?target . },1_prop_object_target,basic
+q91,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100114> schema:author ?target . },1_prop_object_target,basic
+q92,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100080_Getzels_Jacob_W> . },1_prop_subject_target,basic
+q93,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:contributor ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q94,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Harper_%26_Row> . },1_prop_subject_target,basic
+q95,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100076_Borgatta_Edgar_F> . },1_prop_subject_target,basic
+q96,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100048> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q97,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100051> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . },2_prop_literal_target,intermediate
+q98,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100053> schema:author ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q99,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100218> schema:author ?target . },1_prop_object_target,basic
+q100,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100220> schema:author ?target . },1_prop_object_target,basic
+q101,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-080> . },1_prop_subject_target,basic
+q102,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100024> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q103,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Crowell> . },1_prop_subject_target,basic
+q104,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . },2_prop_literal_target,intermediate
+q105,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100024> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q106,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100008> schema:author ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q107,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:inLanguage ?target . },3_prop_star_v1,advanced
+q108,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100161_Berth_Rolf> . },1_prop_subject_target,basic
+q109,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100275_Baker_Kendall_L> . },1_prop_subject_target,basic
+q110,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:about ?target . },3_prop_star_v1,advanced
+q111,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100024> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q112,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100047> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q113,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_076-510> . },1_prop_subject_target,basic
+q114,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100018> schema:about ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q115,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.053> . },1_prop_subject_target,basic
+q116,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Institutspublikation> . ?hidden schema:publisher ?target . },3_prop_star_v1,advanced
+q117,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100134> schema:author ?target . },1_prop_object_target,basic
+q118,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Aldine> . },1_prop_subject_target,basic
+q119,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-085> . },1_prop_subject_target,basic
+q120,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q121,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-060> . },1_prop_subject_target,basic
+q122,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100013> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q123,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100125_Sinha_Durganand> . },1_prop_subject_target,basic
+q124,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100012> schema:about ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q125,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:abstract ?target . },3_prop_star_v1,advanced
+q126,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100232> schema:about ?target . },1_prop_object_target,basic
+q127,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100> schema:contributor ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q128,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100040> schema:publisher ?target . },1_prop_object_target,basic
+q129,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100024_IRLE_MARTIN> . },1_prop_subject_target,basic
+q130,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . },2_prop_literal_target,intermediate
+q131,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100279_Hartjens_Peter_G> . },1_prop_subject_target,basic
+q132,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100007> schema:contributor ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q133,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100284> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q134,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:about ?target . },3_prop_star_v1,advanced
+q135,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100270_Leathar_DS> . },1_prop_subject_target,basic
+q136,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> schema:author ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q137,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100> schema:publisher ?target . },1_prop_object_target,basic
+q138,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100055_Sanford_Nevitt_R> . },1_prop_subject_target,basic
+q139,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100222> schema:editor ?target . },1_prop_object_target,basic
+q140,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100021_Asch_Solomon_E> . },1_prop_subject_target,basic
+q141,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-1> schema:author ?target . },1_prop_object_target,basic
+q142,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100152> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q143,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_081-047> . },1_prop_subject_target,basic
+q144,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:about ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q145,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-051> . },1_prop_subject_target,basic
+q146,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q147,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100283_Lipset_Seymour_Martin> . },1_prop_subject_target,basic
+q148,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100222_Neubauer_Deane_E> . },1_prop_subject_target,basic
+q149,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100028> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q150,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-10001> schema:author ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q151,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100236> schema:editor ?target . },1_prop_object_target,basic
+q152,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100006> schema:author ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q153,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100042> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q154,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100020> schema:provider ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q155,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100134_Jonassen_Christen_M> . },1_prop_subject_target,basic
+q156,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/BECK> . },1_prop_subject_target,basic
+q157,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100221> schema:author ?target . },1_prop_object_target,basic
+q158,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100260> schema:contributor ?target . },1_prop_object_target,basic
+q159,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100002> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q160,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100089> schema:contributor ?target . },1_prop_object_target,basic
+q161,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/ABC-Clio> . },1_prop_subject_target,basic
+q162,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100078> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q163,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q164,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100090_CANTRIL_HADLEY> . },1_prop_subject_target,basic
+q165,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/pdf> . ?hidden gesiskg:hasFulltext ?target . },3_prop_star_v1,advanced
+q166,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100237> schema:editor ?target . },1_prop_object_target,basic
+q167,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100078> schema:contributor ?target . },1_prop_object_target,basic
+q168,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q169,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100091_Gerth_Hans> . },1_prop_subject_target,basic
+q170,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100133> schema:author ?target . },1_prop_object_target,basic
+q171,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100154> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q172,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100011> schema:contributor ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q173,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100083> schema:contributor ?target . },1_prop_object_target,basic
+q174,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100150> schema:editor ?target . },1_prop_object_target,basic
+q175,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:contributor ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q176,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100018> schema:author ?hidden . ?hidden schema:familyName ?target . },2_prop_literal_target,intermediate
+q177,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:provider ?target . },3_prop_star_v1,advanced
+q178,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100214_Brewer_Garry_D> . },1_prop_subject_target,basic
+q179,SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100198_De_Sola_Pool_Ithiel> . },1_prop_subject_target,basic
+q180,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100054> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q181,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100024> schema:editor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q182,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100052> schema:author ?target . },1_prop_object_target,basic
+q183,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100011> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q184,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100107> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q185,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100113> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q186,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:abstract ?target . },3_prop_star_v1,advanced
+q187,SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/North-Holland> . },1_prop_subject_target,basic
+q188,SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Institutspublikation> . ?hidden schema:name ?target . },3_prop_star_v1,advanced
+q189,SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100020_Stoodley_Bartlett_H> . },1_prop_subject_target,basic
+q190,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . },2_prop_literal_target,intermediate
+q191,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100214> gesiskg:libraryLocation ?target . },1_prop_object_target,basic
+q192,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100009> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q193,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100007> schema:publisher ?hidden . ?hidden schema:name ?target . },2_prop_literal_target,intermediate
+q194,SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100071_Durkheim_Emile> . },1_prop_subject_target,basic
+q195,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100205> schema:contributor ?target . },1_prop_object_target,basic
+q196,SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-044> . },1_prop_subject_target,basic
+q197,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100066> schema:publisher ?target . },1_prop_object_target,basic
+q198,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100018> schema:contributor ?hidden . ?hidden schema:givenName ?target . },2_prop_literal_target,intermediate
+q199,SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100160> schema:author ?target . },1_prop_object_target,basic
