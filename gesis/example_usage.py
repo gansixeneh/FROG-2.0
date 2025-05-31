@@ -29,10 +29,9 @@ def check_and_extract_kg_data(endpoint_url="http://localhost:3030/gesis", force_
     """
     # Define CSV file paths
     csv_paths = {
-        "entities_csv_path": "gesis_entities.csv",
-        "properties_csv_path": "gesis_properties.csv",
-        "types_csv_path": "gesis_types.csv",
-        "schema_info_csv_path": "gesis_schema_info.csv"
+        "entities_csv_path": "data/gesis_entities.csv",
+        "properties_csv_path": "data/gesis_properties.csv",
+        "schema_info_csv_path": "data/gesis_schema_info.csv"
     }
     
     # Check if files exist
