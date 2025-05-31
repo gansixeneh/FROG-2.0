@@ -40,7 +40,6 @@ class SPARQLWrapperClient:
 
         self.sparql = SPARQLWrapper(endpoint_url)
         self.sparql.setReturnFormat(JSON)
-        self.sparql.setTimeout(30)  # 30 second timeout
 
         # Set default prefixes for GESIS knowledge graph
         if prefixes is None:
@@ -82,6 +81,7 @@ class SPARQLWrapperClient:
             return results  # Returns JSON format
         except Exception as e:
             print(f"Error querying SPARQL endpoint: {e}")
+            print(f"Query: {sparql_query}")
             return None
 
 
@@ -113,9 +113,9 @@ class PatternBasedSPARQLGenerator:
         self.excluded_properties = {
             # Very common properties that might not be interesting for queries
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-            "https://schema.org/url",  # URLs are usually not interesting targets
+            # "https://schema.org/url",  # URLs are usually not interesting targets
             "https://schema.org/hasPart",
-            "https://schema.org/name",
+            # "https://schema.org/name",
             "https://schema.org/mainEntity",
             "https://data.gesis.org/gesiskg/schema/duplicate",
             "https://data.gesis.org/gesiskg/schema/referenceMetadata",
@@ -375,6 +375,7 @@ class PatternBasedSPARQLGenerator:
     def generate_2_property_patterns(self, count=100):
         """
         Generate 2-property patterns using discovery-first approach for GESIS KG
+        Modified to allow literals in the ?entity position of branching patterns
 
         Args:
             count (int): Number of patterns to generate
@@ -391,60 +392,21 @@ class PatternBasedSPARQLGenerator:
 
         exclusion_filter_str = " && ".join(exclusion_filters) if exclusion_filters else "true"
 
-        # Discovery query for middle target pattern: entity1 prop1 ?target . ?target prop2 entity2
-        middle_discovery_query = f"""
-            SELECT DISTINCT ?prop1 ?prop2 ?entity1 ?entity2 ?middle WHERE {{
-                ?entity1 ?prop1 ?middle .
-                ?middle ?prop2 ?entity2 .
-                FILTER(
-                    (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
-                    (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/"))
-                )
-                FILTER(
-                    STRSTARTS(STR(?entity1), "https://data.gesis.org/gesiskg/resource/") &&
-                    STRSTARTS(STR(?entity2), "https://data.gesis.org/gesiskg/resource/")
-                )
-                FILTER(?prop1 != ?prop2)
-                FILTER({exclusion_filter_str})
-            }}
-            LIMIT 500
-        """
-
         # Discovery query for branching pattern: ?target prop1 ?hidden . ?hidden prop2 entity
+        # Modified to allow literals for ?entity by removing FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
         branching_discovery_query = f"""
             SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {{
                 ?target ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
-                FILTER(
-                    (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
-                    (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/"))
-                )
-                FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER(?prop1 != ?prop2)
                 FILTER({exclusion_filter_str})
             }}
-            LIMIT 500
+            LIMIT 1000
         """
 
-        print("Executing discovery queries for 2-property patterns...")
+        print("Executing discovery query for 2-property patterns...")
 
         try:
-            # Get middle target combinations
-            middle_result = self.client.query(middle_discovery_query)
-            middle_results = []
-            if middle_result and middle_result["results"]["bindings"]:
-                middle_results = [
-                    (
-                        binding["prop1"]["value"],
-                        binding["prop2"]["value"],
-                        binding["entity1"]["value"],
-                        binding["entity2"]["value"],
-                        binding["middle"]["value"],
-                    )
-                    for binding in middle_result["results"]["bindings"]
-                ]
-            print(f"Found {len(middle_results)} valid middle-target combinations")
-
             # Get branching combinations
             branching_result = self.client.query(branching_discovery_query)
             branching_results = []
@@ -461,10 +423,6 @@ class PatternBasedSPARQLGenerator:
 
             all_combinations = []
 
-            # Process middle target results
-            for result in middle_results:
-                all_combinations.append({"type": "middle_target", "data": result})
-
             # Process branching results
             for result in branching_results:
                 all_combinations.append({"type": "branching", "data": result})
@@ -480,15 +438,9 @@ class PatternBasedSPARQLGenerator:
                 attempts += 1
 
                 combination = random.choice(all_combinations)
-
-                if combination["type"] == "middle_target":
-                    pattern = self._create_middle_target_pattern(
-                        combination["data"], len(patterns)
-                    )
-                else:
-                    pattern = self._create_branching_pattern(
-                        combination["data"], len(patterns)
-                    )
+                pattern = self._create_branching_pattern(
+                    combination["data"], len(patterns)
+                )
 
                 if pattern:
                     patterns.append(pattern)
@@ -498,45 +450,19 @@ class PatternBasedSPARQLGenerator:
 
         return patterns
 
-    def _create_middle_target_pattern(self, data, pattern_index):
-        """Create middle target pattern from discovery data"""
-        prop1, prop2, entity1, entity2, middle = data
-
-        prop1_str = self._shorten_uri(prop1)
-        prop2_str = self._shorten_uri(prop2)
-        entity1_str = self._shorten_uri(entity1)
-        entity2_str = self._shorten_uri(entity2)
-
-        # Generate random variation (4 possibilities)
-        variation = random.randint(0, 3)
-
-        variations = [
-            f"{entity1_str} {prop1_str} ?target . ?target {prop2_str} {entity2_str}",  # original
-            f"?target {prop1_str} {entity1_str} . {entity2_str} {prop2_str} ?target",  # both swapped
-            f"{entity1_str} {prop1_str} ?target . {entity2_str} {prop2_str} ?target",  # second swapped
-            f"?target {prop1_str} {entity1_str} . ?target {prop2_str} {entity2_str}",  # first swapped
-        ]
-
-        sparql = f"SELECT ?target WHERE {{ {variations[variation]} . }}"
-
-        if self._validate_pattern(sparql):
-            return {
-                "id": f"2p_mid_{variation}_{pattern_index}",
-                "sparql": self._format_sparql(sparql),
-                "pattern_type": f"2_prop_middle_target_v{variation+1}",
-                "complexity": "intermediate",
-                "properties": [prop1_str, prop2_str],
-                "fixed_entities": [entity1_str, entity2_str],
-            }
-        return None
-
     def _create_branching_pattern(self, data, pattern_index):
         """Create branching pattern from discovery data"""
         prop1, prop2, entity = data
 
         prop1_str = self._shorten_uri(prop1)
         prop2_str = self._shorten_uri(prop2)
-        entity_str = self._shorten_uri(entity)
+        
+        # Check if entity is a URI or a literal and format accordingly
+        if entity.startswith("http"):
+            entity_str = self._shorten_uri(entity)
+        else:
+            # For literals, just wrap with quotes
+            entity_str = f'"{entity}"'
 
         # Generate random variation (4 possibilities)
         variation = random.randint(0, 3)
@@ -952,7 +878,7 @@ def main():
 
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
-    dataset = generator.generate_dataset(size=200)
+    dataset = generator.generate_dataset(size=225)
 
     # Export results
     try:
