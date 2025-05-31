@@ -26,7 +26,7 @@ def separate_camel_case(text):
     """
     Separate camelCase text into words
     """
-    return re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
+    return re.sub(r"([a-z])([A-Z])", lambda m: m.group(1) + " " + m.group(2).lower(), text)
 
 
 def gesis_entity_label(url):

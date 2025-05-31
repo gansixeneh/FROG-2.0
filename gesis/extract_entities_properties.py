@@ -47,6 +47,7 @@ class GesisKGExtractor:
     get_properties_query = """
     PREFIX schema: <https://schema.org/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>
     PREFIX disco: <https://rdf-vocabulary.ddialliance.org/discovery.html#>
     PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
@@ -54,7 +55,12 @@ class GesisKGExtractor:
 
     SELECT DISTINCT ?property
     WHERE {
-    ?subject ?property ?object.
+        ?subject ?property ?object.
+        FILTER(
+            !STRSTARTS(STR(?property), "http://www.w3.org/2000/01/rdf-schema#") && 
+            ?property != rdf:type && 
+            ?property != owl:versionInfo
+        )
     }
     """
     
@@ -365,10 +371,10 @@ class GesisKGExtractor:
     def extract_and_save_all(self):
         """Extract all data and save to CSV files"""
         # Extract and save entities
-        logger.info("Extracting and saving entities...")
-        entities_df = self.extract_entities()
-        entities_df.to_csv(self.entities_csv_path, index=False)
-        logger.info(f"Saved {len(entities_df)} entities to {self.entities_csv_path}")
+        # logger.info("Extracting and saving entities...")
+        # entities_df = self.extract_entities()
+        # entities_df.to_csv(self.entities_csv_path, index=False)
+        # logger.info(f"Saved {len(entities_df)} entities to {self.entities_csv_path}")
         
         # Extract and save properties
         logger.info("Extracting and saving properties...")
