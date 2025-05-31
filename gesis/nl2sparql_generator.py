@@ -262,7 +262,7 @@ class NL2SPARQLGenerator:
                 if "title" in result:
                     title = str(result["title"])
                     # Split by spaces and filter for meaningful words (4+ characters)
-                    title_words = [w.upper() for w in title.split() if len(w) >= 4]
+                    title_words = [w.strip('()').upper() for w in title.split() if len(w) >= 4]
                     all_words.extend(title_words)
             
             # Count frequency of each word
@@ -1093,7 +1093,7 @@ class NL2SPARQLGenerator:
         # Default to label for most contexts
         return mapping.get('label', mapping.get('value', placeholder))
 
-    def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True, 
+    def generate_dataset(self, size=1000, complexity_distribution=None, 
                     validate_queries=False, max_attempts_per_template=15):
         """
         Generate dataset based on GESIS knowledge graph
@@ -1101,7 +1101,6 @@ class NL2SPARQLGenerator:
         Args:
             size (int): Total number of question-query pairs to generate
             complexity_distribution (dict): Distribution of complexity levels
-            include_variations (bool): Whether to include variations of questions
             validate_queries (bool): Whether to validate SPARQL queries
             max_attempts_per_template (int): Maximum number of attempts to instantiate a template
             
@@ -1182,37 +1181,42 @@ class NL2SPARQLGenerator:
                             success_templates[template_id] += 1
                             success = True
                             
-                            # Add variations if requested
-                            if include_variations and instance["question"]:
-                                variations = self.variation_generator.generate_variations(
-                                    instance["question"],
-                                    instance["englishQuestion"],
-                                    template["category"]
-                                )
+                            # Generate additional query instances from the same template
+                            additional_attempts = 0
+                            max_additional = 3  # Generate up to 3 additional instances per successful template
+                            
+                            while additional_attempts < max_additional and successful_generations < count and len(dataset) < size:
+                                additional_attempts += 1
                                 
-                                for variation in variations:
-                                    if len(dataset) >= size:
-                                        break
+                                try:
+                                    # Generate a new instance with different entities/values
+                                    new_instance = self.instantiate_template_with_discovery(template)
                                     
-                                    # Generate thoughts for the variation
-                                    var_thoughts = self.generate_chain_of_thoughts(
-                                        variation["text"], 
-                                        instance["sparql"], 
-                                        template
-                                    )
-                                    
-                                    dataset.append({
-                                        "id": f"q{id_counter}",
-                                        "question": variation["text"],
-                                        "englishQuestion": variation["english"],
-                                        "sparql": instance["sparql"],
-                                        "category": template["category"],
-                                        "complexity": template["complexity"],
-                                        "templateId": template["id"],
-                                        "isVariation": True,
-                                        "thoughts": var_thoughts
-                                    })
-                                    id_counter += 1
+                                    if new_instance and new_instance["question"] != instance["question"]:
+                                        # Generate thoughts for the new instance
+                                        new_thoughts = self.generate_chain_of_thoughts(
+                                            new_instance["question"], 
+                                            new_instance["sparql"], 
+                                            template
+                                        )
+                                        
+                                        dataset.append({
+                                            "id": f"q{id_counter}",
+                                            "question": new_instance["question"],
+                                            "englishQuestion": new_instance["englishQuestion"],
+                                            "sparql": new_instance["sparql"],
+                                            "category": template["category"],
+                                            "complexity": template["complexity"],
+                                            "templateId": template["id"],
+                                            "thoughts": new_thoughts
+                                        })
+                                        id_counter += 1
+                                        successful_generations += 1
+                                        
+                                except Exception as e:
+                                    # If generating additional instance fails, continue
+                                    print(f"Error generating additional instance for template {template['id']}: {e}")
+                                    break
                             
                     except Exception as e:
                         print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
@@ -1540,6 +1544,13 @@ class NL2SPARQLGenerator:
             # rather than trying to discover them from the SPARQL endpoint
             return None
         
+        # Check if this is a complex query with aggregation, grouping, or ordering
+        complexity_indicators = ['COUNT(', 'MAX(', 'MIN(', 'AVG(', 'SUM(', 'GROUP BY', 'ORDER BY', 'HAVING']
+        is_complex_query = any(indicator in sparql_template.upper() for indicator in complexity_indicators)
+        
+        if is_complex_query:
+            return self.create_simplified_discovery_query(template, placeholders)
+        
         # Extract the WHERE clause more carefully
         # First normalize the template by removing extra whitespace
         normalized_template = re.sub(r'\s+', ' ', sparql_template)
@@ -1617,6 +1628,107 @@ class NL2SPARQLGenerator:
         discovery_query = re.sub(r'\s+', ' ', discovery_query).strip()
         
         return discovery_query
+    
+    def create_simplified_discovery_query(self, template, placeholders):
+        """
+        Create a simplified discovery query for complex templates with aggregation/grouping
+        
+        Args:
+            template (dict): The template to convert
+            placeholders (set): Set of placeholders in the template
+            
+        Returns:
+            str: The simplified discovery query
+        """
+        template_id = template["id"]
+        
+        # Create specific discovery queries based on template patterns
+        if "publication-count" in template_id:
+            if "person" in template_id:
+                # For person publication count queries
+                return """
+                    SELECT DISTINCT ?entity ?entityLabel WHERE {
+                        ?publication <https://schema.org/author> ?entity .
+                        OPTIONAL { ?entity rdfs:label ?entityLabel }
+                        OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                    } LIMIT 50
+                """
+            elif "organization" in template_id:
+                # For organization publication count queries
+                return """
+                    SELECT DISTINCT ?entity ?entityLabel WHERE {
+                        { ?publication <https://schema.org/publisher> ?entity } UNION
+                        { ?publication <https://schema.org/contributor> ?entity }
+                        OPTIONAL { ?entity rdfs:label ?entityLabel }
+                        OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                    } LIMIT 50
+                """
+            elif "topic" in template_id:
+                # For topic-based publication count queries, use keywords
+                return None  # Will fall back to keyword selection
+            elif "year" in template_id:
+                # For year-based publication count queries
+                return """
+                    SELECT DISTINCT ?value WHERE {
+                        ?publication <https://schema.org/datePublished> ?date .
+                        BIND(SUBSTR(STR(?date), 0, 5) AS ?value)
+                    } LIMIT 20
+                """
+        elif "latest-publication" in template_id or "first-publication" in template_id:
+            # For latest/first publication queries
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?publication <https://schema.org/author> ?entity .
+                    ?publication <https://schema.org/datePublished> ?date .
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                } LIMIT 50
+            """
+        elif "collaborator-count" in template_id:
+            # For collaborator count queries
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?entity a <https://schema.org/ScholarlyArticle> .
+                    ?entity <https://schema.org/author> ?author1 .
+                    ?entity <https://schema.org/author> ?author2 .
+                    FILTER(?author1 != ?author2)
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                } LIMIT 50
+            """
+        elif "top-expert" in template_id:
+            # For top expert queries, use keywords
+            return None  # Will fall back to keyword selection
+        elif "top-contributor" in template_id:
+            # For top contributor queries
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?publication <https://schema.org/publisher> ?entity .
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                } LIMIT 50
+            """
+        elif "most-authors" in template_id or "most-productive" in template_id or "most-collaborative" in template_id:
+            # For "most" queries, no placeholders needed
+            return None
+        elif "most-diverse" in template_id:
+            # For most diverse publication queries
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?entity <https://schema.org/about> ?topic1 .
+                    ?entity <https://schema.org/about> ?topic2 .
+                    FILTER(?topic1 != ?topic2)
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                } LIMIT 50
+            """
+        elif "publications-by-year" in template_id:
+            # For year trend queries, no placeholders needed
+            return None
+        
+        # Default fallback for unknown complex patterns
+        print(f"Warning: No specific discovery pattern for complex template: {template_id}")
+        return None
     
     def instantiate_template(self, template):
         """

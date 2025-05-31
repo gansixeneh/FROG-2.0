@@ -74,7 +74,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis"):
                 "intermediate": 0.3,
                 "advanced": 0.3,
             },
-            include_variations=True
+            # include_variations=True
         )
 
         print(f"Generated {len(dataset)} question-SPARQL pairs about scholarly resources")
