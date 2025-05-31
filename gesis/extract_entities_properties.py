@@ -42,7 +42,6 @@ class GesisKGExtractor:
         FILTER(isIRI(?entity))
       }
     }
-    LIMIT 10000
     """
     
     # SPARQL query to get all properties
@@ -58,7 +57,6 @@ class GesisKGExtractor:
     WHERE {
     ?subject ?property ?object.
     }
-    LIMIT 5000
     """
     
     # Known prefixes for URI shortening
