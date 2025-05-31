@@ -40,7 +40,6 @@ class SPARQLWrapperClient:
 
         self.sparql = SPARQLWrapper(endpoint_url)
         self.sparql.setReturnFormat(JSON)
-        self.sparql.setTimeout(30)  # 30 second timeout
 
         # Set default prefixes for GESIS knowledge graph
         if prefixes is None:
@@ -416,10 +415,6 @@ class PatternBasedSPARQLGenerator:
             SELECT DISTINCT ?prop1 ?prop2 ?entity WHERE {{
                 ?target ?prop1 ?hidden .
                 ?hidden ?prop2 ?entity .
-                FILTER(
-                    (STRSTARTS(STR(?prop1), "https://schema.org/") || STRSTARTS(STR(?prop1), "https://data.gesis.org/gesiskg/schema/")) &&
-                    (STRSTARTS(STR(?prop2), "https://schema.org/") || STRSTARTS(STR(?prop2), "https://data.gesis.org/gesiskg/schema/"))
-                )
                 FILTER(STRSTARTS(STR(?entity), "https://data.gesis.org/gesiskg/resource/"))
                 FILTER(?prop1 != ?prop2)
                 FILTER({exclusion_filter_str})

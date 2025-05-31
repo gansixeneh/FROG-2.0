@@ -1,704 +1,698 @@
 [
   {
     "id": "q1",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:abstract ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100275> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
   },
   {
     "id": "q2",
-    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Zeitschriftenartikel> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q3",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.049> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q4",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100110> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q5",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100231_Backhaus_Hans-Georg> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q6",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100111_Rokeach_Milton> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q7",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100287_HABERMAS_J%C3%9CRGEN> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q8",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q9",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100173> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q10",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100277> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q11",
-    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/politische_Kommunikation> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q12",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Westdt._Verl.> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q13",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100234> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q14",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100054_Frenkel-Brunswick_Else> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q15",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100116> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q16",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:datePublished ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q17",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q18",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100227_Hughes_John_A> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q19",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100251> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q20",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden schema:datePublished ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q21",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.032> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q22",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:datePublished ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q23",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100232> schema:isPartOf ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q24",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100223> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q25",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Johns_Hopkins_University_Press> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q26",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100298> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q27",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100215> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q28",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100257> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q29",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden schema:about ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q30",
-    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/%28Soziologische_Texte_%3B_99%29> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q31",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100101> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q32",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:publisher ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q33",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100044> schema:publisher ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q34",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100014> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q35",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:datePublished ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q36",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Jossey-Bass> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q37",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100219_Kiessler-Hauschild_Kerstin> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q38",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100205_Kress_Gisela> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q39",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100236> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q40",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/McNally> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q41",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100295> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q42",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100067> schema:publisher ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q43",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100239> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q44",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100152_Wakenhut_Roland> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q45",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100236> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q46",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100234_Greenstein_Fred_I> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q47",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100010_Opaschowski_Horst_W> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q48",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100121_Bruner_Jerome_S> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q49",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100195_Lipset_Seymour_Martin> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q50",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100251> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q51",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100095> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q52",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-007> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q53",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100121> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q54",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:publisher ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q55",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100007_Opaschowski_Horst_W> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q56",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100295_Allardt_Erik> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q57",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Markham> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q58",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-004> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q59",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100091_Mills_C_Wright> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q60",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100069> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q61",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q62",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100306_Rae_Douglas_W> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q63",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100111> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q64",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100091> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q65",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100201_Flechtheim_Ossip_K> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q66",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100201_Flechtheim_Ossip_K> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q67",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100005_Neubauer_Ursula> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q68",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100234> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q69",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-035> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q70",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100209_Grosser_Dieter> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q71",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100190> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q72",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100211> schema:author ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q73",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100188> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q74",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100220_Stammer_Otto> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q75",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:publisher ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q76",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100150_Welz_Rainer> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q77",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100234_Greenstein_Fred_I> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q78",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100248> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q79",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100254_Fassbender_Heino> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q80",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100118_INSKO_CHESTER_A> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q81",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100279> schema:contributor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q82",
     "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/pdf> . ?hidden schema:author ?target . }",
     "pattern_type": "3_prop_star_v1",
     "complexity": "advanced"
   },
   {
-    "id": "q83",
+    "id": "q3",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100116> schema:publisher ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q4",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Monographie> . ?hidden gesiskg:sourceInfo ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q5",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:isPartOf ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q6",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100075_HULIN_CHARLES_L> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q7",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100214> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q8",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100119_Bower_Gordon_H> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q9",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100271> schema:publisher ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q10",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:isPartOf <https://data.gesis.org/gesiskg/resource/%28CEWS.publik_%3B_4%29> . ?hidden gesiskg:hasFulltext ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q11",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:provider ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q12",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100073_Abcarian_Gilbert> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q13",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100050_Bettelheim_Bruno> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q14",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/pdf> . ?hidden gesiskg:linksLabel ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q15",
     "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100073> schema:editor ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q84",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:publicationType ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q85",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100182_March_James_G> . }",
+    "id": "q16",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.043> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q86",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100251> schema:author ?target . }",
+    "id": "q17",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100200> gesiskg:libraryLocation ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q87",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Martin_Ilse> . ?hidden gesiskg:hasFulltext ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
-  },
-  {
-    "id": "q88",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-008> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q89",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100217_Ebbinghausen_Rolf> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q90",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100073_Soule_John_W> . }",
-    "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q91",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100004> schema:isPartOf ?target . }",
+    "id": "q18",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100286> schema:contributor ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q92",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100005_Neubauer_Ursula> . }",
-    "pattern_type": "1_prop_subject_target",
+    "id": "q19",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100170> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q93",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Harper> . }",
-    "pattern_type": "1_prop_subject_target",
+    "id": "q20",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100049> schema:publisher ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q94",
+    "id": "q21",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100056> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q22",
     "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:inLanguage ?target . }",
     "pattern_type": "3_prop_star_v1",
     "complexity": "advanced"
   },
   {
-    "id": "q95",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100119> schema:author ?target . }",
+    "id": "q23",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100298> schema:author ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
-    "id": "q96",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Institutspublikation> . ?hidden gesiskg:linksLabel ?target . }",
+    "id": "q24",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100004> schema:publisher ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q25",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100237> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q26",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100253> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q27",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100135> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q28",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q29",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden schema:contributor ?target . }",
     "pattern_type": "3_prop_star_v1",
     "complexity": "advanced"
   },
   {
+    "id": "q30",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Harvard_Univ._Press> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q31",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100083> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q32",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden schema:provider ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q33",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100221_Schmid_G%C3%BCnther> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q34",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/pdf> . ?hidden schema:editor ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q35",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100150> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q36",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100152> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q37",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100144_Ooskamp_Stuart> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q38",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q39",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Doubleday> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q40",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100280> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q41",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100138_White_Robert_W> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q42",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.049> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q43",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_280-049> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q44",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/%28Politische_Vierteljahresschrift_%3A_Sonderheft_%3B_07%29> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q45",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/University_of_Michigan> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q46",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100227> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q47",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100234_Polsby_Nelson_W> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q48",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100200_BUCHHEIM_HANS> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q49",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100309_Segal_David_R> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q50",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100005_Opaschowski_Horst_W> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q51",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-023> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q52",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100292_HYMAN_HERBERT_H> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q53",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100118_INSKO_CHESTER_A> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q54",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100020> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q55",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:dateModified ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q56",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100120> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q57",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100116_LINDSAY_PETER_H> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q58",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Macmillan> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q59",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.050> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q60",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100078> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q61",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100240> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q62",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100174> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q63",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100118> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q64",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-1> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q65",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:about ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q66",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100147> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q67",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100260> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q68",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/au%C3%9Feruniversit%C3%A4re_Forschung> . ?hidden schema:isPartOf ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q69",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/%28Studies_in_prejudice%29> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q70",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100106_Renn_Heinz> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q71",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q72",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100006> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q73",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100156_Toch_Hans> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q74",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100233_Kirsch_Guy> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q75",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100140> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q76",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100158> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q77",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-021> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q78",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_ZA0948> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q79",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100285> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q80",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Freizeit> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q81",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/pdf> . ?hidden gesiskg:hasFulltext ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q82",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100121_Bruner_Jerome_S> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q83",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100296> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q84",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100232> schema:editor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q85",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/McGraw-Hill> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q86",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100101_Cohen_Joel_B> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q87",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100108> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q88",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100113> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q89",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100274> schema:isPartOf ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q90",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100267_Cranston_Maurice> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q91",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100055> schema:author ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q92",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100314> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q93",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-065> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q94",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_080-013> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q95",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100_Rota_Franco_P> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q96",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q97",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100195_Lipset_Seymour_Martin> . }",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100102_Feger_Hubert> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q98",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100272_Taylor_Charles_Lewis> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100115> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q99",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_111-089.047> . }",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100241_Polsby_Nelson_W> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q100",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100120_Bem_Daryl_J> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100041> schema:about ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q101",
-    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-100203_JANOWITZ_MORRIS> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100274> schema:isPartOf ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q102",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Petersen_Ulrike> . ?hidden schema:abstract ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/PIPER> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
   },
   {
     "id": "q103",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:about ?target . }",
-    "pattern_type": "3_prop_star_v1",
-    "complexity": "advanced"
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Springer> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
   },
   {
     "id": "q104",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100197> schema:about ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100004> schema:isPartOf ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q105",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100197> schema:about ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100182> schema:editor ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q106",
-    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden schema:publisher ?target . }",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-1_M%C3%BCller_Martina> . ?hidden gesiskg:sourceInfo ?target . }",
     "pattern_type": "3_prop_star_v1",
     "complexity": "advanced"
   },
   {
     "id": "q107",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100021> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q108",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100005> schema:isPartOf ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q109",
-    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Merrill> . }",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/Mannheim_080-015.004> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
+    "id": "q108",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100267_Mair_Peter> . }",
+    "pattern_type": "1_prop_subject_target",
+    "complexity": "basic"
+  },
+  {
+    "id": "q109",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100075> schema:contributor ?target . }",
+    "pattern_type": "1_prop_object_target",
+    "complexity": "basic"
+  },
+  {
     "id": "q110",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100231_Backhaus_Hans-Georg> . }",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Sozialisation> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q111",
-    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100298_Brand_J_A> . }",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Elektronische_Ressource> . ?hidden schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-1_Havenith_Eva> . ?hidden gesiskg:hasFulltext ?target . }",
+    "pattern_type": "3_prop_star_v1",
+    "complexity": "advanced"
+  },
+  {
+    "id": "q112",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-100306_Taylor_Michael> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
-    "id": "q112",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100238> schema:editor ?target . }",
-    "pattern_type": "1_prop_object_target",
-    "complexity": "basic"
-  },
-  {
     "id": "q113",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100235> gesiskg:libraryLocation ?target . }",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100284> schema:about ?target . }",
     "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q114",
-    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/W%C3%B6rterbuch> . }",
-    "pattern_type": "1_prop_subject_target",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100254> gesiskg:libraryLocation ?target . }",
+    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   },
   {
     "id": "q115",
-    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100198_De_Sola_Pool_Ithiel> . }",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-100237_Greenstein_Fred_I> . }",
     "pattern_type": "1_prop_subject_target",
     "complexity": "basic"
   },
   {
     "id": "q116",
-    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/Mannheim_080-015.001> . }",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Univ.> . }",
     "pattern_type": "1_prop_subject_target",
-    "complexity": "basic"
-  },
-  {
-    "id": "q117",
-    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-100246> gesiskg:libraryLocation ?target . }",
-    "pattern_type": "1_prop_object_target",
     "complexity": "basic"
   }
 ]
