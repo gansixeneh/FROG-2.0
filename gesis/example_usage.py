@@ -254,10 +254,7 @@ def main():
         force_extract = False
         
         if os.path.exists("data/gesis_entities.csv"):
-            use_existing = input("CSV files found. Use existing files? (y/n, default: y): ")
-            if use_existing.lower() == "n":
-                force_extract = True
-                print("Will re-extract data to CSV files.")
+            use_existing = input("CSV files found. Will use existing files.")
         else:
             print("No CSV files found. Will extract data from SPARQL endpoint.")
         
