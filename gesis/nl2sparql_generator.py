@@ -39,7 +39,7 @@ class SparqlExecutor:
             Results in the specified format
         """
         # add rdfs prefix before query
-        query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + query
+        query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>\nPREFIX schema: <https://schema.org/>\n" + query
         self.endpoint.setQuery(query)
         results = self.endpoint.query().convert()
         
@@ -1342,7 +1342,6 @@ class NL2SPARQLGenerator:
                         LIMIT 1
                     }
                     ?publication schema:name ?title .
-                    FILTER(LANGMATCHES(LANG(?title), "en"))
                     }
                 """,
                 "complexity": "advanced",
