@@ -358,6 +358,7 @@ class NL2SPARQLGenerator:
             except Exception as e:
                 print(f"Error searching entities with Weaviate: {e}")
         
+        # Return empty list if property_retrieval is None or if there was an error
         return []
 
     def _search_properties_weaviate(self, query: str, k: int = 5) -> list[dict]:
@@ -387,6 +388,7 @@ class NL2SPARQLGenerator:
             except Exception as e:
                 print(f"Error searching properties with Weaviate: {e}")
         
+        # Return empty list if property_retrieval is None or if there was an error
         return []
 
     def get_entities_and_properties(self, question, sparql):
@@ -1393,11 +1395,10 @@ class NL2SPARQLGenerator:
         # Default to label for most contexts
         return mapping.get('label', mapping.get('value', placeholder))
 
-    def generate_dataset(self, size=1000, complexity_distribution=None, 
-                    include_variations=True, variations_per_question=3,
-                    validate_queries=False, max_attempts_per_template=15):
+    def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
+                    variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
         """
-        Generate dataset based on GESIS knowledge graph
+        Generate dataset based on university course knowledge graph
         
         Args:
             size (int): Total number of question-query pairs to generate
@@ -1412,9 +1413,9 @@ class NL2SPARQLGenerator:
         """
         if complexity_distribution is None:
             complexity_distribution = {
-                "basic": 0.5,
+                "basic": 0.4,
                 "intermediate": 0.3,
-                "advanced": 0.2
+                "advanced": 0.3  # Increased proportion of advanced queries
             }
         
         dataset = []
@@ -1427,10 +1428,10 @@ class NL2SPARQLGenerator:
         
         # Track problematic templates for reporting
         failed_templates = {}
-        success_templates = {}
         
         # Generate questions for each complexity level
         for complexity, count in counts_by_complexity.items():
+            print(f"\nGenerating {count} questions for complexity level: {complexity}")
             successful_generations = 0
             eligible_templates = [t for t in self.templates if t["complexity"] == complexity]
             
@@ -1438,108 +1439,70 @@ class NL2SPARQLGenerator:
                 print(f"Warning: No templates found for complexity level: {complexity}")
                 continue
             
-            # Try to generate the required number for this complexity
             while successful_generations < count and len(dataset) < size:
+                print(f"  - Attempting to generate questions for complexity '{complexity}' (current count: {successful_generations}/{count})")
                 # Randomly select a template for this complexity level
                 template = random.choice(eligible_templates)
                 
                 # Track attempts for this template
                 template_id = template["id"]
-                if template_id not in success_templates:
-                    success_templates[template_id] = 0
-                if template_id not in failed_templates:
-                    failed_templates[template_id] = 0
+                attempts = 0
                 
                 # Try to instantiate this template up to max_attempts
-                attempts = 0
-                success = False
-                
-                while attempts < max_attempts_per_template and not success:
+                while attempts < max_attempts_per_template:
                     attempts += 1
                     try:
                         # Use the discovery-based approach to instantiate the template
                         instance = self.instantiate_template_with_discovery(template)
                         
                         if instance:
-                            # Generate thoughts about the translation from NL to SPARQL
-                            thoughts = self.generate_chain_of_thoughts(
-                                instance["question"], 
-                                instance["sparql"], 
-                                template
-                            )
+                            # Generate chain of thoughts for the question-query pair
+                            thoughts = self.generate_chain_of_thoughts(instance["question"], instance["sparql"], template)
                             
-                            # Get entity matches and property matches
-                            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
-                            
-                            # Success! Add the question-query pair with thoughts and matches
-                            dataset.append({
+                            # Create the base dataset entry
+                            entry = {
                                 "id": f"q{id_counter}",
                                 "question": instance["question"],
-                                "englishQuestion": instance["englishQuestion"],
                                 "sparql": instance["sparql"],
                                 "category": template["category"],
                                 "complexity": template["complexity"],
                                 "templateId": template["id"],
-                                "thoughts": thoughts,
-                                "entities": entities_list,
-                                "properties": properties_list,
-                                "entities_matches": entity_matches,
-                                "properties_matches": property_matches
-                            })
+                                "thoughts": thoughts
+                            }
+                            
+                            # Add entity and property information if property_retrieval is available
+                            if self.property_retrieval:
+                                entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(
+                                    instance["question"], instance["sparql"]
+                                )
+                                entry.update({
+                                    "entities": entities_list,
+                                    "properties": properties_list,
+                                    "entities_matches": entity_matches,
+                                    "properties_matches": property_matches
+                                })
+                            
+                            dataset.append(entry)
                             id_counter += 1
                             successful_generations += 1
-                            success_templates[template_id] += 1
-                            success = True
                             
-                            # Add variations if requested
-                            if include_variations and instance["question"]:
-                                variations = self.variation_generator.generate_variations(
-                                    instance["question"],
-                                    instance["englishQuestion"],
-                                    template["category"],
-                                    min(variations_per_question, 5),
-                                )
-
-                                for variation in variations:
-                                    if len(dataset) >= size:
-                                        break
-
-                                    # Generate thoughts for variation too
-                                    var_thoughts = self.generate_chain_of_thoughts(variation["text"], instance["sparql"], template)
-                                    var_entities_list, var_properties_list, var_entity_matches, var_property_matches = self.get_entities_and_properties(variation["text"], instance["sparql"])
-
-                                    dataset.append({
-                                        "id": f"q{id_counter}",
-                                        "question": variation["text"],
-                                        "englishQuestion": variation["english"],
-                                        "sparql": instance["sparql"],
-                                        "category": template["category"],
-                                        "complexity": template["complexity"],
-                                        "templateId": template["id"],
-                                        "isVariation": True,
-                                        "thoughts": var_thoughts,
-                                        "entities": var_entities_list,
-                                        "properties": var_properties_list,
-                                        "entities_matches": var_entity_matches,
-                                        "properties_matches": var_property_matches
-                                    })
-                                    id_counter += 1
-                            
+                            # Break out of the attempts loop
+                            break
                     except Exception as e:
-                        print(f"Error instantiating template {template['id']} (attempt {attempts}): {e}")
+                        print(f"Error instantiating template {template['id']}: {e}")
                 
                 # If we've tried max_attempts and still failed, record this template as problematic
-                if not success:
+                if attempts >= max_attempts_per_template and template_id not in failed_templates:
+                    failed_templates[template_id] = 0
+                
+                if template_id in failed_templates:
                     failed_templates[template_id] += 1
         
-        # Report template success and failure rates
-        print("\nTemplate success/failure statistics:")
-        for template_id in set(success_templates.keys()) | set(failed_templates.keys()):
-            success_count = success_templates.get(template_id, 0)
-            failure_count = failed_templates.get(template_id, 0)
-            total = success_count + failure_count
-            success_rate = (success_count / total * 100) if total > 0 else 0
-            print(f"  - {template_id}: {success_count} successes, {failure_count} failures ({success_rate:.1f}% success rate)")
+        # Report problematic templates
+        if failed_templates:
+            print("\nWarning: Some templates consistently failed to instantiate:")
+            for template_id, count in failed_templates.items():
+                print(f"  - {template_id}: failed {count} times")
         
         # Report complexity distribution achieved
         complexity_counts = {}
@@ -1556,16 +1519,18 @@ class NL2SPARQLGenerator:
             print(f"  - {complexity}: {count}/{len(dataset)} ({percentage:.1f}%) [Target: {target}]")
         
         # Validate queries if requested
-        if validate_queries:
+        if validate_queries and hasattr(self.config, "query_validator"):
+            validator = self.config["query_validator"]
             filtered_dataset = []
             
             for item in dataset:
                 try:
-                    # Execute the query to validate it
-                    results = self.sparql_exec.execute_query(item["sparql"], return_format="dict")
-                    filtered_dataset.append(item)
+                    if validator(item["sparql"]):
+                        filtered_dataset.append(item)
+                    else:
+                        print(f"Invalid SPARQL query for id {item['id']}")
                 except Exception as e:
-                    print(f"Invalid SPARQL query for id {item['id']}: {e}")
+                    print(f"Error validating query for id {item['id']}: {e}")
             
             return filtered_dataset
         
