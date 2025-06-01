@@ -792,6 +792,34 @@ class NL2SPARQLGenerator:
                     "5. The result provides the language of {entity} as stored in the knowledge graph."
                 ]
             },
+            {
+                "id": "resource-library-location",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Where is {entity} located in the library?",
+                    "What is the library location of {entity}?",
+                    "In which section of the library can I find {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "Where is {entity} located in the library?",
+                    "What is the library location of {entity}?",
+                    "In which section of the library can I find {entity}?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?locationName WHERE {
+                    {entity} gesiskg:libraryLocation ?location .
+                    ?location schema:name ?locationName .
+                    }
+                """,
+                "complexity": "basic",
+                "thoughtsTemplate": [
+                    "1. The question asks about the library location of a specific resource {entity}.",
+                    "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+                    "3. First, I need to find the location entity related to {entity} using the gesiskg:libraryLocation property.",
+                    "4. Then I retrieve the human-readable name of the location using the schema:name property.",
+                    "5. The query returns the name of the library location where {entity} can be found."
+                ]
+            },
             
             # Intermediate: Structure and relationships
             {
@@ -1020,6 +1048,66 @@ class NL2SPARQLGenerator:
                     "3. I need to find publications where either the linked topic's name contains '{value}' or where a keyword contains '{value}'.",
                     "4. I use CONTAINS with LCASE to perform case-insensitive matching, ensuring we find all relevant publications regardless of capitalization.",
                     "5. COUNT(DISTINCT ?publication) ensures each publication is counted only once, even if it matches multiple times."
+                ]
+            },
+            {
+                "id": "location-resource-count",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "How many resources are located in {entity}?",
+                    "What is the total number of resources at {entity}?",
+                    "How many items can be found in the {entity} section?"
+                ],
+                "englishQuestionTemplates": [
+                    "How many resources are located in {entity}?",
+                    "What is the total number of resources at {entity}?",
+                    "How many items can be found in the {entity} section?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?count WHERE {
+                    {
+                        SELECT (COUNT(?resource) AS ?count) WHERE {
+                        ?resource gesiskg:libraryLocation {entity} .
+                        }
+                    }
+                    }
+                """,
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of resources located at a specific library location {entity}.",
+                    "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+                    "3. To count the resources, I need to find all resources that have {entity} as their library location.",
+                    "4. I use COUNT(?resource) to count the total number of such resources.",
+                    "5. The query returns the count of resources located at {entity}."
+                ]
+            },
+            {
+                "id": "location-resources-list",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Which resources are available at {entity}?",
+                    "What items can be found at the {entity} location?",
+                    "List the resources located in {entity}."
+                ],
+                "englishQuestionTemplates": [
+                    "Which resources are available at {entity}?",
+                    "What items can be found at the {entity} location?",
+                    "List the resources located in {entity}."
+                ],
+                "sparqlTemplate": """
+                    SELECT ?resourceName WHERE {
+                    ?resource gesiskg:libraryLocation {entity} .
+                    ?resource schema:name ?resourceName .
+                    }
+                    LIMIT 10
+                """,
+                "complexity": "intermediate",
+                "thoughtsTemplate": [
+                    "1. The question asks for a list of resources available at a specific library location {entity}.",
+                    "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+                    "3. I need to find all resources that have {entity} as their library location.",
+                    "4. For each resource, I retrieve its name using the schema:name property.",
+                    "5. The query returns the names of up to 10 resources located at {entity}."
                 ]
             },
             
@@ -1264,6 +1352,117 @@ class NL2SPARQLGenerator:
                     "3. I need to count how many distinct topics each publication covers.",
                     "4. I group the results by publication and title, then count the number of distinct topics for each using COUNT(DISTINCT ?topic).",
                     "5. Ordering by topic count in descending order and limiting to 1 result gives us the publication with the most diverse topics."
+                ]
+            },
+            {
+                "id": "most-populated-location",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Which library location has the most resources?",
+                    "What is the most populated section in the library?",
+                    "Which library location contains the largest number of items?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which library location has the most resources?",
+                    "What is the most populated section in the library?",
+                    "Which library location contains the largest number of items?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?locationName WHERE {
+                    {
+                        SELECT ?location (COUNT(?resource) AS ?count) WHERE {
+                        ?resource gesiskg:libraryLocation ?location .
+                        }
+                        GROUP BY ?location
+                        ORDER BY DESC(?count)
+                        LIMIT 1
+                    }
+                    ?location schema:name ?locationName .
+                    }
+                """,
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the library location that contains the most resources.",
+                    "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+                    "3. I need to count how many resources are associated with each location.",
+                    "4. I group the results by location and count the number of resources for each using COUNT(?resource).",
+                    "5. Ordering by the resource count in descending order and limiting to 1 result gives the location with the most resources.",
+                    "6. Finally, I retrieve the human-readable name of this location using the schema:name property."
+                ]
+            },
+            {
+                "id": "author-multiple-locations",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "Which author has works in the most different library locations?",
+                    "Who is the author with publications across the most library sections?",
+                    "Which researcher has the widest distribution of works across library locations?"
+                ],
+                "englishQuestionTemplates": [
+                    "Which author has works in the most different library locations?",
+                    "Who is the author with publications across the most library sections?",
+                    "Which researcher has the widest distribution of works across library locations?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?authorName WHERE {
+                    {
+                        SELECT ?author (COUNT(DISTINCT ?location) AS ?locationCount) WHERE {
+                        ?resource schema:author ?author .
+                        ?resource gesiskg:libraryLocation ?location .
+                        }
+                        GROUP BY ?author
+                        ORDER BY DESC(?locationCount)
+                        LIMIT 1
+                    }
+                    ?author schema:name ?authorName .
+                    }
+                """,
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the author who has works distributed across the most different library locations.",
+                    "2. I need to find authors, their works, and the library locations of those works.",
+                    "3. For each author, I count the distinct library locations where their works can be found using COUNT(DISTINCT ?location).",
+                    "4. The resources are linked to authors via schema:author and to locations via gesiskg:libraryLocation.",
+                    "5. I group by author and order by the count of distinct locations in descending order.",
+                    "6. The LIMIT 1 ensures I get only the author with works in the most locations.",
+                    "7. Finally, I retrieve the author's name using the schema:name property."
+                ]
+            },
+            {
+                "id": "location-topic-distribution",
+                "category": "scholarly",
+                "questionTemplates": [
+                    "What is the most common topic for resources in {entity}?",
+                    "Which subject is most represented in the {entity} section?",
+                    "What topic dominates the collection at {entity}?"
+                ],
+                "englishQuestionTemplates": [
+                    "What is the most common topic for resources in {entity}?",
+                    "Which subject is most represented in the {entity} section?",
+                    "What topic dominates the collection at {entity}?"
+                ],
+                "sparqlTemplate": """
+                    SELECT ?topicName WHERE {
+                    {
+                        SELECT ?topic (COUNT(?resource) AS ?count) WHERE {
+                        ?resource gesiskg:libraryLocation {entity} .
+                        ?resource schema:about ?topic .
+                        }
+                        GROUP BY ?topic
+                        ORDER BY DESC(?count)
+                        LIMIT 1
+                    }
+                    ?topic schema:name ?topicName .
+                    }
+                """,
+                "complexity": "advanced",
+                "thoughtsTemplate": [
+                    "1. The question asks for the most common topic among resources located at {entity}.",
+                    "2. In the GESIS knowledge graph, resources are linked to locations via gesiskg:libraryLocation and to topics via schema:about.",
+                    "3. I need to find all resources at the specified location, then identify their topics.",
+                    "4. I count how many resources are associated with each topic using COUNT(?resource).",
+                    "5. Grouping by topic and ordering by count in descending order gives the most common topic.",
+                    "6. Finally, I retrieve the human-readable name of this topic using the schema:name property."
                 ]
             }
         ]
@@ -2015,6 +2214,18 @@ class NL2SPARQLGenerator:
         elif "publications-by-year" in template_id:
             # For year trend queries, no placeholders needed
             return None
+        elif "location-topic-distribution" in template_id:
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?resource gesiskg:libraryLocation ?entity .
+                    ?resource schema:about ?topic .
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity schema:name ?entityLabel }
+                } 
+                GROUP BY ?entity ?entityLabel
+                HAVING (COUNT(?resource) > 3)
+                LIMIT 50
+            """
         
         # Default fallback for unknown complex patterns
         print(f"Warning: No specific discovery pattern for complex template: {template_id}")
