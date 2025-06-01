@@ -1469,7 +1469,7 @@ class NL2SPARQLGenerator:
                             )
                             
                             # Get entity matches and property matches
-                            # entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
+                            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(instance["question"], instance["sparql"])
                             
                             # Success! Add the question-query pair with thoughts and matches
                             dataset.append({
@@ -1481,10 +1481,10 @@ class NL2SPARQLGenerator:
                                 "complexity": template["complexity"],
                                 "templateId": template["id"],
                                 "thoughts": thoughts,
-                                # "entities": entities_list,
-                                # "properties": properties_list,
-                                # "entities_matches": entity_matches,
-                                # "properties_matches": property_matches
+                                "entities": entities_list,
+                                "properties": properties_list,
+                                "entities_matches": entity_matches,
+                                "properties_matches": property_matches
                             })
                             id_counter += 1
                             successful_generations += 1
