@@ -40,7 +40,7 @@ def check_and_extract_kg_data(endpoint_url="http://localhost:3030/gesis", force_
     if not files_exist or force_extract:
         print("Extracting KG data to CSV files...")
         # Create extractor and extract data
-        extractor = GesisKGExtractor(endpoint_url + "/query")
+        extractor = GesisKGExtractor("http://localhost:3030/gesis/query")
         extracted_paths = extractor.extract_and_save_all()
         print("KG data extraction completed!")
         return extracted_paths
@@ -123,7 +123,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis", use_cs
         try:
             raise ImportError("Simulating import error for testing purposes")
             property_retrieval = GesisPropertyRetrieval(
-                endpoint_url=endpoint_url + "/query",  # Add /query for SPARQL endpoint
+                endpoint_url="http://localhost:3030/gesis/query",  # Add /query for SPARQL endpoint
                 embedding_model_name="jinaai/jina-embeddings-v3",
                 is_local_client=True,
                 weaviate_host="localhost",
@@ -141,7 +141,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis", use_cs
         # Generate dataset using extracted schema with property retrieval
         generator = NL2SPARQLGenerator(
             schema, 
-            endpoint_url=endpoint_url + "/query",
+            endpoint_url="http://localhost:3030/gesis/query",
             property_retrieval=property_retrieval
         )
 
