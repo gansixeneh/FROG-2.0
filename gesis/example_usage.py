@@ -121,6 +121,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis", use_cs
         # Initialize the property retrieval system for entity/property matching
         print("\nInitializing property retrieval system...")
         try:
+            raise ImportError("Simulating import error for testing purposes")
             property_retrieval = GesisPropertyRetrieval(
                 endpoint_url=endpoint_url + "/query",  # Add /query for SPARQL endpoint
                 embedding_model_name="jinaai/jina-embeddings-v3",
@@ -209,7 +210,7 @@ def main():
     """Main function to run the GESIS example"""
     try:
         # Define the Fuseki endpoint URL
-        endpoint_url = "http://localhost:3030/gesis"
+        endpoint_url = "http://localhost:3030"
         
         # Check if Fuseki server is accessible
         import requests
@@ -252,7 +253,7 @@ def main():
         use_csv = True  # Default to using CSV for efficiency
         force_extract = False
         
-        if os.path.exists("gesis_entities.csv"):
+        if os.path.exists("data/gesis_entities.csv"):
             use_existing = input("CSV files found. Use existing files? (y/n, default: y): ")
             if use_existing.lower() == "n":
                 force_extract = True

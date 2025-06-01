@@ -99,9 +99,9 @@ class KGSchemaExtractor:
                 "void": "http://rdfs.org/ns/void#",
             },
             # Default CSV file paths
-            "entities_csv_path": "gesis_entities.csv",
-            "properties_csv_path": "gesis_properties.csv",
-            "schema_info_csv_path": "gesis_schema_info.csv",
+            "entities_csv_path": "data/gesis_entities.csv",
+            "properties_csv_path": "data/gesis_properties.csv",
+            "schema_info_csv_path": "data/gesis_schema_info.csv",
             # Use CSV files if available
             "use_csv": True
         }
