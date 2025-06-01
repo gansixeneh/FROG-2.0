@@ -1039,7 +1039,6 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
-                    ?author schema:name ?authorName .
                     ?publication schema:author ?author .
                     {
                         ?publication schema:about ?topic .
@@ -1052,6 +1051,7 @@ class NL2SPARQLGenerator:
                         ?publication schema:name ?title .
                         FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
+                    ?author schema:name ?authorName .
                     }
                     GROUP BY ?author ?authorName
                     ORDER BY DESC(COUNT(?publication))
@@ -1145,8 +1145,8 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
-                    ?author schema:name ?authorName .
                     ?publication schema:author ?author .
+                    ?author schema:name ?authorName .
                     }
                     GROUP BY ?author ?authorName
                     ORDER BY DESC(COUNT(?publication))
@@ -1176,14 +1176,18 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
-                    ?author schema:name ?authorName .
-                    ?publication schema:author ?author .
-                    ?publication schema:author ?coauthor .
-                    FILTER(?author != ?coauthor)
+                    {
+                        SELECT ?author WHERE {
+                        ?publication schema:author ?author .
+                        ?publication schema:author ?coauthor .
+                        FILTER(?author != ?coauthor)
+                        }
+                        GROUP BY ?author
+                        ORDER BY DESC(COUNT(DISTINCT ?coauthor))
+                        LIMIT 1
                     }
-                    GROUP BY ?author ?authorName
-                    ORDER BY DESC(COUNT(DISTINCT ?coauthor))
-                    LIMIT 1
+                    ?author schema:name ?authorName .
+                    }
                 """,
                 "complexity": "advanced",
                 "thoughtsTemplate": [
@@ -1241,12 +1245,17 @@ class NL2SPARQLGenerator:
                 ],
                 "sparqlTemplate": """
                     SELECT ?title WHERE {
-                    ?publication schema:name ?title .
-                    ?publication schema:about ?topic .
+                    {
+                        SELECT ?publication WHERE {
+                        ?publication schema:about ?topic .
+                        }
+                        GROUP BY ?publication
+                        ORDER BY DESC(COUNT(DISTINCT ?topic))
+                        LIMIT 1
                     }
-                    GROUP BY ?publication ?title
-                    ORDER BY DESC(COUNT(DISTINCT ?topic))
-                    LIMIT 1
+                    ?publication schema:name ?title .
+                    FILTER(LANGMATCHES(LANG(?title), "en"))
+                    }
                 """,
                 "complexity": "advanced",
                 "thoughtsTemplate": [
@@ -1396,9 +1405,10 @@ class NL2SPARQLGenerator:
         return mapping.get('label', mapping.get('value', placeholder))
 
     def generate_dataset(self, size=1000, complexity_distribution=None, include_variations=True,
-                    variations_per_question=3, validate_queries=False, max_attempts_per_template=10):
+                    variations_per_question=3, validate_queries=False, max_attempts_per_template=10,
+                    use_english_question=False):
         """
-        Generate dataset based on university course knowledge graph
+        Generate dataset based on university course or GESIS knowledge graph
         
         Args:
             size (int): Total number of question-query pairs to generate
@@ -1407,6 +1417,7 @@ class NL2SPARQLGenerator:
             variations_per_question (int): Number of variations per question
             validate_queries (bool): Whether to validate SPARQL queries
             max_attempts_per_template (int): Maximum number of attempts to instantiate a template
+            use_english_question (bool): If True, use "englishQuestion" field instead of "question" (for GESIS data)
             
         Returns:
             list: Array of question-SPARQL pairs
@@ -1462,13 +1473,18 @@ class NL2SPARQLGenerator:
                             # Create the base dataset entry
                             entry = {
                                 "id": f"q{id_counter}",
-                                "question": instance["question"],
-                                "sparql": instance["sparql"],
                                 "category": template["category"],
                                 "complexity": template["complexity"],
                                 "templateId": template["id"],
+                                "sparql": instance["sparql"],
                                 "thoughts": thoughts
                             }
+                            
+                            # Set the question field name based on parameter
+                            if use_english_question:
+                                entry["englishQuestion"] = instance["question"]
+                            else:
+                                entry["question"] = instance["question"]
                             
                             # Add entity and property information if property_retrieval is available
                             if self.property_retrieval:
@@ -2638,7 +2654,19 @@ class NL2SPARQLGenerator:
         Returns:
             str: JSON string
         """
-        return json.dumps(dataset, indent=2)
+        # Create a copy of the dataset to avoid modifying the original
+        export_dataset = []
+        
+        for item in dataset:
+            export_item = item.copy()
+            
+            # Ensure we have consistent field names
+            if "englishQuestion" in export_item and "question" not in export_item:
+                export_item["question"] = export_item["englishQuestion"]
+            
+            export_dataset.append(export_item)
+        
+        return json.dumps(export_dataset, indent=2)
 
     def export_csv(self, dataset):
         """
@@ -2653,39 +2681,41 @@ class NL2SPARQLGenerator:
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_ALL)
         
-        # Write header - updated to include new fields
-        writer.writerow([
-            'id', 'question', 'englishQuestion', 'sparql', 'category', 
-            'complexity', 'templateId', 'thoughts', 'entities', 'properties',
-            'entities_matches', 'properties_matches'
-        ])
+        # Determine which fields are present in the dataset
+        sample_item = dataset[0] if dataset else {}
+        
+        # Check if we're dealing with university data or GESIS data
+        is_gesis_format = "englishQuestion" in sample_item
+        
+        # Set the header based on dataset type
+        if is_gesis_format:
+            # GESIS data format
+            header = ['id', 'englishQuestion', 'sparql', 'category', 'complexity', 'templateId']
+        else:
+            # University course data format
+            header = ['id', 'question', 'sparql', 'category', 'complexity', 'templateId']
+        
+        # Write header
+        writer.writerow(header)
         
         # Write rows
         for item in dataset:
             sparql_escaped = item["sparql"].replace("\n", " ")
             
-            # Convert complex fields to JSON strings for CSV
-            thoughts_str = json.dumps(item.get("thoughts", []))
-            entities_str = json.dumps(item.get("entities", []))
-            properties_str = json.dumps(item.get("properties", []))
-            entities_matches_str = json.dumps(item.get("entities_matches", []))
-            properties_matches_str = json.dumps(item.get("properties_matches", []))
+            # Get the question field based on the dataset type
+            question_field = item.get("englishQuestion", item.get("question", ""))
             
-            writer.writerow([
+            row = [
                 item["id"],
-                item["question"],
-                item["englishQuestion"],
+                question_field,
                 sparql_escaped,
-                item["category"],
-                item["complexity"],
-                item["templateId"],
-                thoughts_str,
-                entities_str,
-                properties_str,
-                entities_matches_str,
-                properties_matches_str
-            ])
-
+                item.get("category", ""),
+                item.get("complexity", ""),
+                item.get("templateId", "")
+            ]
+            
+            writer.writerow(row)
+        
         return output.getvalue()
 
     def export_jsonl(self, dataset):
