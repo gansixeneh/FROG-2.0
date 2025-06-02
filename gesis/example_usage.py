@@ -121,7 +121,7 @@ def generate_gesis_kg_dataset(endpoint_url="http://localhost:3030/gesis", use_cs
         # Initialize the property retrieval system for entity/property matching
         print("\nInitializing property retrieval system...")
         try:
-            raise ImportError("Simulating import error for testing purposes")
+            # raise ImportError("Simulating import error for testing purposes")
             property_retrieval = GesisPropertyRetrieval(
                 endpoint_url="http://localhost:3030/gesis/query",  # Add /query for SPARQL endpoint
                 embedding_model_name="jinaai/jina-embeddings-v3",

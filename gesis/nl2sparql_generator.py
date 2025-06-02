@@ -432,7 +432,7 @@ class NL2SPARQLGenerator:
         related_candidates = self.get_related_candidates(
             question, 
             property_candidates=property_candidates,
-            threshold=0.6,
+            threshold=0.65,
             k=5
         )
         
@@ -525,7 +525,7 @@ class NL2SPARQLGenerator:
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.6,
+        threshold: float = 0.65,
         k: int = 5,
     ) -> dict[str, list[str]]:
         """
