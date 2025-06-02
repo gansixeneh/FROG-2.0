@@ -160,8 +160,20 @@ class SparqlGenerationNode:
             
         return query
         
-    def get_entities(self, entity: str, k: int = 5):
-        """Search for entities in Wikidata"""
+    def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
+        """Search for entities in knowledge base"""
+        if source == "curriculum":
+            # Try to use UniversityEntityRetrieval if it exists
+            try:
+                from ..utils.entity_retrieval import UniversityEntityRetrieval
+                entity_retrieval = UniversityEntityRetrieval()
+                result = entity_retrieval.get_related_entities(entity, [entity], k=k)
+                return result.get("entities", []), None
+            except Exception as e:
+                logger.error(f"Error using UniversityEntityRetrieval: {e}")
+                return [], e
+        
+        # Default to Wikidata API
         wikidata_api = "https://www.wikidata.org/w/api.php"
         params = {
             "action": "wbsearchentities",
@@ -239,8 +251,12 @@ class SparqlGenerationNode:
                 start_time=start_time
             )
         
+        # Determine the knowledge source name for prompts
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        
         # Define the system prompt for SPARQL generation
-        system_prompt = """You are a SPARQL generator expert for Wikidata knowledge graph. Your task is to convert the following natural language question to a SPARQL query for Wikidata using the provided entity and property resolutions.
+        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
 
 Guidelines:
 1. First identify which entities from the list match the question's intent
@@ -259,8 +275,9 @@ Guidelines:
         
         # Gather resources for the query generation
         entities_matches_formatted = ""
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         for entity in state.extracted_entities:
-            entity_resources, _ = self.get_entities(entity, k=5)
+            entity_resources, _ = self.get_entities(entity, k=5, source=knowledge_source)
             for resource in entity_resources:
                 if 'description' in resource and resource['description']:
                     entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
@@ -680,6 +697,8 @@ Please generate a better query. Try using different properties or restructuring 
         
         # Failed after all attempts
         use_google_search = getattr(state, 'use_google_search', True)
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
         
         if use_google_search:
             state.context_str = "I couldn't generate a working query to answer this question."
@@ -687,7 +706,7 @@ Please generate a better query. Try using different properties or restructuring 
             state.approach_used = "sparql_failed"
         else:
             # Google Search is disabled, provide a more informative message
-            state.context_str = "I couldn't generate a working SPARQL query to answer this question using Wikidata. Google Search fallback is disabled in settings."
+            state.context_str = f"I couldn't generate a working SPARQL query to answer this question using {source_name}. Google Search fallback is disabled in settings."
             state.approach_used = "sparql_failed_no_fallback"
         
         # Log failure after all attempts

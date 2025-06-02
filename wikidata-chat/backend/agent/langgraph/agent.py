@@ -285,10 +285,13 @@ class WikidataGraphAgent:
     def create_explanation(self, state):
         """Create a detailed explanation of the process and results"""
         approach = state.approach_used if state.approach_used else "Unknown"
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
 
         # Start with a header and the original question
         explanation = f"""## Question Answering Process
 **Question:** {state.question}
+**Knowledge Source:** {source_name}
 
 """
 
@@ -475,8 +478,8 @@ Using entity: {entity_label}
                 explanation += f"\n**Total references found**: {len(state.sparql_references)}\n\n"
 
         elif approach == "google_search":
-            explanation += """### Approach: Google Web Search
-Wikidata methods did not provide sufficient results, so web search was used as a fallback.
+            explanation += f"""### Approach: Google Web Search
+{source_name} methods did not provide sufficient results, so web search was used as a fallback.
 
 """
             if state.google_search_result:

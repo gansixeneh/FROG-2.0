@@ -352,24 +352,36 @@ class LogToRDF:
         self._extract_wikidata_refs(query_uri, query_text)
     
     def _extract_wikidata_refs(self, query_uri, query_text):
-        """Extract Wikidata entity and property references from SPARQL query"""
-        # Extract Wikidata entities (Q numbers)
-        entities = re.findall(r'wd:Q(\d+)', query_text)
-        for entity_id in entities:
-            # Use LOGS_NS for entity references in this run
-            entity_uri = self.LOGS_NS[f"WikidataEntity_Q{entity_id}"]
-            self.graph.add((query_uri, self.LOG.referencesEntity, entity_uri))
-            self.graph.add((entity_uri, RDF.type, self.LOG.WikidataEntity))
-            self.graph.add((entity_uri, self.LOG.wikidataId, Literal(f"Q{entity_id}")))
-        
-        # Extract Wikidata properties (P numbers)
-        properties = re.findall(r'wdt:P(\d+)', query_text)
-        for prop_id in properties:
-            # Use LOGS_NS for property references in this run
-            prop_uri = self.LOGS_NS[f"WikidataProperty_P{prop_id}"]
-            self.graph.add((query_uri, self.LOG.referencesProperty, prop_uri))
-            self.graph.add((prop_uri, RDF.type, self.LOG.WikidataProperty))
-            self.graph.add((prop_uri, self.LOG.wikidataId, Literal(f"P{prop_id}")))
+        """Extract entity and property references from SPARQL query"""
+        # Only extract Wikidata-specific patterns if this is actually a Wikidata query
+        if 'wd:Q' in query_text or 'wdt:P' in query_text:
+            # Extract Wikidata entities (Q numbers)
+            entities = re.findall(r'wd:Q(\d+)', query_text)
+            for entity_id in entities:
+                # Use LOGS_NS for entity references in this run
+                entity_uri = self.LOGS_NS[f"WikidataEntity_Q{entity_id}"]
+                self.graph.add((query_uri, self.LOG.referencesEntity, entity_uri))
+                self.graph.add((entity_uri, RDF.type, self.LOG.WikidataEntity))
+                self.graph.add((entity_uri, self.LOG.wikidataId, Literal(f"Q{entity_id}")))
+            
+            # Extract Wikidata properties (P numbers)
+            properties = re.findall(r'wdt:P(\d+)', query_text)
+            for prop_id in properties:
+                # Use LOGS_NS for property references in this run
+                prop_uri = self.LOGS_NS[f"WikidataProperty_P{prop_id}"]
+                self.graph.add((query_uri, self.LOG.referencesProperty, prop_uri))
+                self.graph.add((prop_uri, RDF.type, self.LOG.WikidataProperty))
+                self.graph.add((prop_uri, self.LOG.wikidataId, Literal(f"P{prop_id}")))
+        else:
+            # For curriculum or other knowledge bases, extract general entity/property patterns
+            # Extract curriculum entities (assuming they might have a different pattern)
+            # This is a generic approach that can be customized based on the actual curriculum URI patterns
+            curriculum_entities = re.findall(r'ns1:(\w+)', query_text)
+            for entity_id in curriculum_entities:
+                entity_uri = self.LOGS_NS[f"CurriculumEntity_{entity_id}"]
+                self.graph.add((query_uri, self.LOG.referencesEntity, entity_uri))
+                self.graph.add((entity_uri, RDF.type, self.LOG.CurriculumEntity))
+                self.graph.add((entity_uri, self.LOG.entityId, Literal(entity_id)))
     
     def _add_template_pattern(self, event_uri, template, event_id):
         """Add template pattern information"""

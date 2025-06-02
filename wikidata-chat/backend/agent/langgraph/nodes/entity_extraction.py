@@ -45,8 +45,12 @@ class EntityExtractionNode:
                 start_time=start_time
             )
         
+        # Determine the knowledge source name for prompts
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        
         # Define system prompt from finetune-extract-entity-property.ipynb
-        system_prompt = """You are an expert entity and property extractor for knowledge graph querying. Your task is to analyze a natural language question and identify the relevant entities and properties needed to create a SPARQL query for Wikidata.
+        system_prompt = f"""You are an expert entity and property extractor for knowledge graph querying. Your task is to analyze a natural language question and identify the relevant entities and properties needed to create a SPARQL query for {source_name}.
 
 Guidelines:
 1. For each question, extract ALL entities mentioned in the question
@@ -57,15 +61,15 @@ Guidelines:
 
 Your output should look like:
 ```json
-{
+{{
   "entities": ["entity1", "entity2", ...],
   "properties": ["property1", "property2", ...]
-}
+}}
 ```
 """
 
         # Create user prompt from finetune-extract-entity-property.ipynb
-        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties from this question that would be needed to generate a SPARQL query for Wikidata."
+        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties from this question that would be needed to generate a SPARQL query for {source_name}."
         
         # Log prompt preparation
         if hasattr(state, 'visualizer') and state.visualizer:

@@ -336,8 +336,12 @@ WHERE {{
             return match.group(1)
         return None
 
-    def get_references_for_property(self, entity: str, property_uri: str):
-        """Get reference information for a specific entity and property"""
+    def get_references_for_property(self, entity: str, property_uri: str, knowledge_source: str = "wikidata"):
+        """Get reference information for a specific entity and property (Wikidata only)"""
+        # Only get references for Wikidata, not curriculum
+        if knowledge_source != "wikidata":
+            return []
+            
         try:
             # Extract property ID
             prop_id = self.extract_property_id(property_uri)
@@ -450,6 +454,7 @@ class VerbalizationNode:
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
         
         if not self.llm_factory:
             raise ValueError("llm_factory must be provided")
@@ -520,45 +525,102 @@ class VerbalizationNode:
             logger.error(f"Error searching for entities: {e}")
             return [], e        
 
-    def get_most_appropriate_entity_uri(self, entity, question, retrieved_entities):
-        """Get the most appropriate Wikidata entity ID from retrieved entities"""
+    def get_most_appropriate_entity_uri(self, entity, question, retrieved_entities, knowledge_source="wikidata"):
+        """Get the most appropriate entity ID from retrieved entities using LLM"""
         if not retrieved_entities:
             return None
         
-        # Simple scoring function based on text similarity
-        def score_entity(entity_data):
-            # Base score - higher is better
-            score = 0
-            
-            # Check if the entity label matches the entity name exactly
-            label = entity_data.get("label", "").lower()
-            if label == entity.lower():
-                score += 10
-            elif entity.lower() in label:
-                score += 5
-            
-            # Check if description mentions relevant terms from the question
-            description = entity_data.get("description", "")
-            if description:  # Only process description if it exists
-                description = description.lower()
-                question_words = question.lower().split()
-                relevant_words = [w for w in question_words if len(w) > 3 and w.lower() not in ["what", "where", "when", "who", "how", "the", "and", "for", "that"]]
-                
-                for word in relevant_words:
-                    if word in description:
-                        score += 2
-            
-            return score
+        # Determine the knowledge source name for prompts
+        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
         
-        # Score and rank entities
-        scored_entities = [(entity_data, score_entity(entity_data)) for entity_data in retrieved_entities]
-        scored_entities.sort(key=lambda x: x[1], reverse=True)
+        # Define system prompt
+        system_prompt = f"""You are an expert entity selector for knowledge graph querying. Your task is to analyze a natural language question and select the most appropriate entity from a list of retrieved entities from {source_name}.
+
+Guidelines:
+1. Select the entity whose description and context best matches the question's intent
+2. Consider the entity's description and how it relates to the question
+3. Choose the entity that would be most useful for answering the given question
+4. Return your response as a JSON object with a single 'entity_id' field containing the selected entity's ID
+
+Your output should look like:
+```json
+{{
+  "entity_id": "selected_entity_id"
+}}
+```"""
+
+        # Format retrieved entities for display
+        entities_text = ""
+        for i, entity_data in enumerate(retrieved_entities):
+            entity_id = entity_data.get("uri", "")
+            label = entity_data.get("label", "")
+            description = entity_data.get("description", "No description available")
+            entities_text += f"{i+1}. ID: {entity_id}\n   Label: {label}\n   Description: {description}\n\n"
+
+        # Create user prompt
+        user_prompt = f"""Question: {question}
+
+Target Entity: {entity}
+
+Retrieved Entities:
+{entities_text}
+
+Select the most appropriate entity ID that best matches the target entity "{entity}" for answering the question "{question}"."""
+
+        try:
+            # Generate response using configured model
+            if self._llm_provider.is_chat_template_supported():
+                # Use chat template
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+                prompt = self._llm_provider.apply_chat_template(messages)
+            else:
+                # Fallback to simple concatenation
+                prompt = f"{system_prompt}\n\n{user_prompt}"
+            
+            completion = self._llm_provider.generate_response(prompt)
+            
+            # Extract JSON content from completion
+            match = re.search(self.json_pattern, completion)
+            if match:
+                json_str = match.group(1).strip()
+                try:
+                    extracted_data = json.loads(json_str)
+                    selected_entity_id = extracted_data.get("entity_id", "")
+                    
+                    # Validate that the selected entity ID exists in retrieved entities
+                    for entity_data in retrieved_entities:
+                        if entity_data.get("uri", "") == selected_entity_id:
+                            return selected_entity_id
+                    
+                    # If not found, log warning and fall back
+                    logger.warning(f"LLM selected entity ID {selected_entity_id} not found in retrieved entities")
+                    
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse LLM response JSON: {e}")
+            else:
+                # Try direct parsing if no JSON code block found
+                try:
+                    extracted_data = json.loads(completion)
+                    selected_entity_id = extracted_data.get("entity_id", "")
+                    
+                    # Validate that the selected entity ID exists in retrieved entities
+                    for entity_data in retrieved_entities:
+                        if entity_data.get("uri", "") == selected_entity_id:
+                            return selected_entity_id
+                    
+                    logger.warning(f"LLM selected entity ID {selected_entity_id} not found in retrieved entities")
+                    
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse direct LLM response as JSON: {e}")
         
-        # Return the highest scoring entity
-        if scored_entities:
-            return scored_entities[0][0]["uri"]
+        except Exception as e:
+            logger.error(f"Error in LLM entity selection: {e}")
         
-        # Fallback to first entity if available
+        # Fallback to first entity if LLM approach fails
+        logger.info("Falling back to first retrieved entity")
         if retrieved_entities:
             return retrieved_entities[0]["uri"]
             
@@ -646,7 +708,7 @@ class VerbalizationNode:
                 start_time=uri_start_time
             )
             
-        entity_uri = self.get_most_appropriate_entity_uri(entity, state.translated_question, retrieved_resources)
+        entity_uri = self.get_most_appropriate_entity_uri(entity, state.translated_question, retrieved_resources, knowledge_source)
         state.entity_uri = entity_uri
 
         entity_label = "no label found"
@@ -781,10 +843,10 @@ class VerbalizationNode:
                 references = []
                 if (getattr(state, 'include_references', True) and 
                     similarity >= 0.6 and result and
-                    getattr(state, 'knowledge_source', 'wikidata') == 'wikidata'):
+                    knowledge_source == 'wikidata'):
                     # Only get references for Wikidata, not curriculum
                     logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
-                    raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
+                    raw_references = self.verbalization.get_references_for_property(entity_uri, best_property, knowledge_source)
                     
                     # Format the references with proper date formatting
                     for ref in raw_references:

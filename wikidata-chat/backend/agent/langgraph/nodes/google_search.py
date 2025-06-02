@@ -58,10 +58,12 @@ class GoogleSearchNode:
         
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
+            knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+            source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
             state.visualizer.log_event(
                 "Google Search Node", 
                 "start",
-                {"question": state.translated_question, "reason": "Wikidata methods failed"},
+                {"question": state.translated_question, "reason": f"{source_name} methods failed"},
                 start_time=start_time
             )
             
