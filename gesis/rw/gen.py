@@ -5,6 +5,11 @@ import csv
 import os
 from collections import defaultdict, Counter
 from SPARQLWrapper import SPARQLWrapper, JSON  # Using SPARQLWrapper instead of requests
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from property_retrieval import GesisPropertyRetrieval
+from kg_schema_extractor import gesis_entity_label, gesis_property_label
 
 
 class SPARQLWrapperClient:
@@ -68,7 +73,12 @@ class SPARQLWrapperClient:
 
 class PatternBasedSPARQLGenerator:
     def __init__(
-        self, endpoint_url="http://localhost:3030/gesis/query", prefixes=None
+        self, 
+        endpoint_url="http://localhost:3030/gesis/query", 
+        prefixes=None,
+        use_property_retrieval=True,
+        entities_csv_path="data/gesis_entities.csv",
+        properties_csv_path="data/gesis_properties.csv"
     ):
         """
         Initialize the pattern-based generator for GESIS Knowledge Graph
@@ -76,8 +86,12 @@ class PatternBasedSPARQLGenerator:
         Args:
             endpoint_url (str): SPARQL endpoint URL
             prefixes (dict): Namespace prefixes
+            use_property_retrieval (bool): Whether to use property retrieval for entity/property matching
+            entities_csv_path (str): Path to entities CSV file
+            properties_csv_path (str): Path to properties CSV file
         """
         self.client = SPARQLWrapperClient(endpoint_url, prefixes)
+        self.endpoint_url = endpoint_url
 
         if prefixes is None:
             self.prefixes = {
@@ -118,6 +132,25 @@ class PatternBasedSPARQLGenerator:
             2: 0.3,  # 30% chance for 2-property patterns
             3: 0.2,  # 20% chance for 3-property patterns
         }
+
+        # Initialize property retrieval system for entity/property matching
+        self.property_retrieval = None
+        if use_property_retrieval:
+            try:
+                print("Initializing property retrieval system for entity/property matching...")
+                self.property_retrieval = GesisPropertyRetrieval(
+                    endpoint_url=f"{endpoint_url}",
+                    embedding_model_name="jinaai/jina-embeddings-v3",
+                    is_local_client=True,
+                    weaviate_host="localhost",
+                    weaviate_port=8080,
+                    entities_csv_path=entities_csv_path,
+                    properties_csv_path=properties_csv_path
+                )
+                print("Property retrieval system initialized successfully!")
+            except Exception as e:
+                print(f"Warning: Could not initialize property retrieval system: {e}")
+                print("Continuing without entity/property matching...")
 
         # Get total triple count
         total_triples = self._get_total_triples()
@@ -841,6 +874,233 @@ class PatternBasedSPARQLGenerator:
             }
         return None
 
+    def _extract_uris_from_sparql(self, sparql):
+        """
+        Extract entity and property URIs from SPARQL query
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entity_uris, property_uris)
+        """
+        entity_uris = []
+        property_uris = []
+        
+        # Extract URIs in angle brackets
+        uri_pattern = r'<([^>]+)>'
+        uris = re.findall(uri_pattern, sparql)
+        
+        # Extract prefixed names (schema:something, gesiskg:something)
+        schema_pattern = r'schema:([a-zA-Z_][a-zA-Z0-9_]*)'
+        gesiskg_pattern = r'gesiskg:([a-zA-Z_][a-zA-Z0-9_]*)'
+        
+        schema_names = re.findall(schema_pattern, sparql)
+        gesiskg_names = re.findall(gesiskg_pattern, sparql)
+        
+        # Convert prefixed names to full URIs
+        schema_prefix = self.prefixes.get('schema', 'https://schema.org/')
+        gesiskg_prefix = self.prefixes.get('gesiskg', 'https://data.gesis.org/gesiskg/schema/')
+        
+        for name in schema_names:
+            full_uri = f"{schema_prefix}{name}"
+            uris.append(full_uri)
+            
+        for name in gesiskg_names:
+            full_uri = f"{gesiskg_prefix}{name}"
+            uris.append(full_uri)
+        
+        # Classify URIs as entities or properties
+        for uri in uris:
+            if self._is_property_uri(uri):
+                property_uris.append(uri)
+            else:
+                entity_uris.append(uri)
+        
+        return entity_uris, property_uris
+
+    def _is_property_uri(self, uri):
+        """
+        Check if a URI is a property URI
+        
+        Args:
+            uri (str): URI to check
+            
+        Returns:
+            bool: True if it's a property URI
+        """
+        # For schema.org, properties typically have a pattern like "https://schema.org/propertyName"
+        # Entities might have a pattern like "https://data.gesis.org/gesiskg/resource/..."
+        
+        # Check if it's from schema.org (properties)
+        if "schema.org/" in uri and "resource/" not in uri:
+            return True
+        
+        # Check if it's from GESIS schema (properties)
+        if "data.gesis.org/gesiskg/schema/" in uri:
+            return True
+                
+        return False
+    
+    def _get_entity_name_from_kg(self, entity_uri):
+        """Get the schema:name for an entity from the knowledge graph"""
+        try:
+            query = f"""
+            PREFIX schema: <https://schema.org/>
+            SELECT ?name WHERE {{
+                <{entity_uri}> schema:name ?name .
+            }}
+            LIMIT 1
+            """
+            result = self.client.query(query)
+            
+            if result and result["results"]["bindings"] and len(result["results"]["bindings"]) > 0:
+                return result["results"]["bindings"][0].get("name", {}).get("value")
+            
+            return None
+        except Exception:
+            return None
+
+    def _get_property_name_from_kg(self, property_uri):
+        """Get the schema:name or rdfs:label for a property from the knowledge graph"""
+        try:
+            query = f"""
+            PREFIX schema: <https://schema.org/>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?name WHERE {{
+                {{
+                    <{property_uri}> schema:name ?name .
+                }} UNION {{
+                    <{property_uri}> rdfs:label ?name .
+                }}
+            }}
+            LIMIT 1
+            """
+            result = self.client.query(query)
+            
+            if result and result["results"]["bindings"] and len(result["results"]["bindings"]) > 0:
+                return result["results"]["bindings"][0].get("name", {}).get("value")
+            
+            return None
+        except Exception:
+            return None
+
+    def get_entities_and_properties(self, sparql):
+        """
+        Extract entities and properties from SPARQL query and get their labels
+        Similar to nl2sparql_generator.py implementation
+        
+        Args:
+            sparql (str): SPARQL query
+            
+        Returns:
+            tuple: (entities_list, properties_list, entity_matches, property_matches)
+        """
+        # Extract actual URIs from SPARQL query
+        entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+        
+        # Get labels for entities and properties
+        entities_list = []
+        properties_list = []
+        
+        # Get entity labels using schema:name
+        for uri in entity_uris:
+            label = self._get_entity_name_from_kg(uri)
+            if not label:
+                # Fallback to gesis_entity_label function
+                label = gesis_entity_label(uri)
+            if label:
+                entities_list.append(label)
+        
+        # Get property labels using schema:name
+        for uri in property_uris:
+            label = self._get_property_name_from_kg(uri)
+            if not label:
+                # Extract from URI if not found
+                label = uri.split('/')[-1] if '/' in uri else uri.split(':')[-1]
+            if label:
+                properties_list.append(label)
+        
+        # Set default empty matches if property_retrieval is not available
+        entity_matches = []
+        property_matches = []
+        
+        # Use property_retrieval if available to get matches
+        if self.property_retrieval:
+            try:
+                # Create a combined list of entities and properties as search candidates
+                property_candidates = entities_list + properties_list
+                
+                # Get related candidates using property_retrieval
+                related_candidates = self.property_retrieval.get_related_candidates(
+                    " ".join(entities_list + properties_list),  # Use entities and properties as search terms
+                    property_candidates=property_candidates,
+                )
+                
+                # Format entity matches
+                if "entities" in related_candidates:
+                    for entity in related_candidates["entities"]:
+                        # Use full URI for entities_matches
+                        if entity.startswith('http'):
+                            # Already a full URI
+                            full_uri = entity
+                        else:
+                            # Expand prefixed URI to full URI
+                            full_uri = self._expand_uri(entity)
+                        
+                        entity_matches.append({
+                            "id": full_uri,
+                            "label": gesis_entity_label(full_uri),
+                        })
+
+                # Format property matches  
+                if "properties" in related_candidates:
+                    for property in related_candidates["properties"]:
+                        property_matches.append({
+                            "id": property,  # Keep prefixed form for properties
+                            "label": gesis_property_label(self._expand_uri(property)),
+                        })
+            except Exception as e:
+                print(f"Error getting entity/property matches: {e}")
+        
+        return entities_list, properties_list, entity_matches, property_matches
+    
+    def _expand_uri(self, shortened_uri):
+        """
+        Expand a shortened URI back to its full form
+        
+        Args:
+            shortened_uri (str): Shortened URI with prefix (e.g., schema:Publication)
+            
+        Returns:
+            str: Full URI (e.g., https://schema.org/Publication)
+        """
+        # If it's already a full URI, return as is
+        if shortened_uri.startswith('http'):
+            return shortened_uri
+            
+        # Check if the URI has a prefix
+        if ":" in shortened_uri:
+            prefix, path = shortened_uri.split(":", 1)
+            
+            # Extended prefix mappings for GESIS knowledge graph
+            extended_prefixes = {
+                **self.prefixes,
+                'gesis': 'https://data.gesis.org/gesiskg/',
+                'gesiskg': 'https://data.gesis.org/gesiskg/schema/',
+                'disco': 'https://rdf-vocabulary.ddialliance.org/discovery.html#',
+                'nfdicore': 'https://nfdi.fiz-karlsruhe.de/ontology/',
+                'skos': 'http://www.w3.org/2004/02/skos/core#',
+                'void': 'http://rdfs.org/ns/void#'
+            }
+            
+            # If the prefix is in our known prefixes, expand it
+            if prefix in extended_prefixes:
+                return f"{extended_prefixes[prefix]}{path}"
+        
+        # Return as is if it doesn't have a recognized prefix
+        return shortened_uri
+
     def generate_dataset(self, size=1000):
         """Generate dataset based on pattern weights using discovery-first approach"""
         dataset = []
@@ -874,40 +1134,67 @@ class PatternBasedSPARQLGenerator:
 
             # Convert to final format and assign sequential IDs
             for i, pattern in enumerate(all_patterns[:size]):
-                dataset.append(
-                    {
-                        "id": f"q{i+1}",
-                        "sparql": pattern["sparql"],
-                        "pattern_type": pattern["pattern_type"],
-                        "complexity": pattern["complexity"],
-                    }
-                )
+                sparql = pattern["sparql"]
+                
+                # Extract entities and properties from SPARQL query
+                entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(sparql)
+                
+                dataset_item = {
+                    "id": f"q{i+1}",
+                    "sparql": sparql,
+                    "pattern_type": pattern["pattern_type"],
+                    "complexity": pattern["complexity"],
+                    "entities": entities_list,
+                    "properties": properties_list,
+                    "entities_matches": entity_matches,
+                    "properties_matches": property_matches
+                }
+                
+                dataset.append(dataset_item)
+                
+                # Print progress
+                if (i+1) % 10 == 0:
+                    print(f"Processed {i+1}/{min(size, len(all_patterns))} patterns")
+                
         except Exception as e:
             print(f"Error in dataset generation: {e}")
 
+        # Clean up property retrieval system if initialized
+        if self.property_retrieval:
+            try:
+                self.property_retrieval.close()
+                print("Property retrieval system closed.")
+            except Exception as e:
+                print(f"Warning: Error closing property retrieval system: {e}")
+
         return dataset
 
-    def export_json(self, dataset, output_path="gesis_pattern_based_dataset.json"):
+    def export_json(self, dataset, output_path="gesis_rw.json"):
         """Export dataset to JSON"""
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(dataset, f, indent=2, ensure_ascii=False)
         print(f"Dataset exported to {output_path}")
 
-    def export_csv(self, dataset, output_path="gesis_pattern_based_dataset.csv"):
-        """Export dataset to CSV"""
+    def export_csv(self, dataset, output_path="gesis_rw.csv"):
+        """Export dataset to CSV with additional entity and property information"""
         with open(output_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(["id", "sparql", "pattern_type", "complexity"])
+            writer.writerow([
+                "id", "sparql", "pattern_type", "complexity", 
+                "entities", "properties", "entities_matches", "properties_matches"
+            ])
 
             for item in dataset:
-                writer.writerow(
-                    [
-                        item["id"],
-                        item["sparql"],
-                        item["pattern_type"],
-                        item["complexity"],
-                    ]
-                )
+                writer.writerow([
+                    item["id"],
+                    item["sparql"],
+                    item["pattern_type"],
+                    item["complexity"],
+                    "|".join(item.get("entities", [])),
+                    "|".join(item.get("properties", [])),
+                    json.dumps(item.get("entities_matches", [])),
+                    json.dumps(item.get("properties_matches", []))
+                ])
 
         print(f"Dataset exported to {output_path}")
 
@@ -925,28 +1212,43 @@ def main():
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
-    # Initialize generator with custom prefixes
+    # Define paths to CSV files
+    base_dir = "/Users/muflihmaxi/Documents/FROG-2.0_dataset/gesis"
+    entities_csv_path = os.path.join(base_dir, "data/gesis_entities.csv")
+    properties_csv_path = os.path.join(base_dir, "data/gesis_properties.csv")
+
+    # Initialize generator with custom prefixes and property retrieval
     print("Initializing pattern-based SPARQL generator for GESIS Knowledge Graph...")
-    generator = PatternBasedSPARQLGenerator(endpoint_url, custom_prefixes)
+    generator = PatternBasedSPARQLGenerator(
+        endpoint_url=endpoint_url, 
+        prefixes=custom_prefixes,
+        use_property_retrieval=True,
+        entities_csv_path=entities_csv_path,
+        properties_csv_path=properties_csv_path
+    )
 
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
-    dataset = generator.generate_dataset(size=225)
+    dataset = generator.generate_dataset(size=20)
 
     # Export results
     try:
-        generator.export_json(dataset)
-        generator.export_csv(dataset)
+        generator.export_json(dataset, os.path.join(base_dir, "rw/gesis_pattern_based_dataset_with_entities.json"))
+        generator.export_csv(dataset, os.path.join(base_dir, "rw/gesis_pattern_based_dataset_with_entities.csv"))
     except Exception as e:
         print(f"Error exporting results: {e}")
 
     # Print statistics
     complexity_counts = Counter()
     pattern_counts = Counter()
+    entity_counts = Counter()
+    property_counts = Counter()
 
     for item in dataset:
         complexity_counts[item["complexity"]] += 1
         pattern_counts[item["pattern_type"]] += 1
+        entity_counts[len(item.get("entities", []))] += 1
+        property_counts[len(item.get("properties", []))] += 1
 
     print(f"\nGenerated {len(dataset)} total queries")
     print("\nComplexity distribution:")
@@ -956,14 +1258,26 @@ def main():
     print("\nTop 10 pattern types:")
     for pattern_type, count in pattern_counts.most_common(10):
         print(f"  {pattern_type}: {count}")
+        
+    print("\nEntity count distribution:")
+    for count, freq in sorted(entity_counts.items()):
+        print(f"  {count} entities: {freq} patterns")
+        
+    print("\nProperty count distribution:")
+    for count, freq in sorted(property_counts.items()):
+        print(f"  {count} properties: {freq} patterns")
 
-    # Show sample queries
-    print("\nSample generated queries:")
+    # Show sample queries with entity and property information
+    print("\nSample generated queries with entity and property information:")
     for complexity in ["basic", "intermediate", "advanced"]:
-        samples = [item for item in dataset if item["complexity"] == complexity][:2]
-        print(f"\n{complexity.capitalize()} queries:")
+        samples = [item for item in dataset if item["complexity"] == complexity][:1]
+        print(f"\n{complexity.capitalize()} query example:")
         for sample in samples:
             print(f"  {sample['id']}: {sample['sparql']}")
+            print(f"  Entities: {sample.get('entities', [])}")
+            print(f"  Properties: {sample.get('properties', [])}")
+            print(f"  Entity matches: {len(sample.get('entities_matches', []))}")
+            print(f"  Property matches: {len(sample.get('properties_matches', []))}")
 
 
 if __name__ == "__main__":
