@@ -1,0 +1,4387 @@
+[
+  {
+    "id": "q1",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-153804> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-153804",
+        "label": "Kooperation von Lehrkräften und pädagogischem Personal an Ganztagsschulen und die Gestaltung von Förderangeboten und der Übergangsempfehlung - KoLepP : Abschlussbericht Gesamtprojekt"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What is the library location of 'Kooperation von Lehrkräften und pädagogischem Personal an Ganztagsschulen und die Gestaltung von Förderangeboten und der Übergangsempfehlung - KoLepP : Abschlussbericht Gesamtprojekt'?",
+    "thoughts": [
+      "1. The question asks about the library location of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. First, I need to find the location entity related to the resource using the gesiskg:libraryLocation property.",
+      "4. Then I retrieve the human-readable name of the location using the schema:name property.",
+      "5. The query returns the name of the library location where the resource can be found."
+    ]
+  },
+  {
+    "id": "q2",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102231> schema:author ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102231",
+        "label": "Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      }
+    ],
+    "question": "What is the given name of the author of 'Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918'?",
+    "thoughts": [
+      "1. The question asks for the given name (first name) of the author of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. First, I need to find the author entity related to the publication.",
+      "4. Then I retrieve the given name of that author using the schema:givenName property.",
+      "5. The query returns the given name of the author of the publication."
+    ]
+  },
+  {
+    "id": "q3",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-49225_Burton_Scot> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-49225_Burton_Scot",
+        "label": "Burton, Scot"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What publications have 'Burton, Scot' as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications that have Burton, Scot as a contributor.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Burton, Scot as their contributor.",
+      "4. The query returns all publications where Burton, Scot is listed as a contributor."
+    ]
+  },
+  {
+    "id": "q4",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142655> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-142655",
+        "label": "Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics is 'Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR' about?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q5",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-153433> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-153433",
+        "label": "Does Subjective Well-Being Affect Political Participation?"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics is 'Does Subjective Well-Being Affect Political Participation?' about?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q6",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-58395> schema:author ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-58395",
+        "label": "The Central and Eastern Eurobarometer 1990 - 1997: TRENDS CEEB 1 - 8. ; The cumulative Data set is now available on CD-ROM"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Who are the authors of 'The Central and Eastern Eurobarometer 1990 - 1997: TRENDS CEEB 1 - 8. ; The cumulative Data set is now available on CD-ROM'?",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors that are associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ]
+  },
+  {
+    "id": "q7",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-60462> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-60462",
+        "label": "Revisiting classic qualitative studies"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Revisiting classic qualitative studies'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q8",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-138164> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-138164",
+        "label": "Support at any distance? : the role of location and prejudice in public oppsition to the \"Ground Zero Mosque\""
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the first name initials of the author of 'Support at any distance? : the role of location and prejudice in public oppsition to the \"Ground Zero Mosque\"'?",
+    "thoughts": [
+      "1. The question asks for the first name initials of the author of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. First, I need to find the author entity related to the publication.",
+      "4. Then I retrieve the first name initials of that author using the gesiskg:initsFirst property.",
+      "5. The query returns the first name initials of the author of the publication."
+    ]
+  },
+  {
+    "id": "q9",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-44495> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-44495",
+        "label": "Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What is the family name of a contributor to 'Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen'?",
+    "thoughts": [
+      "1. The question asks for the family name (last name) of a contributor to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. First, I need to find the contributor entity related to the publication.",
+      "4. Then I retrieve the family name of that contributor using the schema:familyName property.",
+      "5. The query returns the family name of a contributor to the publication."
+    ]
+  },
+  {
+    "id": "q10",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102231> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102231",
+        "label": "Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What is the full name of the author of 'Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918'?",
+    "thoughts": [
+      "1. The question asks for the full name of the author of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. First, I need to find the author entity related to the publication.",
+      "4. Then I retrieve the full name of that author using the schema:name property.",
+      "5. The query returns the full name of the author of the publication."
+    ]
+  },
+  {
+    "id": "q11",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-91738> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-91738",
+        "label": "Industriearbeit und Lehrerausbildung. Eine empirische Untersuchung zur politischen Bewußtseinsbildung künftiger Lehrer"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics is 'Industriearbeit und Lehrerausbildung. Eine empirische Untersuchung zur politischen Bewußtseinsbildung künftiger Lehrer' about?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q12",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-120387> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-120387",
+        "label": "The more, the better? : counterfactual evidence on the effect oof compulsory voting on the consistency of party choice"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'The more, the better? : counterfactual evidence on the effect oof compulsory voting on the consistency of party choice'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q13",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-139366> schema:publisher ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-139366",
+        "label": "Zwei Klassen und die Vielfalt des Konsums : Haushaltsbudgetierung bei abhängig Erwerbstätigen in Deutschland im ersten Drittel des 20. Jahrhunderts ; Band 1"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
+      }
+    ],
+    "question": "Who is the publisher of 'Zwei Klassen und die Vielfalt des Konsums : Haushaltsbudgetierung bei abhängig Erwerbstätigen in Deutschland im ersten Drittel des 20. Jahrhunderts ; Band 1'?",
+    "thoughts": [
+      "1. The question asks about the publisher of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their publishers via the schema:publisher property.",
+      "3. I need to find the publisher entity associated with this publication.",
+      "4. The query returns the publisher of the publication."
+    ]
+  },
+  {
+    "id": "q14",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-65753> schema:about ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-65753",
+        "label": "Caring for a dependent spouse : three case studies"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      }
+    ],
+    "question": "What are the names of the topics covered in 'Caring for a dependent spouse : three case studies'?",
+    "thoughts": [
+      "1. The question asks about the names of topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. First, I need to find the topic entities related to the publication.",
+      "4. Then I retrieve the human-readable names of those topics using the schema:name property.",
+      "5. The query returns the names of all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q15",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-81854> schema:author ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-81854",
+        "label": "Behinderte in den neuen Bundesländern"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Who are the authors of 'Behinderte in den neuen Bundesländern'?",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors that are associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ]
+  },
+  {
+    "id": "q16",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-147173> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-147173",
+        "label": "Außer Protesten nichts gewesen? : Das politische Potential der AfD"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      },
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      }
+    ],
+    "question": "What is the family name of a contributor to 'Außer Protesten nichts gewesen? : Das politische Potential der AfD'?",
+    "thoughts": [
+      "1. The question asks for the family name (last name) of a contributor to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. First, I need to find the contributor entity related to the publication.",
+      "4. Then I retrieve the family name of that contributor using the schema:familyName property.",
+      "5. The query returns the family name of a contributor to the publication."
+    ]
+  },
+  {
+    "id": "q17",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-80108_Neyer_Franz_Josef> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-80108_Neyer_Franz_Josef",
+        "label": "Neyer, Franz Josef"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What publications were authored by 'Neyer, Franz Josef'?",
+    "thoughts": [
+      "1. The question asks for publications authored by a specific person (Neyer, Franz Josef).",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all resources that have Neyer, Franz Josef as their author.",
+      "4. The query returns all publications authored by Neyer, Franz Josef."
+    ]
+  },
+  {
+    "id": "q18",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-77060_Wilke_J%C3%BCrgen> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-77060_Wilke_J%C3%BCrgen",
+        "label": "Wilke, Jürgen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What publications have 'Wilke, Jürgen' as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications that have Wilke, Jürgen as a contributor.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Wilke, Jürgen as their contributor.",
+      "4. The query returns all publications where Wilke, Jürgen is listed as a contributor."
+    ]
+  },
+  {
+    "id": "q19",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-88120> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-88120",
+        "label": "Datenbankorganisation. Arbeitsweise, Entwicklung und Einsatz von Datenbanksystemen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Datenbankorganisation. Arbeitsweise, Entwicklung und Einsatz von Datenbanksystemen'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q20",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-44495> schema:about ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-44495",
+        "label": "Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      }
+    ],
+    "question": "What are the names of the topics covered in 'Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen'?",
+    "thoughts": [
+      "1. The question asks about the names of topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. First, I need to find the topic entities related to the publication.",
+      "4. Then I retrieve the human-readable names of those topics using the schema:name property.",
+      "5. The query returns the names of all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q21",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-143149> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-143149",
+        "label": "Mobilität und demografische Entwicklung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Mobilität und demografische Entwicklung'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q22",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-150849> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150849",
+        "label": "Resonanz : eine Soziologie der Weltbeziehung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What is the full name of the author of 'Resonanz : eine Soziologie der Weltbeziehung'?",
+    "thoughts": [
+      "1. The question asks for the full name of the author of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. First, I need to find the author entity related to the publication.",
+      "4. Then I retrieve the full name of that author using the schema:name property.",
+      "5. The query returns the full name of the author of the publication."
+    ]
+  },
+  {
+    "id": "q23",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-51200> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-51200",
+        "label": "Die lokale und regionale Dimension des sozialen Wandels"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Die lokale und regionale Dimension des sozialen Wandels'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q24",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-44495> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-44495",
+        "label": "Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What is the mention ID of the author of 'Anonyme und nicht-anonyme postalische Bevölkerungsbefragungen'?",
+    "thoughts": [
+      "1. The question asks for the mention ID of the author of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. First, I need to find the author entity related to the publication.",
+      "4. Then I retrieve the mention ID of that author using the gesiskg:mentionID property.",
+      "5. The query returns the mention ID of the author of the publication."
+    ]
+  },
+  {
+    "id": "q25",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_ZA6250> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_ZA6250",
+        "label": "ZA6250"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      }
+    ],
+    "question": "What resources reference the bibliographic reference 'ZA6250'?",
+    "thoughts": [
+      "1. The question asks for resources that reference a specific bibliographic reference (ZA6250).",
+      "2. In the GESIS knowledge graph, resources are linked to references via the gesiskg:reference property.",
+      "3. I need to find all resources that reference ZA6250.",
+      "4. The query returns all resources that have a reference to ZA6250."
+    ]
+  },
+  {
+    "id": "q26",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/Diskurs_Kindheits-_und_Jugendforschung> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Diskurs_Kindheits-_und_Jugendforschung",
+        "label": "Diskurs Kindheits- und Jugendforschung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "What publications are part of the journal 'Diskurs Kindheits- und Jugendforschung'?",
+    "thoughts": [
+      "1. The question asks for publications that are part of a specific journal (Diskurs Kindheits- und Jugendforschung).",
+      "2. In the GESIS knowledge graph, publications are linked to journals via the schema:isPartOf property.",
+      "3. I need to find all resources that are part of this journal.",
+      "4. The query returns all publications that are part of Diskurs Kindheits- und Jugendforschung."
+    ]
+  },
+  {
+    "id": "q27",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-115571_Smith_Nicola> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-115571_Smith_Nicola",
+        "label": "Smith, Nicola"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What publications have 'Smith, Nicola' as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications that have Smith, Nicola as a contributor.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Smith, Nicola as their contributor.",
+      "4. The query returns all publications where Smith, Nicola is listed as a contributor."
+    ]
+  },
+  {
+    "id": "q28",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-65673> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-65673",
+        "label": "The changning institutional setting and social problems of the Israeli educational system"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What is the library location of 'The changning institutional setting and social problems of the Israeli educational system'?",
+    "thoughts": [
+      "1. The question asks about the library location of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. First, I need to find the location entity related to the resource using the gesiskg:libraryLocation property.",
+      "4. Then I retrieve the human-readable name of the location using the schema:name property.",
+      "5. The query returns the name of the library location where the resource can be found."
+    ]
+  },
+  {
+    "id": "q29",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-147133> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-147133",
+        "label": "Knowledge transfer as intercultural translation : the German Reunification as a 'lesson' for Korea? (Forum)"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Knowledge transfer as intercultural translation : the German Reunification as a 'lesson' for Korea? (Forum)'?",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors that are associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ]
+  },
+  {
+    "id": "q30",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-153804> schema:contributor ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-153804",
+        "label": "Kooperation von Lehrkräften und pädagogischem Personal an Ganztagsschulen und die Gestaltung von Förderangeboten und der Übergangsempfehlung - KoLepP : Abschlussbericht Gesamtprojekt"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What is the given name of a contributor to 'Kooperation von Lehrkräften und pädagogischem Personal an Ganztagsschulen und die Gestaltung von Förderangeboten und der Übergangsempfehlung - KoLepP : Abschlussbericht Gesamtprojekt'?",
+    "thoughts": [
+      "1. The question asks for the given name (first name) of a contributor to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. First, I need to find the contributor entity related to the publication.",
+      "4. Then I retrieve the given name of that contributor using the schema:givenName property.",
+      "5. The query returns the given name of a contributor to the publication."
+    ]
+  },
+  {
+    "id": "q31",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-150849> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150849",
+        "label": "Resonanz : eine Soziologie der Weltbeziehung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Resonanz : eine Soziologie der Weltbeziehung'?",
+    "thoughts": [
+      "1. The question asks for the contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all entities that are contributors to 'Resonanz : eine Soziologie der Weltbeziehung'.",
+      "4. I use the publication's URI (https://data.gesis.org/gesiskg/resource/gesis-bib-150849) to query for contributors.",
+      "5. The query returns all entities that are contributors to this publication."
+    ]
+  },
+  {
+    "id": "q32",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-59690> schema:provider ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-59690",
+        "label": "CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "What is the name of the provider for 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'?",
+    "thoughts": [
+      "1. The question asks for the name of the provider of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their providers via the schema:provider property.",
+      "3. The provider entity has a name property that contains its label or official name.",
+      "4. First, I need to find the provider entity related to 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'.",
+      "5. Then I retrieve the name of this provider entity using the schema:name property.",
+      "6. The query returns the name of the provider of this CD-ROM resource."
+    ]
+  },
+  {
+    "id": "q33",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-59690> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-59690",
+        "label": "CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the family names of contributors to the 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'?",
+    "thoughts": [
+      "1. The question asks for the family names of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their contributors via the schema:contributor property.",
+      "3. Each contributor entity has a family name stored in the schema:familyName property.",
+      "4. First, I need to find all contributor entities related to 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'.",
+      "5. Then I retrieve the family name of each contributor using the schema:familyName property.",
+      "6. The query returns the family names of all contributors to this resource."
+    ]
+  },
+  {
+    "id": "q34",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-85030> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-85030",
+        "label": "Partizipation, Interessenvermittlung und politische Gleichheit. Nicht indentierte Folgen der partizipatorischen Revolution"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What are the topics covered in 'Partizipation, Interessenvermittlung und politische Gleichheit. Nicht indentierte Folgen der partizipatorischen Revolution'?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topic entities that the publication 'Partizipation, Interessenvermittlung und politische Gleichheit' is about.",
+      "4. I use the publication's URI to query for topics linked via the schema:about property.",
+      "5. The query returns all entities that represent topics covered in this publication."
+    ]
+  },
+  {
+    "id": "q35",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Studie> . ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden gesiskg:sourceInfo ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS-Studie",
+        "label": "GESIS-Studie"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "gesiskg:sourceInfo",
+        "label": "source info"
+      }
+    ],
+    "question": "What is the source information for resources about 'GESIS-Studie' located in 'Köln Umfrageergebnisse'?",
+    "thoughts": [
+      "1. The question asks for source information about resources that meet two criteria.",
+      "2. In the GESIS knowledge graph, resources can be about certain topics (schema:about) and have physical locations (gesiskg:libraryLocation).",
+      "3. I need to find resources that are about 'GESIS-Studie' AND are located in 'Köln Umfrageergebnisse'.",
+      "4. For each matching resource, I retrieve the source information using the gesiskg:sourceInfo property.",
+      "5. The query returns the source information for all resources that match both criteria."
+    ]
+  },
+  {
+    "id": "q36",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-76468_Schwartz_Pepper> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-76468_Schwartz_Pepper",
+        "label": "Schwartz, Pepper"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Which publications have Pepper Schwartz as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications to which a specific person has contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all publications that have 'Schwartz, Pepper' as a contributor.",
+      "4. I use the inverse relationship of schema:contributor to find publications where this person is listed as a contributor.",
+      "5. The query returns all publications to which Pepper Schwartz has contributed."
+    ]
+  },
+  {
+    "id": "q37",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-146260_Vala_Jorge> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-146260_Vala_Jorge",
+        "label": "Vala, Jorge"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Which publications have Jorge Vala as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications to which a specific person has contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all publications that have 'Vala, Jorge' as a contributor.",
+      "4. I use the inverse relationship of schema:contributor to find publications where this person is listed as a contributor.",
+      "5. The query returns all publications to which Jorge Vala has contributed."
+    ]
+  },
+  {
+    "id": "q38",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-46144> schema:author ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-46144",
+        "label": "The JAMA Controversy and the Meaning of Sex"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Who are the authors of 'The JAMA Controversy and the Meaning of Sex'?",
+    "thoughts": [
+      "1. The question asks for the authors of a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all entities that are authors of 'The JAMA Controversy and the Meaning of Sex'.",
+      "4. I use the publication's URI to query for authors linked via the schema:author property.",
+      "5. The query returns all entities that are authors of this publication."
+    ]
+  },
+  {
+    "id": "q39",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-37487> schema:provider ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-37487",
+        "label": "Von Adamo bis Zadek - Kulturangebote in Fersehprogrammen. Ausgewählte Ergebnisse einer Inhaltsanalyse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "What is the name of the provider for 'Von Adamo bis Zadek - Kulturangebote in Fersehprogrammen. Ausgewählte Ergebnisse einer Inhaltsanalyse'?",
+    "thoughts": [
+      "1. The question asks for the name of the provider of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their providers via the schema:provider property.",
+      "3. The provider entity has a name property that contains its label or official name.",
+      "4. First, I need to find the provider entity related to this publication about cultural offerings in television programs.",
+      "5. Then I retrieve the name of this provider entity using the schema:name property.",
+      "6. The query returns the name of the provider of this resource."
+    ]
+  },
+  {
+    "id": "q40",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142655> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-142655",
+        "label": "Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What are the topics covered in 'Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR'?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication about cultural life in the GDR.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topic entities that this publication about cultural development problems in the GDR is about.",
+      "4. I use the publication's URI to query for topics linked via the schema:about property.",
+      "5. The query returns all entities that represent topics covered in this publication."
+    ]
+  },
+  {
+    "id": "q41",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-93811> schema:isPartOf ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-93811",
+        "label": "How to ask survey questions"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "What collection or series is 'How to ask survey questions' a part of?",
+    "thoughts": [
+      "1. The question asks for the larger collection or series that a specific publication belongs to.",
+      "2. In the GESIS knowledge graph, publications can be part of larger collections or series, represented by the schema:isPartOf property.",
+      "3. I need to find what collection or series the publication 'How to ask survey questions' is a part of.",
+      "4. I use the publication's URI to query for entities it is part of via the schema:isPartOf property.",
+      "5. The query returns the collection or series that this publication belongs to."
+    ]
+  },
+  {
+    "id": "q42",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102071",
+        "label": "Statistical design for research"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the first initials of contributors to 'Statistical design for research'?",
+    "thoughts": [
+      "1. The question asks for the first initials of contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Each contributor entity has first initials stored in the gesiskg:initsFirst property.",
+      "4. First, I need to find all contributor entities related to 'Statistical design for research'.",
+      "5. Then I retrieve the first initials of each contributor using the gesiskg:initsFirst property.",
+      "6. The query returns the first initials of all contributors to this publication."
+    ]
+  },
+  {
+    "id": "q43",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-50949> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-50949",
+        "label": "Tales from the grave : organizations accounts of their own demise"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the mention IDs of contributors to 'Tales from the grave : organizations accounts of their own demise'?",
+    "thoughts": [
+      "1. The question asks for the mention IDs of contributors to a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Each contributor entity has a mention ID stored in the gesiskg:mentionID property.",
+      "4. First, I need to find all contributor entities related to 'Tales from the grave : organizations accounts of their own demise'.",
+      "5. Then I retrieve the mention ID of each contributor using the gesiskg:mentionID property.",
+      "6. The query returns the mention IDs of all contributors to this publication."
+    ]
+  },
+  {
+    "id": "q44",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-74862> schema:author ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-74862",
+        "label": "Gewerbeanzeigen 2006 - Gründungen und Schließungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Who are the authors of 'Gewerbeanzeigen 2006 - Gründungen und Schließungen'?",
+    "thoughts": [
+      "1. The question asks for the authors of a specific publication about business registrations in 2006.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all entities that are authors of 'Gewerbeanzeigen 2006 - Gründungen und Schließungen'.",
+      "4. I use the publication's URI to query for authors linked via the schema:author property.",
+      "5. The query returns all entities that are authors of this publication."
+    ]
+  },
+  {
+    "id": "q45",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-129332_Bruce_Steve> . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Which publications have Steve Bruce as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications to which a specific person has contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all publications that have 'Bruce, Steve' as a contributor.",
+      "4. I use the inverse relationship of schema:contributor to find publications where this person is listed as a contributor.",
+      "5. The query returns all publications to which Steve Bruce has contributed."
+    ]
+  },
+  {
+    "id": "q46",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-49473_Hoge_Dean> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-49473_Hoge_Dean",
+        "label": "Hoge, Dean"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Which publications have Dean Hoge as an author?",
+    "thoughts": [
+      "1. The question asks for publications authored by a specific person.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all publications that have 'Hoge, Dean' as an author.",
+      "4. I use the inverse relationship of schema:author to find publications where this person is listed as an author.",
+      "5. The query returns all publications authored by Dean Hoge."
+    ]
+  },
+  {
+    "id": "q47",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-679> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-679",
+        "label": "Chancengleichheit durch Personalpolitik : Gleichstellung von Frauen und Männern in Unternehmen und Verwaltungen ; rechtliche Regelungen, Problemanalysen, Lösungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What are the topics covered in 'Chancengleichheit durch Personalpolitik : Gleichstellung von Frauen und Männern in Unternehmen und Verwaltungen'?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication about gender equality through personnel policy.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topic entities that this publication about equal opportunities is about.",
+      "4. I use the publication's URI to query for topics linked via the schema:about property.",
+      "5. The query returns all entities that represent topics covered in this publication."
+    ]
+  },
+  {
+    "id": "q48",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-70347_Schoen_Harald> . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Which publications have Harald Schoen as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications to which a specific person has contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all publications that have 'Schoen, Harald' as a contributor.",
+      "4. I use the inverse relationship of schema:contributor to find publications where this person is listed as a contributor.",
+      "5. The query returns all publications to which Harald Schoen has contributed."
+    ]
+  },
+  {
+    "id": "q49",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-16016> schema:provider ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-16016",
+        "label": "Time at a Premium for Many Americans. Young People Feel the Pressures Most"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "What is the name of the provider for 'Time at a Premium for Many Americans. Young People Feel the Pressures Most'?",
+    "thoughts": [
+      "1. The question asks for the name of the provider of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their providers via the schema:provider property.",
+      "3. The provider entity has a name property that contains its label or official name.",
+      "4. First, I need to find the provider entity related to the publication 'Time at a Premium for Many Americans'.",
+      "5. Then I retrieve the name of this provider entity using the schema:name property.",
+      "6. The query returns the name of the provider of this resource."
+    ]
+  },
+  {
+    "id": "q50",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/Wirtschaft_und_Statistik%2C_2007%2C_Nr._6%2C_S._567-576.> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Wirtschaft_und_Statistik%2C_2007%2C_Nr._6%2C_S._567-576.",
+        "label": "Wirtschaft und Statistik, 2007, Nr. 6, S. 567-576."
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "Which publications are part of 'Wirtschaft und Statistik, 2007, Nr. 6, S. 567-576'?",
+    "thoughts": [
+      "1. The question asks for publications that are part of a specific journal issue.",
+      "2. In the GESIS knowledge graph, publications can be part of larger collections or journal issues, represented by the schema:isPartOf property.",
+      "3. I need to find all publications that are part of 'Wirtschaft und Statistik, 2007, Nr. 6, S. 567-576.'",
+      "4. I use the inverse relationship of schema:isPartOf to find publications that are part of this journal issue.",
+      "5. The query returns all publications that are included in this specific issue of Wirtschaft und Statistik."
+    ]
+  },
+  {
+    "id": "q51",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-44946_Haque_M_Shamsul> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-44946_Haque_M_Shamsul",
+        "label": "Haque, M. Shamsul"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "Which publications have M. Shamsul Haque as an author?",
+    "thoughts": [
+      "1. The question asks for publications authored by a specific person.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all publications that have 'Haque, M. Shamsul' as an author.",
+      "4. I use the inverse relationship of schema:author to find publications where this person is listed as an author.",
+      "5. The query returns all publications authored by M. Shamsul Haque."
+    ]
+  },
+  {
+    "id": "q52",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-92800_Clarke_Harold_D> . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Which publications have Harold D. Clarke as a contributor?",
+    "thoughts": [
+      "1. The question asks for publications to which a specific person has contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all publications that have 'Clarke, Harold D.' as a contributor.",
+      "4. I use the inverse relationship of schema:contributor to find publications where this person is listed as a contributor.",
+      "5. The query returns all publications to which Harold D. Clarke has contributed."
+    ]
+  },
+  {
+    "id": "q53",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:about <https://data.gesis.org/gesiskg/resource/FDZ_International> . ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/FDZ_International",
+        "label": "FDZ International"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What are the names of resources about 'FDZ International' located in 'Köln Umfrageergebnisse'?",
+    "thoughts": [
+      "1. The question asks for the names of resources that meet two criteria.",
+      "2. In the GESIS knowledge graph, resources can be about certain topics (schema:about) and have physical locations (gesiskg:libraryLocation).",
+      "3. I need to find resources that are about 'FDZ International' AND are located in 'Köln Umfrageergebnisse'.",
+      "4. For each matching resource, I retrieve its name using the schema:name property.",
+      "5. The query returns the names of all resources that match both criteria."
+    ]
+  },
+  {
+    "id": "q54",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-59690> schema:author ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-59690",
+        "label": "CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      }
+    ],
+    "question": "What are the given names of authors of 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'?",
+    "thoughts": [
+      "1. The question asks for the given names (first names) of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their authors via the schema:author property.",
+      "3. Each author entity has a given name stored in the schema:givenName property.",
+      "4. First, I need to find all author entities related to 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'.",
+      "5. Then I retrieve the given name of each author using the schema:givenName property.",
+      "6. The query returns the given names of all authors of this resource."
+    ]
+  },
+  {
+    "id": "q55",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-87144> schema:provider ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-87144",
+        "label": "Religious Beliefs and Practices in Contemporary Europe"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "What is the name of the provider for 'Religious Beliefs and Practices in Contemporary Europe'?",
+    "thoughts": [
+      "1. The question asks for the name of the provider of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their providers via the schema:provider property.",
+      "3. The provider entity has a name property that contains its label or official name.",
+      "4. First, I need to find the provider entity related to the publication 'Religious Beliefs and Practices in Contemporary Europe'.",
+      "5. Then I retrieve the name of this provider entity using the schema:name property.",
+      "6. The query returns the name of the provider of this resource."
+    ]
+  },
+  {
+    "id": "q56",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Studie> . ?hidden gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer> . ?hidden schema:inLanguage ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS-Studie",
+        "label": "GESIS-Studie"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer",
+        "label": "Eurobarometer"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:inLanguage",
+        "label": "in language"
+      },
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      }
+    ],
+    "question": "What languages are used in resources about 'GESIS-Studie' that reference 'Eurobarometer'?",
+    "thoughts": [
+      "1. The question asks for the languages of resources that meet two criteria.",
+      "2. In the GESIS knowledge graph, resources can be about certain topics (schema:about), have references (gesiskg:reference), and be in specific languages (schema:inLanguage).",
+      "3. I need to find resources that are about 'GESIS-Studie' AND reference 'Eurobarometer'.",
+      "4. For each matching resource, I retrieve the language using the schema:inLanguage property.",
+      "5. The query returns the languages of all resources that match both criteria."
+    ]
+  },
+  {
+    "id": "q57",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/Datenschutz_und_Datensicherung%2C_1989%2C_Nr._6%2C_S._299.> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Datenschutz_und_Datensicherung%2C_1989%2C_Nr._6%2C_S._299.",
+        "label": "Datenschutz und Datensicherung, 1989, Nr. 6, S. 299."
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "Which publications are part of 'Datenschutz und Datensicherung, 1989, Nr. 6, S. 299'?",
+    "thoughts": [
+      "1. The question asks for publications that are part of a specific journal issue.",
+      "2. In the GESIS knowledge graph, publications can be part of larger collections or journal issues, represented by the schema:isPartOf property.",
+      "3. I need to find all publications that are part of 'Datenschutz und Datensicherung, 1989, Nr. 6, S. 299.'",
+      "4. I use the inverse relationship of schema:isPartOf to find publications that are part of this journal issue.",
+      "5. The query returns all publications that are included in this specific issue of the journal Datenschutz und Datensicherung."
+    ]
+  },
+  {
+    "id": "q58",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-75465> schema:about ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-75465",
+        "label": "Corporate Demography and Income Inequality"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      }
+    ],
+    "question": "What are the names of topics covered in 'Corporate Demography and Income Inequality'?",
+    "thoughts": [
+      "1. The question asks for the names of topics covered in a specific publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. Each topic entity has a name stored in the schema:name property.",
+      "4. First, I need to find all topic entities that 'Corporate Demography and Income Inequality' is about.",
+      "5. Then I retrieve the name of each topic using the schema:name property.",
+      "6. The query returns the names of all topics covered in this publication."
+    ]
+  },
+  {
+    "id": "q59",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-152790> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-152790",
+        "label": "Wetter im Wandel : wie der Klimawandel unser Wetter der Zukunft beeinflusst"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Wetter im Wandel : wie der Klimawandel unser Wetter der Zukunft beeinflusst'?",
+    "thoughts": [
+      "1. The question asks for the contributors to a specific publication about climate change and weather.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all entities that are contributors to 'Wetter im Wandel : wie der Klimawandel unser Wetter der Zukunft beeinflusst'.",
+      "4. I use the publication's URI to query for contributors linked via the schema:contributor property.",
+      "5. The query returns all entities that are contributors to this publication."
+    ]
+  },
+  {
+    "id": "q60",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-81854> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-81854",
+        "label": "Behinderte in den neuen Bundesländern"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What are the topics covered in 'Behinderte in den neuen Bundesländern'?",
+    "thoughts": [
+      "1. The question asks about the topics or subjects covered in a specific publication about people with disabilities in the new federal states of Germany.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topic entities that the publication 'Behinderte in den neuen Bundesländern' is about.",
+      "4. I use the publication's URI to query for topics linked via the schema:about property.",
+      "5. The query returns all entities that represent topics covered in this publication."
+    ]
+  },
+  {
+    "id": "q61",
+    "sparql": "SELECT ?target WHERE { ?target schema:isPartOf <https://data.gesis.org/gesiskg/resource/American_Sociological_Review> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/American_Sociological_Review",
+        "label": "American Sociological Review"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "What resources are part of the American Sociological Review?",
+    "thoughts": [
+      "1. The question asks for resources that are part of the American Sociological Review.",
+      "2. In the GESIS knowledge graph, resources are linked to their parent publications via the schema:isPartOf property.",
+      "3. I need to find all resources that have American Sociological Review as their parent publication.",
+      "4. The query returns all resources that are part of the American Sociological Review."
+    ]
+  },
+  {
+    "id": "q62",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-37487> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-37487",
+        "label": "Von Adamo bis Zadek - Kulturangebote in Fersehprogrammen. Ausgewählte Ergebnisse einer Inhaltsanalyse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the first initials of the contributors to 'Von Adamo bis Zadek - Kulturangebote in Fersehprogrammen'?",
+    "thoughts": [
+      "1. The question asks for the first initials of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' first initials are accessed via the gesiskg:initsFirst property.",
+      "4. I need to find all contributors to the specified resource and retrieve their first initials.",
+      "5. The query returns the first initials of all contributors to the resource."
+    ]
+  },
+  {
+    "id": "q63",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-87144> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-87144",
+        "label": "Religious Beliefs and Practices in Contemporary Europe"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the family names of contributors to 'Religious Beliefs and Practices in Contemporary Europe'?",
+    "thoughts": [
+      "1. The question asks for the family names of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' family names are accessed via the schema:familyName property.",
+      "4. I need to find all contributors to the specified resource and retrieve their family names.",
+      "5. The query returns the family names of all contributors to 'Religious Beliefs and Practices in Contemporary Europe'."
+    ]
+  },
+  {
+    "id": "q64",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Gleichstellung> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Gleichstellung",
+        "label": "Gleichstellung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What resources are about 'Gleichstellung'?",
+    "thoughts": [
+      "1. The question asks for resources that are about the topic 'Gleichstellung'.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. I need to find all resources that have Gleichstellung as their topic.",
+      "4. The query returns all resources that are about Gleichstellung."
+    ]
+  },
+  {
+    "id": "q65",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_083-108> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_083-108",
+        "label": "Köln 083-108"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What resources are located in 'Köln 083-108'?",
+    "thoughts": [
+      "1. The question asks for resources that are located at a specific library location 'Köln 083-108'.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find all resources that have Köln 083-108 as their library location.",
+      "4. The query returns all resources located at Köln 083-108."
+    ]
+  },
+  {
+    "id": "q66",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-138164> schema:isPartOf ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-138164",
+        "label": "Support at any distance? : the role of location and prejudice in public oppsition to the \"Ground Zero Mosque\""
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "What publication contains the article 'Support at any distance? : the role of location and prejudice in public opposition to the \"Ground Zero Mosque\"'?",
+    "thoughts": [
+      "1. The question asks for the publication that contains a specific article.",
+      "2. In the GESIS knowledge graph, articles are linked to their parent publications via the schema:isPartOf property.",
+      "3. I need to find what publication contains the specified article.",
+      "4. The query returns the publication that contains 'Support at any distance? : the role of location and prejudice in public opposition to the \"Ground Zero Mosque\"'."
+    ]
+  },
+  {
+    "id": "q67",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102231> schema:author ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102231",
+        "label": "Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      }
+    ],
+    "question": "What are the family names of the authors of 'Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918'?",
+    "thoughts": [
+      "1. The question asks for the family names of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Authors' family names are accessed via the schema:familyName property.",
+      "4. I need to find all authors of the specified resource and retrieve their family names.",
+      "5. The query returns the family names of all authors of 'Krisenzonen einer Demokratie. Gewalt, Streik und Konfliktunterdrückung in Österreich seit 1918'."
+    ]
+  },
+  {
+    "id": "q68",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-131856> schema:about ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      }
+    ],
+    "question": "What are the names of topics that the resource with ID 'gesis-bib-131856' is about?",
+    "thoughts": [
+      "1. The question asks for the names of topics that a specific resource is about.",
+      "2. In the GESIS knowledge graph, resources are linked to topics via the schema:about property.",
+      "3. Topic names are accessed via the schema:name property.",
+      "4. I need to find all topics that the resource with ID 'gesis-bib-131856' is about and retrieve their names.",
+      "5. The query returns the names of all topics that the specified resource is about."
+    ]
+  },
+  {
+    "id": "q69",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-42619> schema:isPartOf ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-42619",
+        "label": "Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ],
+    "question": "What is the name of the publication that contains 'Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen'?",
+    "thoughts": [
+      "1. The question asks for the name of the publication containing a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their parent publications via the schema:isPartOf property.",
+      "3. Publication names are accessed via the schema:name property.",
+      "4. I need to find the publication that contains the specified resource and retrieve its name.",
+      "5. The query returns the name of the publication containing 'Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen'."
+    ]
+  },
+  {
+    "id": "q70",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/FDZ_International> . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/FDZ_International",
+        "label": "FDZ International"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS",
+        "label": "GESIS"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "What are the names of resources provided by GESIS that are about FDZ International?",
+    "thoughts": [
+      "1. The question asks for the names of resources that are provided by GESIS and are about FDZ International.",
+      "2. In the GESIS knowledge graph, resources are linked to providers via the schema:provider property.",
+      "3. Resources are linked to topics via the schema:about property.",
+      "4. Resource names are accessed via the schema:name property.",
+      "5. I need to find all resources that have GESIS as their provider and FDZ International as their topic, then retrieve their names.",
+      "6. The query returns the names of all resources provided by GESIS that are about FDZ International."
+    ]
+  },
+  {
+    "id": "q71",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Instrumentarium> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Instrumentarium",
+        "label": "Instrumentarium"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What resources are about 'Instrumentarium'?",
+    "thoughts": [
+      "1. The question asks for resources that are about the topic 'Instrumentarium'.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. I need to find all resources that have Instrumentarium as their topic.",
+      "4. The query returns all resources that are about Instrumentarium."
+    ]
+  },
+  {
+    "id": "q72",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-85019> gesiskg:libraryLocation ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-85019",
+        "label": "Die territoriale Differenzierung der Werte zwischen Regionalität, Nationalität und Supranationalität : der italienische und deutsche Kulturraum in Europa"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What is the library location of 'Die territoriale Differenzierung der Werte zwischen Regionalität, Nationalität und Supranationalität'?",
+    "thoughts": [
+      "1. The question asks for the library location of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find the library location of the specified resource.",
+      "4. The query returns the library location of 'Die territoriale Differenzierung der Werte zwischen Regionalität, Nationalität und Supranationalität : der italienische und deutsche Kulturraum in Europa'."
+    ]
+  },
+  {
+    "id": "q73",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102021> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102021",
+        "label": "Die gesellschaftspolitische Aufgabe der Bibliothek : Gegenwartsprobleme und Zukunftsperspektiven ; Bibliothekskongreß Hannover 1983"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics is 'Die gesellschaftspolitische Aufgabe der Bibliothek' about?",
+    "thoughts": [
+      "1. The question asks for the topics that a specific resource is about.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that the specified resource is about.",
+      "4. The query returns all topics that 'Die gesellschaftspolitische Aufgabe der Bibliothek : Gegenwartsprobleme und Zukunftsperspektiven ; Bibliothekskongreß Hannover 1983' is about."
+    ]
+  },
+  {
+    "id": "q74",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-131856> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the first initials of the authors of the resource with ID 'gesis-bib-131856'?",
+    "thoughts": [
+      "1. The question asks for the first initials of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Authors' first initials are accessed via the gesiskg:initsFirst property.",
+      "4. I need to find all authors of the resource with ID 'gesis-bib-131856' and retrieve their first initials.",
+      "5. The query returns the first initials of all authors of the specified resource."
+    ]
+  },
+  {
+    "id": "q75",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102071",
+        "label": "Statistical design for research"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the first initials of the contributors to 'Statistical design for research'?",
+    "thoughts": [
+      "1. The question asks for the first initials of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' first initials are accessed via the gesiskg:initsFirst property.",
+      "4. I need to find all contributors to the specified resource and retrieve their first initials.",
+      "5. The query returns the first initials of all contributors to 'Statistical design for research'."
+    ]
+  },
+  {
+    "id": "q76",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-50949> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-50949",
+        "label": "Tales from the grave : organizations accounts of their own demise"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the names of the authors of 'Tales from the grave : organizations accounts of their own demise'?",
+    "thoughts": [
+      "1. The question asks for the names of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Author names are accessed via the schema:name property.",
+      "4. I need to find all authors of the specified resource and retrieve their names.",
+      "5. The query returns the names of all authors of 'Tales from the grave : organizations accounts of their own demise'."
+    ]
+  },
+  {
+    "id": "q77",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Umfrageergebnisse> . ?hidden schema:inLanguage ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Umfrageergebnisse",
+        "label": "Umfrageergebnisse"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "schema:inLanguage",
+        "label": "in language"
+      }
+    ],
+    "question": "In what languages are resources about 'Umfrageergebnisse' located in 'Köln Umfrageergebnisse'?",
+    "thoughts": [
+      "1. The question asks for the languages of resources that are about Umfrageergebnisse and located in Köln Umfrageergebnisse.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. Resources are linked to topics via the schema:about property.",
+      "4. Resource languages are specified via the schema:inLanguage property.",
+      "5. I need to find all resources that have Köln Umfrageergebnisse as their library location and Umfrageergebnisse as their topic, then retrieve their languages.",
+      "6. The query returns the languages of resources about Umfrageergebnisse located in Köln Umfrageergebnisse."
+    ]
+  },
+  {
+    "id": "q78",
+    "sparql": "SELECT ?target WHERE { ?target schema:publisher <https://data.gesis.org/gesiskg/resource/Vandenhoeck_%26_Ruprecht> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Vandenhoeck_%26_Ruprecht",
+        "label": "Vandenhoeck & Ruprecht"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
+      }
+    ],
+    "question": "What resources are published by Vandenhoeck & Ruprecht?",
+    "thoughts": [
+      "1. The question asks for resources that are published by Vandenhoeck & Ruprecht.",
+      "2. In the GESIS knowledge graph, resources are linked to their publishers via the schema:publisher property.",
+      "3. I need to find all resources that have Vandenhoeck & Ruprecht as their publisher.",
+      "4. The query returns all resources published by Vandenhoeck & Ruprecht."
+    ]
+  },
+  {
+    "id": "q79",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142655> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-142655",
+        "label": "Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR'?",
+    "thoughts": [
+      "1. The question asks for the contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors to the specified resource.",
+      "4. The query returns all contributors to 'Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR'."
+    ]
+  },
+  {
+    "id": "q80",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Studie> . ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden schema:datePublished ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS-Studie",
+        "label": "GESIS-Studie"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS",
+        "label": "GESIS"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "When were resources about GESIS-Studie provided by GESIS published?",
+    "thoughts": [
+      "1. The question asks for the publication dates of resources that are about GESIS-Studie and provided by GESIS.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. Resources are linked to their providers via the schema:provider property.",
+      "4. Publication dates are specified via the schema:datePublished property.",
+      "5. I need to find all resources that have GESIS-Studie as their topic and GESIS as their provider, then retrieve their publication dates.",
+      "6. The query returns the publication dates of resources about GESIS-Studie provided by GESIS."
+    ]
+  },
+  {
+    "id": "q81",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-72480_Wagenf%C3%BChr_Horst> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-72480_Wagenf%C3%BChr_Horst",
+        "label": "Wagenführ, Horst"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What resources have Wagenführ, Horst as a contributor?",
+    "thoughts": [
+      "1. The question asks for resources that have Wagenführ, Horst as a contributor.",
+      "2. In the GESIS knowledge graph, resources are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Wagenführ, Horst as a contributor.",
+      "4. The query returns all resources to which Wagenführ, Horst has contributed."
+    ]
+  },
+  {
+    "id": "q82",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-76468> schema:contributor ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-76468",
+        "label": "Sociological Research on Male and Female Homosexuality"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the given names of contributors to 'Sociological Research on Male and Female Homosexuality'?",
+    "thoughts": [
+      "1. The question asks for the given names of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' given names are accessed via the schema:givenName property.",
+      "4. I need to find all contributors to the specified resource and retrieve their given names.",
+      "5. The query returns the given names of all contributors to 'Sociological Research on Male and Female Homosexuality'."
+    ]
+  },
+  {
+    "id": "q83",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Konsumverhalten> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Konsumverhalten",
+        "label": "Konsumverhalten"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What resources are about 'Konsumverhalten'?",
+    "thoughts": [
+      "1. The question asks for resources that are about the topic 'Konsumverhalten'.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. I need to find all resources that have Konsumverhalten as their topic.",
+      "4. The query returns all resources that are about Konsumverhalten."
+    ]
+  },
+  {
+    "id": "q84",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Studie> . ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:inLanguage ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS-Studie",
+        "label": "GESIS-Studie"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "schema:inLanguage",
+        "label": "in language"
+      }
+    ],
+    "question": "In what languages are resources about GESIS-Studie located in Köln Umfrageergebnisse?",
+    "thoughts": [
+      "1. The question asks for the languages of resources that are about GESIS-Studie and located in Köln Umfrageergebnisse.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. Resources are linked to topics via the schema:about property.",
+      "4. Resource languages are specified via the schema:inLanguage property.",
+      "5. I need to find all resources that have Köln Umfrageergebnisse as their library location and GESIS-Studie as their topic, then retrieve their languages.",
+      "6. The query returns the languages of resources about GESIS-Studie located in Köln Umfrageergebnisse."
+    ]
+  },
+  {
+    "id": "q85",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Methodik> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Methodik",
+        "label": "Methodik"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What resources are about 'Methodik'?",
+    "thoughts": [
+      "1. The question asks for resources that are about the topic 'Methodik'.",
+      "2. In the GESIS knowledge graph, resources are linked to their topics via the schema:about property.",
+      "3. I need to find all resources that have Methodik as their topic.",
+      "4. The query returns all resources that are about Methodik."
+    ]
+  },
+  {
+    "id": "q86",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-101041> schema:editor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-101041",
+        "label": "Research methods in the behavioral sciences"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:editor",
+        "label": "editor"
+      }
+    ],
+    "question": "Who are the editors of 'Research methods in the behavioral sciences'?",
+    "thoughts": [
+      "1. The question asks for the editors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to their editors via the schema:editor property.",
+      "3. I need to find all editors of the specified resource.",
+      "4. The query returns all editors of 'Research methods in the behavioral sciences'."
+    ]
+  },
+  {
+    "id": "q87",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-83622_Volkens_Andrea> . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What resources were authored by Volkens, Andrea?",
+    "thoughts": [
+      "1. The question asks for resources that were authored by Volkens, Andrea.",
+      "2. In the GESIS knowledge graph, resources are linked to their authors via the schema:author property.",
+      "3. I need to find all resources that have Volkens, Andrea as their author.",
+      "4. The query returns all resources authored by Volkens, Andrea."
+    ]
+  },
+  {
+    "id": "q88",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-75465> schema:author ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-75465",
+        "label": "Corporate Demography and Income Inequality"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      }
+    ],
+    "question": "What are the family names of the authors of 'Corporate Demography and Income Inequality'?",
+    "thoughts": [
+      "1. The question asks for the family names of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Authors' family names are accessed via the schema:familyName property.",
+      "4. I need to find all authors of the specified resource and retrieve their family names.",
+      "5. The query returns the family names of all authors of 'Corporate Demography and Income Inequality'."
+    ]
+  },
+  {
+    "id": "q89",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-97575> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97575",
+        "label": "Offene Fragen im Generationendiskurs : zum Realitätsgehalt gängiger Konzepte"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the mention IDs of the authors of 'Offene Fragen im Generationendiskurs'?",
+    "thoughts": [
+      "1. The question asks for the mention IDs of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Authors' mention IDs are accessed via the gesiskg:mentionID property.",
+      "4. I need to find all authors of the specified resource and retrieve their mention IDs.",
+      "5. The query returns the mention IDs of all authors of 'Offene Fragen im Generationendiskurs : zum Realitätsgehalt gängiger Konzepte'."
+    ]
+  },
+  {
+    "id": "q90",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-99287> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-99287",
+        "label": "Handlungsorientierung im Industriebetrieb. Eine Untersuchung über das Verhältnis von Technik und Betriebsideologie"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      }
+    ],
+    "question": "What are the first initials of the authors of 'Handlungsorientierung im Industriebetrieb'?",
+    "thoughts": [
+      "1. The question asks for the first initials of authors of a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to authors via the schema:author property.",
+      "3. Authors' first initials are accessed via the gesiskg:initsFirst property.",
+      "4. I need to find all authors of the specified resource and retrieve their first initials.",
+      "5. The query returns the first initials of all authors of 'Handlungsorientierung im Industriebetrieb. Eine Untersuchung über das Verhältnis von Technik und Betriebsideologie'."
+    ]
+  },
+  {
+    "id": "q91",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-59690> schema:contributor ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-59690",
+        "label": "CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the first initials of the contributors to 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'?",
+    "thoughts": [
+      "1. The question asks for the first initials of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' first initials are accessed via the gesiskg:initsFirst property.",
+      "4. I need to find all contributors to the specified resource and retrieve their first initials.",
+      "5. The query returns the first initials of all contributors to 'CD-ROM zur Information über die Längsschnittforschung im Bildungsbereich'."
+    ]
+  },
+  {
+    "id": "q92",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-80108_Neyer_Franz_Josef> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-80108_Neyer_Franz_Josef",
+        "label": "Neyer, Franz Josef"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What resources have Neyer, Franz Josef as a contributor?",
+    "thoughts": [
+      "1. The question asks for resources that have Neyer, Franz Josef as a contributor.",
+      "2. In the GESIS knowledge graph, resources are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Neyer, Franz Josef as a contributor.",
+      "4. The query returns all resources to which Neyer, Franz Josef has contributed."
+    ]
+  },
+  {
+    "id": "q93",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_059-450> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_059-450",
+        "label": "Köln 059-450"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What resources are located in 'Köln 059-450'?",
+    "thoughts": [
+      "1. The question asks for resources that are located at a specific library location 'Köln 059-450'.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find all resources that have Köln 059-450 as their library location.",
+      "4. The query returns all resources located at Köln 059-450."
+    ]
+  },
+  {
+    "id": "q94",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-116845_Schenk_Winfried> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-116845_Schenk_Winfried",
+        "label": "Schenk, Winfried"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What resources were authored by Schenk, Winfried?",
+    "thoughts": [
+      "1. The question asks for resources that were authored by Schenk, Winfried.",
+      "2. In the GESIS knowledge graph, resources are linked to their authors via the schema:author property.",
+      "3. I need to find all resources that have Schenk, Winfried as their author.",
+      "4. The query returns all resources authored by Schenk, Winfried."
+    ]
+  },
+  {
+    "id": "q95",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-50949> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-50949",
+        "label": "Tales from the grave : organizations accounts of their own demise"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the family names of contributors to 'Tales from the grave : organizations accounts of their own demise'?",
+    "thoughts": [
+      "1. The question asks for the family names of contributors to a specific resource.",
+      "2. In the GESIS knowledge graph, resources are linked to contributors via the schema:contributor property.",
+      "3. Contributors' family names are accessed via the schema:familyName property.",
+      "4. I need to find all contributors to the specified resource and retrieve their family names.",
+      "5. The query returns the family names of all contributors to 'Tales from the grave : organizations accounts of their own demise'."
+    ]
+  },
+  {
+    "id": "q96",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "resource-publication-date",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:datePublished ?target . }",
+    "thoughts": [
+      "1. The question asks about publication dates of resources provided by GESIS and located in Köln Umfrageergebnisse.",
+      "2. In the GESIS knowledge graph, resources have providers, library locations, and publication dates.",
+      "3. I need to find resources with GESIS as the provider and Köln Umfrageergebnisse as the library location.",
+      "4. Then I need to retrieve the publication dates of these resources.",
+      "5. The query returns the publication dates of resources meeting these criteria."
+    ],
+    "question": "What are the publication dates of resources provided by GESIS that are located in Köln Umfrageergebnisse?",
+    "entities": [
+      "GESIS",
+      "Köln Umfrageergebnisse"
+    ],
+    "properties": [
+      "provider",
+      "libraryLocation",
+      "datePublished"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS",
+        "label": "GESIS"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ]
+  },
+  {
+    "id": "q97",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "author-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-37032_Erb_Rainer> . }",
+    "thoughts": [
+      "1. The question asks about publications authored by Rainer Erb.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all resources that have Rainer Erb as their author.",
+      "4. The query returns all publications authored by Rainer Erb."
+    ],
+    "question": "What publications were authored by Rainer Erb?",
+    "entities": [
+      "Rainer Erb"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q98",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topics",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-121270> schema:about ?target . }",
+    "thoughts": [
+      "1. The question asks about the topics related to a specific publication about Mikrozensus.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all topics that the publication is about."
+    ],
+    "question": "What topics is the publication 'Schätzung des Stichprobenfehlers im Mikrozensus mit Stata' about?",
+    "entities": [
+      "Schätzung des Stichprobenfehlers im Mikrozensus mit Stata : eine Einführung mit Beispielen zum Campus File Mikrozensus 2002"
+    ],
+    "properties": [
+      "about"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-121270",
+        "label": "Schätzung des Stichprobenfehlers im Mikrozensus mit Stata : eine Einführung mit Beispielen zum Campus File Mikrozensus 2002"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ]
+  },
+  {
+    "id": "q99",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topics",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-142655> schema:about ?target . }",
+    "thoughts": [
+      "1. The question asks about the topics related to a specific publication about cultural life in the GDR.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all topics that the publication is about."
+    ],
+    "question": "What topics is the publication 'Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR' about?",
+    "entities": [
+      "Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR"
+    ],
+    "properties": [
+      "about"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-142655",
+        "label": "Entwicklungsprobleme des kulturellen Lebensniveaus und des geistig-kulturellen Lebens in der DDR"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ]
+  },
+  {
+    "id": "q100",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "author-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-54842_Albrecht_G%C3%BCnter> . }",
+    "thoughts": [
+      "1. The question asks about publications authored by Günter Albrecht.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all resources that have Günter Albrecht as their author.",
+      "4. The query returns all publications authored by Günter Albrecht."
+    ],
+    "question": "What publications were authored by Günter Albrecht?",
+    "entities": [
+      "Günter Albrecht"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q101",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-105287> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about family authority in Yugoslavia.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'Family Authority, Marital Satisfaction, and the Social Network in Yugoslavia'?",
+    "entities": [
+      "Family Authority, Marital Satisfaction, and the Social Network in Yugoslavia : Sonderdruck aus: Journal of Marriage and the Family, Vol. XXIX, 1967, No.2, pp. 325-336."
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-105287",
+        "label": "Family Authority, Marital Satisfaction, and the Social Network in Yugoslavia : Sonderdruck aus: Journal of Marriage and the Family, Vol. XXIX, 1967, No.2, pp. 325-336."
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q102",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-70347> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about candidates' list positions.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election'?",
+    "entities": [
+      "The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-70347",
+        "label": "The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q103",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-author-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-147173> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "thoughts": [
+      "1. The question asks about the author names of a specific publication about AfD's political potential.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. Authors are entities with a schema:name property that contains their full name.",
+      "4. I need to find all authors associated with this publication and retrieve their names.",
+      "5. The query returns the names of all authors of the publication."
+    ],
+    "question": "What are the names of the authors of 'Außer Protesten nichts gewesen? : Das politische Potential der AfD'?",
+    "entities": [
+      "Außer Protesten nichts gewesen? : Das politische Potential der AfD"
+    ],
+    "properties": [
+      "author",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-147173",
+        "label": "Außer Protesten nichts gewesen? : Das politische Potential der AfD"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q104",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-library-location",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-143149> gesiskg:libraryLocation ?target . }",
+    "thoughts": [
+      "1. The question asks about the library location of a specific publication about mobility and demographic development.",
+      "2. In the GESIS knowledge graph, publications are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find the location where this publication is stored.",
+      "4. The query returns the library location of the publication."
+    ],
+    "question": "What is the library location of 'Mobilität und demografische Entwicklung'?",
+    "entities": [
+      "Mobilität und demografische Entwicklung"
+    ],
+    "properties": [
+      "libraryLocation"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-143149",
+        "label": "Mobilität und demografische Entwicklung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ]
+  },
+  {
+    "id": "q105",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "publication-author-ids",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-72064> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "thoughts": [
+      "1. The question asks about the mention IDs of authors of a specific publication about crowd studies.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. Authors have mention IDs stored in the gesiskg:mentionID property.",
+      "4. I need to find all authors associated with this publication and retrieve their mention IDs.",
+      "5. The query returns the mention IDs of all authors of the publication."
+    ],
+    "question": "What are the mention IDs of the authors of 'A Preliminary Laboratory Study of the Acting Crowd'?",
+    "entities": [
+      "A Preliminary Laboratory Study of the Acting Crowd"
+    ],
+    "properties": [
+      "author",
+      "mentionID"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-72064",
+        "label": "A Preliminary Laboratory Study of the Acting Crowd"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q106",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "eurobarometer-library-location",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/GESIS-Studie> . ?hidden gesiskg:libraryLocation ?target . }",
+    "thoughts": [
+      "1. The question asks about library locations of resources that reference Eurobarometer and are about GESIS studies.",
+      "2. In the GESIS knowledge graph, resources have references, topics, and library locations.",
+      "3. I need to find resources that reference Eurobarometer and are about GESIS studies.",
+      "4. Then I need to retrieve the library locations of these resources.",
+      "5. The query returns the library locations of resources meeting these criteria."
+    ],
+    "question": "What are the library locations of resources that reference Eurobarometer and are about GESIS studies?",
+    "entities": [
+      "Eurobarometer",
+      "GESIS-Studie"
+    ],
+    "properties": [
+      "reference",
+      "about",
+      "libraryLocation"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS-Studie",
+        "label": "GESIS-Studie"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer",
+        "label": "Eurobarometer"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      }
+    ]
+  },
+  {
+    "id": "q107",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-contributor-family-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-97416> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "thoughts": [
+      "1. The question asks about the family names of contributors to a specific publication about diffusion and globalization.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Contributors have family names stored in the schema:familyName property.",
+      "4. I need to find all contributors associated with this publication and retrieve their family names.",
+      "5. The query returns the family names of all contributors to the publication."
+    ],
+    "question": "What are the family names of the contributors to 'Diffusion und Globalisierung : Migration, Klimawandel und Aids - empirische Befunde'?",
+    "entities": [
+      "Diffusion und Globalisierung : Migration, Klimawandel und Aids - empirische Befunde"
+    ],
+    "properties": [
+      "contributor",
+      "familyName"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97416",
+        "label": "Diffusion und Globalisierung : Migration, Klimawandel und Aids - empirische Befunde"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q108",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-70347> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about candidates' list positions.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election'?",
+    "entities": [
+      "The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-70347",
+        "label": "The Importance of Being First: Effects of Candidates' List Positions in the 2003 Bavarian State Election"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q109",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-58395> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about the Central and Eastern Eurobarometer.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'The Central and Eastern Eurobarometer 1990 - 1997: TRENDS CEEB 1 - 8'?",
+    "entities": [
+      "The Central and Eastern Eurobarometer 1990 - 1997: TRENDS CEEB 1 - 8. ; The cumulative Data set is now available on CD-ROM"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-58395",
+        "label": "The Central and Eastern Eurobarometer 1990 - 1997: TRENDS CEEB 1 - 8. ; The cumulative Data set is now available on CD-ROM"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q110",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "topic-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:about <https://data.gesis.org/gesiskg/resource/Medizinsoziologie> . }",
+    "thoughts": [
+      "1. The question asks about publications related to medical sociology (Medizinsoziologie).",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all resources that are about medical sociology.",
+      "4. The query returns all publications about medical sociology."
+    ],
+    "question": "What publications are about medical sociology (Medizinsoziologie)?",
+    "entities": [
+      "Medizinsoziologie"
+    ],
+    "properties": [
+      "about"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Medizinsoziologie",
+        "label": "Medizinsoziologie"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ]
+  },
+  {
+    "id": "q111",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topics",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103180> schema:about ?target . }",
+    "thoughts": [
+      "1. The question asks about the topics related to a specific publication about health care system data.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all topics that the publication is about."
+    ],
+    "question": "What topics is the publication 'Basisdaten des Gesundheitswesens. Ausgabe 1990' about?",
+    "entities": [
+      "Basisdaten des Gesundheitswesens. Ausgabe 1990. Handbuch zur zahlenmäßigen Entwicklung der wesentlichen Teile des Gesundheitswesens der Bundesrepublik Deutschland"
+    ],
+    "properties": [
+      "about"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-103180",
+        "label": "Basisdaten des Gesundheitswesens. Ausgabe 1990. Handbuch zur zahlenmäßigen Entwicklung der wesentlichen Teile des Gesundheitswesens der Bundesrepublik Deutschland"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ]
+  },
+  {
+    "id": "q112",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "contributor-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-2843_Bock_Hans_Manfred> . }",
+    "thoughts": [
+      "1. The question asks about publications to which Hans Manfred Bock contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Hans Manfred Bock as a contributor.",
+      "4. The query returns all publications to which Hans Manfred Bock contributed."
+    ],
+    "question": "What publications has Hans Manfred Bock contributed to?",
+    "entities": [
+      "Bock, Hans Manfred"
+    ],
+    "properties": [
+      "contributor"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-2843_Bock_Hans_Manfred",
+        "label": "Bock, Hans Manfred"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q113",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-series-name",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-116492> schema:isPartOf ?hidden . ?hidden schema:name ?target . }",
+    "thoughts": [
+      "1. The question asks about the name of the series or collection that includes a specific publication about solidarity.",
+      "2. In the GESIS knowledge graph, publications are linked to their parent series via the schema:isPartOf property.",
+      "3. Series have names stored in the schema:name property.",
+      "4. I need to find the series that includes this publication and retrieve its name.",
+      "5. The query returns the name of the series that the publication is part of."
+    ],
+    "question": "What is the name of the series or collection that includes 'Solidarität und internationale Gemeinschaftsbildung'?",
+    "entities": [
+      "Solidarität und internationale Gemeinschaftsbildung"
+    ],
+    "properties": [
+      "isPartOf",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-116492",
+        "label": "Solidarität und internationale Gemeinschaftsbildung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      }
+    ]
+  },
+  {
+    "id": "q114",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-contributor-family-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-49473> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "thoughts": [
+      "1. The question asks about the family names of contributors to a specific publication about protestant young adults.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Contributors have family names stored in the schema:familyName property.",
+      "4. I need to find all contributors associated with this publication and retrieve their family names.",
+      "5. The query returns the family names of all contributors to the publication."
+    ],
+    "question": "What are the family names of the contributors to 'Types of denominational switching among protestant young adults'?",
+    "entities": [
+      "Types of denominational switching among protestant young adults"
+    ],
+    "properties": [
+      "contributor",
+      "familyName"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-49473",
+        "label": "Types of denominational switching among protestant young adults"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q115",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "eurobarometer-fulltext",
+    "sparql": "SELECT ?target WHERE { ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer> . ?hidden gesiskg:hasFulltext ?target . }",
+    "thoughts": [
+      "1. The question asks about the availability of full text for resources provided by GESIS that reference Eurobarometer.",
+      "2. In the GESIS knowledge graph, resources have providers, references, and fulltext availability indicators.",
+      "3. I need to find resources with GESIS as the provider and that reference Eurobarometer.",
+      "4. Then I need to check if these resources have full text available.",
+      "5. The query returns the fulltext availability for resources meeting these criteria."
+    ],
+    "question": "Is fulltext available for resources provided by GESIS that reference Eurobarometer?",
+    "entities": [
+      "GESIS",
+      "Eurobarometer"
+    ],
+    "properties": [
+      "provider",
+      "reference",
+      "hasFulltext"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer",
+        "label": "Eurobarometer"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS",
+        "label": "GESIS"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:hasFulltext",
+        "label": "has fulltext"
+      },
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ]
+  },
+  {
+    "id": "q116",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "library-location-resources",
+    "sparql": "SELECT ?target WHERE { ?target gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_081-099> . }",
+    "thoughts": [
+      "1. The question asks about resources located in the Köln 081-099 library section.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find all resources that are located in Köln 081-099.",
+      "4. The query returns all resources in this library location."
+    ],
+    "question": "What resources are located in the Köln 081-099 library section?",
+    "entities": [
+      "Köln 081-099"
+    ],
+    "properties": [
+      "libraryLocation"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_081-099",
+        "label": "Köln 081-099"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ]
+  },
+  {
+    "id": "q117",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "contributor-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-37487_M%C3%BCller-Sachse_Karl_H> . }",
+    "thoughts": [
+      "1. The question asks about publications to which Karl H. Müller-Sachse contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Karl H. Müller-Sachse as a contributor.",
+      "4. The query returns all publications to which Karl H. Müller-Sachse contributed."
+    ],
+    "question": "What publications has Karl H. Müller-Sachse contributed to?",
+    "entities": [
+      "Müller-Sachse, Karl H."
+    ],
+    "properties": [
+      "contributor"
+    ],
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q118",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-23282> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about Belson's readership study.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'Aided Recall und Recognition in Belson's Leserschaftsuntersuchung von 1962'?",
+    "entities": [
+      "Aided Recall und Recognition in Belson's Leserschaftsuntersuchung von 1962"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-23282",
+        "label": "Aided Recall und Recognition in Belson's Leserschaftsuntersuchung von 1962"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q119",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-contributors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-83622> schema:contributor ?target . }",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication about political party programs.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ],
+    "question": "Who contributed to 'Wahlprogramme, Regierungserklärungen und politisches Handeln - zur \"Programmatik politischer Parteien\"'?",
+    "entities": [
+      "Wahlprogramme, Regierungserklärungen und politisches Handeln - zur \"Programmatik politischer Parteien\""
+    ],
+    "properties": [
+      "contributor"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-83622",
+        "label": "Wahlprogramme, Regierungserklärungen und politisches Handeln - zur \"Programmatik politischer Parteien\""
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q120",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "resource-publication-date",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:provider <https://data.gesis.org/gesiskg/resource/GESIS> . ?hidden schema:datePublished ?target . }",
+    "thoughts": [
+      "1. The question asks about publication dates of resources provided by GESIS and located in Köln Umfrageergebnisse.",
+      "2. In the GESIS knowledge graph, resources have providers, library locations, and publication dates.",
+      "3. I need to find resources with Köln Umfrageergebnisse as the library location and GESIS as the provider.",
+      "4. Then I need to retrieve the publication dates of these resources.",
+      "5. The query returns the publication dates of resources meeting these criteria."
+    ],
+    "question": "What are the publication dates of resources located in Köln Umfrageergebnisse and provided by GESIS?",
+    "entities": [
+      "Köln Umfrageergebnisse",
+      "GESIS"
+    ],
+    "properties": [
+      "libraryLocation",
+      "provider",
+      "datePublished"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/GESIS",
+        "label": "GESIS"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ]
+  },
+  {
+    "id": "q121",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-contributor-given-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-42619> schema:contributor ?hidden . ?hidden schema:givenName ?target . }",
+    "thoughts": [
+      "1. The question asks about the given names of contributors to a specific publication about parliamentary investigation committees.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Contributors have given names stored in the schema:givenName property.",
+      "4. I need to find all contributors associated with this publication and retrieve their given names.",
+      "5. The query returns the given names of all contributors to the publication."
+    ],
+    "question": "What are the given names of the contributors to 'Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen'?",
+    "entities": [
+      "Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen"
+    ],
+    "properties": [
+      "contributor",
+      "givenName"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-42619",
+        "label": "Ein Mustergesetz zu Einsetzung und Verfahren von Parlamentarischen Untersuchungsausschüssen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q122",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-34193> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about fiscal illusions.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'Fiscal illusions: Nothing but illusions'?",
+    "entities": [
+      "Fiscal illusions: Nothing but illusionsß"
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-34193",
+        "label": "Fiscal illusions: Nothing but illusionsß"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q123",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topics",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-118266> schema:about ?target . }",
+    "thoughts": [
+      "1. The question asks about the topics related to a specific publication about individualization and political participation.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics that are associated with this publication.",
+      "4. The query returns all topics that the publication is about."
+    ],
+    "question": "What topics is the publication 'Individualisierung, Individualismus, politische Partizipation und politische Präferenzen' about?",
+    "entities": [
+      "Individualisierung, Individualismus, politische Partizipation und politische Präferenzen : eine theoretische und empirische Studie am Beispiel der Bundestagswahl 2002"
+    ],
+    "properties": [
+      "about"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-118266",
+        "label": "Individualisierung, Individualismus, politische Partizipation und politische Präferenzen : eine theoretische und empirische Studie am Beispiel der Bundestagswahl 2002"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ]
+  },
+  {
+    "id": "q124",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-authors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-138164> schema:author ?target . }",
+    "thoughts": [
+      "1. The question asks about the authors of a specific publication about the Ground Zero Mosque.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to find all authors associated with this publication.",
+      "4. The query returns all authors of the publication."
+    ],
+    "question": "Who are the authors of 'Support at any distance? : the role of location and prejudice in public opposition to the \"Ground Zero Mosque\"'?",
+    "entities": [
+      "Support at any distance? : the role of location and prejudice in public oppsition to the \"Ground Zero Mosque\""
+    ],
+    "properties": [
+      "author"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-138164",
+        "label": "Support at any distance? : the role of location and prejudice in public oppsition to the \"Ground Zero Mosque\""
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q125",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "contributor-publications",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-131856_Marsh_Michael> . }",
+    "thoughts": [
+      "1. The question asks about publications to which Michael Marsh contributed.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all resources that have Michael Marsh as a contributor.",
+      "4. The query returns all publications to which Michael Marsh contributed."
+    ],
+    "question": "What publications has Michael Marsh contributed to?",
+    "entities": [
+      "Marsh, Michael"
+    ],
+    "properties": [
+      "contributor"
+    ],
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q126",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-author-given-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> schema:author ?hidden . ?hidden schema:givenName ?target . }",
+    "thoughts": [
+      "1. The question asks about the given names of authors of a specific publication about statistical design.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. Authors have given names stored in the schema:givenName property.",
+      "4. I need to find all authors associated with this publication and retrieve their given names.",
+      "5. The query returns the given names of all authors of the publication."
+    ],
+    "question": "What are the given names of the authors of 'Statistical design for research'?",
+    "entities": [
+      "Statistical design for research"
+    ],
+    "properties": [
+      "author",
+      "givenName"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102071",
+        "label": "Statistical design for research"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      }
+    ]
+  },
+  {
+    "id": "q127",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "publication-author-ids",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-76468> schema:author ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "thoughts": [
+      "1. The question asks about the mention IDs of authors of a specific publication about homosexuality research.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. Authors have mention IDs stored in the gesiskg:mentionID property.",
+      "4. I need to find all authors associated with this publication and retrieve their mention IDs.",
+      "5. The query returns the mention IDs of all authors of the publication."
+    ],
+    "question": "What are the mention IDs of the authors of 'Sociological Research on Male and Female Homosexuality'?",
+    "entities": [
+      "Sociological Research on Male and Female Homosexuality"
+    ],
+    "properties": [
+      "author",
+      "mentionID"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-76468",
+        "label": "Sociological Research on Male and Female Homosexuality"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ]
+  },
+  {
+    "id": "q128",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-contributors",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-134330> schema:contributor ?target . }",
+    "thoughts": [
+      "1. The question asks about the contributors to a specific publication (gesis-bib-134330).",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors associated with this publication.",
+      "4. The query returns all contributors to the publication."
+    ],
+    "question": "Who contributed to the publication with ID 'gesis-bib-134330'?",
+    "entities": [
+      "gesis-bib-134330"
+    ],
+    "properties": [
+      "contributor"
+    ],
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q129",
+    "category": "scholarly",
+    "complexity": "intermediate",
+    "templateId": "publication-contributor-names",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-72064> schema:contributor ?hidden . ?hidden schema:name ?target . }",
+    "thoughts": [
+      "1. The question asks about the names of contributors to a specific publication about crowd studies.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. Contributors have names stored in the schema:name property.",
+      "4. I need to find all contributors associated with this publication and retrieve their names.",
+      "5. The query returns the names of all contributors to the publication."
+    ],
+    "question": "What are the names of the contributors to 'A Preliminary Laboratory Study of the Acting Crowd'?",
+    "entities": [
+      "A Preliminary Laboratory Study of the Acting Crowd"
+    ],
+    "properties": [
+      "contributor",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-72064",
+        "label": "A Preliminary Laboratory Study of the Acting Crowd"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ]
+  },
+  {
+    "id": "q130",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-publisher",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-130010> schema:publisher ?target . }",
+    "thoughts": [
+      "1. The question asks about the publisher of a specific publication about democracy and politics of investment.",
+      "2. In the GESIS knowledge graph, publications are linked to their publishers via the schema:publisher property.",
+      "3. I need to find the publisher associated with this publication.",
+      "4. The query returns the publisher of the publication."
+    ],
+    "question": "Who published 'Governing for the long term : democracy and the politics of investment'?",
+    "entities": [
+      "Governing for the long term : democracy and the politics of investment"
+    ],
+    "properties": [
+      "publisher"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-130010",
+        "label": "Governing for the long term : democracy and the politics of investment"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
+      }
+    ]
+  },
+  {
+    "id": "q131",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-33461> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-33461",
+        "label": "Computer im Paradigmenwechsel"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who are the contributors to 'Computer im Paradigmenwechsel'?",
+    "thoughts": [
+      "1. The question asks about contributors to a specific publication titled 'Computer im Paradigmenwechsel'.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors associated with the resource 'Computer im Paradigmenwechsel'.",
+      "4. The query uses the schema:contributor property to retrieve all contributor entities linked to this publication.",
+      "5. The query returns all contributors to 'Computer im Paradigmenwechsel'."
+    ]
+  },
+  {
+    "id": "q132",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-50949> schema:contributor ?hidden . ?hidden gesiskg:mentionID ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-50949",
+        "label": "Tales from the grave : organizations accounts of their own demise"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:mentionID",
+        "label": "mention id"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the mention IDs of contributors to 'Tales from the grave: organizations accounts of their own demise'?",
+    "thoughts": [
+      "1. The question asks about the mention IDs of contributors to a specific publication.",
+      "2. First, I need to find all contributors to 'Tales from the grave: organizations accounts of their own demise' using the schema:contributor property.",
+      "3. For each contributor, I need to retrieve their mention ID using the gesiskg:mentionID property.",
+      "4. The query first links the publication to contributors through schema:contributor, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the mention IDs of these contributors through the gesiskg:mentionID property.",
+      "6. The query returns all mention IDs of contributors to this publication."
+    ]
+  },
+  {
+    "id": "q133",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-97575> schema:about ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97575",
+        "label": "Offene Fragen im Generationendiskurs : zum Realitätsgehalt gängiger Konzepte"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      }
+    ],
+    "question": "What are the names of subjects that 'Offene Fragen im Generationendiskurs' is about?",
+    "thoughts": [
+      "1. The question asks about the names of subjects covered in the publication 'Offene Fragen im Generationendiskurs'.",
+      "2. In the GESIS knowledge graph, publications are linked to their subjects via the schema:about property.",
+      "3. I first need to find all subjects associated with this publication using schema:about, storing them in ?hidden.",
+      "4. Then I need to retrieve the names of these subjects using the schema:name property.",
+      "5. The query returns the names of all subjects that the publication is about."
+    ]
+  },
+  {
+    "id": "q134",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-679> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-679",
+        "label": "Chancengleichheit durch Personalpolitik : Gleichstellung von Frauen und Männern in Unternehmen und Verwaltungen ; rechtliche Regelungen, Problemanalysen, Lösungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics is 'Chancengleichheit durch Personalpolitik' about?",
+    "thoughts": [
+      "1. The question asks about the topics covered in the publication 'Chancengleichheit durch Personalpolitik'.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics associated with this publication using the schema:about property.",
+      "4. The query directly retrieves all topic entities that are linked to this publication.",
+      "5. The query returns all topics that 'Chancengleichheit durch Personalpolitik' is about."
+    ]
+  },
+  {
+    "id": "q135",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-140067> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-140067",
+        "label": "Detection of unusual increases in MRI lesion counts in individual multiple sclerosis patients"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who contributed to the publication 'Detection of unusual increases in MRI lesion counts in individual multiple sclerosis patients'?",
+    "thoughts": [
+      "1. The question asks about contributors to a specific medical publication.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors associated with 'Detection of unusual increases in MRI lesion counts in individual multiple sclerosis patients'.",
+      "4. The query uses the schema:contributor property to retrieve all contributor entities linked to this publication.",
+      "5. The query returns all contributors to this medical research publication."
+    ]
+  },
+  {
+    "id": "q136",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-153433> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-153433",
+        "label": "Does Subjective Well-Being Affect Political Participation?"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics does the publication 'Does Subjective Well-Being Affect Political Participation?' cover?",
+    "thoughts": [
+      "1. The question asks about the topics covered in the publication 'Does Subjective Well-Being Affect Political Participation?'",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics associated with this publication using the schema:about property.",
+      "4. The query directly retrieves all topic entities that are linked to this publication.",
+      "5. The query returns all topics that the publication 'Does Subjective Well-Being Affect Political Participation?' is about."
+    ]
+  },
+  {
+    "id": "q137",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> schema:contributor ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102071",
+        "label": "Statistical design for research"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the given names of contributors to 'Statistical design for research'?",
+    "thoughts": [
+      "1. The question asks about the given names (first names) of contributors to the publication 'Statistical design for research'.",
+      "2. First, I need to find all contributors to this publication using the schema:contributor property.",
+      "3. For each contributor, I need to retrieve their given name using the schema:givenName property.",
+      "4. The query first identifies contributors through schema:contributor, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the given names of these contributors through the schema:givenName property.",
+      "6. The query returns all given names of contributors to 'Statistical design for research'."
+    ]
+  },
+  {
+    "id": "q138",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> schema:contributor ?hidden . ?hidden schema:givenName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-102071",
+        "label": "Statistical design for research"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the given names of contributors to 'Statistical design for research'?",
+    "thoughts": [
+      "1. The question asks about the given names (first names) of contributors to the publication 'Statistical design for research'.",
+      "2. First, I need to find all contributors to this publication using the schema:contributor property.",
+      "3. For each contributor, I need to retrieve their given name using the schema:givenName property.",
+      "4. The query first identifies contributors through schema:contributor, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the given names of these contributors through the schema:givenName property.",
+      "6. The query returns all given names of contributors to 'Statistical design for research'."
+    ]
+  },
+  {
+    "id": "q139",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-144156> schema:author ?hidden . ?hidden gesiskg:initsFirst ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-144156",
+        "label": "Converging on euroscepticism : online polity contestation during European Parliament elections"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:initsFirst",
+        "label": "inits first"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the first initials of authors of 'Converging on euroscepticism: online polity contestation during European Parliament elections'?",
+    "thoughts": [
+      "1. The question asks about the first initials of authors of the publication about euroscepticism.",
+      "2. First, I need to find all authors of this publication using the schema:author property.",
+      "3. For each author, I need to retrieve their first initials using the gesiskg:initsFirst property.",
+      "4. The query first identifies authors through schema:author, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the first initials of these authors through the gesiskg:initsFirst property.",
+      "6. The query returns all first initials of authors of this publication about euroscepticism."
+    ]
+  },
+  {
+    "id": "q140",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-43209> schema:contributor ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-43209",
+        "label": "Editorial: twenty-five years of ISSJ - a new look, a personal note (ISSJ 1973/1-2)"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "Who contributed to the 'Editorial: twenty-five years of ISSJ - a new look, a personal note (ISSJ 1973/1-2)'?",
+    "thoughts": [
+      "1. The question asks about contributors to a specific editorial publication about ISSJ.",
+      "2. In the GESIS knowledge graph, publications are linked to their contributors via the schema:contributor property.",
+      "3. I need to find all contributors associated with this editorial publication.",
+      "4. The query uses the schema:contributor property to retrieve all contributor entities linked to this publication.",
+      "5. The query returns all contributors to the ISSJ editorial."
+    ]
+  },
+  {
+    "id": "q141",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-101041> gesiskg:libraryLocation ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-101041",
+        "label": "Research methods in the behavioral sciences"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "Where in the library can 'Research methods in the behavioral sciences' be found?",
+    "thoughts": [
+      "1. The question asks about the library location of a specific publication on research methods.",
+      "2. In the GESIS knowledge graph, publications are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. I need to find the library location associated with 'Research methods in the behavioral sciences'.",
+      "4. The query uses the gesiskg:libraryLocation property to retrieve the location entity for this publication.",
+      "5. The query returns the library location where 'Research methods in the behavioral sciences' can be found."
+    ]
+  },
+  {
+    "id": "q142",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-120387_Selb_Peter> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-120387_Selb_Peter",
+        "label": "Selb, Peter"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What publications has Peter Selb authored?",
+    "thoughts": [
+      "1. The question asks about publications authored by a specific person, Peter Selb.",
+      "2. In the GESIS knowledge graph, authors are linked to their publications via the schema:author property.",
+      "3. I need to find all publications that have Peter Selb as their author.",
+      "4. The query uses the schema:author property to retrieve all publication entities linked to Peter Selb.",
+      "5. The query returns all publications authored by Peter Selb."
+    ]
+  },
+  {
+    "id": "q143",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-61073_Coughenour_C_Milton> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-61073_Coughenour_C_Milton",
+        "label": "Coughenour, C. Milton"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What publications has C. Milton Coughenour authored?",
+    "thoughts": [
+      "1. The question asks about publications authored by a specific person, C. Milton Coughenour.",
+      "2. In the GESIS knowledge graph, authors are linked to their publications via the schema:author property.",
+      "3. I need to find all publications that have C. Milton Coughenour as their author.",
+      "4. The query uses the schema:author property to retrieve all publication entities linked to C. Milton Coughenour.",
+      "5. The query returns all publications authored by C. Milton Coughenour."
+    ]
+  },
+  {
+    "id": "q144",
+    "sparql": "SELECT ?target WHERE { ?target schema:contributor <https://data.gesis.org/gesiskg/resource/gesis-bib-37032_Erb_Rainer> . }",
+    "entities_matches": [],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What publications has Rainer Erb contributed to?",
+    "thoughts": [
+      "1. The question asks about publications that a specific person, Rainer Erb, has contributed to.",
+      "2. In the GESIS knowledge graph, contributors are linked to publications via the schema:contributor property.",
+      "3. I need to find all publications that have Rainer Erb as a contributor.",
+      "4. The query uses the schema:contributor property to retrieve all publication entities to which Rainer Erb has contributed.",
+      "5. The query returns all publications that Rainer Erb has contributed to."
+    ]
+  },
+  {
+    "id": "q145",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-85800> gesiskg:reference ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-85800",
+        "label": "Genes, Culture, Democracy, and Happiness"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      }
+    ],
+    "question": "What references are cited in 'Genes, Culture, Democracy, and Happiness'?",
+    "thoughts": [
+      "1. The question asks about references cited in a specific publication about genes, culture, democracy, and happiness.",
+      "2. In the GESIS knowledge graph, publications are linked to their references via the gesiskg:reference property.",
+      "3. I need to find all references associated with this publication.",
+      "4. The query uses the gesiskg:reference property to retrieve all reference entities linked to this publication.",
+      "5. The query returns all references cited in 'Genes, Culture, Democracy, and Happiness'."
+    ]
+  },
+  {
+    "id": "q146",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-103180> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-103180",
+        "label": "Basisdaten des Gesundheitswesens. Ausgabe 1990. Handbuch zur zahlenmäßigen Entwicklung der wesentlichen Teile des Gesundheitswesens der Bundesrepublik Deutschland"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics does the 1990 handbook on healthcare system data in Germany cover?",
+    "thoughts": [
+      "1. The question asks about the topics covered in a handbook on healthcare system data in Germany from 1990.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics associated with this healthcare handbook using the schema:about property.",
+      "4. The query directly retrieves all topic entities that are linked to this publication.",
+      "5. The query returns all topics that the 1990 healthcare handbook covers."
+    ]
+  },
+  {
+    "id": "q147",
+    "sparql": "SELECT ?target WHERE { ?target schema:editor <https://data.gesis.org/gesiskg/resource/gesis-bib-104533_Johnson_Todd_M> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-104533_Johnson_Todd_M",
+        "label": "Johnson, Todd M."
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:editor",
+        "label": "editor"
+      }
+    ],
+    "question": "Which publications has Todd M. Johnson edited?",
+    "thoughts": [
+      "1. The question asks about publications edited by a specific person, Todd M. Johnson.",
+      "2. In the GESIS knowledge graph, editors are linked to publications via the schema:editor property.",
+      "3. I need to find all publications that have Todd M. Johnson as an editor.",
+      "4. The query uses the schema:editor property to retrieve all publication entities edited by Todd M. Johnson.",
+      "5. The query returns all publications that Todd M. Johnson has edited."
+    ]
+  },
+  {
+    "id": "q148",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-150849> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150849",
+        "label": "Resonanz : eine Soziologie der Weltbeziehung"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics does 'Resonanz: eine Soziologie der Weltbeziehung' cover?",
+    "thoughts": [
+      "1. The question asks about the topics covered in the publication 'Resonanz: eine Soziologie der Weltbeziehung'.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics associated with this sociology publication using the schema:about property.",
+      "4. The query directly retrieves all topic entities that are linked to this publication.",
+      "5. The query returns all topics that 'Resonanz: eine Soziologie der Weltbeziehung' is about."
+    ]
+  },
+  {
+    "id": "q149",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-44946> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-44946",
+        "label": "The Fate of Sustainable Development Under Neo-liberal Regimes in Developing Countries"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the names of authors who wrote 'The Fate of Sustainable Development Under Neo-liberal Regimes in Developing Countries'?",
+    "thoughts": [
+      "1. The question asks about the names of authors of a specific publication about sustainable development.",
+      "2. First, I need to find all authors of this publication using the schema:author property.",
+      "3. For each author, I need to retrieve their name using the schema:name property.",
+      "4. The query first identifies authors through schema:author, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the names of these authors through the schema:name property.",
+      "6. The query returns all names of authors who wrote this publication about sustainable development."
+    ]
+  },
+  {
+    "id": "q150",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:reference <https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Umfrageergebnisse> . ?hidden schema:provider ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Umfrageergebnisse",
+        "label": "Umfrageergebnisse"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Eurobarometer",
+        "label": "Eurobarometer"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      },
+      {
+        "id": "schema:provider",
+        "label": "provider"
+      }
+    ],
+    "question": "Who are the providers of survey results referencing Eurobarometer?",
+    "thoughts": [
+      "1. The question asks about providers of survey results that reference Eurobarometer and are about 'Umfrageergebnisse' (survey results).",
+      "2. First, I need to find publications that reference Eurobarometer using the gesiskg:reference property.",
+      "3. These publications must also be about survey results, which I can find using the schema:about property.",
+      "4. For publications meeting both criteria, I need to retrieve their providers using the schema:provider property.",
+      "5. The query first identifies relevant publications through multiple constraints, storing them in ?hidden.",
+      "6. Then it retrieves the providers of these publications through the schema:provider property.",
+      "7. The query returns all providers of survey results that reference Eurobarometer."
+    ]
+  },
+  {
+    "id": "q151",
+    "sparql": "SELECT ?target WHERE { ?target schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-144156_Trenz_Hans-J%C3%B6rg> . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-144156_Trenz_Hans-J%C3%B6rg",
+        "label": "Trenz, Hans-Jörg"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What publications has Hans-Jörg Trenz authored?",
+    "thoughts": [
+      "1. The question asks about publications authored by a specific person, Hans-Jörg Trenz.",
+      "2. In the GESIS knowledge graph, authors are linked to their publications via the schema:author property.",
+      "3. I need to find all publications that have Hans-Jörg Trenz as their author.",
+      "4. The query uses the schema:author property to retrieve all publication entities linked to Hans-Jörg Trenz.",
+      "5. The query returns all publications authored by Hans-Jörg Trenz."
+    ]
+  },
+  {
+    "id": "q152",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-118266> schema:about ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-118266",
+        "label": "Individualisierung, Individualismus, politische Partizipation und politische Präferenzen : eine theoretische und empirische Studie am Beispiel der Bundestagswahl 2002"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      }
+    ],
+    "question": "What topics does the study on individualization, political participation, and preferences related to the 2002 German federal election cover?",
+    "thoughts": [
+      "1. The question asks about the topics covered in a study on individualization and political participation related to the 2002 German federal election.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to find all topics associated with this political study using the schema:about property.",
+      "4. The query directly retrieves all topic entities that are linked to this publication.",
+      "5. The query returns all topics that the study on individualization and political participation covers."
+    ]
+  },
+  {
+    "id": "q153",
+    "sparql": "SELECT ?target WHERE { ?hidden gesiskg:libraryLocation <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse> . ?hidden schema:about <https://data.gesis.org/gesiskg/resource/Umfrageergebnisse> . ?hidden gesiskg:reference ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Umfrageergebnisse",
+        "label": "Umfrageergebnisse"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_Umfrageergebnisse",
+        "label": "Köln Umfrageergebnisse"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "gesiskg:reference",
+        "label": "reference"
+      },
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What references are cited in survey results publications located in Köln and about survey results?",
+    "thoughts": [
+      "1. The question asks about references cited in publications that are about survey results and are located in Köln.",
+      "2. First, I need to find publications located in Köln using the gesiskg:libraryLocation property.",
+      "3. These publications must also be about survey results, which I can find using the schema:about property.",
+      "4. For publications meeting both criteria, I need to retrieve their references using the gesiskg:reference property.",
+      "5. The query identifies relevant publications through multiple constraints, storing them in ?hidden.",
+      "6. Then it retrieves the references of these publications through the gesiskg:reference property.",
+      "7. The query returns all references cited in survey results publications located in Köln."
+    ]
+  },
+  {
+    "id": "q154",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-36519> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-36519",
+        "label": "Über die Bedeutung der Massenmedien für die Mobilisierung sozialer Bewegungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      }
+    ],
+    "question": "What are the family names of contributors to the publication about mass media and social movements?",
+    "thoughts": [
+      "1. The question asks about the family names (last names) of contributors to a publication about mass media and social movements.",
+      "2. First, I need to find all contributors to this publication using the schema:contributor property.",
+      "3. For each contributor, I need to retrieve their family name using the schema:familyName property.",
+      "4. The query first identifies contributors through schema:contributor, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the family names of these contributors through the schema:familyName property.",
+      "6. The query returns all family names of contributors to the publication about mass media and social movements."
+    ]
+  },
+  {
+    "id": "q155",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-74862> schema:contributor ?hidden . ?hidden schema:familyName ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-74862",
+        "label": "Gewerbeanzeigen 2006 - Gründungen und Schließungen"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      },
+      {
+        "id": "schema:familyName",
+        "label": "family name"
+      }
+    ],
+    "question": "What are the family names of contributors to 'Gewerbeanzeigen 2006 - Gründungen und Schließungen'?",
+    "thoughts": [
+      "1. The question asks about the family names (last names) of contributors to a publication about business registrations in 2006.",
+      "2. First, I need to find all contributors to this publication using the schema:contributor property.",
+      "3. For each contributor, I need to retrieve their family name using the schema:familyName property.",
+      "4. The query first identifies contributors through schema:contributor, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the family names of these contributors through the schema:familyName property.",
+      "6. The query returns all family names of contributors to the publication about business registrations in 2006."
+    ]
+  },
+  {
+    "id": "q156",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-97575> gesiskg:libraryLocation ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97575",
+        "label": "Offene Fragen im Generationendiskurs : zum Realitätsgehalt gängiger Konzepte"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
+      }
+    ],
+    "question": "What is the name of the library location where 'Offene Fragen im Generationendiskurs' can be found?",
+    "thoughts": [
+      "1. The question asks about the name of the library location where a specific publication about generational discourse can be found.",
+      "2. First, I need to find the library location of this publication using the gesiskg:libraryLocation property.",
+      "3. Then I need to retrieve the name of this location using the schema:name property.",
+      "4. The query first identifies the location through gesiskg:libraryLocation, storing it in a temporary variable ?hidden.",
+      "5. Then it retrieves the name of this location through the schema:name property.",
+      "6. The query returns the name of the library location where 'Offene Fragen im Generationendiskurs' can be found."
+    ]
+  },
+  {
+    "id": "q157",
+    "sparql": "SELECT ?target WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-77631> schema:author ?hidden . ?hidden schema:name ?target . }",
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-77631",
+        "label": "Postfordismus und Postmoderne. Ansätze zur Kritik eines kritischen Topos"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      }
+    ],
+    "question": "What are the names of authors who wrote 'Postfordismus und Postmoderne. Ansätze zur Kritik eines kritischen Topos'?",
+    "thoughts": [
+      "1. The question asks about the names of authors of a specific publication about post-Fordism and postmodernism.",
+      "2. First, I need to find all authors of this publication using the schema:author property.",
+      "3. For each author, I need to retrieve their name using the schema:name property.",
+      "4. The query first identifies authors through schema:author, storing them in a temporary variable ?hidden.",
+      "5. Then it retrieves the names of these authors through the schema:name property.",
+      "6. The query returns all names of authors who wrote this publication about post-Fordism and postmodernism."
+    ]
+  }
+]
