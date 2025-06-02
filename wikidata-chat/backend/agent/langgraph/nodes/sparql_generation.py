@@ -268,11 +268,14 @@ Guidelines:
         for entity in state.extracted_entities:
             entity_resources, _ = self.get_entities(entity, k=5)
             for resource in entity_resources:
-                entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
+                if 'description' in resource and resource['description']:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
+                else:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}\n"
             
             # Log entity resources
             if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
+                state.visualizer.log_event( 
                     "SPARQL Generation Node",
                     f"entity resources for '{entity}'",
                     {"resources": entity_resources}

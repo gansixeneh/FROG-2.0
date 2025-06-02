@@ -462,13 +462,15 @@ class VerbalizationNode:
                 score += 5
             
             # Check if description mentions relevant terms from the question
-            description = entity_data.get("description", "").lower()
-            question_words = question.lower().split()
-            relevant_words = [w for w in question_words if len(w) > 3 and w.lower() not in ["what", "where", "when", "who", "how", "the", "and", "for", "that"]]
-            
-            for word in relevant_words:
-                if word in description:
-                    score += 2
+            description = entity_data.get("description", "")
+            if description:  # Only process description if it exists
+                description = description.lower()
+                question_words = question.lower().split()
+                relevant_words = [w for w in question_words if len(w) > 3 and w.lower() not in ["what", "where", "when", "who", "how", "the", "and", "for", "that"]]
+                
+                for word in relevant_words:
+                    if word in description:
+                        score += 2
             
             return score
         

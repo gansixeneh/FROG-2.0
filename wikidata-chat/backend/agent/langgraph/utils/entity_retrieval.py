@@ -55,7 +55,7 @@ class UniversityEntityRetrieval:
             query_vector = self.model_embed.encode([q])[0]
             response = self.collection.query.hybrid(
                 query=q,
-                query_properties=["label", "description"],
+                query_properties=["label"],
                 vector=query_vector,
                 return_metadata=weaviate.classes.query.MetadataQuery(score=True),
                 limit=k,
@@ -107,7 +107,6 @@ class UniversityEntityRetrieval:
                         entity_data = {
                             "uri": row.get("uri", ""),
                             "label": row.get("label", ""),
-                            "description": row.get("description", ""),
                             "score": float(row["score"])
                         }
                         if entity_data not in result["entities"]:
@@ -124,7 +123,6 @@ class UniversityEntityRetrieval:
                             entity_data = {
                                 "uri": row.get("uri", ""),
                                 "label": row.get("label", ""),
-                                "description": row.get("description", ""),
                                 "score": float(row["score"])
                             }
                             if entity_data not in result["entities"]:
