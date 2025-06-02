@@ -444,6 +444,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:tentang ?title .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the title of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:tentang' links a legal document to its title or subject matter.",
+                    "4. To solve this, retrieve the title linked to {entity} via the 'lex2kg-o:tentang' property.",
+                    "5. Construct a SPARQL query to retrieve the title for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -464,6 +471,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanPada ?date .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the enactment date of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanPada' links a legal document to its enactment date.",
+                    "4. To solve this, retrieve the date linked to {entity} via the 'lex2kg-o:disahkanPada' property.",
+                    "5. Construct a SPARQL query to retrieve the enactment date for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -484,6 +498,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanDi ?location .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the enactment location of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanDi' links a legal document to its enactment location.",
+                    "4. To solve this, retrieve the location linked to {entity} via the 'lex2kg-o:disahkanDi' property.",
+                    "5. Construct a SPARQL query to retrieve the enactment location for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -504,6 +525,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:disahkanOleh ?person .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the person who enacted {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:disahkanOleh' links a legal document to the person who enacted it.",
+                    "4. To solve this, retrieve the person linked to {entity} via the 'lex2kg-o:disahkanOleh' property.",
+                    "5. Construct a SPARQL query to retrieve the enacting person for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -524,6 +552,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:jabatanPengesah ?position .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the position of the person who enacted {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:jabatanPengesah' links a legal document to the position of its enactor.",
+                    "4. To solve this, retrieve the position linked to {entity} via the 'lex2kg-o:jabatanPengesah' property.",
+                    "5. Construct a SPARQL query to retrieve the enactor's position for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -544,6 +579,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:jenisPeraturan ?type .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the regulation type of {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:jenisPeraturan' links a legal document to its regulation type.",
+                    "4. To solve this, retrieve the type linked to {entity} via the 'lex2kg-o:jenisPeraturan' property.",
+                    "5. Construct a SPARQL query to retrieve the regulation type for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -564,6 +606,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:teks ?text .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the text content of {entity}.",
+                    "2. The entity '{entity}' represents a legal article or section in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:teks' links a legal article to its actual text content.",
+                    "4. To solve this, retrieve the text linked to {entity} via the 'lex2kg-o:teks' property.",
+                    "5. Construct a SPARQL query to retrieve the text content for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -584,6 +633,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:versi ?version .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the latest version of {entity}.",
+                    "2. The entity '{entity}' represents a legal article or document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:versi' links a legal document to its version information.",
+                    "4. To solve this, retrieve the version linked to {entity} via the 'lex2kg-o:versi' property.",
+                    "5. Construct a SPARQL query to retrieve the version for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -604,6 +660,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:judul ?title .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the title of {entity}.",
+                    "2. The entity '{entity}' represents a chapter (bab) in a legal document.",
+                    "3. The property 'lex2kg-o:judul' links a chapter to its title.",
+                    "4. To solve this, retrieve the title linked to {entity} via the 'lex2kg-o:judul' property.",
+                    "5. Construct a SPARQL query to retrieve the title for {entity}."
+                ],
                 "complexity": "basic"
             },
             {
@@ -624,6 +687,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:bahasa ?language .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the language in which {entity} is written.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:bahasa' links a legal document to its language.",
+                    "4. To solve this, retrieve the language linked to {entity} via the 'lex2kg-o:bahasa' property.",
+                    "5. Construct a SPARQL query to retrieve the language for {entity}."
+                ],
                 "complexity": "basic"
             },
             
@@ -646,6 +716,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:pasal ?article .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of articles (pasal) in {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:pasal' links a legal document to its articles.",
+                    "4. To solve this, count all articles linked to {entity} via the 'lex2kg-o:pasal' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the total number of articles."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -666,6 +743,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:bab ?chapter .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of chapters (bab) in {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:bab' links a legal document to its chapters.",
+                    "4. To solve this, count all chapters linked to {entity} via the 'lex2kg-o:bab' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the total number of chapters."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -686,6 +770,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:ayat ?section .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of sections (ayat) in {entity}.",
+                    "2. The entity '{entity}' represents an article in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:ayat' links an article to its sections.",
+                    "4. To solve this, count all sections linked to {entity} via the 'lex2kg-o:ayat' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the total number of sections."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -707,6 +798,14 @@ class NL2SPARQLGenerator:
                     ?referringArticle lex2kg-o:versi ?textSegment .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for articles that reference {entity}.",
+                    "2. The entity '{entity}' represents a legal element in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:merujuk' links text segments to what they reference.",
+                    "4. The property 'lex2kg-o:versi' links articles to their text segments or versions.",
+                    "5. To solve this, find text segments that reference {entity}, then find articles that have those segments.",
+                    "6. Construct a SPARQL query with a join pattern to retrieve the referring articles."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -730,6 +829,13 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?date)
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the latest law enacted in the year {value}.",
+                    "2. The property 'lex2kg-o:tahun' links laws to their year.",
+                    "3. The property 'lex2kg-o:disahkanPada' links laws to their enactment dates.",
+                    "4. To solve this, find laws from the year {value}, then order them by date in descending order.",
+                    "5. Construct a SPARQL query with ORDER BY DESC and LIMIT 1 to get the latest law from that year."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -750,6 +856,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:paragraf ?paragraph .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of paragraphs in {entity}.",
+                    "2. The entity '{entity}' represents a section in a legal document.",
+                    "3. The property 'lex2kg-o:paragraf' links a section to its paragraphs.",
+                    "4. To solve this, count all paragraphs linked to {entity} via the 'lex2kg-o:paragraf' property.",
+                    "5. Construct a SPARQL query using the COUNT function to determine the total number of paragraphs."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -770,6 +883,12 @@ class NL2SPARQLGenerator:
                     ?law lex2kg-o:tahun {value} .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the number of laws enacted in the year {value}.",
+                    "2. The property 'lex2kg-o:tahun' links laws to their year of enactment.",
+                    "3. To solve this, count all laws linked to the year {value} via the 'lex2kg-o:tahun' property.",
+                    "4. Construct a SPARQL query using the COUNT function to determine the total number of laws from that year."
+                ],
                 "complexity": "intermediate"
             },
             
@@ -794,6 +913,15 @@ class NL2SPARQLGenerator:
                     ?amendment lex2kg-o:versi ?version .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for amendments that modified {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:mengubah' links amendment letters to what they modify.",
+                    "4. The property 'lex2kg-o:huruf' links versions to their letters.",
+                    "5. The property 'lex2kg-o:versi' links amendments to their versions.",
+                    "6. To solve this, trace the connection from letters that modify {entity} to the amendments they belong to.",
+                    "7. Construct a SPARQL query with a complex join pattern to retrieve the amendments to {entity}."
+                ],
                 "complexity": "intermediate"
             },
             {
@@ -820,6 +948,16 @@ class NL2SPARQLGenerator:
                         ?amendedLaw a lex2kg-o:Peraturan
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for legal articles that were amended by {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:pasal' links laws to their articles.",
+                    "4. The property 'lex2kg-o:versi' links articles to their versions.",
+                    "5. The property 'lex2kg-o:huruf' links versions to their letters.",
+                    "6. The property 'lex2kg-o:mengubah' links letters to the versions they modify.",
+                    "7. To solve this, trace the complex connection path from {entity} to laws it amended.",
+                    "8. Construct a SPARQL query with multiple joins to find the amended laws."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -841,6 +979,13 @@ class NL2SPARQLGenerator:
                     FILTER(CONTAINS(LCASE(?title), LCASE({value})))
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for laws related to the keyword '{value}'.",
+                    "2. The property 'lex2kg-o:tentang' links laws to their titles or subject matter.",
+                    "3. To solve this, find laws whose titles contain the keyword '{value}'.",
+                    "4. Construct a SPARQL query using FILTER with CONTAINS to match laws with titles containing '{value}'.",
+                    "5. Use LCASE to make the search case-insensitive."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -864,6 +1009,14 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(COUNT(?article))
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the law with the most articles.",
+                    "2. The property 'lex2kg-o:pasal' links laws to their articles.",
+                    "3. To solve this, count the articles for each law, then find the law with the highest count.",
+                    "4. Construct a SPARQL query using GROUP BY to group by law.",
+                    "5. Use ORDER BY DESC with COUNT to sort laws by their article count in descending order.",
+                    "6. Use LIMIT 1 to get only the law with the highest count."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -887,6 +1040,13 @@ class NL2SPARQLGenerator:
                     ORDER BY DESC(?date)
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the most recent law enacted by {value}.",
+                    "2. The property 'lex2kg-o:disahkanOleh' links laws to their enactors.",
+                    "3. The property 'lex2kg-o:disahkanPada' links laws to their enactment dates.",
+                    "4. To solve this, find laws enacted by {value}, then order them by date in descending order.",
+                    "5. Construct a SPARQL query with ORDER BY DESC and LIMIT 1 to get the most recent law."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -907,6 +1067,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:menghapus ?deletedArticle .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for articles that were deleted by {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:menghapus' links laws to articles they deleted.",
+                    "4. To solve this, retrieve all articles linked to {entity} via the 'lex2kg-o:menghapus' property.",
+                    "5. Construct a SPARQL query to list all deleted articles."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -927,6 +1094,13 @@ class NL2SPARQLGenerator:
                     {entity} lex2kg-o:menyisipkan ?insertedArticle .
                     }
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for articles that were inserted by {entity}.",
+                    "2. The entity '{entity}' represents a legal document in the Indonesian legal system.",
+                    "3. The property 'lex2kg-o:menyisipkan' links laws to articles they inserted.",
+                    "4. To solve this, retrieve all articles linked to {entity} via the 'lex2kg-o:menyisipkan' property.",
+                    "5. Construct a SPARQL query to list all inserted articles."
+                ],
                 "complexity": "advanced"
             },
             {
@@ -951,6 +1125,13 @@ class NL2SPARQLGenerator:
                     ORDER BY ?date
                     LIMIT 1
                 """,
+                "thoughtsTemplate": [
+                    "1. The question asks for the oldest law in the system.",
+                    "2. The property 'lex2kg-o:disahkanPada' links laws to their enactment dates.",
+                    "3. The property 'lex2kg-o:jenisPeraturan' identifies the type of regulation.",
+                    "4. To solve this, find laws of type UU, then order them by date in ascending order.",
+                    "5. Construct a SPARQL query with FILTER to restrict to laws (UU), ORDER BY for date, and LIMIT 1 to get the oldest."
+                ],
                 "complexity": "advanced"
             }
         ]
@@ -1064,11 +1245,11 @@ class NL2SPARQLGenerator:
             "using",
             "through"
         ]):
-            # For entity placeholders (typically starting with "entity"), use full URI
-            if placeholder.startswith('entity') and 'uri' in mapping and mapping['uri'].startswith('http'):
-                return f"<{mapping['uri']}>"
+            # For entity placeholders, use label or entity name without prefix
+            if placeholder.startswith('entity') and 'label' in mapping:
+                return mapping['label']
             
-            # For property placeholders or other placeholders, keep using prefixed form
+            # For property placeholders, use prefixed form with lex2kg-o:
             return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
         
         # Use label form in these contexts:
@@ -1088,7 +1269,7 @@ class NL2SPARQLGenerator:
         
         # Default to label for most contexts
         return mapping.get('label', mapping.get('value', placeholder))
-
+    
     def _extract_uris_from_sparql(self, sparql):
         """
         Extract entity and property URIs from SPARQL query
