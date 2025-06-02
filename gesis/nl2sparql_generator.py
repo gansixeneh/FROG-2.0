@@ -1545,13 +1545,29 @@ class NL2SPARQLGenerator:
                 'prefixed': self.shorten_uri(uri)
             }
         
+        # Extract quoted values from the question first (more reliable)
+        quoted_values_from_question = re.findall(r"'([^']+)'", question)
+
         # Add value mappings from SPARQL
         numeric_pattern = r'\b(\d+)\b'
         numeric_values = re.findall(numeric_pattern, sparql)
-        string_pattern = r'"([^"]+)"'
-        string_values = re.findall(string_pattern, sparql)
-        
-        if numeric_values:
+
+        # Improved pattern to handle both normal and escaped quotes in SPARQL
+        string_pattern = r'(?:"([^"]+)"|\\\"([^\\\"]+)\\\")'
+        string_values = []
+        for match in re.finditer(string_pattern, sparql):
+            # Get whichever group captured something (either group 1 or 2)
+            value = match.group(1) if match.group(1) else match.group(2)
+            if value:
+                string_values.append(value)
+
+        # Prioritize values from question, then fall back to SPARQL values
+        if quoted_values_from_question:
+            all_mappings['value'] = {
+                'value': quoted_values_from_question[0],
+                'label': quoted_values_from_question[0]
+            }
+        elif numeric_values:
             all_mappings['value'] = {
                 'value': numeric_values[0],
                 'label': numeric_values[0]
