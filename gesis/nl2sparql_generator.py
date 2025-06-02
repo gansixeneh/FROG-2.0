@@ -2226,6 +2226,19 @@ class NL2SPARQLGenerator:
                 LIMIT 50
             """
         
+        elif "location-resource-count" in template_id:
+            # For counting resources at a specific library location
+            return """
+                SELECT DISTINCT ?entity ?entityLabel WHERE {
+                    ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> ?entity .
+                    OPTIONAL { ?entity rdfs:label ?entityLabel }
+                    OPTIONAL { ?entity <https://schema.org/name> ?entityLabel }
+                }
+                GROUP BY ?entity ?entityLabel
+                HAVING (COUNT(?resource) > 0)
+                LIMIT 50
+            """
+        
         # Default fallback for unknown complex patterns
         print(f"Warning: No specific discovery pattern for complex template: {template_id}")
         return None
