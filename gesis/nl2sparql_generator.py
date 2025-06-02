@@ -438,18 +438,25 @@ class NL2SPARQLGenerator:
         entity_matches = []
         if "entities" in related_candidates:
             for entity in related_candidates["entities"]:
-                expanded_id = self.expand_uri(entity['short'])
+                # Use full URI for entities_matches
+                if entity['short'].startswith('http'):
+                    # Already a full URI
+                    full_uri = entity['short']
+                else:
+                    # Expand prefixed URI to full URI
+                    full_uri = self.expand_uri(entity['short'])
+                
                 entity_matches.append({
-                    "id": expanded_id,
+                    "id": full_uri,  # Use full URI instead of expanded_id
                     "label": entity['label'],
                 })
-        
-        # Format property matches
+
+        # Format property matches  
         property_matches = []
         if "properties" in related_candidates:
             for property in related_candidates["properties"]:
                 property_matches.append({
-                    "id": property['short'],
+                    "id": property['short'],  # Keep prefixed form for properties
                     "label": property['label'],
                 })
         
@@ -508,15 +515,30 @@ class NL2SPARQLGenerator:
         Returns:
             str: Full URI (e.g., https://schema.org/Publication)
         """
+        # If it's already a full URI, return as is
+        if shortened_uri.startswith('http'):
+            return shortened_uri
+            
         # Check if the URI has a prefix
         if ":" in shortened_uri:
             prefix, path = shortened_uri.split(":", 1)
             
+            # Extended prefix mappings for GESIS knowledge graph
+            extended_prefixes = {
+                **self.prefixes,
+                'gesis': 'https://data.gesis.org/gesiskg/',
+                'gesiskg': 'https://data.gesis.org/gesiskg/schema/',
+                'disco': 'https://rdf-vocabulary.ddialliance.org/discovery.html#',
+                'nfdicore': 'https://nfdi.fiz-karlsruhe.de/ontology/',
+                'skos': 'http://www.w3.org/2004/02/skos/core#',
+                'void': 'http://rdfs.org/ns/void#'
+            }
+            
             # If the prefix is in our known prefixes, expand it
-            if prefix in self.prefixes:
-                return f"{self.prefixes[prefix]}{path}"
+            if prefix in extended_prefixes:
+                return f"{extended_prefixes[prefix]}{path}"
         
-        # Return as is if it doesn't have a recognized prefix or is already a full URI
+        # Return as is if it doesn't have a recognized prefix
         return shortened_uri
 
     def get_related_candidates(
@@ -1502,13 +1524,24 @@ class NL2SPARQLGenerator:
         # Create mappings for replacement
         all_mappings = {}
         
+        # Extract entity labels from the question itself by looking for quoted text
+        entity_labels_from_question = re.findall(r"'([^']+)'", question)
+        
         # Add entity mappings
         for i, uri in enumerate(entity_uris):
             key = "entity" if i == 0 else f"entity{i+1}"
-            label = self.extract_label_from_uri(uri)
+            
+            # Use label from question if available, otherwise extract from URI
+            if i < len(entity_labels_from_question):
+                entity_label = entity_labels_from_question[i]
+            else:
+                entity_label = self._get_entity_name_from_kg(uri)
+                if not entity_label:
+                    entity_label = self.extract_label_from_uri(uri)
+                    
             all_mappings[key] = {
                 'uri': uri,
-                'label': label,
+                'label': entity_label,
                 'prefixed': self.shorten_uri(uri)
             }
         

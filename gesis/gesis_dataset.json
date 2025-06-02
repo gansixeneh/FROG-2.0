@@ -3,231 +3,88 @@
     "id": "q1",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "resource-library-location",
-    "sparql": "SELECT ?locationName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-18885> <https://data.gesis.org/gesiskg/schema/libraryLocation> ?location . ?location <https://schema.org/name> ?locationName . }",
+    "templateId": "publication-date",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-108633> <https://schema.org/datePublished> ?date . }",
     "thoughts": [
-      "1. The question asks about the library location of a specific resource gesis bib 18885.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. First, I need to find the location entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-18885> using the gesiskg:libraryLocation property.",
-      "4. Then I retrieve the human-readable name of the location using the schema:name property.",
-      "5. The query returns the name of the library location where gesis bib 18885 can be found."
+      "1. The question asks when a specific scholarly resource Methodological aspects in cross-national research was published.",
+      "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
+      "3. To answer this question, I need to query for the value of the schema:datePublished property of <https://data.gesis.org/gesiskg/resource/gesis-bib-108633>.",
+      "4. The query directly retrieves the publication date without needing additional joins or transformations.",
+      "5. The result provides the publication date of Methodological aspects in cross-national research in the format stored in the knowledge graph."
     ],
-    "question": "What is the library location of 'KRISENFURCHT. FURCHT VOR WIRTSCHAFTSKRISE'?",
+    "question": "When was 'Methodological aspects in cross-national research' published?",
     "entities": [
-      "KRISENFURCHT. FURCHT VOR WIRTSCHAFTSKRISE"
+      "Methodological aspects in cross-national research"
     ],
     "properties": [
-      "libraryLocation",
-      "name"
+      "datePublished"
     ],
     "entities_matches": [
       {
-        "id": "gesis:resource/library_data",
-        "label": "library data"
+        "id": "https://data.gesis.org/gesiskg/resource/methodological_paradigms",
+        "label": "methodological paradigms"
       },
       {
-        "id": "gesis:resource/British_Library",
-        "label": "British Library"
+        "id": "https://data.gesis.org/gesiskg/resource/%28Methodological_perspectives%29",
+        "label": "(Methodological perspectives)"
       },
       {
-        "id": "gesis:resource/gesis-bib-18885",
-        "label": "KRISENFURCHT. FURCHT VOR WIRTSCHAFTSKRISE"
+        "id": "https://data.gesis.org/gesiskg/resource/sozialeocial_aspects",
+        "label": "sozialeocial aspects"
       },
       {
-        "id": "gesis:resource/Wirtschaftskrise",
-        "label": "Wirtschaftskrise"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-39136_Cross_J",
+        "label": "Cross, J."
       },
       {
-        "id": "gesis:resource/Harvard_Library",
-        "label": "Harvard Library"
+        "id": "https://data.gesis.org/gesiskg/resource/Research",
+        "label": "Research"
       },
       {
-        "id": "gesis:resource/Hutchison_University_Library",
-        "label": "Hutchison University Library"
+        "id": "https://data.gesis.org/gesiskg/resource/cross-national_research",
+        "label": "cross-national research"
       },
       {
-        "id": "gesis:resource/University_Library_Groningen",
-        "label": "University Library Groningen"
+        "id": "https://data.gesis.org/gesiskg/resource/National_Center_of_Social_Research",
+        "label": "National Center of Social Research"
       },
       {
-        "id": "gesis:resource/Name",
-        "label": "Name"
+        "id": "https://data.gesis.org/gesiskg/resource/National_Centre_of_Social_Research",
+        "label": "National Centre of Social Research"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/cross-national_analysis",
+        "label": "cross-national analysis"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/cross-national_survey_research",
+        "label": "cross-national survey research"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-152283",
+        "label": "Cross-national comparative research"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-108633",
+        "label": "Methodological aspects in cross-national research"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-43502",
+        "label": "Methodological considerations in comparative cross-national research"
       }
     ],
     "properties_matches": [
       {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
+        "id": "schema:abstract",
+        "label": "abstract"
       },
       {
         "id": "schema:about",
         "label": "about"
       },
       {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q2",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "resource-library-location",
-    "sparql": "SELECT ?locationName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-16061> <https://data.gesis.org/gesiskg/schema/libraryLocation> ?location . ?location <https://schema.org/name> ?locationName . }",
-    "thoughts": [
-      "1. The question asks about the library location of a specific resource gesis bib 16061.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. First, I need to find the location entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-16061> using the gesiskg:libraryLocation property.",
-      "4. Then I retrieve the human-readable name of the location using the schema:name property.",
-      "5. The query returns the name of the library location where gesis bib 16061 can be found."
-    ],
-    "question": "In which section of the library can I find 'Bush approval at 89 percent, highest in polling history. However, only 51 percent back his handling of domestic issues'?",
-    "entities": [
-      "Bush approval at 89 percent, highest in polling history. However, only 51 percent back his handling of domestic issues"
-    ],
-    "properties": [
-      "libraryLocation",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/library_data",
-        "label": "library data"
-      },
-      {
-        "id": "gesis:resource/British_Library",
-        "label": "British Library"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-81234_Bush_Richard",
-        "label": "Bush, Richard"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-71734_Bush_Robert_R",
-        "label": "Bush, Robert R."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-109494_Bush_Robert_R",
-        "label": "Bush, Robert R."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-16062",
-        "label": "Bush after the war"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-149892_Bush_Sarah_Sunn",
-        "label": "Bush, Sarah Sunn"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-60245",
-        "label": "Approval Voting"
-      },
-      {
-        "id": "gesis:resource/%28Sonder_89%29",
-        "label": "(Sonder_89)"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-51020",
-        "label": "A pollester on polling"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-25074",
-        "label": "POLLing for data"
-      },
-      {
-        "id": "gesis:resource/%28Sonder_51%29",
-        "label": "(Sonder_51)"
-      },
-      {
-        "id": "gesis:resource/%28Library_and_information_science%29",
-        "label": "(Library and information science)"
-      },
-      {
-        "id": "gesis:resource/%28Library_and_information_science_series%29",
-        "label": "(Library and information science series)"
-      },
-      {
-        "id": "gesis:resource/Hutchison_University_Library",
-        "label": "Hutchison University Library"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-15693",
-        "label": "Bush Job Performance. Bush Approval Ratings - Trend"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-15631",
-        "label": "Bush approval and What's Behind it. President's Performance Ratings Up on Drugs and Taxes"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-16158",
-        "label": "Bush approval drops from stratospheric levels. Now at 77%"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-146558",
-        "label": "Observations on the historical development of polling"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-74228",
-        "label": "History Does Not Repeat Itself"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-51159",
-        "label": "Making the present history"
-      },
-      {
-        "id": "gesis:resource/domestic_labor_support",
-        "label": "domestic labor support"
-      },
-      {
-        "id": "gesis:resource/%28Social_issues%29",
-        "label": "(Social issues)"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-44820",
-        "label": "International Crises and Domestic Politics"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-16061",
-        "label": "Bush approval at 89 percent, highest in polling history. However, only 51 percent back his handling of domestic issues"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-16284",
-        "label": "Congress Approval Rating"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-60813",
-        "label": "Polling in 1968"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-64557",
-        "label": "The Future Direction of Election Polling"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
         "id": "schema:isPartOf",
         "label": "is part of"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
-      },
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
       },
       {
         "id": "schema:author",
@@ -242,24 +99,90 @@
         "label": "date published"
       },
       {
-        "id": "schema:url",
-        "label": "url"
+        "id": "schema:publicationType",
+        "label": "publication type"
+      },
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
       },
       {
         "id": "gesiskg:sourceInfo",
         "label": "source info"
       },
       {
-        "id": "schema:provider",
-        "label": "provider"
+        "id": "schema:inLanguage",
+        "label": "in language"
+      }
+    ]
+  },
+  {
+    "id": "q2",
+    "category": "scholarly",
+    "complexity": "basic",
+    "templateId": "publication-topic",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-13015> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "thoughts": [
+      "1. The question asks about the topic or subject of URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D.",
+      "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
+      "3. I first need to find the topic entity that <https://data.gesis.org/gesiskg/resource/gesis-bib-13015> is about using schema:about.",
+      "4. Then I retrieve the name of the topic using the schema:name property.",
+      "5. The query returns the name of the topic that URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D is about."
+    ],
+    "question": "What is the subject of 'URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D'?",
+    "entities": [
+      "URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D"
+    ],
+    "properties": [
+      "about",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/subject_headings",
+        "label": "subject headings"
       },
       {
-        "id": "schema:givenName",
-        "label": "given name"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-76126",
+        "label": "Subject Headings"
       },
       {
-        "id": "schema:mainEntity",
-        "label": "main entity"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-13015",
+        "label": "URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12536",
+        "label": "URLAUBSREISENDE, AUSLANDSREISEN, REISEZIELE, REISEMONATE"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12201",
+        "label": "URLAUBSREISEN, AUSLANDSREISE, REISEZIELE, D"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12627",
+        "label": "URLAUBSREISE, PLANUNG, AUSLANDSREISE"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Name",
+        "label": "Name"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      },
+      {
+        "id": "schema:url",
+        "label": "url"
+      },
+      {
+        "id": "schema:abstract",
+        "label": "abstract"
       },
       {
         "id": "schema:name",
@@ -270,1451 +193,78 @@
   {
     "id": "q3",
     "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-author",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-76468> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
+    "complexity": "intermediate",
+    "templateId": "location-resource-count",
+    "sparql": "SELECT ?COUNT WHERE { { SELECT (COUNT(?resource) AS ?COUNT) WHERE { ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_063-099.001> . } } }",
     "thoughts": [
-      "1. The question asks for the author of a specific scholarly resource gesis bib 76468.",
-      "2. In the GESIS knowledge graph, authorship is represented by the schema:author property.",
-      "3. First, I need to find the author entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-76468> using the schema:author property.",
-      "4. Then I retrieve the human-readable name of the author using the schema:name property.",
-      "5. The query returns the name(s) of the author(s) who created gesis bib 76468."
+      "1. The question asks for the number of resources located at a specific library location K\u00f6ln 063-099/001.",
+      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
+      "3. To count the resources, I need to find all resources that have K\u00f6ln 063-099/001 as their library location.",
+      "4. I use COUNT(?resource) to count the total number of such resources.",
+      "5. The query returns the count of resources located at K\u00f6ln 063-099/001."
     ],
-    "question": "Who created 'Sociological Research on Male and Female Homosexuality'?",
+    "question": "How many items can be found in the 'K\u00f6ln 063-099/001' section?",
     "entities": [
-      "Sociological Research on Male and Female Homosexuality"
+      "K\u00f6ln 063-099/001"
     ],
     "properties": [
-      "author",
-      "name"
+      "libraryLocation"
     ],
     "entities_matches": [
       {
-        "id": "gesis:resource/Research",
-        "label": "Research"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-66533",
+        "label": "From the many are chosen the few"
       },
       {
-        "id": "gesis:resource/gesis-bib-11218",
-        "label": "Homosexuality"
+        "id": "https://data.gesis.org/gesiskg/resource/Items",
+        "label": "Items"
       },
       {
-        "id": "gesis:resource/gesis-bib-90157",
-        "label": "Doing sociological research"
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln",
+        "label": "K\u00f6ln"
       },
       {
-        "id": "gesis:resource/gesis-bib-101265",
-        "label": "Sociological research methods"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-13715",
+        "label": "K\u00f6ln"
       },
       {
-        "id": "gesis:resource/gesis-bib-76468",
-        "label": "Sociological Research on Male and Female Homosexuality"
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_099-009",
+        "label": "K\u00f6ln 099-009"
       },
       {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_099-001",
+        "label": "K\u00f6ln 099-001"
       },
       {
-        "id": "gesis:resource/Name",
-        "label": "Name"
+        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_063-099.001",
+        "label": "K\u00f6ln 063-099/001"
       }
     ],
     "properties_matches": [
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
       {
         "id": "schema:about",
         "label": "about"
       },
       {
-        "id": "gesiskg:reference",
-        "label": "reference"
+        "id": "schema:hasPart",
+        "label": "has part"
       },
       {
-        "id": "schema:name",
-        "label": "name"
+        "id": "schema:isPartOf",
+        "label": "is part of"
       },
       {
-        "id": "schema:inLanguage",
-        "label": "in language"
+        "id": "gesiskg:sourceCollection",
+        "label": "source collection"
+      },
+      {
+        "id": "gesiskg:libraryLocation",
+        "label": "library location"
       }
     ]
   },
   {
     "id": "q4",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-language",
-    "sparql": "SELECT ?language WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-72064> <https://schema.org/inLanguage> ?language . }",
-    "thoughts": [
-      "1. The question asks about the language in which gesis bib 72064 was written or published.",
-      "2. In the GESIS knowledge graph, the language of a publication is represented by the schema:inLanguage property.",
-      "3. To answer this question, I need to query for the value of the schema:inLanguage property of <https://data.gesis.org/gesiskg/resource/gesis-bib-72064>.",
-      "4. The query directly retrieves the language without needing additional joins or transformations.",
-      "5. The result provides the language of gesis bib 72064 as stored in the knowledge graph."
-    ],
-    "question": "In which language was 'A Preliminary Laboratory Study of the Acting Crowd' published?",
-    "entities": [
-      "A Preliminary Laboratory Study of the Acting Crowd"
-    ],
-    "properties": [
-      "inLanguage"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-50749",
-        "label": "Rethinking the laboratory experiment"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-98934",
-        "label": "A First Language"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-72064",
-        "label": "A Preliminary Laboratory Study of the Acting Crowd"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:inLanguage",
-        "label": "in language"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "gesiskg:reference",
-        "label": "reference"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "gesiskg:initsFirst",
-        "label": "inits first"
-      },
-      {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
-      }
-    ]
-  },
-  {
-    "id": "q5",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-date",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-108476> <https://schema.org/datePublished> ?date . }",
-    "thoughts": [
-      "1. The question asks when a specific scholarly resource gesis bib 108476 was published.",
-      "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
-      "3. To answer this question, I need to query for the value of the schema:datePublished property of <https://data.gesis.org/gesiskg/resource/gesis-bib-108476>.",
-      "4. The query directly retrieves the publication date without needing additional joins or transformations.",
-      "5. The result provides the publication date of gesis bib 108476 in the format stored in the knowledge graph."
-    ],
-    "question": "What is the publication date of 'Buchk\u00e4ufer und Leser 2005. Profile, Motive, W\u00fcnsche'?",
-    "entities": [
-      "Buchk\u00e4ufer und Leser 2005. Profile, Motive, W\u00fcnsche"
-    ],
-    "properties": [
-      "datePublished"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-95523_Date_C_J",
-        "label": "Date, C. J."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-109242_Date_Chris_J",
-        "label": "Date, Chris J."
-      },
-      {
-        "id": "gesis:resource/Leser",
-        "label": "Leser"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-108884_Leser_UIf",
-        "label": "Leser, UIf"
-      },
-      {
-        "id": "gesis:resource/bib_reference_Typolgie_der_W%C3%BCnsche_1993",
-        "label": "Typolgie der W\u00fcnsche 1993"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-11558",
-        "label": "W\u00fcnsche zum Neuen Jahr"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-15483",
-        "label": "W\u00fcnsche an das neue Jahr"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-12067",
-        "label": "W\u00dcNSCHE F\u00dcR NEUJAHR, GESUNDHEIT, FRIEDEN"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-12057",
-        "label": "W\u00dcNSCHE NEUJAHR, GESUNDHEIT, FRIEDEN"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-108476",
-        "label": "Buchk\u00e4ufer und Leser 2005. Profile, Motive, W\u00fcnsche"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:dateModified",
-        "label": "date modified"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:editor",
-        "label": "editor"
-      },
-      {
-        "id": "gesiskg:toSource",
-        "label": "to source"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:mainEntity",
-        "label": "main entity"
-      },
-      {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
-      }
-    ]
-  },
-  {
-    "id": "q6",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-author",
-    "sparql": "SELECT ?authorName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . }",
-    "thoughts": [
-      "1. The question asks for the author of a specific scholarly resource gesis bib 102071.",
-      "2. In the GESIS knowledge graph, authorship is represented by the schema:author property.",
-      "3. First, I need to find the author entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-102071> using the schema:author property.",
-      "4. Then I retrieve the human-readable name of the author using the schema:name property.",
-      "5. The query returns the name(s) of the author(s) who created gesis bib 102071."
-    ],
-    "question": "Who wrote 'Statistical design for research'?",
-    "entities": [
-      "Statistical design for research"
-    ],
-    "properties": [
-      "author",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/Design",
-        "label": "Design"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-138149",
-        "label": "Design"
-      },
-      {
-        "id": "gesis:resource/Research",
-        "label": "Research"
-      },
-      {
-        "id": "gesis:resource/%28Texts_in_statistical_science%29",
-        "label": "(Texts in statistical science)"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-102071",
-        "label": "Statistical design for research"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-101689",
-        "label": "Statistical principles in experimental design"
-      },
-      {
-        "id": "gesis:resource/Research-Design",
-        "label": "Research-Design"
-      },
-      {
-        "id": "gesis:resource/research_design",
-        "label": "research design"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-71301",
-        "label": "Some statistical problems in research design"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "gesiskg:reference",
-        "label": "reference"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      }
-    ]
-  },
-  {
-    "id": "q7",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "publication-publisher",
-    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-119574> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
-    "thoughts": [
-      "1. The question asks about the organization that published gesis bib 119574.",
-      "2. In the GESIS knowledge graph, publishers are linked to publications via the schema:publisher property.",
-      "3. I need to first find the publisher entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-119574> using schema:publisher.",
-      "4. Then I retrieve the name of the publisher organization using the schema:name property.",
-      "5. The query returns the name of the organization that published gesis bib 119574."
-    ],
-    "question": "What is the publisher of 'National identity : June 2009'?",
-    "entities": [
-      "National identity : June 2009"
-    ],
-    "properties": [
-      "publisher",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/%28Jahresgutachten_2009_%28Langfassung%29_%3B_2009%29",
-        "label": "(Jahresgutachten 2009 (Langfassung) ; 2009)"
-      },
-      {
-        "id": "gesis:resource/bib_reference_ISSP_2009",
-        "label": "ISSP 2009"
-      },
-      {
-        "id": "gesis:resource/National_Academic_Press",
-        "label": "National Academic Press"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-82975",
-        "label": "National Identity.; - Nationalism"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-84934",
-        "label": "National Identity and national pride"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-77406",
-        "label": "The construction of national identity"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-119574",
-        "label": "National identity : June 2009"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-77417",
-        "label": "Documenting publications related to the concept of national identity"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "gesiskg:mentionID",
-        "label": "mention iD"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      }
-    ]
-  },
-  {
-    "id": "q8",
-    "category": "scholarly",
-    "complexity": "basic",
-    "templateId": "resource-library-location",
-    "sparql": "SELECT ?locationName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-21010> <https://data.gesis.org/gesiskg/schema/libraryLocation> ?location . ?location <https://schema.org/name> ?locationName . }",
-    "thoughts": [
-      "1. The question asks about the library location of a specific resource gesis bib 21010.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. First, I need to find the location entity related to <https://data.gesis.org/gesiskg/resource/gesis-bib-21010> using the gesiskg:libraryLocation property.",
-      "4. Then I retrieve the human-readable name of the location using the schema:name property.",
-      "5. The query returns the name of the library location where gesis bib 21010 can be found."
-    ],
-    "question": "What is the library location of 'Wiederaufnahme der politischen Arbeit M\u00f6llemanns; - Pers\u00f6nliche Angst vor dem Ausbruch eines Krieges im Irak; - Einstellung zum Beitritt der T\u00fcrkei in die EU; - Einsch\u00e4tzung eines Krieges im Irak; - Volksabstimmung zum EU-Beitritt der T\u00fcrkei; - H\u00f6here Neuverschuldung angesichts der schlechten Wirtschaftslage; - Beitr\u00e4ge zur gesetzlichen Krankenversicherung f\u00fcr Ehepartner Alleinverdienender'?",
-    "entities": [
-      "Wiederaufnahme der politischen Arbeit M\u00f6llemanns; - Pers\u00f6nliche Angst vor dem Ausbruch eines Krieges im Irak; - Einstellung zum Beitritt der T\u00fcrkei in die EU; - Einsch\u00e4tzung eines Krieges im Irak; - Volksabstimmung zum EU-Beitritt der T\u00fcrkei; - H\u00f6here Neuverschuldung angesichts der schlechten Wirtschaftslage; - Beitr\u00e4ge zur gesetzlichen Krankenversicherung f\u00fcr Ehepartner Alleinverdienender"
-    ],
-    "properties": [
-      "libraryLocation",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/library_data",
-        "label": "library data"
-      },
-      {
-        "id": "gesis:resource/British_Library",
-        "label": "British Library"
-      },
-      {
-        "id": "gesis:resource/Arbeit",
-        "label": "Arbeit"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-13759",
-        "label": "Angst"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-15383",
-        "label": "Angst"
-      },
-      {
-        "id": "gesis:resource/Angst",
-        "label": "Angst"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-11368",
-        "label": "Angst"
-      },
-      {
-        "id": "gesis:resource/IM",
-        "label": "IM"
-      },
-      {
-        "id": "gesis:resource/Irak",
-        "label": "Irak"
-      },
-      {
-        "id": "gesis:resource/Einstellung",
-        "label": "Einstellung"
-      },
-      {
-        "id": "gesis:resource/EU-Beitritt",
-        "label": "EU-Beitritt"
-      },
-      {
-        "id": "gesis:resource/T%C3%BCrkei",
-        "label": "T\u00fcrkei"
-      },
-      {
-        "id": "gesis:resource/EU",
-        "label": "EU"
-      },
-      {
-        "id": "gesis:resource/Volksabstimmung",
-        "label": "Volksabstimmung"
-      },
-      {
-        "id": "gesis:resource/h%C3%B6here_Schule",
-        "label": "h\u00f6here Schule"
-      },
-      {
-        "id": "gesis:resource/Krankenversicherung",
-        "label": "Krankenversicherung"
-      },
-      {
-        "id": "gesis:resource/gesetzliche_Krankenversicherung",
-        "label": "gesetzliche Krankenversicherung"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-106776",
-        "label": "Die gesetzliche Krankenversicherung"
-      },
-      {
-        "id": "gesis:resource/Ehepartner",
-        "label": "Ehepartner"
-      },
-      {
-        "id": "gesis:resource/Harvard_Library",
-        "label": "Harvard Library"
-      },
-      {
-        "id": "gesis:resource/Hutchison_University_Library",
-        "label": "Hutchison University Library"
-      },
-      {
-        "id": "gesis:resource/EU_membership",
-        "label": "EU membership"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-20842",
-        "label": "Keine Deutschen im Irak"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-20990",
-        "label": "Beitritt der T\u00fcrkei zu EU"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-22016",
-        "label": "EU-Beitritt; - T\u00fcrkei. ; - Kroatien"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-58749",
-        "label": "Die T\u00fcrkei und die EU. Die Geschichte richtig lesen"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-21357",
-        "label": "W\u00e4re die Mitgliedschaft der T\u00fcrkei in der EU generell....?"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-12205",
-        "label": "EINSCH\u00c4TZUNG KRIEGSGEFAHR, D"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-28919",
-        "label": "Die wirtschaftliche Entwicklung der T\u00fcrkei"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-21010",
-        "label": "Wiederaufnahme der politischen Arbeit M\u00f6llemanns; - Pers\u00f6nliche Angst vor dem Ausbruch eines Krieges im Irak; - Einstellung zum Beitritt der T\u00fcrkei in die EU; - Einsch\u00e4tzung eines Krieges im Irak; - Volksabstimmung zum EU-Beitritt der T\u00fcrkei; - H\u00f6here Neuverschuldung angesichts der schlechten Wirtschaftslage; - Beitr\u00e4ge zur gesetzlichen Krankenversicherung f\u00fcr Ehepartner Alleinverdienender"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:provider",
-        "label": "provider"
-      },
-      {
-        "id": "schema:mainEntity",
-        "label": "main entity"
-      },
-      {
-        "id": "gesiskg:toSource",
-        "label": "to source"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "gesiskg:reference",
-        "label": "reference"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
-      },
-      {
-        "id": "schema:familyName",
-        "label": "family name"
-      }
-    ]
-  },
-  {
-    "id": "q9",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-first-publication",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-105287_Buric_Oliver> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY ASC(?date) LIMIT 1",
-    "thoughts": [
-      "1. The question asks for the earliest publication by gesis bib 105287_Buric_Oliver.",
-      "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
-      "3. I need to find all publications that have gesis bib 105287_Buric_Oliver as their author and retrieve their titles and dates.",
-      "4. I sort the results by publication date in ascending order (oldest first) using ORDER BY ASC(?date).",
-      "5. The LIMIT 1 clause ensures only the earliest publication is returned."
-    ],
-    "question": "What was the first publication by 'Buric, Oliver'?",
-    "entities": [
-      "Buric, Oliver"
-    ],
-    "properties": [
-      "author",
-      "name",
-      "datePublished"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-54876_First_Anat",
-        "label": "First, Anat"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-105287_Buric_Oliver",
-        "label": "Buric, Oliver"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-133565_Oliver_Eric",
-        "label": "Oliver, Eric"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-25579_Oliver_Daniel",
-        "label": "Oliver, Daniel"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "gesiskg:initsFirst",
-        "label": "inits first"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q10",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-latest-publication",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-104139_Lautmann_R%C3%BCdiger> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
-    "thoughts": [
-      "1. The question asks for the most recent publication by gesis bib 104139_Lautmann_R%C3%BCdiger.",
-      "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
-      "3. I need to find all publications that have gesis bib 104139_Lautmann_R%C3%BCdiger as their author and retrieve their titles and dates.",
-      "4. I sort the results by publication date in descending order (most recent first) using ORDER BY DESC(?date).",
-      "5. The LIMIT 1 clause ensures only the most recent publication is returned."
-    ],
-    "question": "What is the latest publication by 'Lautmann, R\u00fcdiger'?",
-    "entities": [
-      "Lautmann, R\u00fcdiger"
-    ],
-    "properties": [
-      "author",
-      "name",
-      "datePublished"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-74312_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-37042_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-44909_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-79615_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-90165_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-3574_Klar_R%C3%BCdiger",
-        "label": "Klar, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-2528_Klar_R%C3%BCdiger",
-        "label": "Klar, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-104139_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-79810_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-36378_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-35912_Lautmann_R%C3%BCdiger",
-        "label": "Lautmann, R\u00fcdiger"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:dateModified",
-        "label": "date modified"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:editor",
-        "label": "editor"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q11",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "year-publication-count",
-    "sparql": "SELECT ?COUNT WHERE { { SELECT (COUNT(?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/datePublished> 2005 . } } }",
-    "thoughts": [
-      "1. The question asks for the number of publications published in a specific year (2005).",
-      "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
-      "3. I need to find all publications with a datePublished value matching 2005.",
-      "4. The COUNT(?publication) aggregation function gives us the total number of such publications.",
-      "5. The query returns the count of publications published in the year 2005."
-    ],
-    "question": "What is the publication count for the year 2005?",
-    "entities": [],
-    "properties": [
-      "datePublished"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-97666",
-        "label": "Regression analysis of count data"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-73830",
-        "label": "Bev\u00f6lkerungsentwicklung 2005"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:dateModified",
-        "label": "date modified"
-      }
-    ]
-  },
-  {
-    "id": "q12",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-publication-count",
-    "sparql": "SELECT ?COUNT WHERE { { SELECT (COUNT(DISTINCT ?publication) AS ?COUNT) WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-39238_Zoller_P-H> . } } }",
-    "thoughts": [
-      "1. The question asks for the number of publications authored by gesis bib 39238_Zoller_P H.",
-      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
-      "3. To count the publications, I need to find all resources that have gesis bib 39238_Zoller_P H as their author.",
-      "4. I use COUNT(DISTINCT ?publication) to avoid counting the same publication multiple times.",
-      "5. The query uses a nested SELECT with aggregation to return the total count of publications authored by gesis bib 39238_Zoller_P H."
-    ],
-    "question": "What is the publication count of 'Zoller, P.-H.'?",
-    "entities": [
-      "Zoller, P.-H."
-    ],
-    "properties": [
-      "author"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-97666",
-        "label": "Regression analysis of count data"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-39238_Zoller_P-H",
-        "label": "Zoller, P.-H."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-39236_Zoller_P-H",
-        "label": "Zoller, P.-H."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-146230_Zoller_Daniel",
-        "label": "Zoller, Daniel"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-124949_Ho_H-P",
-        "label": "Ho, H.-P."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-127546_Ho_H-P",
-        "label": "Ho, H.-P."
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      }
-    ]
-  },
-  {
-    "id": "q13",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "location-resources-list",
-    "sparql": "SELECT ?resourceName WHERE { ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_058-050.001> . ?resource <https://schema.org/name> ?resourceName . } LIMIT 10",
-    "thoughts": [
-      "1. The question asks for a list of resources available at a specific library location K%C3%B6ln_058 050.001.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. I need to find all resources that have K%C3%B6ln_058 050.001 as their library location.",
-      "4. For each resource, I retrieve its name using the schema:name property.",
-      "5. The query returns the names of up to 10 resources located at K%C3%B6ln_058 050.001."
-    ],
-    "question": "List the resources located in 'K\u00f6ln 058-050/001'.",
-    "entities": [
-      "K\u00f6ln 058-050/001"
-    ],
-    "properties": [
-      "libraryLocation",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/List",
-        "label": "List"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln",
-        "label": "K\u00f6ln"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-13715",
-        "label": "K\u00f6ln"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_050-058",
-        "label": "K\u00f6ln 050-058"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_085-058",
-        "label": "K\u00f6ln 085-058"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_058-055",
-        "label": "K\u00f6ln 058-055"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_088-058",
-        "label": "K\u00f6ln 088-058"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_050-050",
-        "label": "K\u00f6ln 050-050"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_058-050",
-        "label": "K\u00f6ln 058-050"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_050-001",
-        "label": "K\u00f6ln 050-001"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_058-050.001",
-        "label": "K\u00f6ln 058-050/001"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
-      },
-      {
-        "id": "gesiskg:sourceCollection",
-        "label": "source collection"
-      },
-      {
-        "id": "gesiskg:reference",
-        "label": "reference"
-      },
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q14",
-    "category": "scholarly",
-    "complexity": "intermediate",
-    "templateId": "person-first-publication",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-113072_Flanagan_David> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY ASC(?date) LIMIT 1",
-    "thoughts": [
-      "1. The question asks for the earliest publication by gesis bib 113072_Flanagan_David.",
-      "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
-      "3. I need to find all publications that have gesis bib 113072_Flanagan_David as their author and retrieve their titles and dates.",
-      "4. I sort the results by publication date in ascending order (oldest first) using ORDER BY ASC(?date).",
-      "5. The LIMIT 1 clause ensures only the earliest publication is returned."
-    ],
-    "question": "What was the first publication by 'Flanagan, David'?",
-    "entities": [
-      "Flanagan, David"
-    ],
-    "properties": [
-      "author",
-      "name",
-      "datePublished"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-54876_First_Anat",
-        "label": "First, Anat"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-102499_Flanagan_Scott_C",
-        "label": "Flanagan, Scott C."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-104006_Flanagan_Scott_C",
-        "label": "Flanagan, Scott C."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-51942_Flanagan_Scott_C",
-        "label": "Flanagan, Scott C."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-47272_Flanagan_Constance",
-        "label": "Flanagan, Constance"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-113072_Flanagan_David",
-        "label": "Flanagan, David"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-90994_Flanagan_John_C_ua",
-        "label": "Flanagan, John C. u.a."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-22903_Flanagan_Robert_J",
-        "label": "Flanagan, Robert J."
-      },
-      {
-        "id": "gesis:resource/gesis-bib-94962_Flanagan_David",
-        "label": "Flanagan, David"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "gesiskg:initsFirst",
-        "label": "inits first"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:givenName",
-        "label": "given name"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      }
-    ]
-  },
-  {
-    "id": "q15",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "location-topic-distribution",
-    "sparql": "SELECT ?topicName WHERE { { SELECT ?topic (COUNT(?resource) AS ?COUNT) WHERE { ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_150-087.029> . ?resource <https://schema.org/about> ?topic . } GROUP BY ?topic ORDER BY DESC(?COUNT) LIMIT 1 } ?topic <https://schema.org/name> ?topicName . }",
-    "thoughts": [
-      "1. The question asks for the most common topic among resources located at K%C3%B6ln_150 087.029.",
-      "2. In the GESIS knowledge graph, resources are linked to locations via gesiskg:libraryLocation and to topics via schema:about.",
-      "3. I need to find all resources at the specified location, then identify their topics.",
-      "4. I count how many resources are associated with each topic using COUNT(?resource).",
-      "5. Grouping by topic and ordering by count in descending order gives the most common topic.",
-      "6. Finally, I retrieve the human-readable name of this topic using the schema:name property."
-    ],
-    "question": "What is the most common topic for resources in 'K\u00f6ln 150-087/029'?",
-    "entities": [
-      "K\u00f6ln 150-087/029"
-    ],
-    "properties": [
-      "libraryLocation",
-      "about",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/common_problems",
-        "label": "common problems"
-      },
-      {
-        "id": "gesis:resource/topic_maps",
-        "label": "topic maps"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-148773",
-        "label": "Applications of topic models"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln",
-        "label": "K\u00f6ln"
-      },
-      {
-        "id": "gesis:resource/gesis-bib-13715",
-        "label": "K\u00f6ln"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-010",
-        "label": "K\u00f6ln 150-010"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-075",
-        "label": "K\u00f6ln 150-075"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-070",
-        "label": "K\u00f6ln 150-070"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-001",
-        "label": "K\u00f6ln 150-001"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_007-150",
-        "label": "K\u00f6ln 007-150"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-030",
-        "label": "K\u00f6ln 150-030"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-035",
-        "label": "K\u00f6ln 150-035"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-004",
-        "label": "K\u00f6ln 150-004"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-015",
-        "label": "K\u00f6ln 150-015"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-087",
-        "label": "K\u00f6ln 150-087"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-087.029",
-        "label": "K\u00f6ln 150-087/029"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-087.027",
-        "label": "K\u00f6ln 150-087/027"
-      },
-      {
-        "id": "gesis:resource/K%C3%B6ln_150-087.028",
-        "label": "K\u00f6ln 150-087/028"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
-      },
-      {
-        "id": "gesiskg:sourceCollection",
-        "label": "source collection"
-      },
-      {
-        "id": "gesiskg:toSource",
-        "label": "to source"
-      },
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q16",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-topic-top-expert",
-    "sparql": "SELECT ?authorName WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"ENTWICKLUNG\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"ENTWICKLUNG\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"ENTWICKLUNG\"))) } ?author <https://schema.org/name> ?authorName . } GROUP BY ?author ?authorName ORDER BY DESC(COUNT(?publication)) LIMIT 1",
-    "thoughts": [
-      "1. The question asks who is the top expert or most prolific researcher on the topic '1'.",
-      "2. To determine expertise, I need to count how many publications each author has on this topic.",
-      "3. A publication can relate to '1' in three ways: through a topic entity's name, through keywords, or through the publication's title.",
-      "4. I use UNION to combine these three patterns and CONTAINS with LCASE for case-insensitive matching.",
-      "5. I group the results by author and count their publications on this topic.",
-      "6. Ordering by the publication count in descending order and limiting to 1 result gives us the top expert."
-    ],
-    "question": "Who has published the most about 'ENTWICKLUNG'?",
-    "entities": [],
-    "properties": [
-      "author",
-      "about",
-      "name",
-      "keywords",
-      "name",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/gesis-bib-104536",
-        "label": "Entwicklung"
-      },
-      {
-        "id": "gesis:resource/Entwicklung",
-        "label": "Entwicklung"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:inLanguage",
-        "label": "in language"
-      }
-    ]
-  },
-  {
-    "id": "q17",
     "category": "scholarly",
     "complexity": "advanced",
     "templateId": "most-populated-location",
@@ -1727,7 +277,7 @@
       "5. Ordering by the resource count in descending order and limiting to 1 result gives the location with the most resources.",
       "6. Finally, I retrieve the human-readable name of this location using the schema:name property."
     ],
-    "question": "What is the most populated section in the library?",
+    "question": "Which library location has the most resources?",
     "entities": [],
     "properties": [
       "libraryLocation",
@@ -1735,46 +285,34 @@
     ],
     "entities_matches": [
       {
-        "id": "gesis:resource/library_data",
+        "id": "https://data.gesis.org/gesiskg/resource/library_data",
         "label": "library data"
       },
       {
-        "id": "gesis:resource/British_Library",
+        "id": "https://data.gesis.org/gesiskg/resource/British_Library",
         "label": "British Library"
       },
       {
-        "id": "gesis:resource/%28Library_and_information_science%29",
-        "label": "(Library and information science)"
+        "id": "https://data.gesis.org/gesiskg/resource/Harvard_Library",
+        "label": "Harvard Library"
       },
       {
-        "id": "gesis:resource/%28Library_and_information_science_series%29",
-        "label": "(Library and information science series)"
-      },
-      {
-        "id": "gesis:resource/Hutchison_University_Library",
+        "id": "https://data.gesis.org/gesiskg/resource/Hutchison_University_Library",
         "label": "Hutchison University Library"
       },
       {
-        "id": "gesis:resource/Name",
+        "id": "https://data.gesis.org/gesiskg/resource/Name",
         "label": "Name"
       }
     ],
     "properties_matches": [
       {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
-      },
-      {
         "id": "gesiskg:libraryLocation",
         "label": "library location"
+      },
+      {
+        "id": "gesiskg:sourceInfo",
+        "label": "source info"
       },
       {
         "id": "gesiskg:sourceCollection",
@@ -1783,169 +321,6 @@
       {
         "id": "schema:name",
         "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q18",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "most-collaborative-author",
-    "sparql": "SELECT ?authorName WHERE { { SELECT ?author WHERE { ?publication <https://schema.org/author> ?author . ?publication <https://schema.org/author> ?coauthor . FILTER (?author != ?coauthor) } GROUP BY ?author ORDER BY DESC(COUNT(DISTINCT ?coauthor)) LIMIT 1 } ?author <https://schema.org/name> ?authorName . }",
-    "thoughts": [
-      "1. The question asks for the most collaborative author, defined as the one who works with the most co-authors.",
-      "2. To determine collaboration, I need to count unique co-authors for each author.",
-      "3. I find publications with the author, then find other authors (co-authors) of the same publications.",
-      "4. The FILTER(?author != ?coauthor) ensures we don't count the author as their own co-author.",
-      "5. I group by author and count distinct co-authors using COUNT(DISTINCT ?coauthor).",
-      "6. Ordering by co-author count in descending order and limiting to 1 result gives us the most collaborative author."
-    ],
-    "question": "Who is the most collaborative author?",
-    "entities": [],
-    "properties": [
-      "author",
-      "author",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q19",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "publication-with-most-authors",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/author> ?author . } GROUP BY ?publication ?title ORDER BY DESC(COUNT(?author)) LIMIT 1",
-    "thoughts": [
-      "1. The question asks for the publication with the highest number of authors or collaborators.",
-      "2. I need to count how many authors are associated with each publication.",
-      "3. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
-      "4. I group the results by publication and title, then count the number of authors for each.",
-      "5. Ordering by the author count in descending order and limiting to 1 result gives us the publication with the most authors."
-    ],
-    "question": "Which publication has the most authors?",
-    "entities": [],
-    "properties": [
-      "name",
-      "author"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      }
-    ]
-  },
-  {
-    "id": "q20",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "keyword-topic-top-expert",
-    "sparql": "SELECT ?authorName WHERE { ?publication <https://schema.org/author> ?author . { ?publication <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . FILTER (CONTAINS(LCASE(?topicName), LCASE(\"STATES\"))) } UNION { ?publication <https://schema.org/keywords> ?keyword . FILTER (CONTAINS(LCASE(?keyword), LCASE(\"STATES\"))) } UNION { ?publication <https://schema.org/name> ?title . FILTER (CONTAINS(LCASE(?title), LCASE(\"STATES\"))) } ?author <https://schema.org/name> ?authorName . } GROUP BY ?author ?authorName ORDER BY DESC(COUNT(?publication)) LIMIT 1",
-    "thoughts": [
-      "1. The question asks who is the top expert or most prolific researcher on the topic '1'.",
-      "2. To determine expertise, I need to count how many publications each author has on this topic.",
-      "3. A publication can relate to '1' in three ways: through a topic entity's name, through keywords, or through the publication's title.",
-      "4. I use UNION to combine these three patterns and CONTAINS with LCASE for case-insensitive matching.",
-      "5. I group the results by author and count their publications on this topic.",
-      "6. Ordering by the publication count in descending order and limiting to 1 result gives us the top expert."
-    ],
-    "question": "Who has published the most about 'STATES'?",
-    "entities": [],
-    "properties": [
-      "author",
-      "about",
-      "name",
-      "keywords",
-      "name",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "gesis:resource/United_States",
-        "label": "United States"
-      },
-      {
-        "id": "gesis:resource/author_names",
-        "label": "author names"
-      },
-      {
-        "id": "gesis:resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:inLanguage",
-        "label": "in language"
       }
     ]
   }
