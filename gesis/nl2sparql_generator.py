@@ -1570,7 +1570,11 @@ class NL2SPARQLGenerator:
             # Replace each placeholder with the appropriate value
             for placeholder, mapping in all_mappings.items():
                 pattern = r'\{' + re.escape(placeholder) + r'\}'
-                replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+                # Always use labels for entities in thoughts to avoid showing URIs
+                if placeholder.startswith('entity'):
+                    replacement_value = mapping.get('label', mapping.get('value', placeholder))
+                else:
+                    replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
                 processed_thought = re.sub(pattern, replacement_value, processed_thought)
             
             # Special handling for first entity: check if {entity} exists, if not try {entity1}
@@ -1598,41 +1602,21 @@ class NL2SPARQLGenerator:
         Returns:
             str: The appropriate replacement value
         """
+        # Always prioritize using labels for entities in thoughts
+        if placeholder.startswith('entity'):
+            return mapping.get('label', mapping.get('value', placeholder))
+            
         # Check context around the placeholder to determine appropriate replacement
         thought_lower = thought_text.lower()
         
         # Use URI/prefixed form in these contexts:
         if any(phrase in thought_lower for phrase in [
             "in the ontology",
-            "represents the",
             "schema:",
-            "property '",
-            "entity '",
-            "via the '",
-            "using",
-            "through"
+            "property '"
         ]):
-            # For entity placeholders (typically starting with "entity"), use full URI
-            if placeholder.startswith('entity') and 'uri' in mapping and mapping['uri'].startswith('http'):
-                return f"<{mapping['uri']}>"
-            
-            # For property placeholders or other placeholders, keep using prefixed form
+            # For property placeholders or other placeholders, use prefixed form
             return mapping.get('prefixed', mapping.get('uri', mapping.get('label', placeholder)))
-        
-        # Use label form in these contexts:
-        elif any(phrase in thought_lower for phrase in [
-            "categorized as",
-            "belonging to", 
-            "classified as",
-            "of the '",
-            "as a '",
-            "category '",
-            "group '",
-            "method '",
-            "article '",
-            "document '"
-        ]):
-            return mapping.get('label', mapping.get('value', placeholder))
         
         # Default to label for most contexts
         return mapping.get('label', mapping.get('value', placeholder))
@@ -1930,11 +1914,25 @@ class NL2SPARQLGenerator:
                 
                 # Replace in question
                 replacement_text = replacement.get("label", replacement.get("value", ""))
-                # Add quotes around entity placeholders, but not other placeholders like 'value'
+
+                # Check if the placeholder is already surrounded by quotes in the template
+                quoted_pattern = r"'[\s]*{[\s]*" + re.escape(placeholder) + r"[\s]*}[\s]*'"
+                already_quoted_q = re.search(quoted_pattern, question_template) is not None
+                already_quoted_eq = re.search(quoted_pattern, english_question_template) is not None
+
+                # Add quotes around entity placeholders only if they're not already quoted
                 if placeholder.startswith('entity'):
-                    quoted_replacement = f"'{replacement_text}'"
-                    question = re.sub(pattern, quoted_replacement, question)
-                    english_question = re.sub(pattern, quoted_replacement, english_question)
+                    if already_quoted_q:
+                        question = re.sub(pattern, replacement_text, question)
+                    else:
+                        quoted_replacement = f"'{replacement_text}'"
+                        question = re.sub(pattern, quoted_replacement, question)
+                        
+                    if already_quoted_eq:
+                        english_question = re.sub(pattern, replacement_text, english_question)
+                    else:
+                        quoted_replacement = f"'{replacement_text}'"
+                        english_question = re.sub(pattern, quoted_replacement, english_question)
                 else:
                     question = re.sub(pattern, replacement_text, question)
                     english_question = re.sub(pattern, replacement_text, english_question)

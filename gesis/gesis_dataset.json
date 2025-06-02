@@ -3,43 +3,55 @@
     "id": "q1",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-topic",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-15345> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "templateId": "publication-publisher",
+    "sparql": "SELECT ?publisherName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-137723> <https://schema.org/publisher> ?publisher . ?publisher <https://schema.org/name> ?publisherName . }",
     "thoughts": [
-      "1. The question asks about the topic or subject of 'Markenkenntnis-Test'.",
-      "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
-      "3. I first need to find the topic entity that '<https://data.gesis.org/gesiskg/resource/gesis-bib-15345>' is about using schema:about.",
-      "4. Then I retrieve the name of the topic using the schema:name property.",
-      "5. The query returns the name of the topic that 'Markenkenntnis-Test' is about."
+      "1. The question asks about the organization that published 'Bericht zur Datenqualit\u00e4t der GLES 2009'.",
+      "2. In the GESIS knowledge graph, publishers are linked to publications via the schema:publisher property.",
+      "3. I need to first find the publisher entity related to 'Bericht zur Datenqualit\u00e4t der GLES 2009' using schema:publisher.",
+      "4. Then I retrieve the name of the publisher organization using the schema:name property.",
+      "5. The query returns the name of the organization that published 'Bericht zur Datenqualit\u00e4t der GLES 2009'."
     ],
-    "question": "What is the main theme of ''Markenkenntnis-Test''?",
+    "question": "What is the publisher of 'Bericht zur Datenqualit\u00e4t der GLES 2009'?",
     "entities": [
-      "Markenkenntnis-Test"
+      "Bericht zur Datenqualit\u00e4t der GLES 2009"
     ],
     "properties": [
-      "about",
+      "publisher",
       "name"
     ],
     "entities_matches": [
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-65258",
-        "label": "The Main Event"
+        "id": "https://data.gesis.org/gesiskg/resource/Bericht",
+        "label": "Bericht"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-107940",
-        "label": "Theme for Successfull Management"
+        "id": "https://data.gesis.org/gesiskg/resource/Datenqualit%C3%A4t",
+        "label": "Datenqualit\u00e4t"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-52196",
-        "label": "A Statistical Measure of Theme and Structure"
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_GLES",
+        "label": "GLES"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-15345",
-        "label": "Markenkenntnis-Test"
+        "id": "https://data.gesis.org/gesiskg/resource/GLES",
+        "label": "GLES"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/Test",
-        "label": "Test"
+        "id": "https://data.gesis.org/gesiskg/resource/%28Jahresgutachten_2009_%28Langfassung%29_%3B_2009%29",
+        "label": "(Jahresgutachten 2009 (Langfassung) ; 2009)"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_ISSP_2009",
+        "label": "ISSP 2009"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_GLES_2009",
+        "label": "GLES 2009"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-137723",
+        "label": "Bericht zur Datenqualit\u00e4t der GLES 2009"
       },
       {
         "id": "https://data.gesis.org/gesiskg/resource/Name",
@@ -48,24 +60,32 @@
     ],
     "properties_matches": [
       {
-        "id": "schema:mainEntity",
-        "label": "main entity"
-      },
-      {
-        "id": "schema:about",
-        "label": "about"
+        "id": "schema:publisher",
+        "label": "publisher"
       },
       {
         "id": "schema:isPartOf",
         "label": "is part of"
       },
       {
-        "id": "schema:name",
-        "label": "name"
+        "id": "gesiskg:sourceInfo",
+        "label": "source info"
       },
       {
-        "id": "schema:givenName",
-        "label": "given name"
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "gesiskg:linkScore",
+        "label": "link score"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
       }
     ]
   },
@@ -73,46 +93,65 @@
     "id": "q2",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-topic",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-15345> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "templateId": "publication-date",
+    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-22040> <https://schema.org/datePublished> ?date . }",
     "thoughts": [
-      "1. The question asks about the topic or subject of 'Markenkenntnis-Test'.",
-      "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
-      "3. I first need to find the topic entity that '<https://data.gesis.org/gesiskg/resource/gesis-bib-15345>' is about using schema:about.",
-      "4. Then I retrieve the name of the topic using the schema:name property.",
-      "5. The query returns the name of the topic that 'Markenkenntnis-Test' is about."
+      "1. The question asks when a specific scholarly resource 'Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern' was published.",
+      "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
+      "3. To answer this question, I need to query for the value of the schema:datePublished property of 'Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern'.",
+      "4. The query directly retrieves the publication date without needing additional joins or transformations.",
+      "5. The result provides the publication date of 'Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern' in the format stored in the knowledge graph."
     ],
-    "question": "What is the subject of ''Markenkenntnis-Test''?",
+    "question": "What is the publication date of 'Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern'?",
     "entities": [
-      "Markenkenntnis-Test"
+      "Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern"
     ],
     "properties": [
-      "about",
-      "name"
+      "datePublished"
     ],
     "entities_matches": [
       {
-        "id": "https://data.gesis.org/gesiskg/resource/subject_headings",
-        "label": "subject headings"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-95523_Date_C_J",
+        "label": "Date, C. J."
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-76126",
-        "label": "Subject Headings"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-109242_Date_Chris_J",
+        "label": "Date, Chris J."
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-15345",
-        "label": "Markenkenntnis-Test"
+        "id": "https://data.gesis.org/gesiskg/resource/Selbsteinsch%C3%A4tzung",
+        "label": "Selbsteinsch\u00e4tzung"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/Test",
-        "label": "Test"
+        "id": "https://data.gesis.org/gesiskg/resource/Religiosit%C3%A4t",
+        "label": "Religiosit\u00e4t"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/Name",
-        "label": "Name"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-128688",
+        "label": "Sonntagsfrage bei T\u00fcrkischst\u00e4mmigen"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/alternative_Religiosit%C3%A4t",
+        "label": "alternative Religiosit\u00e4t"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-22040",
+        "label": "Selbsteinsch\u00e4tzung der Religiosit\u00e4t bei t\u00fcrkischst\u00e4mmigen Einwanderern"
       }
     ],
     "properties_matches": [
+      {
+        "id": "schema:publicationType",
+        "label": "publication type"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "schema:dateModified",
+        "label": "date modified"
+      },
       {
         "id": "schema:about",
         "label": "about"
@@ -122,12 +161,8 @@
         "label": "is part of"
       },
       {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:givenName",
-        "label": "given name"
+        "id": "schema:inLanguage",
+        "label": "in language"
       }
     ]
   },
@@ -135,36 +170,142 @@
     "id": "q3",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "person-latest-publication",
-    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-97416_Becker_Jens> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
+    "templateId": "publication-collaborator-count",
+    "sparql": "SELECT ?COUNT WHERE { { SELECT (COUNT(DISTINCT ?collaborator) AS ?COUNT) WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-144156> <https://schema.org/author> ?collaborator . } } }",
     "thoughts": [
-      "1. The question asks for the most recent publication by Becker, Jens.",
-      "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
-      "3. I need to find all publications that have Becker, Jens as their author and retrieve their titles and dates.",
-      "4. I sort the results by publication date in descending order (most recent first) using ORDER BY DESC(?date).",
-      "5. The LIMIT 1 clause ensures only the most recent publication is returned."
+      "1. The question asks for the number of authors or collaborators who worked on 'Converging on euroscepticism : online polity contestation during European Parliament elections'.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. To count the collaborators, I need to find all authors that are linked to 'Converging on euroscepticism : online polity contestation during European Parliament elections'.",
+      "4. I use COUNT(DISTINCT ?collaborator) to count each collaborator only once.",
+      "5. The query uses a nested SELECT with aggregation to return the total count of distinct authors of 'Converging on euroscepticism : online polity contestation during European Parliament elections'."
     ],
-    "question": "What is the latest publication by 'Becker, Jens'?",
+    "question": "What is the number of authors for 'Converging on euroscepticism : online polity contestation during European Parliament elections'?",
     "entities": [
-      "Becker, Jens"
+      "Converging on euroscepticism : online polity contestation during European Parliament elections"
     ],
     "properties": [
-      "author",
-      "name",
-      "datePublished"
+      "author"
     ],
     "entities_matches": [
       {
-        "id": "https://data.gesis.org/gesiskg/resource/BECKER",
-        "label": "BECKER"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-144351",
+        "label": "German euroscepticism"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97416_Becker_Jens",
-        "label": "Becker, Jens"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150729",
+        "label": "The Routledge handbook of Euroscepticism"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-124866_Becker_Jens",
-        "label": "Becker, Jens"
+        "id": "https://data.gesis.org/gesiskg/resource/Online",
+        "label": "Online"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/ONLINE",
+        "label": "ONLINE"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Polity",
+        "label": "Polity"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-134215",
+        "label": "The European parliament"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-82534",
+        "label": "Polls and elections"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-39218",
+        "label": "The business of elections"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150295",
+        "label": "Euroscepticism and the future of European integration"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-144156",
+        "label": "Converging on euroscepticism : online polity contestation during European Parliament elections"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Politische_Online-Kommunikation_ZA5227",
+        "label": "Politische Online-Kommunikation"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Politische_Online-Kommunikation",
+        "label": "Politische Online-Kommunikation"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_ZA5227_ZA5227",
+        "label": "Politische Online-Kommunikation"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/%28European_Studies_%3B_16%29",
+        "label": "(European Studies ; 16)"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/European_Parliament",
+        "label": "European Parliament"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-85671",
+        "label": "Themen: - The European Parliament"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-150602",
+        "label": "Communicating politics online"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-100814",
+        "label": "European politics"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/author_names",
+        "label": "author names"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      },
+      {
+        "id": "schema:url",
+        "label": "url"
+      }
+    ]
+  },
+  {
+    "id": "q4",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "most-productive-author",
+    "sparql": "SELECT ?authorName WHERE { ?publication <https://schema.org/author> ?author . ?author <https://schema.org/name> ?authorName . } GROUP BY ?author ?authorName ORDER BY DESC(COUNT(?publication)) LIMIT 1",
+    "thoughts": [
+      "1. The question asks for the most productive author, defined as the one with the most publications.",
+      "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
+      "3. I need to count how many publications are associated with each author.",
+      "4. I group the results by author and author name, then count the number of publications for each.",
+      "5. Ordering by publication count in descending order and limiting to 1 result gives us the most productive author."
+    ],
+    "question": "Who has the highest publication count?",
+    "entities": [],
+    "properties": [
+      "author",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97666",
+        "label": "Regression analysis of count data"
       },
       {
         "id": "https://data.gesis.org/gesiskg/resource/author_names",
@@ -181,104 +322,16 @@
         "label": "is part of"
       },
       {
-        "id": "schema:dateModified",
-        "label": "date modified"
-      },
-      {
         "id": "schema:publicationType",
         "label": "publication type"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
-      },
-      {
-        "id": "schema:author",
-        "label": "author"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:givenName",
-        "label": "given name"
-      },
-      {
-        "id": "schema:name",
-        "label": "name"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      }
-    ]
-  },
-  {
-    "id": "q4",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "most-diverse-publication",
-    "sparql": "SELECT ?title WHERE { { SELECT ?publication WHERE { ?publication <https://schema.org/about> ?topic . } GROUP BY ?publication ORDER BY DESC(COUNT(DISTINCT ?topic)) LIMIT 1 } ?publication <https://schema.org/name> ?title . }",
-    "thoughts": [
-      "1. The question asks for the publication that covers the most diverse range of topics.",
-      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
-      "3. I need to count how many distinct topics each publication covers.",
-      "4. I group the results by publication and title, then count the number of distinct topics for each using COUNT(DISTINCT ?topic).",
-      "5. Ordering by topic count in descending order and limiting to 1 result gives us the publication with the most diverse topics."
-    ],
-    "question": "Which publication covers the most diverse topics?",
-    "entities": [],
-    "properties": [
-      "about",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Diverse",
-        "label": "Diverse"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-145992",
-        "label": "Sensitive topics"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/Name",
-        "label": "Name"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
       },
       {
         "id": "schema:about",
         "label": "about"
       },
       {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
-        "id": "schema:contributor",
-        "label": "contributor"
+        "id": "schema:author",
+        "label": "author"
       },
       {
         "id": "schema:name",
