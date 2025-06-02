@@ -432,8 +432,6 @@ class NL2SPARQLGenerator:
         related_candidates = self.get_related_candidates(
             question, 
             property_candidates=property_candidates,
-            threshold=0.65,
-            k=5
         )
         
         # Format entity matches
@@ -525,7 +523,8 @@ class NL2SPARQLGenerator:
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.65,
+        entity_threshold: float = 0.7,
+        property_threshold: float = 0.65,
         k: int = 5,
     ) -> dict[str, list[str]]:
         """
@@ -534,7 +533,8 @@ class NL2SPARQLGenerator:
         Args:
             q (str): Question string
             property_candidates (list[str]): List of property candidates (entities and properties)
-            threshold (float): Score threshold for relevance
+            entity_threshold (float): Score threshold for entity relevance
+            property_threshold (float): Score threshold for property relevance
             k (int): Number of results per search
             
         Returns:
@@ -544,14 +544,16 @@ class NL2SPARQLGenerator:
         ngrams = self._generate_ngrams(tokens)
         result = {"entities": [], "properties": []}
 
-        def search(ngram, search_type, threshold=threshold):
+        def search(ngram, search_type):
             """Search for entities or properties and format results"""
 
             # Search using the appropriate method
             if search_type == "entities":
                 df_res = self._search_entities_weaviate(ngram, k=k)
+                threshold = entity_threshold  # Use entity threshold
             else:
                 df_res = self._search_properties_weaviate(ngram, k=k)
+                threshold = property_threshold  # Use property threshold
             
             # Filter by threshold and format results
             filtered_results = []
