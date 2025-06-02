@@ -30,7 +30,9 @@ def separate_camel_case(s):
 class WikidataVerbalization:
     SENTENCE_TEMPLATE = "{s}'s {p} is {o}"
     MANUAL_MAPPING_DICT = {"_": " "}
-    PO_TEMPLATE = """
+    
+    # Wikidata templates
+    WIKIDATA_PO_TEMPLATE = """
 SELECT distinct ?p ?o ?oLabel
 WHERE {{
   BIND(wd:{entity} AS ?s) .
@@ -45,7 +47,7 @@ WHERE {{
   }}
 }} LIMIT 1000
 """
-    SP_TEMPLATE = """
+    WIKIDATA_SP_TEMPLATE = """
 SELECT ?s ?sLabel ?p
 WHERE {{
   BIND(wd:{entity} AS ?o) .
@@ -59,6 +61,32 @@ WHERE {{
   }}
 }} LIMIT 1000
 """
+    
+    # Curriculum templates
+    CURRICULUM_PO_TEMPLATE = """
+SELECT distinct ?p ?o ?pLabel ?oLabel
+WHERE {{
+  <{entity}> ?p ?o .
+  OPTIONAL {{
+    ?p rdfs:label ?pLabel .
+  }}
+  OPTIONAL {{
+    ?o rdfs:label ?oLabel .
+  }}
+}} LIMIT 1000
+"""
+    CURRICULUM_SP_TEMPLATE = """
+SELECT ?s ?p ?sLabel ?pLabel
+WHERE {{
+  ?s ?p <{entity}> .
+  OPTIONAL {{
+    ?s rdfs:label ?sLabel .
+  }}
+  OPTIONAL {{
+    ?p rdfs:label ?pLabel .
+  }}
+}} LIMIT 1000
+"""
 
     def __init__(
         self,
@@ -66,17 +94,48 @@ WHERE {{
         model_kwargs={"trust_remote_code": True},
         query_model_encode_kwargs={},
         passage_model_encode_kwargs={},
+        knowledge_source="wikidata"
     ) -> None:
         self.model_name = model_name
         self.query_model_encode_kwargs = query_model_encode_kwargs
         self.passage_model_encode_kwargs = passage_model_encode_kwargs
+        self.knowledge_source = knowledge_source
+        
         # Use the singleton instead of creating a new instance
         self.model = get_sentence_transformer(model_name, **model_kwargs)
-        self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
+        
+        # Set up SPARQL endpoint based on source
+        if knowledge_source == "curriculum":
+            self.api = SPARQLWrapper("http://localhost:3030/curi/query")
+            self.PO_TEMPLATE = self.CURRICULUM_PO_TEMPLATE
+            self.SP_TEMPLATE = self.CURRICULUM_SP_TEMPLATE
+        else:
+            self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
+            self.PO_TEMPLATE = self.WIKIDATA_PO_TEMPLATE
+            self.SP_TEMPLATE = self.WIKIDATA_SP_TEMPLATE
+            
         self.api.setReturnFormat(JSON)
         # Set a user agent to be respectful
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
-        logger.info(f"Initialized WikidataVerbalization with model: {model_name}")
+        logger.info(f"Initialized WikidataVerbalization with model: {model_name} for source: {knowledge_source}")
+    
+    def set_knowledge_source(self, knowledge_source):
+        """Update the knowledge source and reconfigure templates and endpoint"""
+        if knowledge_source != self.knowledge_source:
+            self.knowledge_source = knowledge_source
+            
+            if knowledge_source == "curriculum":
+                self.api = SPARQLWrapper("http://localhost:3030/curi/query")
+                self.PO_TEMPLATE = self.CURRICULUM_PO_TEMPLATE
+                self.SP_TEMPLATE = self.CURRICULUM_SP_TEMPLATE
+            else:
+                self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
+                self.PO_TEMPLATE = self.WIKIDATA_PO_TEMPLATE
+                self.SP_TEMPLATE = self.WIKIDATA_SP_TEMPLATE
+                
+            self.api.setReturnFormat(JSON)
+            self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+            logger.info(f"Updated WikidataVerbalization to use source: {knowledge_source}")
 
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
@@ -180,11 +239,11 @@ WHERE {{
             p = result.get('p', '')
             o = result.get('o', '')
             sLabel = entity_label  # We know the subject is the entity
-            pLabel = None
+            pLabel = result.get('pLabel', '')  # For curriculum, this comes from the query
             oLabel = result.get('oLabel', '')
             
-            # Get property label from property_retrieval if available
-            if property_retrieval:
+            # For Wikidata, try to get property label from property_retrieval if pLabel not available
+            if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
                 prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
                 pLabel = property_retrieval.property_id_to_label.get(prop_id)
             
@@ -204,17 +263,18 @@ WHERE {{
                 candidates[p] = self.SENTENCE_TEMPLATE.format(
                     s=str(label_s), p=str(label_p), o=str(label_o)
                 )
+        
         # Process subject-predicate pairs
         curr_p = None
         for result in sp:
             s = result.get('s', '')
             p = result.get('p', '')
             sLabel = result.get('sLabel', '')
-            pLabel = None
+            pLabel = result.get('pLabel', '')  # For curriculum, this comes from the query
             oLabel = entity_label  # We know the object is the entity
             
-            # Get property label from property_retrieval if available
-            if property_retrieval:
+            # For Wikidata, try to get property label from property_retrieval if pLabel not available
+            if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
                 prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
                 pLabel = property_retrieval.property_id_to_label.get(prop_id)
             
@@ -315,11 +375,13 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
         for p_result in po:
             p = p_result.get('p', '')
             o = p_result.get('o', '')
-            pLabel = p_result.get('propLabel', '')
+            pLabel = p_result.get('pLabel', '')  # For curriculum, this comes directly from query
             oLabel = p_result.get('oLabel', '')
             
             if p == property_uri:
+                # Use pLabel if available, otherwise fall back to camelCase separation
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
+                
                 if o.startswith("http"):
                     label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1], self.MANUAL_MAPPING_DICT)
                 else:
@@ -331,9 +393,10 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             s = s_result.get('s', '')
             p = s_result.get('p', '')
             sLabel = s_result.get('sLabel', '')
-            pLabel = s_result.get('propLabel', '')
+            pLabel = s_result.get('pLabel', '')  # For curriculum, this comes directly from query
             
             if p == property_uri:
+                # Use pLabel if available, otherwise fall back to camelCase separation
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
                 label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
                 result.append({label_p: s if output_uri else label_s})
@@ -373,20 +436,7 @@ class VerbalizationNode:
         if not self._llm_provider and not self.genai_model:
             raise ValueError("Either llm_factory or genai_model must be provided")
         
-        # Create WikidataVerbalization with optimized parameters
-        # Uses singleton model under the hood
-        self.verbalization = WikidataVerbalization(
-            model_name="jinaai/jina-embeddings-v3",
-            query_model_encode_kwargs={
-                "task": "retrieval.query",
-                "prompt_name": "retrieval.query",
-            },
-            passage_model_encode_kwargs={
-                "task": "retrieval.passage",
-                "prompt_name": "retrieval.passage",
-            }
-        )
-        logger.info("Initialized VerbalizationNode with WikidataVerbalization")        
+        logger.info("Initialized VerbalizationNode")        
     
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
@@ -492,12 +542,31 @@ class VerbalizationNode:
         # Start timing
         start_time = datetime.now()
         
+        # Update verbalization object based on knowledge source
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        if hasattr(self, 'verbalization'):
+            self.verbalization.set_knowledge_source(knowledge_source)
+        else:
+            # Create verbalization if it doesn't exist
+            self.verbalization = WikidataVerbalization(
+                model_name="jinaai/jina-embeddings-v3",
+                query_model_encode_kwargs={
+                    "task": "retrieval.query",
+                    "prompt_name": "retrieval.query",
+                },
+                passage_model_encode_kwargs={
+                    "task": "retrieval.passage",
+                    "prompt_name": "retrieval.passage",
+                },
+                knowledge_source=knowledge_source
+            )
+        
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
             state.visualizer.log_event(
                 "Verbalization Node", 
                 "start",
-                {"question": state.translated_question, "entity": state.extracted_entities[0] if state.extracted_entities else None},
+                {"question": state.translated_question, "entity": state.extracted_entities[0] if state.extracted_entities else None, "knowledge_source": knowledge_source},
                 start_time=start_time
             )
         
@@ -557,7 +626,7 @@ class VerbalizationNode:
             state.visualizer.log_event(
                 "Verbalization Node",
                 "entity URI selection end",
-                {"selected_entity_uri": f"{entity_uri} - {entity_label}"},
+                {"selected_entity_uri": f"{entity_uri} - {entity_label}", "knowledge_source": knowledge_source},
                 start_time=uri_start_time,
                 end_time=uri_end_time
             )
@@ -673,23 +742,24 @@ class VerbalizationNode:
                 
                 # Get references if needed
                 references = []
-                if getattr(state, 'include_references', True) and similarity >= 0.6 and result:
-                    # Skip references for curriculum source
-                    if getattr(state, 'knowledge_source', 'wikidata') != 'curriculum':
-                        logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
-                        raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
+                if (getattr(state, 'include_references', True) and 
+                    similarity >= 0.6 and result and
+                    getattr(state, 'knowledge_source', 'wikidata') == 'wikidata'):
+                    # Only get references for Wikidata, not curriculum
+                    logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
+                    raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
+                    
+                    # Format the references with proper date formatting
+                    for ref in raw_references:
+                        formatted_ref = {}
+                        if ref.get('refUrl'):
+                            formatted_ref['refUrl'] = ref['refUrl']
+                        if ref.get('refDate'):
+                            formatted_ref['refDate'] = ref['refDate']
+                            formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
                         
-                        # Format the references with proper date formatting
-                        for ref in raw_references:
-                            formatted_ref = {}
-                            if ref.get('refUrl'):
-                                formatted_ref['refUrl'] = ref['refUrl']
-                            if ref.get('refDate'):
-                                formatted_ref['refDate'] = ref['refDate']
-                                formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
-                            
-                            if formatted_ref:  # Only add if we have some reference data
-                                references.append(formatted_ref)
+                        if formatted_ref:  # Only add if we have some reference data
+                            references.append(formatted_ref)
                 
                 # Store results in state
                 state.verbalization_result = result
