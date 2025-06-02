@@ -1769,7 +1769,7 @@ class NL2SPARQLGenerator:
             return self.instantiate_template_without_placeholders(template)
         
         # Special handling for keyword-based templates
-        if "keyword" in template["id"] and "value" in placeholders:
+        if ("keyword" in template["id"] or "topic" in template["id"]) and "value" in placeholders:
             # For this template, use the pre-extracted keywords directly
             # rather than trying to discover them via SPARQL
             return self.instantiate_keyword_template(template)
