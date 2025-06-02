@@ -2,10 +2,10 @@ import json
 
 def merge_json_files():
     # Read the content from both files
-    with open('legal_rw.json', 'r') as file1:
+    with open('gesis_rw.json', 'r') as file1:
         paste1_data = json.loads(file1.read())
     
-    with open('legal_claude.json', 'r') as file2:
+    with open('gesis_claude.json', 'r') as file2:
         paste2_data = json.loads(file2.read())
     
     # Create a dictionary from paste2 data for easy lookup by id
@@ -23,7 +23,7 @@ def merge_json_files():
         merged_data.append(item)
     
     # Write the merged data to a new file
-    with open('legal.json', 'w') as output_file:
+    with open('gesis.json', 'w') as output_file:
         json.dump(merged_data, output_file, indent=2)
     
     print("Merged JSON file created")
