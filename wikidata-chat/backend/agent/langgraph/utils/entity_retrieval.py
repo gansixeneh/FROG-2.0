@@ -105,7 +105,7 @@ class UniversityEntityRetrieval:
                 if not df_res.empty:
                     for _, row in df_res.iterrows():
                         entity_data = {
-                            "uri": row.get("uri", ""),
+                            "uri": row.get("short", ""),
                             "label": row.get("label", ""),
                             "score": float(row["score"])
                         }
@@ -121,7 +121,7 @@ class UniversityEntityRetrieval:
                     if not df_res.empty:
                         for _, row in df_res.iterrows():
                             entity_data = {
-                                "uri": row.get("uri", ""),
+                                "uri": row.get("short", ""),
                                 "label": row.get("label", ""),
                                 "score": float(row["score"])
                             }
