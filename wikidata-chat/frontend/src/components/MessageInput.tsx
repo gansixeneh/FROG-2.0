@@ -6,7 +6,7 @@ import { API_HOST } from '../config/api';
 const MessageInput: React.FC = () => {
   const [message, setMessage] = useState('');
   const [dots, setDots] = useState(1);
-  const { sendMessage, currentChat, isProcessing } = useChat();
+  const { sendMessage, currentChat, isProcessing, settings } = useChat();
   
   // Animate dots when processing
   useEffect(() => {
@@ -61,7 +61,7 @@ const MessageInput: React.FC = () => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isProcessing ? getThinkingText() : "Ask FrOG a question..."}
+          placeholder={isProcessing ? getThinkingText() : `Ask FrOG a question about ${settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum'}...`}
           className="flex-grow h-12 px-4 border-2 border-frog-DEFAULT rounded-full focus:outline-none focus:ring-2 focus:ring-frog-dark focus:border-transparent shadow-md"
           disabled={!currentChat || isProcessing}
         />
@@ -99,7 +99,7 @@ const MessageInput: React.FC = () => {
       
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | Connected to: {API_HOST}
+        FrOG: Framework of Open GraphRAG | Connected to: {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum (localhost:3030/curi)'}
       </div>
     </div>
   );

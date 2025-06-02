@@ -19,6 +19,13 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     });
   };
 
+  const handleSourceChange = (source: 'wikidata' | 'curriculum') => {
+    updateSettings({
+      ...settings,
+      knowledgeSource: source
+    });
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
@@ -56,6 +63,42 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="space-y-6">
+          {/* Knowledge Source Setting */}
+          <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex-1 pr-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Knowledge Source</h3>
+              <p className="text-sm text-gray-500 mb-3">
+                Select the knowledge source to use for answering questions. Each source has different data and capabilities.
+              </p>
+              <div className="flex flex-col space-y-2 mt-4">
+                <label className="inline-flex items-center">
+                  <input 
+                    type="radio" 
+                    checked={settings.knowledgeSource === 'wikidata'} 
+                    onChange={() => handleSourceChange('wikidata')}
+                    className="form-radio h-5 w-5 text-frog-dark"
+                  />
+                  <span className="ml-2 text-gray-700">
+                    Wikidata
+                    <span className="block text-xs text-gray-500">Comprehensive public knowledge graph with references</span>
+                  </span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input 
+                    type="radio" 
+                    checked={settings.knowledgeSource === 'curriculum'} 
+                    onChange={() => handleSourceChange('curriculum')}
+                    className="form-radio h-5 w-5 text-frog-dark" 
+                  />
+                  <span className="ml-2 text-gray-700">
+                    Curriculum
+                    <span className="block text-xs text-gray-500">University curriculum knowledge graph (http://localhost:3030/curi/query)</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
           {/* Use Verbalization Setting */}
           <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex-1 pr-4">

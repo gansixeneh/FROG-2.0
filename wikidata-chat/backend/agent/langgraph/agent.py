@@ -52,13 +52,28 @@ logger = logging.getLogger(__name__)
 
 # WikidataAPI helper class
 class WikidataAPI:
-    def __init__(self, url="https://query.wikidata.org/sparql") -> None:
+    def __init__(self, url="https://query.wikidata.org/sparql", source="wikidata") -> None:
+        self.source = source
+        self.wikidata_url = "https://query.wikidata.org/sparql"
+        self.curriculum_url = "http://localhost:3030/curi/query"
+        self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
         self.sparqlwd = SPARQLWrapper(
-            url,
+            self.current_url,
             agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.36",
         )
 
+    def set_source(self, source: str) -> None:
+        """Update the source and endpoint URL"""
+        if source != self.source:
+            self.source = source
+            self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
+            self.sparqlwd = SPARQLWrapper(
+                self.current_url,
+                agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.36",
+            )
+
     def execute_sparql(self, q: str) -> tuple:
+        """Execute a SPARQL query"""
         self.sparqlwd.setQuery(q)
         self.sparqlwd.setReturnFormat(JSON)
         try:
@@ -138,6 +153,19 @@ class WikidataGraphAgent:
 
         # Initialize Wikidata API
         self.api = WikidataAPI()
+
+        # Initialize source-aware SPARQL wrapper
+        from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
+        self.sparql_wrapper = SourceAwareSPARQLWrapper(source="wikidata")
+
+        # Initialize entity retrieval for curriculum
+        from .utils.entity_retrieval import UniversityEntityRetrieval
+        try:
+            self.entity_retrieval = UniversityEntityRetrieval()
+            logger.info("Successfully initialized UniversityEntityRetrieval")
+        except Exception as e:
+            logger.error(f"Failed to initialize UniversityEntityRetrieval: {e}")
+            self.entity_retrieval = None
 
         # Initialize LLM - keep for backward compatibility
         self.gemini_model = genai.GenerativeModel(model_name="gemini-2.0-flash")
@@ -532,6 +560,14 @@ Wikidata methods did not provide sufficient results, so web search was used as a
 
         # Initialize the state
         settings = settings or {}
+        knowledge_source = settings.get('knowledgeSource', 'wikidata')
+        
+        # Update SPARQL endpoints based on source
+        if hasattr(self.api, 'set_source'):
+            self.api.set_source(knowledge_source)
+        if hasattr(self.sparql_wrapper, 'set_source'):
+            self.sparql_wrapper.set_source(knowledge_source)
+            
         initial_state = WikidataGraphRAGState(
             question=question,
             use_cot=True,
@@ -543,6 +579,7 @@ Wikidata methods did not provide sufficient results, so web search was used as a
             include_references=True,  # Enable references by default
             use_verbalization=settings.get('useVerbalization', True),  # Default to True
             use_google_search=settings.get('useGoogleSearch', True),   # Default to True
+            knowledge_source=knowledge_source,  # Set the knowledge source
         )
 
         # Run the graph

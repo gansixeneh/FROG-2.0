@@ -165,7 +165,7 @@ class WikidataAgent:
 
         Args:
             user_question: The user's natural language question
-            settings: Runtime settings dict with useVerbalization and useGoogleSearch flags
+            settings: Runtime settings dict with useVerbalization, useGoogleSearch, and knowledgeSource flags
 
         Returns:
             A tuple containing:

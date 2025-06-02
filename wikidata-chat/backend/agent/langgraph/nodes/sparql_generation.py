@@ -26,9 +26,16 @@ class SparqlGenerationNode:
         self.property_retrieval = property_retrieval
         self.llm_factory = llm_factory
         self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
-        self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
-        self.api.setReturnFormat(JSON)
-        self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        
+        # Use source-aware SPARQL wrapper if available
+        try:
+            from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
+            self.api = SourceAwareSPARQLWrapper("wikidata")
+        except ImportError:
+            # Fallback to standard SPARQLWrapper
+            self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
+            self.api.setReturnFormat(JSON)
+            self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
         
         # Initialize the LLM provider
         self._llm_provider = None
@@ -44,21 +51,30 @@ class SparqlGenerationNode:
         if not self._llm_provider and not self.genai_model:
             raise ValueError("Either llm_factory or genai_model must be provided")
         
-    def execute_sparql(self, q: str):
+    def execute_sparql(self, q: str, state=None):
         """Execute a SPARQL query"""
-        self.api.setQuery(q)
-        try:
-            results = self.api.query().convert()
-            results_cleaned = []
-            for result in results["results"]["bindings"]:
-                tmp = dict()
-                for header in results["head"]["vars"]:
-                    if header in result:
-                        tmp[header] = result[header]["value"]
-                results_cleaned.append(tmp)
-            return results_cleaned, None
-        except Exception as e:
-            return [], e
+        # Set source if available in state
+        if hasattr(state, 'knowledge_source') and hasattr(self.api, 'set_source'):
+            self.api.set_source(state.knowledge_source)
+            
+        if hasattr(self.api, 'execute_sparql'):
+            # Use our source-aware wrapper
+            return self.api.execute_sparql(q)
+        else:
+            # Legacy method
+            self.api.setQuery(q)
+            try:
+                results = self.api.query().convert()
+                results_cleaned = []
+                for result in results["results"]["bindings"]:
+                    tmp = dict()
+                    for header in results["head"]["vars"]:
+                        if header in result:
+                            tmp[header] = result[header]["value"]
+                    results_cleaned.append(tmp)
+                return results_cleaned, None
+            except Exception as e:
+                return [], e
             
     def _enhance_query_with_references(self, query: str, state: WikidataGraphRAGState):
         """
@@ -73,6 +89,10 @@ class SparqlGenerationNode:
         """
         # Check if we should include references
         if not state.include_references:
+            return query
+            
+        # Skip references for curriculum source
+        if getattr(state, 'knowledge_source', 'wikidata') == 'curriculum':
             return query
             
         # Parse the query to find wdt: patterns
@@ -412,7 +432,7 @@ SPARQL:"""
                         start_time=exec_start_time
                     )
                     
-                result, err = self.execute_sparql(sparql_query)
+                result, err = self.execute_sparql(sparql_query, state)
                 
                 # End execution timing
                 exec_end_time = datetime.now()

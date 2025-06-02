@@ -405,8 +405,20 @@ class VerbalizationNode:
             logger.error(f"Error executing SPARQL query: {e}")
             return [], e
         
-    def get_entities(self, entity: str, k: int = 5):
-        """Search for entities in Wikidata"""
+    def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
+        """Search for entities in Wikidata or Curriculum"""
+        if source == "curriculum":
+            # Try to use UniversityEntityRetrieval if it exists
+            try:
+                from ..utils.entity_retrieval import UniversityEntityRetrieval
+                entity_retrieval = UniversityEntityRetrieval()
+                result = entity_retrieval.get_related_entities(entity, [entity], k=k)
+                return result.get("entities", []), None
+            except Exception as e:
+                logger.error(f"Error using UniversityEntityRetrieval: {e}")
+                return [], e
+        
+        # Default to Wikidata API
         wikidata_api = "https://www.wikidata.org/w/api.php"
         params = {
             "action": "wbsearchentities",
@@ -502,7 +514,8 @@ class VerbalizationNode:
             return state
         
         entity = state.extracted_entities[0]
-        retrieved_resources, err = self.get_entities(entity, k=5)
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        retrieved_resources, err = self.get_entities(entity, k=5, source=knowledge_source)
         
         # Log retrieved resources
         if hasattr(state, 'visualizer') and state.visualizer:
@@ -659,20 +672,22 @@ class VerbalizationNode:
                 # Get references if needed
                 references = []
                 if getattr(state, 'include_references', True) and similarity >= 0.6 and result:
-                    logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
-                    raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
-                    
-                    # Format the references with proper date formatting
-                    for ref in raw_references:
-                        formatted_ref = {}
-                        if ref.get('refUrl'):
-                            formatted_ref['refUrl'] = ref['refUrl']
-                        if ref.get('refDate'):
-                            formatted_ref['refDate'] = ref['refDate']
-                            formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
+                    # Skip references for curriculum source
+                    if getattr(state, 'knowledge_source', 'wikidata') != 'curriculum':
+                        logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
+                        raw_references = self.verbalization.get_references_for_property(entity_uri, best_property)
                         
-                        if formatted_ref:  # Only add if we have some reference data
-                            references.append(formatted_ref)
+                        # Format the references with proper date formatting
+                        for ref in raw_references:
+                            formatted_ref = {}
+                            if ref.get('refUrl'):
+                                formatted_ref['refUrl'] = ref['refUrl']
+                            if ref.get('refDate'):
+                                formatted_ref['refDate'] = ref['refDate']
+                                formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
+                            
+                            if formatted_ref:  # Only add if we have some reference data
+                                references.append(formatted_ref)
                 
                 # Store results in state
                 state.verbalization_result = result

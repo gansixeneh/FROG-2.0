@@ -6,13 +6,13 @@ import Settings from './Settings';
 import FrogLogo from './FrogLogo'; // Add this import
 
 const Header: React.FC = () => {
-  const { toggleNav, isNavOpen, startNewChat, pusherStatus } = useChat();
+  const { toggleNav, isNavOpen, startNewChat, pusherStatus, settings, updateSettings } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   
   const getStatusColor = (isConnected: boolean) => {
     return isConnected ? 'bg-green-400' : 'bg-red-400';
   };
-
+  
   const getConnectionStateText = (state: string) => {
     switch (state) {
       case 'connected': return 'Connected';
@@ -21,6 +21,15 @@ const Header: React.FC = () => {
       case 'unavailable': return 'Unavailable';
       default: return state;
     }
+  };
+
+  // Handler for changing the knowledge source
+  const toggleKnowledgeSource = () => {
+    const newSource = settings.knowledgeSource === 'wikidata' ? 'curriculum' : 'wikidata';
+    updateSettings({
+      ...settings,
+      knowledgeSource: newSource
+    });
   };
   
   return (
@@ -78,6 +87,32 @@ const Header: React.FC = () => {
               {getConnectionStateText(pusherStatus.connectionState)}
             </span>
           </div>
+          
+          {/* Knowledge Source Toggle */}
+          <button
+            onClick={toggleKnowledgeSource}
+            className={`px-4 py-2 ${
+              settings.knowledgeSource === 'wikidata' 
+                ? 'bg-blue-500/50 hover:bg-blue-500/70' 
+                : 'bg-purple-500/50 hover:bg-purple-500/70'
+            } text-white rounded-full focus:outline-none font-semibold transition-colors shadow-md flex items-center`}
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum'}
+          </button>
           
           <button
             onClick={() => setShowSettings(true)}

@@ -40,4 +40,5 @@ export interface VisualizationFiles {
 export interface AgentSettings {
   useVerbalization: boolean;
   useGoogleSearch: boolean;
+  knowledgeSource: "wikidata" | "curriculum";
 }
