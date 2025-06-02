@@ -1,0 +1,1 @@
+arq --data GESISKG_resources_bib.ttl --query filter_query.sparql --results TTL > GESISKG_resources_bib_modified.ttl

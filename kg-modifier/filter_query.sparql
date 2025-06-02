@@ -1,0 +1,14 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <https://schema.org/>
+PREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>
+
+CONSTRUCT { ?s ?p ?o }
+WHERE {
+  ?s ?p ?o .
+  FILTER NOT EXISTS { ?s a gesiskg:DuplicateMetadata }
+  FILTER NOT EXISTS { ?o a gesiskg:DuplicateMetadata }
+  FILTER NOT EXISTS { 
+    ?s a schema:ScholarlyArticle . 
+    FILTER NOT EXISTS { ?s schema:name ?name }
+  }
+}
