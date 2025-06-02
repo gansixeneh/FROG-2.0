@@ -117,7 +117,7 @@ def main():
     if len(sys.argv) > 1:
         input_json_path = sys.argv[1]
     else:
-        input_json_path = "gesis_pattern_based_dataset.json"
+        input_json_path = "gesis_rw.json"
 
     if not os.path.exists(input_json_path):
         print(f"Error: Input JSON file '{input_json_path}' not found!")
