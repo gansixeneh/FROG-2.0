@@ -6,10 +6,6 @@ import logging
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Callable, Tuple
 
-# Google Generative AI imports
-import google.generativeai as genai
-from langchain_google_genai import ChatGoogleGenerativeAI
-
 # LangGraph imports
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
@@ -131,9 +127,6 @@ class WikidataGraphAgent:
                 "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
             )
 
-        # Initialize Gemini
-        genai.configure(api_key=self.gemini_api_key)
-
         # Store configuration
         self.print_output = print_output
         self.debug_callback = debug_callback
@@ -147,9 +140,29 @@ class WikidataGraphAgent:
             logger.info("Initialized LLM Factory with configuration")
         except Exception as e:
             logger.error(f"Failed to initialize LLM Factory: {e}")
-            # Fallback to legacy Gemini-only mode
-            self.llm_factory = None
-            logger.warning("Falling back to legacy Gemini-only mode")
+            logger.info("Creating LLM Factory with default Gemini configuration")
+            # Create a minimal default config for Gemini
+            import tempfile
+            import json
+            default_config = {
+                "default": {
+                    "provider": "gemini",
+                    "model": "gemini-2.0-flash",
+                    "config": {"temperature": 0.2}
+                },
+                "nodes": {},
+                "providers": {
+                    "gemini": {
+                        "default_config": {"temperature": 0.2}
+                    }
+                }
+            }
+            # Write to temp file and initialize factory
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                json.dump(default_config, f)
+                temp_config_path = f.name
+            
+            self.llm_factory = LLMFactory(config_path=temp_config_path)
 
         # Initialize Wikidata API
         self.api = WikidataAPI()
@@ -166,14 +179,6 @@ class WikidataGraphAgent:
         except Exception as e:
             logger.error(f"Failed to initialize UniversityEntityRetrieval: {e}")
             self.entity_retrieval = None
-
-        # Initialize LLM - keep for backward compatibility
-        self.gemini_model = genai.GenerativeModel(model_name="gemini-2.0-flash")
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash",
-            temperature=0.2,
-            google_api_key=self.gemini_api_key,
-        )
 
         # Load properties data
         try:
@@ -204,27 +209,15 @@ class WikidataGraphAgent:
 
     def build_graph(self):
         """Build the LangGraph workflow"""
-        # Create nodes with LLM factory support
+        # Create nodes with LLM factory
         translation_node = TranslationNode()
-        
-        # Use LLM factory if available, otherwise fallback to hardcoded models
-        if self.llm_factory:
-            entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
-            verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
-            sparql_generation_node = SparqlGenerationNode(
-                llm_factory=self.llm_factory, 
-                property_retrieval=self.property_retrieval
-            )
-            answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
-        else:
-            # Fallback to legacy initialization
-            logger.warning("Using legacy node initialization without LLM factory")
-            entity_extraction_node = EntityExtractionNode(self.gemini_model)
-            verbalization_node = VerbalizationNode(self.gemini_model, property_retrieval=self.property_retrieval)
-            sparql_generation_node = SparqlGenerationNode(
-                self.gemini_model, self.property_retrieval
-            )
-            answer_generation_node = AnswerGenerationNode(self.gemini_model)
+        entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
+        verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
+        sparql_generation_node = SparqlGenerationNode(
+            llm_factory=self.llm_factory, 
+            property_retrieval=self.property_retrieval
+        )
+        answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
         
         strategy_selection_node = StrategySelectionNode()
         property_generation_node = PropertyGenerationNode(self.property_retrieval)

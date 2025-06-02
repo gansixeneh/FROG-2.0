@@ -6,37 +6,31 @@ import logging
 from datetime import datetime
 from typing import Optional, Union
 from ..utils.state import WikidataGraphRAGState
-import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
 
 class EntityExtractionNode:
     """Node for extracting entities and properties from questions"""
-    def __init__(self, genai_model=None, llm_factory=None):
+    def __init__(self, llm_factory=None):
         """
         Initialize EntityExtractionNode
         
         Args:
-            genai_model: Legacy Gemini model (for backward compatibility)
             llm_factory: LLM factory instance for multi-provider support
         """
-        self.genai_model = genai_model
         self.llm_factory = llm_factory
         self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
         
-        # Initialize the LLM provider
-        self._llm_provider = None
-        if self.llm_factory:
-            try:
-                self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
-                logger.info("Initialized EntityExtractionNode with LLM factory")
-            except Exception as e:
-                logger.error(f"Failed to get model from factory: {e}")
-                logger.warning("Falling back to legacy Gemini model")
-                self._llm_provider = None
+        if not self.llm_factory:
+            raise ValueError("llm_factory must be provided")
         
-        if not self._llm_provider and not self.genai_model:
-            raise ValueError("Either llm_factory or genai_model must be provided")
+        # Initialize the LLM provider
+        try:
+            self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
+            logger.info("Initialized EntityExtractionNode with LLM factory")
+        except Exception as e:
+            logger.error(f"Failed to get model from factory: {e}")
+            raise ValueError(f"Failed to initialize LLM provider: {e}")
         
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
@@ -93,25 +87,18 @@ Your output should look like:
                 )
                 
             # Generate extraction using configured model
-            if self._llm_provider:
-                # Use LLM factory provider
-                if self._llm_provider.is_chat_template_supported():
-                    # Use chat template
-                    messages = [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ]
-                    prompt = self._llm_provider.apply_chat_template(messages)
-                else:
-                    # Fallback to simple concatenation
-                    prompt = f"{system_prompt}\n\n{user_prompt}"
-                
-                completion = self._llm_provider.generate_response(prompt)
+            if self._llm_provider.is_chat_template_supported():
+                # Use chat template
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+                prompt = self._llm_provider.apply_chat_template(messages)
             else:
-                # Legacy Gemini model
-                combined_prompt = f"{system_prompt}\n\n{user_prompt}"
-                response = self.genai_model.generate_content(combined_prompt)
-                completion = response.text
+                # Fallback to simple concatenation
+                prompt = f"{system_prompt}\n\n{user_prompt}"
+            
+            completion = self._llm_provider.generate_response(prompt)
             
             # Log raw completion
             if hasattr(state, 'visualizer') and state.visualizer:

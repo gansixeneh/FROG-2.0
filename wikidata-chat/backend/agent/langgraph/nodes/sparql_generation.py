@@ -7,25 +7,25 @@ from typing import Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
 from ..utils.state import WikidataGraphRAGState
 from ..utils.date_utils import format_reference_date
-import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
 
 class SparqlGenerationNode:
     """Node for generating and executing SPARQL queries"""
-    def __init__(self, genai_model=None, property_retrieval=None, llm_factory=None):
+    def __init__(self, llm_factory=None, property_retrieval=None):
         """
         Initialize SparqlGenerationNode
         
         Args:
-            genai_model: Legacy Gemini model (for backward compatibility)
-            property_retrieval: Property retrieval system
             llm_factory: LLM factory instance for multi-provider support
+            property_retrieval: Property retrieval system
         """
-        self.genai_model = genai_model
-        self.property_retrieval = property_retrieval
         self.llm_factory = llm_factory
+        self.property_retrieval = property_retrieval
         self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
+        
+        if not self.llm_factory:
+            raise ValueError("llm_factory must be provided")
         
         # Use source-aware SPARQL wrapper if available
         try:
@@ -38,18 +38,12 @@ class SparqlGenerationNode:
             self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
         
         # Initialize the LLM provider
-        self._llm_provider = None
-        if self.llm_factory:
-            try:
-                self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
-                logger.info("Initialized SparqlGenerationNode with LLM factory")
-            except Exception as e:
-                logger.error(f"Failed to get model from factory: {e}")
-                logger.warning("Falling back to legacy Gemini model")
-                self._llm_provider = None
-        
-        if not self._llm_provider and not self.genai_model:
-            raise ValueError("Either llm_factory or genai_model must be provided")
+        try:
+            self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
+            logger.info("Initialized SparqlGenerationNode with LLM factory")
+        except Exception as e:
+            logger.error(f"Failed to get model from factory: {e}")
+            raise ValueError(f"Failed to initialize LLM provider: {e}")
         
     def execute_sparql(self, q: str, state=None):
         """Execute a SPARQL query"""
@@ -350,24 +344,18 @@ SPARQL:"""
                 combined_prompt = f"{system_prompt}\n\n{user_prompt_template}"
                 
                 # Generate SPARQL query using configured model
-                if self._llm_provider:
-                    # Use LLM factory provider
-                    if self._llm_provider.is_chat_template_supported():
-                        # Use chat template
-                        messages = [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt_template}
-                        ]
-                        prompt = self._llm_provider.apply_chat_template(messages)
-                    else:
-                        # Fallback to simple concatenation
-                        prompt = combined_prompt
-                    
-                    completion = self._llm_provider.generate_response(prompt)
+                if self._llm_provider.is_chat_template_supported():
+                    # Use chat template
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt_template}
+                    ]
+                    prompt = self._llm_provider.apply_chat_template(messages)
                 else:
-                    # Legacy Gemini model
-                    response = self.genai_model.generate_content(combined_prompt)
-                    completion = response.text
+                    # Fallback to simple concatenation
+                    prompt = combined_prompt
+                
+                completion = self._llm_provider.generate_response(prompt)
                 
                 # Log raw completion
                 if hasattr(state, 'visualizer') and state.visualizer:

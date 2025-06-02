@@ -4,37 +4,31 @@ from datetime import datetime
 import logging
 import googletrans
 from ..utils.state import WikidataGraphRAGState
-import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
 
 class AnswerGenerationNode:
     """Node for generating the final natural language answer"""
-    def __init__(self, genai_model=None, llm_factory=None):
+    def __init__(self, llm_factory=None):
         """
         Initialize AnswerGenerationNode
         
         Args:
-            genai_model: Legacy Gemini model (for backward compatibility)
             llm_factory: LLM factory instance for multi-provider support
         """
-        self.genai_model = genai_model
         self.llm_factory = llm_factory
         self.translator = googletrans.Translator()
         
-        # Initialize the LLM provider
-        self._llm_provider = None
-        if self.llm_factory:
-            try:
-                self._llm_provider = self.llm_factory.get_model_for_answer_generation()
-                logger.info("Initialized AnswerGenerationNode with LLM factory")
-            except Exception as e:
-                logger.error(f"Failed to get model from factory: {e}")
-                logger.warning("Falling back to legacy Gemini model")
-                self._llm_provider = None
+        if not self.llm_factory:
+            raise ValueError("llm_factory must be provided")
         
-        if not self._llm_provider and not self.genai_model:
-            raise ValueError("Either llm_factory or genai_model must be provided")
+        # Initialize the LLM provider
+        try:
+            self._llm_provider = self.llm_factory.get_model_for_answer_generation()
+            logger.info("Initialized AnswerGenerationNode with LLM factory")
+        except Exception as e:
+            logger.error(f"Failed to get model from factory: {e}")
+            raise ValueError(f"Failed to initialize LLM provider: {e}")
         
     def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
         # Start timing
@@ -96,24 +90,18 @@ Answer:"""
             )
             
         # Generate response using configured model
-        if self._llm_provider:
-            # Use LLM factory provider
-            if self._llm_provider.is_chat_template_supported():
-                # Use chat template if supported
-                messages = [
-                    {"role": "system", "content": "You are an assistant for question-answering tasks."},
-                    {"role": "user", "content": prompt}
-                ]
-                formatted_prompt = self._llm_provider.apply_chat_template(messages)
-            else:
-                # Use direct prompt
-                formatted_prompt = prompt
-            
-            state.final_answer = self._llm_provider.generate_response(formatted_prompt)
+        if self._llm_provider.is_chat_template_supported():
+            # Use chat template if supported
+            messages = [
+                {"role": "system", "content": "You are an assistant for question-answering tasks."},
+                {"role": "user", "content": prompt}
+            ]
+            formatted_prompt = self._llm_provider.apply_chat_template(messages)
         else:
-            # Legacy Gemini model
-            response = self.genai_model.generate_content(prompt)
-            state.final_answer = response.text
+            # Use direct prompt
+            formatted_prompt = prompt
+        
+        state.final_answer = self._llm_provider.generate_response(formatted_prompt)
         
         # End generation timing
         gen_end_time = datetime.now()

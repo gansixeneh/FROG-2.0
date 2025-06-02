@@ -22,7 +22,34 @@ class LLMFactory:
         """
         self.config_path = config_path
         self._model_cache: Dict[str, BaseLLMProvider] = {}
-        self.config = load_llm_config(config_path)
+        
+        try:
+            self.config = load_llm_config(config_path)
+        except Exception as e:
+            logger.warning(f"Failed to load config from {config_path}: {e}")
+            logger.info("Using default Gemini configuration")
+            # Create default config for Gemini
+            self.config = {
+                "default": {
+                    "provider": "gemini",
+                    "model": "gemini-2.0-flash",
+                    "config": {"temperature": 0.2}
+                },
+                "nodes": {},
+                "providers": {
+                    "gemini": {
+                        "default_config": {"temperature": 0.2}
+                    },
+                    "ollama": {
+                        "default_config": {
+                            "base_url": "http://localhost:11434",
+                            "temperature": 0.2,
+                            "top_p": 0.9,
+                            "num_predict": 512
+                        }
+                    }
+                }
+            }
         
         # Validate environment variables
         self.env_status = validate_environment_variables()

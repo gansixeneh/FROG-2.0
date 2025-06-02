@@ -6,11 +6,6 @@ import threading
 import json
 import tempfile
 import logging
-import google.generativeai as genai
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import SystemMessage
 from langchain.callbacks.base import BaseCallbackHandler
 
 # Import LangGraph agent
