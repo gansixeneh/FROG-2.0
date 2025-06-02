@@ -3,80 +3,53 @@
     "id": "q1",
     "category": "scholarly",
     "complexity": "basic",
-    "templateId": "publication-date",
-    "sparql": "SELECT ?date WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-108633> <https://schema.org/datePublished> ?date . }",
+    "templateId": "publication-topic",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-15345> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "thoughts": [
-      "1. The question asks when a specific scholarly resource Methodological aspects in cross-national research was published.",
-      "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
-      "3. To answer this question, I need to query for the value of the schema:datePublished property of <https://data.gesis.org/gesiskg/resource/gesis-bib-108633>.",
-      "4. The query directly retrieves the publication date without needing additional joins or transformations.",
-      "5. The result provides the publication date of Methodological aspects in cross-national research in the format stored in the knowledge graph."
+      "1. The question asks about the topic or subject of 'Markenkenntnis-Test'.",
+      "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
+      "3. I first need to find the topic entity that '<https://data.gesis.org/gesiskg/resource/gesis-bib-15345>' is about using schema:about.",
+      "4. Then I retrieve the name of the topic using the schema:name property.",
+      "5. The query returns the name of the topic that 'Markenkenntnis-Test' is about."
     ],
-    "question": "When was 'Methodological aspects in cross-national research' published?",
+    "question": "What is the main theme of ''Markenkenntnis-Test''?",
     "entities": [
-      "Methodological aspects in cross-national research"
+      "Markenkenntnis-Test"
     ],
     "properties": [
-      "datePublished"
+      "about",
+      "name"
     ],
     "entities_matches": [
       {
-        "id": "https://data.gesis.org/gesiskg/resource/methodological_paradigms",
-        "label": "methodological paradigms"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-65258",
+        "label": "The Main Event"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/%28Methodological_perspectives%29",
-        "label": "(Methodological perspectives)"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-107940",
+        "label": "Theme for Successfull Management"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/sozialeocial_aspects",
-        "label": "sozialeocial aspects"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-52196",
+        "label": "A Statistical Measure of Theme and Structure"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-39136_Cross_J",
-        "label": "Cross, J."
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-15345",
+        "label": "Markenkenntnis-Test"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/Research",
-        "label": "Research"
+        "id": "https://data.gesis.org/gesiskg/resource/Test",
+        "label": "Test"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/cross-national_research",
-        "label": "cross-national research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/National_Center_of_Social_Research",
-        "label": "National Center of Social Research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/National_Centre_of_Social_Research",
-        "label": "National Centre of Social Research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/cross-national_analysis",
-        "label": "cross-national analysis"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/cross-national_survey_research",
-        "label": "cross-national survey research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-152283",
-        "label": "Cross-national comparative research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-108633",
-        "label": "Methodological aspects in cross-national research"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-43502",
-        "label": "Methodological considerations in comparative cross-national research"
+        "id": "https://data.gesis.org/gesiskg/resource/Name",
+        "label": "Name"
       }
     ],
     "properties_matches": [
       {
-        "id": "schema:abstract",
-        "label": "abstract"
+        "id": "schema:mainEntity",
+        "label": "main entity"
       },
       {
         "id": "schema:about",
@@ -87,32 +60,12 @@
         "label": "is part of"
       },
       {
-        "id": "schema:author",
-        "label": "author"
+        "id": "schema:name",
+        "label": "name"
       },
       {
-        "id": "gesiskg:reference",
-        "label": "reference"
-      },
-      {
-        "id": "schema:datePublished",
-        "label": "date published"
-      },
-      {
-        "id": "schema:publicationType",
-        "label": "publication type"
-      },
-      {
-        "id": "schema:publisher",
-        "label": "publisher"
-      },
-      {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
-      },
-      {
-        "id": "schema:inLanguage",
-        "label": "in language"
+        "id": "schema:givenName",
+        "label": "given name"
       }
     ]
   },
@@ -121,17 +74,17 @@
     "category": "scholarly",
     "complexity": "basic",
     "templateId": "publication-topic",
-    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-13015> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
+    "sparql": "SELECT ?topicName WHERE { <https://data.gesis.org/gesiskg/resource/gesis-bib-15345> <https://schema.org/about> ?topic . ?topic <https://schema.org/name> ?topicName . }",
     "thoughts": [
-      "1. The question asks about the topic or subject of URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D.",
+      "1. The question asks about the topic or subject of 'Markenkenntnis-Test'.",
       "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
-      "3. I first need to find the topic entity that <https://data.gesis.org/gesiskg/resource/gesis-bib-13015> is about using schema:about.",
+      "3. I first need to find the topic entity that '<https://data.gesis.org/gesiskg/resource/gesis-bib-15345>' is about using schema:about.",
       "4. Then I retrieve the name of the topic using the schema:name property.",
-      "5. The query returns the name of the topic that URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D is about."
+      "5. The query returns the name of the topic that 'Markenkenntnis-Test' is about."
     ],
-    "question": "What is the subject of 'URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D'?",
+    "question": "What is the subject of ''Markenkenntnis-Test''?",
     "entities": [
-      "URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D"
+      "Markenkenntnis-Test"
     ],
     "properties": [
       "about",
@@ -147,20 +100,12 @@
         "label": "Subject Headings"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-13015",
-        "label": "URLAUBSREISE, REISEPL\u00c4NE, AUSLANDSREISE, REISEZIELE, VERKEHRSMITTEL, D"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-15345",
+        "label": "Markenkenntnis-Test"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12536",
-        "label": "URLAUBSREISENDE, AUSLANDSREISEN, REISEZIELE, REISEMONATE"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12201",
-        "label": "URLAUBSREISEN, AUSLANDSREISE, REISEZIELE, D"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-12627",
-        "label": "URLAUBSREISE, PLANUNG, AUSLANDSREISE"
+        "id": "https://data.gesis.org/gesiskg/resource/Test",
+        "label": "Test"
       },
       {
         "id": "https://data.gesis.org/gesiskg/resource/Name",
@@ -177,16 +122,12 @@
         "label": "is part of"
       },
       {
-        "id": "schema:url",
-        "label": "url"
-      },
-      {
-        "id": "schema:abstract",
-        "label": "abstract"
-      },
-      {
         "id": "schema:name",
         "label": "name"
+      },
+      {
+        "id": "schema:givenName",
+        "label": "given name"
       }
     ]
   },
@@ -194,111 +135,40 @@
     "id": "q3",
     "category": "scholarly",
     "complexity": "intermediate",
-    "templateId": "location-resource-count",
-    "sparql": "SELECT ?COUNT WHERE { { SELECT (COUNT(?resource) AS ?COUNT) WHERE { ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> <https://data.gesis.org/gesiskg/resource/K%C3%B6ln_063-099.001> . } } }",
+    "templateId": "person-latest-publication",
+    "sparql": "SELECT ?title WHERE { ?publication <https://schema.org/author> <https://data.gesis.org/gesiskg/resource/gesis-bib-97416_Becker_Jens> . ?publication <https://schema.org/name> ?title . ?publication <https://schema.org/datePublished> ?date . } ORDER BY DESC(?date) LIMIT 1",
     "thoughts": [
-      "1. The question asks for the number of resources located at a specific library location K\u00f6ln 063-099/001.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. To count the resources, I need to find all resources that have K\u00f6ln 063-099/001 as their library location.",
-      "4. I use COUNT(?resource) to count the total number of such resources.",
-      "5. The query returns the count of resources located at K\u00f6ln 063-099/001."
+      "1. The question asks for the most recent publication by Becker, Jens.",
+      "2. In the GESIS knowledge graph, publications are linked to authors via schema:author and have publication dates via schema:datePublished.",
+      "3. I need to find all publications that have Becker, Jens as their author and retrieve their titles and dates.",
+      "4. I sort the results by publication date in descending order (most recent first) using ORDER BY DESC(?date).",
+      "5. The LIMIT 1 clause ensures only the most recent publication is returned."
     ],
-    "question": "How many items can be found in the 'K\u00f6ln 063-099/001' section?",
+    "question": "What is the latest publication by 'Becker, Jens'?",
     "entities": [
-      "K\u00f6ln 063-099/001"
+      "Becker, Jens"
     ],
     "properties": [
-      "libraryLocation"
+      "author",
+      "name",
+      "datePublished"
     ],
     "entities_matches": [
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-66533",
-        "label": "From the many are chosen the few"
+        "id": "https://data.gesis.org/gesiskg/resource/BECKER",
+        "label": "BECKER"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/Items",
-        "label": "Items"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-97416_Becker_Jens",
+        "label": "Becker, Jens"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln",
-        "label": "K\u00f6ln"
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-124866_Becker_Jens",
+        "label": "Becker, Jens"
       },
       {
-        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-13715",
-        "label": "K\u00f6ln"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_099-009",
-        "label": "K\u00f6ln 099-009"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_099-001",
-        "label": "K\u00f6ln 099-001"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/K%C3%B6ln_063-099.001",
-        "label": "K\u00f6ln 063-099/001"
-      }
-    ],
-    "properties_matches": [
-      {
-        "id": "schema:about",
-        "label": "about"
-      },
-      {
-        "id": "schema:hasPart",
-        "label": "has part"
-      },
-      {
-        "id": "schema:isPartOf",
-        "label": "is part of"
-      },
-      {
-        "id": "gesiskg:sourceCollection",
-        "label": "source collection"
-      },
-      {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
-      }
-    ]
-  },
-  {
-    "id": "q4",
-    "category": "scholarly",
-    "complexity": "advanced",
-    "templateId": "most-populated-location",
-    "sparql": "SELECT ?locationName WHERE { { SELECT ?location (COUNT(?resource) AS ?COUNT) WHERE { ?resource <https://data.gesis.org/gesiskg/schema/libraryLocation> ?location . } GROUP BY ?location ORDER BY DESC(?COUNT) LIMIT 1 } ?location <https://schema.org/name> ?locationName . }",
-    "thoughts": [
-      "1. The question asks for the library location that contains the most resources.",
-      "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-      "3. I need to count how many resources are associated with each location.",
-      "4. I group the results by location and count the number of resources for each using COUNT(?resource).",
-      "5. Ordering by the resource count in descending order and limiting to 1 result gives the location with the most resources.",
-      "6. Finally, I retrieve the human-readable name of this location using the schema:name property."
-    ],
-    "question": "Which library location has the most resources?",
-    "entities": [],
-    "properties": [
-      "libraryLocation",
-      "name"
-    ],
-    "entities_matches": [
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/library_data",
-        "label": "library data"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/British_Library",
-        "label": "British Library"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/Harvard_Library",
-        "label": "Harvard Library"
-      },
-      {
-        "id": "https://data.gesis.org/gesiskg/resource/Hutchison_University_Library",
-        "label": "Hutchison University Library"
+        "id": "https://data.gesis.org/gesiskg/resource/author_names",
+        "label": "author names"
       },
       {
         "id": "https://data.gesis.org/gesiskg/resource/Name",
@@ -307,16 +177,108 @@
     ],
     "properties_matches": [
       {
-        "id": "gesiskg:libraryLocation",
-        "label": "library location"
+        "id": "schema:isPartOf",
+        "label": "is part of"
       },
       {
-        "id": "gesiskg:sourceInfo",
-        "label": "source info"
+        "id": "schema:dateModified",
+        "label": "date modified"
       },
       {
-        "id": "gesiskg:sourceCollection",
-        "label": "source collection"
+        "id": "schema:publicationType",
+        "label": "publication type"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
+      },
+      {
+        "id": "schema:author",
+        "label": "author"
+      },
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
+      },
+      {
+        "id": "schema:givenName",
+        "label": "given name"
+      },
+      {
+        "id": "schema:name",
+        "label": "name"
+      },
+      {
+        "id": "schema:datePublished",
+        "label": "date published"
+      },
+      {
+        "id": "schema:abstract",
+        "label": "abstract"
+      }
+    ]
+  },
+  {
+    "id": "q4",
+    "category": "scholarly",
+    "complexity": "advanced",
+    "templateId": "most-diverse-publication",
+    "sparql": "SELECT ?title WHERE { { SELECT ?publication WHERE { ?publication <https://schema.org/about> ?topic . } GROUP BY ?publication ORDER BY DESC(COUNT(DISTINCT ?topic)) LIMIT 1 } ?publication <https://schema.org/name> ?title . }",
+    "thoughts": [
+      "1. The question asks for the publication that covers the most diverse range of topics.",
+      "2. In the GESIS knowledge graph, publications are linked to their topics via the schema:about property.",
+      "3. I need to count how many distinct topics each publication covers.",
+      "4. I group the results by publication and title, then count the number of distinct topics for each using COUNT(DISTINCT ?topic).",
+      "5. Ordering by topic count in descending order and limiting to 1 result gives us the publication with the most diverse topics."
+    ],
+    "question": "Which publication covers the most diverse topics?",
+    "entities": [],
+    "properties": [
+      "about",
+      "name"
+    ],
+    "entities_matches": [
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/bib_reference_Diverse",
+        "label": "Diverse"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/gesis-bib-145992",
+        "label": "Sensitive topics"
+      },
+      {
+        "id": "https://data.gesis.org/gesiskg/resource/Name",
+        "label": "Name"
+      }
+    ],
+    "properties_matches": [
+      {
+        "id": "schema:publicationType",
+        "label": "publication type"
+      },
+      {
+        "id": "schema:hasPart",
+        "label": "has part"
+      },
+      {
+        "id": "schema:about",
+        "label": "about"
+      },
+      {
+        "id": "schema:isPartOf",
+        "label": "is part of"
+      },
+      {
+        "id": "schema:publisher",
+        "label": "publisher"
+      },
+      {
+        "id": "schema:abstract",
+        "label": "abstract"
+      },
+      {
+        "id": "schema:contributor",
+        "label": "contributor"
       },
       {
         "id": "schema:name",

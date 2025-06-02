@@ -682,14 +682,14 @@ class NL2SPARQLGenerator:
                 "id": "publication-author",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "Who is the author of {entity}?",
-                    "Who wrote {entity}?", 
-                    "Who created {entity}?"
+                    "Who is the author of '{entity}'?",
+                    "Who wrote '{entity}'?", 
+                    "Who created '{entity}'?"
                 ],
                 "englishQuestionTemplates": [
-                    "Who is the author of {entity}?",
-                    "Who wrote {entity}?",
-                    "Who created {entity}?"
+                    "Who is the author of '{entity}'?",
+                    "Who wrote '{entity}'?",
+                    "Who created '{entity}'?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?authorName WHERE {
@@ -699,25 +699,25 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks for the author of a specific scholarly resource {entity}.",
+                    "1. The question asks for the author of a specific scholarly resource '{entity}'.",
                     "2. In the GESIS knowledge graph, authorship is represented by the schema:author property.",
-                    "3. First, I need to find the author entity related to {entity} using the schema:author property.",
+                    "3. First, I need to find the author entity related to '{entity}' using the schema:author property.",
                     "4. Then I retrieve the human-readable name of the author using the schema:name property.",
-                    "5. The query returns the name(s) of the author(s) who created {entity}."
+                    "5. The query returns the name(s) of the author(s) who created '{entity}'."
                 ]
             },
             {
                 "id": "publication-date",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "When was {entity} published?",
-                    "What is the publication date of {entity}?",
-                    "In what year was {entity} published?"
+                    "When was '{entity}' published?",
+                    "What is the publication date of '{entity}'?",
+                    "In what year was '{entity}' published?"
                 ],
                 "englishQuestionTemplates": [
-                    "When was {entity} published?",
-                    "What is the publication date of {entity}?",
-                    "In what year was {entity} published?"
+                    "When was '{entity}' published?",
+                    "What is the publication date of '{entity}'?",
+                    "In what year was '{entity}' published?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?date WHERE {
@@ -726,25 +726,25 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks when a specific scholarly resource {entity} was published.",
+                    "1. The question asks when a specific scholarly resource '{entity}' was published.",
                     "2. In the GESIS knowledge graph, publication dates are represented by the schema:datePublished property.",
-                    "3. To answer this question, I need to query for the value of the schema:datePublished property of {entity}.",
+                    "3. To answer this question, I need to query for the value of the schema:datePublished property of '{entity}'.",
                     "4. The query directly retrieves the publication date without needing additional joins or transformations.",
-                    "5. The result provides the publication date of {entity} in the format stored in the knowledge graph."
+                    "5. The result provides the publication date of '{entity}' in the format stored in the knowledge graph."
                 ]
             },
             {
                 "id": "publication-publisher",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "Which organization published {entity}?",
-                    "Who published {entity}?",
-                    "What is the publisher of {entity}?"
+                    "Which organization published '{entity}'?",
+                    "Who published '{entity}'?",
+                    "What is the publisher of '{entity}'?"
                 ],
                 "englishQuestionTemplates": [
-                    "Which organization published {entity}?",
-                    "Who published {entity}?",
-                    "What is the publisher of {entity}?"
+                    "Which organization published '{entity}'?",
+                    "Who published '{entity}'?",
+                    "What is the publisher of '{entity}'?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?publisherName WHERE {
@@ -754,25 +754,25 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks about the organization that published {entity}.",
+                    "1. The question asks about the organization that published '{entity}'.",
                     "2. In the GESIS knowledge graph, publishers are linked to publications via the schema:publisher property.",
-                    "3. I need to first find the publisher entity related to {entity} using schema:publisher.",
+                    "3. I need to first find the publisher entity related to '{entity}' using schema:publisher.",
                     "4. Then I retrieve the name of the publisher organization using the schema:name property.",
-                    "5. The query returns the name of the organization that published {entity}."
+                    "5. The query returns the name of the organization that published '{entity}'."
                 ]
             },
             {
                 "id": "publication-topic",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "What is the topic of {entity}?",
-                    "What is the subject of {entity}?",
-                    "What is the main theme of {entity}?"
+                    "What is the topic of '{entity}'?",
+                    "What is the subject of '{entity}'?",
+                    "What is the main theme of '{entity}'?"
                 ],
                 "englishQuestionTemplates": [
-                    "What is the topic of {entity}?",
-                    "What is the subject of {entity}?",
-                    "What is the main theme of {entity}?"
+                    "What is the topic of '{entity}'?",
+                    "What is the subject of '{entity}'?",
+                    "What is the main theme of '{entity}'?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?topicName WHERE {
@@ -782,25 +782,25 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks about the topic or subject of {entity}.",
+                    "1. The question asks about the topic or subject of '{entity}'.",
                     "2. In the GESIS knowledge graph, topics are linked to publications via the schema:about property.",
-                    "3. I first need to find the topic entity that {entity} is about using schema:about.",
+                    "3. I first need to find the topic entity that '{entity}' is about using schema:about.",
                     "4. Then I retrieve the name of the topic using the schema:name property.",
-                    "5. The query returns the name of the topic that {entity} is about."
+                    "5. The query returns the name of the topic that '{entity}' is about."
                 ]
             },
             {
                 "id": "publication-language",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "What language is {entity} written in?",
-                    "What is the language of {entity}?",
-                    "In which language was {entity} published?"
+                    "What language is '{entity}' written in?",
+                    "What is the language of '{entity}'?",
+                    "In which language was '{entity}' published?"
                 ],
                 "englishQuestionTemplates": [
-                    "What language is {entity} written in?",
-                    "What is the language of {entity}?",
-                    "In which language was {entity} published?"
+                    "What language is '{entity}' written in?",
+                    "What is the language of '{entity}'?",
+                    "In which language was '{entity}' published?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?language WHERE {
@@ -809,25 +809,25 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks about the language in which {entity} was written or published.",
+                    "1. The question asks about the language in which '{entity}' was written or published.",
                     "2. In the GESIS knowledge graph, the language of a publication is represented by the schema:inLanguage property.",
-                    "3. To answer this question, I need to query for the value of the schema:inLanguage property of {entity}.",
+                    "3. To answer this question, I need to query for the value of the schema:inLanguage property of '{entity}'.",
                     "4. The query directly retrieves the language without needing additional joins or transformations.",
-                    "5. The result provides the language of {entity} as stored in the knowledge graph."
+                    "5. The result provides the language of '{entity}' as stored in the knowledge graph."
                 ]
             },
             {
                 "id": "resource-library-location",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "Where is {entity} located in the library?",
-                    "What is the library location of {entity}?",
-                    "In which section of the library can I find {entity}?"
+                    "Where is '{entity}' located in the library?",
+                    "What is the library location of '{entity}'?",
+                    "In which section of the library can I find '{entity}'?"
                 ],
                 "englishQuestionTemplates": [
-                    "Where is {entity} located in the library?",
-                    "What is the library location of {entity}?",
-                    "In which section of the library can I find {entity}?"
+                    "Where is '{entity}' located in the library?",
+                    "What is the library location of '{entity}'?",
+                    "In which section of the library can I find '{entity}'?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?locationName WHERE {
@@ -837,11 +837,11 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "basic",
                 "thoughtsTemplate": [
-                    "1. The question asks about the library location of a specific resource {entity}.",
+                    "1. The question asks about the library location of a specific resource '{entity}'.",
                     "2. In the GESIS knowledge graph, resources are linked to their physical locations via the gesiskg:libraryLocation property.",
-                    "3. First, I need to find the location entity related to {entity} using the gesiskg:libraryLocation property.",
+                    "3. First, I need to find the location entity related to '{entity}' using the gesiskg:libraryLocation property.",
                     "4. Then I retrieve the human-readable name of the location using the schema:name property.",
-                    "5. The query returns the name of the library location where {entity} can be found."
+                    "5. The query returns the name of the library location where '{entity}' can be found."
                 ]
             },
             
@@ -912,14 +912,14 @@ class NL2SPARQLGenerator:
                 "id": "publication-collaborator-count",
                 "category": "scholarly",
                 "questionTemplates": [
-                    "How many collaborators worked on {entity}?",
-                    "What is the number of authors for {entity}?",
-                    "How many researchers contributed to {entity}?"
+                    "How many collaborators worked on '{entity}'?",
+                    "What is the number of authors for '{entity}'?",
+                    "How many researchers contributed to '{entity}'?"
                 ],
                 "englishQuestionTemplates": [
-                    "How many collaborators worked on {entity}?",
-                    "What is the number of authors for {entity}?",
-                    "How many researchers contributed to {entity}?"
+                    "How many collaborators worked on '{entity}'?",
+                    "What is the number of authors for '{entity}'?",
+                    "How many researchers contributed to '{entity}'?"
                 ],
                 "sparqlTemplate": """
                     SELECT ?count WHERE {
@@ -932,11 +932,11 @@ class NL2SPARQLGenerator:
                 """,
                 "complexity": "intermediate",
                 "thoughtsTemplate": [
-                    "1. The question asks for the number of authors or collaborators who worked on {entity}.",
+                    "1. The question asks for the number of authors or collaborators who worked on '{entity}'.",
                     "2. In the GESIS knowledge graph, publications are linked to their authors via the schema:author property.",
-                    "3. To count the collaborators, I need to find all authors that are linked to {entity}.",
+                    "3. To count the collaborators, I need to find all authors that are linked to '{entity}'.",
                     "4. I use COUNT(DISTINCT ?collaborator) to count each collaborator only once.",
-                    "5. The query uses a nested SELECT with aggregation to return the total count of distinct authors of {entity}."
+                    "5. The query uses a nested SELECT with aggregation to return the total count of distinct authors of '{entity}'."
                 ]
             },
             {
