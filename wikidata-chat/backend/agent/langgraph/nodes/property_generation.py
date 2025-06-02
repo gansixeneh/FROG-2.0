@@ -2,10 +2,14 @@
 # backend/agent/langgraph/nodes/property_generation.py
 from datetime import datetime
 import re
+import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 from ..utils.state import WikidataGraphRAGState
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class PropertyGenerationNode:
     """Node for enhancing and retrieving additional Wikidata properties"""
@@ -16,12 +20,25 @@ class PropertyGenerationNode:
         # Start timing
         start_time = datetime.now()
         
+        # Get knowledge source and use appropriate property retrieval
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        current_property_retrieval = self.property_retrieval
+        
+        if knowledge_source == 'curriculum':
+            try:
+                from ..utils.property_retrieval import UniversityPropertyRetrieval
+                current_property_retrieval = UniversityPropertyRetrieval()
+                logger.info("Using UniversityPropertyRetrieval for curriculum in PropertyGenerationNode")
+            except Exception as e:
+                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
+                logger.info("Falling back to standard property retrieval")
+        
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
             state.visualizer.log_event(
                 "Property Generation Node", 
                 "start",
-                {"question": state.translated_question, "initial_properties": state.related_properties},
+                {"question": state.translated_question, "initial_properties": state.related_properties, "knowledge_source": knowledge_source},
                 start_time=start_time
             )
         
@@ -56,11 +73,18 @@ class PropertyGenerationNode:
             # Get top 5 n-gram properties
             top_ngram_properties = []
             for ngram in ngrams_list:
-                df_res = self.property_retrieval._search(ngram, k=5)
+                df_res = current_property_retrieval._search(ngram, k=5)
                 if not df_res.empty:
                     df_res = df_res[df_res["score"] >= 0.6]
                     if not df_res.empty:
-                        df_res["idWithLabel"] = df_res["propertyId"] + " - " + df_res["label"]
+                        # Handle both Wikidata and curriculum property formats
+                        if hasattr(current_property_retrieval, 'property_id_to_label'):
+                            # Wikidata format
+                            df_res["idWithLabel"] = df_res["propertyId"] + " - " + df_res["label"]
+                        else:
+                            # Curriculum format - use appropriate property ID field
+                            prop_id_field = "propertyId" if "propertyId" in df_res.columns else "label"
+                            df_res["idWithLabel"] = df_res[prop_id_field] + " - " + df_res["label"]
                         top_ngram_properties.extend(df_res["idWithLabel"].tolist())
                         if len(top_ngram_properties) >= 5:
                             break
@@ -110,7 +134,7 @@ class PropertyGenerationNode:
             
             # Get related properties from vector DB
             threshold = 0.6
-            related_candidates = self.property_retrieval.get_related_candidates(
+            related_candidates = current_property_retrieval.get_related_candidates(
                 state.translated_question, 
                 property_candidates=combined_properties, 
                 threshold=threshold

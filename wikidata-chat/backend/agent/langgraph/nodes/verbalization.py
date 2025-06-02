@@ -64,9 +64,12 @@ WHERE {{
     
     # Curriculum templates
     CURRICULUM_PO_TEMPLATE = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
 SELECT distinct ?p ?o ?pLabel ?oLabel
 WHERE {{
-  <{entity}> ?p ?o .
+  {entity} ?p ?o .
   OPTIONAL {{
     ?p rdfs:label ?pLabel .
   }}
@@ -76,9 +79,12 @@ WHERE {{
 }} LIMIT 1000
 """
     CURRICULUM_SP_TEMPLATE = """
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
 SELECT ?s ?p ?sLabel ?pLabel
 WHERE {{
-  ?s ?p <{entity}> .
+  ?s ?p {entity} .
   OPTIONAL {{
     ?s rdfs:label ?sLabel .
   }}
@@ -156,14 +162,26 @@ WHERE {{
 
     def get_po(self, entity: str, visualizer=None):
         """Get predicate-object pairs for entity"""
-        query = self.PO_TEMPLATE.format(entity=entity)
+        # Handle prefixed URIs vs full URIs
+        if self.knowledge_source == "curriculum":
+            # For curriculum, entity might be prefixed (e.g., ns1:ethical_hacking)
+            # Don't wrap in angle brackets if it contains a colon (indicating a prefix)
+            if ':' in entity and not entity.startswith('http'):
+                formatted_entity = entity
+            else:
+                formatted_entity = f"<{entity}>"
+        else:
+            # For Wikidata, always use the entity ID directly
+            formatted_entity = f"<{entity}>"
+            
+        query = self.PO_TEMPLATE.format(entity=formatted_entity)
         
         # Log before executing SPARQL
         if visualizer:
             visualizer.log_event(
                 "Verbalization Node",
                 "get_po SPARQL execution start",
-                {"entity": entity, "query_preview": query[:200] + "..."}
+                {"entity": entity, "formatted_entity": formatted_entity, "query_preview": query[:200] + "..."}
             )
             
         start_time = datetime.now()
@@ -193,14 +211,26 @@ WHERE {{
 
     def get_sp(self, entity: str, visualizer=None):
         """Get subject-predicate pairs for entity"""
-        query = self.SP_TEMPLATE.format(entity=entity)
+        # Handle prefixed URIs vs full URIs
+        if self.knowledge_source == "curriculum":
+            # For curriculum, entity might be prefixed (e.g., ns1:ethical_hacking)
+            # Don't wrap in angle brackets if it contains a colon (indicating a prefix)
+            if ':' in entity and not entity.startswith('http'):
+                formatted_entity = entity
+            else:
+                formatted_entity = f"<{entity}>"
+        else:
+            # For Wikidata, always use the entity ID directly
+            formatted_entity = f"<{entity}>"
+            
+        query = self.SP_TEMPLATE.format(entity=formatted_entity)
         
         # Log before executing SPARQL
         if visualizer:
             visualizer.log_event(
                 "Verbalization Node",
                 "get_sp SPARQL execution start",
-                {"entity": entity, "query_preview": query[:200] + "..."}
+                {"entity": entity, "formatted_entity": formatted_entity, "query_preview": query[:200] + "..."}
             )
             
         start_time = datetime.now()
@@ -244,20 +274,21 @@ WHERE {{
             
             # For Wikidata, try to get property label from property_retrieval if pLabel not available
             if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
-                prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
-                pLabel = property_retrieval.property_id_to_label.get(prop_id)
+                if hasattr(property_retrieval, 'property_id_to_label'):
+                    prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
+                    pLabel = property_retrieval.property_id_to_label.get(prop_id)
             
             # Fallback to camelCase separation if no label found
             if not pLabel:
-                pLabel = separate_camel_case(p.split("/")[-1])
+                pLabel = separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
             
-            label_s = sLabel if sLabel else replace_using_dict(entity_uri.split("/")[-1], self.MANUAL_MAPPING_DICT)
+            label_s = sLabel if sLabel else replace_using_dict(entity_uri.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
             label_p = pLabel
 
             if label_p != curr_p:
                 curr_p = label_p
-                if o.startswith("http"):
-                    label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1], self.MANUAL_MAPPING_DICT)
+                if o.startswith("http") or ":" in o:
+                    label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
                 else:
                     label_o = o
                 candidates[p] = self.SENTENCE_TEMPLATE.format(
@@ -275,16 +306,17 @@ WHERE {{
             
             # For Wikidata, try to get property label from property_retrieval if pLabel not available
             if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
-                prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
-                pLabel = property_retrieval.property_id_to_label.get(prop_id)
+                if hasattr(property_retrieval, 'property_id_to_label'):
+                    prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
+                    pLabel = property_retrieval.property_id_to_label.get(prop_id)
             
             # Fallback to camelCase separation if no label found
             if not pLabel:
-                pLabel = separate_camel_case(p.split("/")[-1])
+                pLabel = separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
             
-            label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
+            label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
             label_p = pLabel
-            label_o = oLabel if oLabel else replace_using_dict(entity_uri.split("/")[-1], self.MANUAL_MAPPING_DICT)
+            label_o = oLabel if oLabel else replace_using_dict(entity_uri.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
 
             if label_p != curr_p:
                 curr_p = label_p
@@ -380,10 +412,10 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             
             if p == property_uri:
                 # Use pLabel if available, otherwise fall back to camelCase separation
-                label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
+                label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
                 
-                if o.startswith("http"):
-                    label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1], self.MANUAL_MAPPING_DICT)
+                if o.startswith("http") or ":" in o:
+                    label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
                 else:
                     label_o = o
                 result.append({label_p: o if output_uri else label_o})
@@ -397,8 +429,8 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             
             if p == property_uri:
                 # Use pLabel if available, otherwise fall back to camelCase separation
-                label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1])
-                label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1], self.MANUAL_MAPPING_DICT)
+                label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
+                label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
                 result.append({label_p: s if output_uri else label_s})
                 
         return result
@@ -561,6 +593,17 @@ class VerbalizationNode:
                 knowledge_source=knowledge_source
             )
         
+        # Use appropriate property retrieval based on knowledge source
+        current_property_retrieval = self.property_retrieval
+        if knowledge_source == 'curriculum':
+            try:
+                from ..utils.property_retrieval import UniversityPropertyRetrieval
+                current_property_retrieval = UniversityPropertyRetrieval()
+                logger.info("Using UniversityPropertyRetrieval for curriculum")
+            except Exception as e:
+                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
+                logger.info("Falling back to standard property retrieval")
+        
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
             state.visualizer.log_event(
@@ -659,7 +702,7 @@ class VerbalizationNode:
                 candidates, po, sp = self.verbalization.get_list_of_candidates(
                     entity_uri=entity_uri, 
                     entity_label=entity_label,
-                    property_retrieval=self.property_retrieval,
+                    property_retrieval=current_property_retrieval,
                     visualizer=state.visualizer if hasattr(state, 'visualizer') else None
                 )
                 
