@@ -1048,9 +1048,14 @@ class PatternBasedSPARQLGenerator:
                             # Expand prefixed URI to full URI
                             full_uri = self._expand_uri(entity)
                         
+                        label = self._get_entity_name_from_kg(uri)
+                        if not label:
+                            # Fallback to gesis_entity_label function
+                            label = gesis_entity_label(uri)
+                            
                         entity_matches.append({
                             "id": full_uri,
-                            "label": gesis_entity_label(full_uri),
+                            "label": self._get_entity_name_from_kg(full_uri),
                         })
 
                 # Format property matches  
@@ -1213,7 +1218,7 @@ def main():
     }
 
     # Define paths to CSV files
-    base_dir = "/Users/muflihmaxi/Documents/FROG-2.0_dataset/gesis"
+    base_dir = ".."
     entities_csv_path = os.path.join(base_dir, "data/gesis_entities.csv")
     properties_csv_path = os.path.join(base_dir, "data/gesis_properties.csv")
 
@@ -1229,12 +1234,12 @@ def main():
 
     # Generate dataset using discovery-first approach
     print("Generating pattern-based dataset...")
-    dataset = generator.generate_dataset(size=20)
+    dataset = generator.generate_dataset(size=225)
 
     # Export results
     try:
-        generator.export_json(dataset, os.path.join(base_dir, "rw/gesis_pattern_based_dataset_with_entities.json"))
-        generator.export_csv(dataset, os.path.join(base_dir, "rw/gesis_pattern_based_dataset_with_entities.csv"))
+        generator.export_json(dataset, os.path.join(base_dir, "rw/gesis_rw.json"))
+        generator.export_csv(dataset, os.path.join(base_dir, "rw/gesis_rw.csv"))
     except Exception as e:
         print(f"Error exporting results: {e}")
 
