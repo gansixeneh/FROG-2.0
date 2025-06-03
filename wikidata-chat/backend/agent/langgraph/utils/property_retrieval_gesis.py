@@ -357,9 +357,6 @@ WHERE {
         result = {"entities": [], "properties": []}
 
         def search(ngram, search_type, threshold=threshold):
-            def format_result(x):
-                return x  # No domain/range needed
-
             if search_type == "entities":
                 df_res = self.search_entities(ngram, k=k)
             else:
@@ -370,7 +367,6 @@ WHERE {
                 
             result_list = (
                 df_res[df_res["score"] >= threshold]["short"]
-                .apply(format_result)
                 .tolist()
             )
             return search_type, result_list
