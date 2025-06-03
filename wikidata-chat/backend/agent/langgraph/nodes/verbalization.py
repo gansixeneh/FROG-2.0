@@ -27,7 +27,7 @@ def separate_camel_case(s):
     separated = re.sub("([a-z])([A-Z])", r"\1 \2", s)
     return separated
 
-class FROGVerbalization:
+class WikidataVerbalization:
     SENTENCE_TEMPLATE = "{s}'s {p} is {o}"
     MANUAL_MAPPING_DICT = {"_": " "}
     
@@ -573,7 +573,7 @@ Select the most appropriate entity ID that best matches the target entity "{enti
             self.verbalization.set_knowledge_source(knowledge_source)
         else:
             # Create verbalization if it doesn't exist
-            self.verbalization = FROGVerbalization(
+            self.verbalization = WikidataVerbalization(
                 model_name="jinaai/jina-embeddings-v3",
                 query_model_encode_kwargs={
                     "task": "retrieval.query",

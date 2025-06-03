@@ -110,7 +110,7 @@ class UniversityPropertyRetrieval:
         result["properties"] = sorted(result["properties"])
         return result
 
-class FROGPropertyRetrieval:
+class WikidataPropertyRetrieval:
     """Class for managing Wikidata properties retrieval and search"""
     def __init__(
         self,

@@ -28,7 +28,7 @@ from ..llm_factory import LLMFactory
 
 # Import visualization classes
 from .utils.visualization import BoxologyVisualizer
-from .utils.property_retrieval import FROGPropertyRetrieval
+from .utils.property_retrieval import WikidataPropertyRetrieval
 from .utils.state import FROGGraphRAGState
 from .utils.date_utils import format_reference_date
 from .utils.knowledge_graph_metadata import get_knowledge_graph_metadata
@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 # WikidataAPI helper class
-class FROGAPI:
+class WikidataAPI:
     def __init__(self, url="https://query.wikidata.org/sparql", source="wikidata") -> None:
         self.source = source
         self.kg_metadata = get_knowledge_graph_metadata()
@@ -167,7 +167,7 @@ class FROGGraphAgent:
             self.llm_factory = LLMFactory(config_path=temp_config_path)
 
         # Initialize Wikidata API
-        self.api = FROGAPI()
+        self.api = WikidataAPI()
 
         # Initialize source-aware SPARQL wrapper
         from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
@@ -201,7 +201,7 @@ class FROGGraphAgent:
             )
 
         # Initialize property retrieval
-        self.property_retrieval = FROGPropertyRetrieval(df_properties)
+        self.property_retrieval = WikidataPropertyRetrieval(df_properties)
 
         # Build the graph
         self.build_graph()
