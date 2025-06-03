@@ -66,7 +66,13 @@ class KnowledgeGraphMetadata:
         """Get SPARQL endpoint for a knowledge source"""
         metadata = self.get_metadata(knowledge_source)
         if metadata:
-            return metadata.get("endpoint", "")
+            endpoint = metadata.get("endpoint", "")
+            # Handle environment variable substitution
+            if endpoint.startswith("${") and "}" in endpoint:
+                var_name = endpoint[2:endpoint.index("}")]
+                env_value = os.environ.get(var_name, "http://localhost:3030")
+                endpoint = endpoint.replace(f"${{{var_name}}}", env_value)
+            return endpoint
         return ""
     
     def get_prefixes(self, knowledge_source: str) -> Dict[str, str]:

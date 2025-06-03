@@ -80,6 +80,7 @@ class WikidataVerbalization:
 
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
+        logger.debug(f"WikidataVerbalization executing SPARQL query on {self.knowledge_source}: {q}")
         self.api.setQuery(q)
         try:
             results = self.api.query().convert()
@@ -92,7 +93,8 @@ class WikidataVerbalization:
                 results_cleaned.append(tmp)
             return results_cleaned, None
         except Exception as e:
-            logger.error(f"Error executing SPARQL query: {e}")
+            logger.error(f"Error executing SPARQL query in WikidataVerbalization on {self.knowledge_source}: {e}")
+            logger.error(f"Query that failed: {q}")
             return [], e
 
     def get_po(self, entity: str, visualizer=None):
@@ -407,6 +409,7 @@ class VerbalizationNode:
     
     def execute_sparql(self, q: str):
         """Execute a SPARQL query"""
+        logger.debug(f"VerbalizationNode executing SPARQL query: {q}")
         self.api.setQuery(q)
         try:
             results = self.api.query().convert()
@@ -419,7 +422,8 @@ class VerbalizationNode:
                 results_cleaned.append(tmp)
             return results_cleaned, None
         except Exception as e:
-            logger.error(f"Error executing SPARQL query: {e}")
+            logger.error(f"Error executing SPARQL query in VerbalizationNode: {e}")
+            logger.error(f"Query that failed: {q}")
             return [], e
         
     def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):

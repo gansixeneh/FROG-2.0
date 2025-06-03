@@ -397,6 +397,15 @@ SPARQL:"""
                 else:
                     sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
                 
+                # Add PREFIX declarations for curriculum if not already present
+                if sparql_query and knowledge_source == "curriculum":
+                    # Check if PREFIX declarations are already in the query
+                    if not sparql_query.upper().startswith("PREFIX"):
+                        # Get PREFIX declarations from metadata
+                        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
+                        if prefixes_declaration:
+                            sparql_query = prefixes_declaration + "\n\n" + sparql_query
+                
                 # Enhance the query with references if requested
                 if sparql_query and state.include_references:
                     original_query = sparql_query
@@ -522,82 +531,83 @@ SPARQL:"""
                     if not result:
                         state.context_str = "I couldn't find information to answer this question."
                     else:
-                        # Check if we need to process entity URIs
-                        has_wikidata_entities = False
-                        entity_uris = []
-                        
-                        for item in result:
-                            for key, value in item.items():
-                                if isinstance(value, str) and value.startswith("http://www.wikidata.org/entity/"):
-                                    has_wikidata_entities = True
-                                    entity_uris.append(value)
-                        
-                        # If we have Wikidata entities, get their labels
-                        if has_wikidata_entities:
-                            # Extract entity IDs
-                            entity_ids = []
-                            for uri in entity_uris:
-                                entity_id = uri.split("/")[-1]
-                                entity_ids.append(entity_id)
+                        # Check if we need to process entity URIs (only for Wikidata)
+                        if knowledge_source == "wikidata":
+                            has_wikidata_entities = False
+                            entity_uris = []
                             
-                            # Generate query for entity labels
-                            values_str = " ".join([f"wd:{eid}" for eid in entity_ids])
-                            label_query = f"""
-                            SELECT ?item ?itemLabel WHERE {{
-                              VALUES ?item {{ {values_str} }}
-                              SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}
-                            }}
-                            """
+                            for item in result:
+                                for key, value in item.items():
+                                    if isinstance(value, str) and value.startswith("http://www.wikidata.org/entity/"):
+                                        has_wikidata_entities = True
+                                        entity_uris.append(value)
                             
-                            # Get entity labels
-                            entity_labels = {}
-                            try:
-                                # Log label query
-                                if hasattr(state, 'visualizer') and state.visualizer:
-                                    state.visualizer.log_event(
-                                        "SPARQL Generation Node",
-                                        "entity label lookup",
-                                        {"label_query": label_query, "entity_ids": entity_ids}
-                                    )
-                                    
-                                label_results, _ = self.execute_sparql(label_query)
-                                for item in label_results:
-                                    if "item" in item and "itemLabel" in item:
-                                        uri = item["item"]
-                                        entity_id = uri.split("/")[-1]
-                                        entity_labels[uri] = f"{item['itemLabel']} ({entity_id})"
-                            except Exception as e:
-                                if hasattr(state, 'visualizer') and state.visualizer:
-                                    state.visualizer.log_event(
-                                        "SPARQL Generation Node",
-                                        "entity label lookup error",
-                                        {"error": str(e)}
-                                    )
-                                    
-                                if state.verbose > 0:
-                                    print(f"Error getting entity labels: {e}")
-                            
-                            # Replace URIs with labels
-                            if entity_labels:
-                                labeled_result = []
-                                for item in result:
-                                    new_item = {}
-                                    for key, value in item.items():
-                                        if isinstance(value, str) and value in entity_labels:
-                                            new_item[key] = entity_labels[value]
-                                        else:
-                                            new_item[key] = value
-                                    labeled_result.append(new_item)
+                            # If we have Wikidata entities, get their labels
+                            if has_wikidata_entities:
+                                # Extract entity IDs
+                                entity_ids = []
+                                for uri in entity_uris:
+                                    entity_id = uri.split("/")[-1]
+                                    entity_ids.append(entity_id)
                                 
-                                result = labeled_result
+                                # Generate query for entity labels
+                                values_str = " ".join([f"wd:{eid}" for eid in entity_ids])
+                                label_query = f"""
+                                SELECT ?item ?itemLabel WHERE {{
+                                  VALUES ?item {{ {values_str} }}
+                                  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}
+                                }}
+                                """
                                 
-                                # Log labeled results
-                                if hasattr(state, 'visualizer') and state.visualizer:
-                                    state.visualizer.log_event(
-                                        "SPARQL Generation Node",
-                                        "labeled results",
-                                        {"results": result[:10] if len(result) > 10 else result}
-                                    )
+                                # Get entity labels
+                                entity_labels = {}
+                                try:
+                                    # Log label query
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "entity label lookup",
+                                            {"label_query": label_query, "entity_ids": entity_ids}
+                                        )
+                                        
+                                    label_results, _ = self.execute_sparql(label_query, state)
+                                    for item in label_results:
+                                        if "item" in item and "itemLabel" in item:
+                                            uri = item["item"]
+                                            entity_id = uri.split("/")[-1]
+                                            entity_labels[uri] = f"{item['itemLabel']} ({entity_id})"
+                                except Exception as e:
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "entity label lookup error",
+                                            {"error": str(e)}
+                                        )
+                                        
+                                    if state.verbose > 0:
+                                        print(f"Error getting entity labels: {e}")
+                                
+                                # Replace URIs with labels
+                                if entity_labels:
+                                    labeled_result = []
+                                    for item in result:
+                                        new_item = {}
+                                        for key, value in item.items():
+                                            if isinstance(value, str) and value in entity_labels:
+                                                new_item[key] = entity_labels[value]
+                                            else:
+                                                new_item[key] = value
+                                        labeled_result.append(new_item)
+                                    
+                                    result = labeled_result
+                                    
+                                    # Log labeled results
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "labeled results",
+                                            {"results": result[:10] if len(result) > 10 else result}
+                                        )
                         
                         # Format context as string
                         context_str = f'The answer to "{state.question}" is: '
