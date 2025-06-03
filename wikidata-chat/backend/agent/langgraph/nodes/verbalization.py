@@ -209,11 +209,27 @@ class WikidataVerbalization:
             pLabel = result.get('pLabel', '')  # For curriculum, this comes from the query
             oLabel = result.get('oLabel', '')
             
-            # For Wikidata, try to get property label from property_retrieval if pLabel not available
-            if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
-                if hasattr(property_retrieval, 'property_id_to_label'):
+            # Try to get property label from property_retrieval if pLabel not available
+            if not pLabel and property_retrieval:
+                if self.knowledge_source == "wikidata" and hasattr(property_retrieval, 'property_id_to_label'):
                     prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
                     pLabel = property_retrieval.property_id_to_label.get(prop_id)
+                elif self.knowledge_source == "curriculum" and hasattr(property_retrieval, 'get_related_candidates'):
+                    # For curriculum properties, try to find the label using related candidates
+                    prop_name = p.split('/')[-1]
+                    if ':' in prop_name:
+                        prop_name = prop_name.split(':')[-1]  # Extract name from prefixed property
+                    try:
+                        # Do a quick search for this property
+                        results = property_retrieval.get_related_candidates(prop_name, [prop_name], threshold=0.4)
+                        if results and results.get("properties"):
+                            for prop_result in results.get("properties"):
+                                if prop_name in prop_result:
+                                    if " - " in prop_result:
+                                        pLabel = prop_result.split(" - ")[1]
+                                        break
+                    except Exception as e:
+                        pass  # Silently continue if property search fails
             
             # Fallback to camelCase separation if no label found
             if not pLabel:
@@ -241,11 +257,27 @@ class WikidataVerbalization:
             pLabel = result.get('pLabel', '')  # For curriculum, this comes from the query
             oLabel = entity_label  # We know the object is the entity
             
-            # For Wikidata, try to get property label from property_retrieval if pLabel not available
-            if not pLabel and property_retrieval and self.knowledge_source == "wikidata":
-                if hasattr(property_retrieval, 'property_id_to_label'):
+            # Try to get property label from property_retrieval if pLabel not available
+            if not pLabel and property_retrieval:
+                if self.knowledge_source == "wikidata" and hasattr(property_retrieval, 'property_id_to_label'):
                     prop_id = p.split('/')[-1]  # Extract property ID like P27 from URI
                     pLabel = property_retrieval.property_id_to_label.get(prop_id)
+                elif self.knowledge_source == "curriculum" and hasattr(property_retrieval, 'get_related_candidates'):
+                    # For curriculum properties, try to find the label using related candidates
+                    prop_name = p.split('/')[-1]
+                    if ':' in prop_name:
+                        prop_name = prop_name.split(':')[-1]  # Extract name from prefixed property
+                    try:
+                        # Do a quick search for this property
+                        results = property_retrieval.get_related_candidates(prop_name, [prop_name], threshold=0.4)
+                        if results and results.get("properties"):
+                            for prop_result in results.get("properties"):
+                                if prop_name in prop_result:
+                                    if " - " in prop_result:
+                                        pLabel = prop_result.split(" - ")[1]
+                                        break
+                    except Exception as e:
+                        pass  # Silently continue if property search fails
             
             # Fallback to camelCase separation if no label found
             if not pLabel:
@@ -596,7 +628,7 @@ Select the most appropriate entity ID that best matches the target entity "{enti
             try:
                 from ..utils.property_retrieval import UniversityPropertyRetrieval
                 current_property_retrieval = UniversityPropertyRetrieval()
-                logger.info("Using UniversityPropertyRetrieval for curriculum")
+                logger.info("Using UniversityPropertyRetrieval for curriculum in VerbalizationNode")
             except Exception as e:
                 logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
                 logger.info("Falling back to standard property retrieval")

@@ -300,24 +300,45 @@ Guidelines:
                     {"resources": entity_resources}
                 )
 
+        # Get knowledge source and use appropriate property retrieval
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        current_property_retrieval = self.property_retrieval
+        
+        if knowledge_source == 'curriculum':
+            try:
+                from ..utils.property_retrieval import UniversityPropertyRetrieval
+                current_property_retrieval = UniversityPropertyRetrieval()
+                logger.info("Using UniversityPropertyRetrieval for curriculum in SparqlGenerationNode")
+            except Exception as e:
+                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
+                logger.info("Falling back to standard property retrieval")
+                
         # Get ontology candidates
-        ontology = self.property_retrieval.get_related_candidates(
+        ontology = current_property_retrieval.get_related_candidates(
             state.translated_question, property_candidates=state.related_properties, threshold=0.6
         )
         
         # Format properties context
         properties_matches_formatted = ""
         for prop in ontology.get("properties", []):
-            # Assuming prop is in format "P123 - label"
-            if " - " in prop:
-                prop_id, prop_label = prop.split(" - ", 1)
-                # Get property description from df_properties if available
-                prop_desc = ""
-                if hasattr(self.property_retrieval, "df_properties"):
-                    prop_row = self.property_retrieval.df_properties[self.property_retrieval.df_properties["propertyId"] == prop_id]
-                    if not prop_row.empty:
-                        prop_desc = prop_row.iloc[0].get("description", "")
-                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}, description: {prop_desc}\n"
+            # Check if we're using curriculum or wikidata format
+            if knowledge_source == 'curriculum':
+                if " - " in prop:
+                    prop_id, prop_label = prop.split(" - ", 1)
+                    properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}\n"
+                else:
+                    properties_matches_formatted += f"- id: {prop}, label: {prop}\n"
+            else:
+                # Wikidata format with P-IDs
+                if " - " in prop:
+                    prop_id, prop_label = prop.split(" - ", 1)
+                    # Get property description from df_properties if available
+                    prop_desc = ""
+                    if hasattr(current_property_retrieval, "df_properties"):
+                        prop_row = current_property_retrieval.df_properties[current_property_retrieval.df_properties["propertyId"] == prop_id]
+                        if not prop_row.empty:
+                            prop_desc = prop_row.iloc[0].get("description", "")
+                    properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}, description: {prop_desc}\n"
         
         # Log ontology
         if hasattr(state, 'visualizer') and state.visualizer:
