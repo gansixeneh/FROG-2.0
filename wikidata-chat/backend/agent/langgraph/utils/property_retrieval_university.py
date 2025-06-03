@@ -1,4 +1,4 @@
-# backend/agent/langgraph/utils/university_property_retrieval.py
+# backend/agent/langgraph/utils/property_retrieval_university.py
 import pandas as pd
 import numpy as np
 import os
@@ -15,17 +15,21 @@ from .singletons.model_singletons import get_sentence_transformer
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
 class UniversityPropertyRetrieval:
     """Class for managing university curriculum properties retrieval and search"""
+
     def __init__(
         self,
         embedding_model_name: str = "jinaai/jina-embeddings-v3",
-        weaviate_client=None
+        weaviate_client=None,
     ) -> None:
         # Use the singleton instead of creating a new instance
-        self.model_embed = get_sentence_transformer(embedding_model_name, trust_remote_code=True)
+        self.model_embed = get_sentence_transformer(
+            embedding_model_name, trust_remote_code=True
+        )
         self.stopwords = set(stopwords.words("english"))
-        
+
         # Connect to local Weaviate or use provided client
         if weaviate_client:
             self.client = weaviate_client
@@ -35,9 +39,11 @@ class UniversityPropertyRetrieval:
                 weaviate_host = os.environ.get("WEAVIATE_URL", "localhost")
                 weaviate_http_port = int(os.environ.get("WEAVIATE_HTTP_PORT", 8080))
                 weaviate_grpc_port = int(os.environ.get("WEAVIATE_GRPC_PORT", 50052))
-                
-                logger.info(f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})")
-                
+
+                logger.info(
+                    f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})"
+                )
+
                 self.client = weaviate.connect_to_local(
                     host=weaviate_host,
                     port=weaviate_http_port,
@@ -46,12 +52,14 @@ class UniversityPropertyRetrieval:
             except Exception as e:
                 logger.error(f"Error connecting to Weaviate: {e}")
                 raise e
-        
+
         # Get collection for university properties
         db_collection_name = "university_properties_db"
         try:
             if not self.client.collections.exists(db_collection_name):
-                logger.warning(f"Collection {db_collection_name} does not exist - creating an empty collection")
+                logger.warning(
+                    f"Collection {db_collection_name} does not exist - creating an empty collection"
+                )
                 # Create a minimal collection for testing
                 self.collection = self.client.collections.create(
                     name=db_collection_name,
@@ -66,12 +74,16 @@ class UniversityPropertyRetrieval:
 
         # Get entity collection for university entities (assume it exists)
         try:
-            self.entity_collection = self.client.collections.get("university_entities_db")
+            self.entity_collection = self.client.collections.get(
+                "university_entities_db"
+            )
         except Exception as e:
             logger.warning(f"University entities collection not found: {e}")
             self.entity_collection = None
-            
-        logger.info(f"Initialized UniversityPropertyRetrieval with model: {embedding_model_name}")
+
+        logger.info(
+            f"Initialized UniversityPropertyRetrieval with model: {embedding_model_name}"
+        )
 
     def _search(self, q: str, k: int = 5) -> pd.DataFrame:
         """Search the vector database for similar properties"""
@@ -84,7 +96,7 @@ class UniversityPropertyRetrieval:
                 return_metadata=weaviate.classes.query.MetadataQuery(score=True),
                 limit=k,
             )
-            
+
             # Convert to dataframe
             df = pd.DataFrame(
                 [{**o.properties, "score": o.metadata.score} for o in response.objects]
@@ -99,7 +111,7 @@ class UniversityPropertyRetrieval:
         try:
             if not self.entity_collection:
                 return pd.DataFrame()
-                
+
             query_vector = self.model_embed.encode([q])[0]
             response = self.entity_collection.query.hybrid(
                 query=q,
@@ -108,7 +120,7 @@ class UniversityPropertyRetrieval:
                 return_metadata=weaviate.classes.query.MetadataQuery(score=True),
                 limit=k,
             )
-            
+
             # Convert to dataframe
             df = pd.DataFrame(
                 [{**o.properties, "score": o.metadata.score} for o in response.objects]
@@ -155,14 +167,16 @@ class UniversityPropertyRetrieval:
                         entity_data = {
                             "uri": row.get("short", ""),
                             "label": row.get("label", ""),
-                            "score": float(row["score"])
+                            "score": float(row["score"]),
                         }
                         if entity_data not in result["entities"]:
                             result["entities"].append(entity_data)
 
         # Then search for n-grams if we don't have enough entities
         if len(result["entities"]) < k:
-            for ngram in ngrams_list + entity_candidates:  # Use ngrams + entity_candidates instead of ngrams + [q]
+            for ngram in (
+                ngrams_list + entity_candidates
+            ):  # Use ngrams + entity_candidates instead of ngrams + [q]
                 df_res = self._search_entities(ngram, k=k)
                 if not df_res.empty:
                     df_res = df_res[df_res["score"] >= threshold]
@@ -171,7 +185,7 @@ class UniversityPropertyRetrieval:
                             entity_data = {
                                 "uri": row.get("short", ""),
                                 "label": row.get("label", ""),
-                                "score": float(row["score"])
+                                "score": float(row["score"]),
                             }
                             if entity_data not in result["entities"]:
                                 result["entities"].append(entity_data)
@@ -181,8 +195,10 @@ class UniversityPropertyRetrieval:
                     break
 
         # Sort entities by score
-        result["entities"] = sorted(result["entities"], key=lambda x: x.get("score", 0), reverse=True)
-        
+        result["entities"] = sorted(
+            result["entities"], key=lambda x: x.get("score", 0), reverse=True
+        )
+
         return result
 
     def get_related_candidates(
@@ -198,18 +214,28 @@ class UniversityPropertyRetrieval:
         result = {"entities": [], "properties": []}
 
         # Search for properties
-        for ngram in ngrams_list + property_candidates:  # Use ngrams + property_candidates
+        for ngram in (
+            ngrams_list + property_candidates
+        ):  # Use ngrams + property_candidates
             df_res = self._search(ngram, k=k)
             if not df_res.empty:
                 # For university properties, use appropriate format
-                df_res["idWithLabel"] = df_res.get("propertyId", df_res.get("label", "")) + " - " + df_res["label"]
-                filtered_results = df_res[df_res["score"] >= threshold]["idWithLabel"].tolist()
+                df_res["idWithLabel"] = (
+                    df_res.get("propertyId", df_res.get("label", ""))
+                    + " - "
+                    + df_res["label"]
+                )
+                filtered_results = df_res[df_res["score"] >= threshold][
+                    "idWithLabel"
+                ].tolist()
                 if filtered_results:
                     result["properties"].extend(filtered_results)
                     result["properties"] = list(set(result["properties"]))
 
         # Search for entities using the entity collection
-        for ngram in ngrams_list + property_candidates:  # Use ngrams + property_candidates instead of ngrams + [q]
+        for ngram in (
+            ngrams_list + property_candidates
+        ):  # Use ngrams + property_candidates instead of ngrams + [q]
             df_res = self._search_entities(ngram, k=k)
             if not df_res.empty:
                 # For entities, extract relevant information
@@ -217,11 +243,13 @@ class UniversityPropertyRetrieval:
                     entity_data = {
                         "uri": row.get("short", row.get("label", "")),
                         "label": row.get("label", ""),
-                        "score": float(row["score"])
+                        "score": float(row["score"]),
                     }
                     if entity_data not in result["entities"]:
                         result["entities"].append(entity_data)
 
         result["properties"] = sorted(result["properties"])
-        result["entities"] = sorted(result["entities"], key=lambda x: x.get("score", 0), reverse=True)[:k]
+        result["entities"] = sorted(
+            result["entities"], key=lambda x: x.get("score", 0), reverse=True
+        )[:k]
         return result

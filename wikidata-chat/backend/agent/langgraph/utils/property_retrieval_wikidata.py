@@ -1,4 +1,4 @@
-# backend/agent/langgraph/utils/wikidata_property_retrieval.py
+# backend/agent/langgraph/utils/property_retrieval_wikidata.py
 import pandas as pd
 import numpy as np
 import os
@@ -15,29 +15,35 @@ from .singletons.model_singletons import get_sentence_transformer
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
 class WikidataPropertyRetrieval:
     """Class for managing Wikidata properties retrieval and search"""
+
     def __init__(
         self,
         df_properties: pd.DataFrame,
         embedding_model_name: str = "jinaai/jina-embeddings-v3",
-        weaviate_client=None
+        weaviate_client=None,
     ) -> None:
         self.df_properties = df_properties
         # Use the singleton instead of creating a new instance
-        self.model_embed = get_sentence_transformer(embedding_model_name, trust_remote_code=True)
+        self.model_embed = get_sentence_transformer(
+            embedding_model_name, trust_remote_code=True
+        )
         self.stopwords = set(stopwords.words("english"))
-        
+
         # Create a dictionary for fast property ID to label lookups
         self.property_id_to_label = {}
         for _, row in df_properties.iterrows():
-            prop_id = row.get('propertyId', '')
-            label = row.get('label', '')
+            prop_id = row.get("propertyId", "")
+            label = row.get("label", "")
             if prop_id and label:
                 self.property_id_to_label[prop_id] = label
-        
-        logger.info(f"Created property ID to label mapping with {len(self.property_id_to_label)} properties")
-        
+
+        logger.info(
+            f"Created property ID to label mapping with {len(self.property_id_to_label)} properties"
+        )
+
         # Connect to local Weaviate or use provided client
         if weaviate_client:
             self.client = weaviate_client
@@ -47,9 +53,11 @@ class WikidataPropertyRetrieval:
                 weaviate_host = os.environ.get("WEAVIATE_URL", "localhost")
                 weaviate_http_port = int(os.environ.get("WEAVIATE_HTTP_PORT", 8080))
                 weaviate_grpc_port = int(os.environ.get("WEAVIATE_GRPC_PORT", 50052))
-                
-                logger.info(f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})")
-                
+
+                logger.info(
+                    f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})"
+                )
+
                 self.client = weaviate.connect_to_local(
                     host=weaviate_host,
                     port=weaviate_http_port,
@@ -58,7 +66,7 @@ class WikidataPropertyRetrieval:
             except Exception as e:
                 logger.error(f"Error connecting to Weaviate: {e}")
                 raise e
-        
+
         # Create/get collection
         db_collection_name = "wikidata_property_db"
         if not self.client.collections.exists(db_collection_name):
@@ -70,7 +78,7 @@ class WikidataPropertyRetrieval:
         else:
             self.collection = self.client.collections.get(db_collection_name)
             self.is_collection_empty = False
-            
+
         # Initialize collection with data if empty
         if self.is_collection_empty:
             self._initialize_collection()
@@ -102,7 +110,7 @@ class WikidataPropertyRetrieval:
                 return_metadata=weaviate.classes.query.MetadataQuery(score=True),
                 limit=k,
             )
-            
+
             # Convert to dataframe
             df = pd.DataFrame(
                 [{**o.properties, "score": o.metadata.score} for o in response.objects]
@@ -144,7 +152,9 @@ class WikidataPropertyRetrieval:
             df_res = self._search(ngram, k=k)
             if not df_res.empty:
                 df_res["idWithLabel"] = df_res["propertyId"] + " - " + df_res["label"]
-                filtered_results = df_res[df_res["score"] >= threshold]["idWithLabel"].tolist()
+                filtered_results = df_res[df_res["score"] >= threshold][
+                    "idWithLabel"
+                ].tolist()
                 if filtered_results:
                     result["properties"].extend(filtered_results)
                     result["properties"] = list(set(result["properties"]))

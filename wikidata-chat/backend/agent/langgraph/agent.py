@@ -28,7 +28,7 @@ from ..llm_factory import LLMFactory
 
 # Import visualization classes
 from .utils.visualization import BoxologyVisualizer
-from .utils.wikidata_property_retrieval import WikidataPropertyRetrieval
+from .utils.property_retrieval_wikidata import WikidataPropertyRetrieval
 from .utils.state import FROGGraphRAGState
 from .utils.date_utils import format_reference_date
 from .utils.knowledge_graph_metadata import get_knowledge_graph_metadata
@@ -49,24 +49,36 @@ logger = logging.getLogger(__name__)
 
 # WikidataAPI helper class
 class WikidataAPI:
-    def __init__(self, url="https://query.wikidata.org/sparql", source="wikidata") -> None:
+    def __init__(
+        self, url="https://query.wikidata.org/sparql", source="wikidata"
+    ) -> None:
         self.source = source
         self.kg_metadata = get_knowledge_graph_metadata()
-        
+
         # Get endpoints from metadata
-        self.wikidata_url = self.kg_metadata.get_endpoint("wikidata") or "https://query.wikidata.org/sparql"
-        self.curriculum_url = self.kg_metadata.get_endpoint("curriculum") or "http://localhost:3030/curi/query"
-        
-        self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
+        self.wikidata_url = (
+            self.kg_metadata.get_endpoint("wikidata")
+            or "https://query.wikidata.org/sparql"
+        )
+        self.curriculum_url = (
+            self.kg_metadata.get_endpoint("curriculum")
+            or "http://localhost:3030/curi/query"
+        )
+
+        self.current_url = (
+            self.wikidata_url if source == "wikidata" else self.curriculum_url
+        )
         user_agent = self.kg_metadata.get_user_agent(source)
-        
+
         self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 
     def set_source(self, source: str) -> None:
         """Update the source and endpoint URL"""
         if source != self.source:
             self.source = source
-            self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
+            self.current_url = (
+                self.wikidata_url if source == "wikidata" else self.curriculum_url
+            )
             user_agent = self.kg_metadata.get_user_agent(source)
             self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 
@@ -146,24 +158,23 @@ class FROGGraphAgent:
             # Create a minimal default config for Gemini
             import tempfile
             import json
+
             default_config = {
                 "default": {
                     "provider": "gemini",
                     "model": "gemini-2.0-flash",
-                    "config": {"temperature": 0.2}
+                    "config": {"temperature": 0.2},
                 },
                 "nodes": {},
-                "providers": {
-                    "gemini": {
-                        "default_config": {"temperature": 0.2}
-                    }
-                }
+                "providers": {"gemini": {"default_config": {"temperature": 0.2}}},
             }
             # Write to temp file and initialize factory
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False
+            ) as f:
                 json.dump(default_config, f)
                 temp_config_path = f.name
-            
+
             self.llm_factory = LLMFactory(config_path=temp_config_path)
 
         # Initialize Wikidata API
@@ -171,12 +182,14 @@ class FROGGraphAgent:
 
         # Initialize source-aware SPARQL wrapper
         from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
+
         self.sparql_wrapper = SourceAwareSPARQLWrapper(source="wikidata")
 
         # Initialize property retrieval factory (will handle entity retrieval as well)
-        
+
         # Initialize property retrieval for all sources
         from .utils.property_retrieval_factory import get_property_retrieval_factory
+
         self.property_factory = get_property_retrieval_factory()
         logger.info("Successfully initialized property retrieval factory")
 
@@ -212,13 +225,14 @@ class FROGGraphAgent:
         # Create nodes with LLM factory
         translation_node = TranslationNode()
         entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
-        verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
+        verbalization_node = VerbalizationNode(
+            llm_factory=self.llm_factory, property_retrieval=self.property_retrieval
+        )
         sparql_generation_node = SparqlGenerationNode(
-            llm_factory=self.llm_factory, 
-            property_retrieval=self.property_retrieval
+            llm_factory=self.llm_factory, property_retrieval=self.property_retrieval
         )
         answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
-        
+
         strategy_selection_node = StrategySelectionNode()
         property_generation_node = PropertyGenerationNode(self.property_retrieval)
         google_search_node = GoogleSearchNode()
@@ -261,20 +275,25 @@ class FROGGraphAgent:
                 "sparql_generation": "property_generation",
             },
         )
-        
+
         # SPARQL can either succeed and go to answer generation, or fail and go to Google search (if enabled)
         workflow.add_conditional_edges(
             "sparql_generation",
             lambda x: (
-                "answer_generation" if x.approach_used == "sparql" 
-                else ("google_search" if getattr(x, 'use_google_search', True) else "answer_generation")
+                "answer_generation"
+                if x.approach_used == "sparql"
+                else (
+                    "google_search"
+                    if getattr(x, "use_google_search", True)
+                    else "answer_generation"
+                )
             ),
             {
                 "answer_generation": "answer_generation",
                 "google_search": "google_search",
             },
         )
-        
+
         # Google search always goes to answer generation
         workflow.add_edge("google_search", "answer_generation")
         workflow.add_edge("answer_generation", END)
@@ -285,7 +304,7 @@ class FROGGraphAgent:
     def create_explanation(self, state):
         """Create a detailed explanation of the process and results"""
         approach = state.approach_used if state.approach_used else "Unknown"
-        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        knowledge_source = getattr(state, "knowledge_source", "wikidata")
         kg_metadata = get_knowledge_graph_metadata()
         source_name = kg_metadata.get_name(knowledge_source)
 
@@ -343,28 +362,31 @@ class FROGGraphAgent:
                 explanation += f"\n**Similarity Score**: {similarity:.2f}\n\n"
 
             # Add reference information if available
-            if hasattr(state, 'verbalization_references') and state.verbalization_references:
+            if (
+                hasattr(state, "verbalization_references")
+                and state.verbalization_references
+            ):
                 explanation += "#### Reference Sources\n"
                 unique_urls = set()
                 formatted_dates = set()
-                
+
                 for ref in state.verbalization_references:
-                    if ref.get('refUrl'):
-                        unique_urls.add(ref['refUrl'])
-                    if ref.get('refDate'):
-                        formatted_date = format_reference_date(ref['refDate'])
+                    if ref.get("refUrl"):
+                        unique_urls.add(ref["refUrl"])
+                    if ref.get("refDate"):
+                        formatted_date = format_reference_date(ref["refDate"])
                         formatted_dates.add(formatted_date)
-                
+
                 if unique_urls:
                     explanation += "**Sources:**\n"
                     for url in unique_urls:
                         explanation += f"- {url}\n"
-                
+
                 if formatted_dates:
                     explanation += "\n**Retrieved on:**\n"
                     for date in formatted_dates:
                         explanation += f"- {date}\n"
-                
+
                 explanation += f"\n**Total references found**: {len(state.verbalization_references)}\n\n"
 
         elif approach == "sparql":
@@ -452,31 +474,33 @@ class FROGGraphAgent:
                     explanation += "\n"
 
             # Add reference information for SPARQL if available
-            if hasattr(state, 'sparql_references') and state.sparql_references:
+            if hasattr(state, "sparql_references") and state.sparql_references:
                 explanation += "#### Reference Sources\n"
                 unique_urls = set()
                 formatted_dates = set()
-                
+
                 for ref in state.sparql_references:
-                    if ref.get('refUrl'):
-                        unique_urls.add(ref['refUrl'])
-                    if ref.get('formattedRefDate'):
-                        formatted_dates.add(ref['formattedRefDate'])
-                    elif ref.get('refDate'):
-                        formatted_date = format_reference_date(ref['refDate'])
+                    if ref.get("refUrl"):
+                        unique_urls.add(ref["refUrl"])
+                    if ref.get("formattedRefDate"):
+                        formatted_dates.add(ref["formattedRefDate"])
+                    elif ref.get("refDate"):
+                        formatted_date = format_reference_date(ref["refDate"])
                         formatted_dates.add(formatted_date)
-                
+
                 if unique_urls:
                     explanation += "**Sources:**\n"
                     for url in unique_urls:
                         explanation += f"- {url}\n"
-                
+
                 if formatted_dates:
                     explanation += "\n**Retrieved on:**\n"
                     for date in formatted_dates:
                         explanation += f"- {date}\n"
-                
-                explanation += f"\n**Total references found**: {len(state.sparql_references)}\n\n"
+
+                explanation += (
+                    f"\n**Total references found**: {len(state.sparql_references)}\n\n"
+                )
 
         elif approach == "google_search":
             explanation += f"""### Approach: Google Web Search
@@ -490,7 +514,7 @@ class FROGGraphAgent:
                     if len(state.google_search_result["content"]) > 500:
                         explanation += "..."
                     explanation += "\n\n"
-                    
+
                 if state.google_search_result.get("citations"):
                     explanation += "#### Sources\n"
                     for citation in state.google_search_result["citations"]:
@@ -557,14 +581,14 @@ class FROGGraphAgent:
 
         # Initialize the state
         settings = settings or {}
-        knowledge_source = settings.get('knowledgeSource', 'wikidata')
-        
+        knowledge_source = settings.get("knowledgeSource", "wikidata")
+
         # Update SPARQL endpoints based on source
-        if hasattr(self.api, 'set_source'):
+        if hasattr(self.api, "set_source"):
             self.api.set_source(knowledge_source)
-        if hasattr(self.sparql_wrapper, 'set_source'):
+        if hasattr(self.sparql_wrapper, "set_source"):
             self.sparql_wrapper.set_source(knowledge_source)
-            
+
         initial_state = FROGGraphRAGState(
             question=question,
             use_cot=True,
@@ -574,8 +598,8 @@ class FROGGraphAgent:
             boxology_verbose=boxology_verbose,
             debug_callback=self.debug_callback,
             include_references=True,  # Enable references by default
-            use_verbalization=settings.get('useVerbalization', True),  # Default to True
-            use_google_search=settings.get('useGoogleSearch', True),   # Default to True
+            use_verbalization=settings.get("useVerbalization", True),  # Default to True
+            use_google_search=settings.get("useGoogleSearch", True),  # Default to True
             knowledge_source=knowledge_source,  # Set the knowledge source
         )
 
