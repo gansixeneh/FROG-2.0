@@ -5,7 +5,7 @@ import json
 import logging
 from datetime import datetime
 from typing import Optional, Union
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class EntityExtractionNode:
             logger.error(f"Failed to get model from factory: {e}")
             raise ValueError(f"Failed to initialize LLM provider: {e}")
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

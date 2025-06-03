@@ -2,8 +2,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
-class WikidataGraphRAGState(BaseModel):
-    """State for the WikidataGraphRAG workflow"""
+class FROGGraphRAGState(BaseModel):
+    """State for the FROGGraphRAG workflow"""
     question: str
     translated_question: Optional[str] = None
     original_lang: Optional[str] = None

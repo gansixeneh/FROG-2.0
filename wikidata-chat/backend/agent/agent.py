@@ -9,7 +9,7 @@ import logging
 from langchain.callbacks.base import BaseCallbackHandler
 
 # Import LangGraph agent
-from agent.langgraph import WikidataGraphAgent
+from agent.langgraph import FROGGraphAgent
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -114,7 +114,7 @@ class DebugHandler(BaseCallbackHandler):
         if hasattr(self, 'processing_thread') and self.processing_thread.is_alive():
             self.processing_thread.join(timeout=1.0)
 
-class WikidataAgent:
+class FROGAgent:
     def __init__(self, gemini_api_key: str = None, debug_callback=None):
         # Set API key
         if gemini_api_key:
@@ -128,7 +128,7 @@ class WikidataAgent:
         self.debug_handler = DebugHandler(debug_callback)
         
         # Initialize the LangGraph agent
-        self.langgraph_agent = WikidataGraphAgent(
+        self.langgraph_agent = FROGGraphAgent(
             gemini_api_key=gemini_api_key,
             print_output=False,
             debug_callback=debug_callback
@@ -137,11 +137,11 @@ class WikidataAgent:
         # Store visualization files
         self.visualization_files = {}
         
-        logger.info("Initialized WikidataAgent")
+        logger.info("Initialized FROGAgent")
     
     def update_debug_callback(self, debug_callback):
         """Update the debug callback function without recreating the agent"""
-        logger.info("Updating debug callback in WikidataAgent")
+        logger.info("Updating debug callback in FROGAgent")
         # Update the debug callback in the DebugHandler
         if hasattr(self, 'debug_handler'):
             self.debug_handler.update_callback(debug_callback)

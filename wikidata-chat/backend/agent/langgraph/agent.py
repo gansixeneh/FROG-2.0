@@ -28,8 +28,8 @@ from ..llm_factory import LLMFactory
 
 # Import visualization classes
 from .utils.visualization import BoxologyVisualizer
-from .utils.property_retrieval import WikidataPropertyRetrieval
-from .utils.state import WikidataGraphRAGState
+from .utils.property_retrieval import FROGPropertyRetrieval
+from .utils.state import FROGGraphRAGState
 from .utils.date_utils import format_reference_date
 from .utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 from .nodes import (
@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 # WikidataAPI helper class
-class WikidataAPI:
+class FROGAPI:
     def __init__(self, url="https://query.wikidata.org/sparql", source="wikidata") -> None:
         self.source = source
         self.kg_metadata = get_knowledge_graph_metadata()
@@ -113,7 +113,7 @@ class WikidataAPI:
 
 
 # Main agent class
-class WikidataGraphAgent:
+class FROGGraphAgent:
     """Agent that uses LangGraph for Wikidata question answering"""
 
     def __init__(
@@ -167,7 +167,7 @@ class WikidataGraphAgent:
             self.llm_factory = LLMFactory(config_path=temp_config_path)
 
         # Initialize Wikidata API
-        self.api = WikidataAPI()
+        self.api = FROGAPI()
 
         # Initialize source-aware SPARQL wrapper
         from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
@@ -201,7 +201,7 @@ class WikidataGraphAgent:
             )
 
         # Initialize property retrieval
-        self.property_retrieval = WikidataPropertyRetrieval(df_properties)
+        self.property_retrieval = FROGPropertyRetrieval(df_properties)
 
         # Build the graph
         self.build_graph()
@@ -226,7 +226,7 @@ class WikidataGraphAgent:
         google_search_node = GoogleSearchNode()
 
         # Create the graph
-        workflow = StateGraph(WikidataGraphRAGState)
+        workflow = StateGraph(FROGGraphRAGState)
 
         # Add nodes
         workflow.add_node("translation", translation_node)
@@ -567,7 +567,7 @@ Using entity: {entity_label}
         if hasattr(self.sparql_wrapper, 'set_source'):
             self.sparql_wrapper.set_source(knowledge_source)
             
-        initial_state = WikidataGraphRAGState(
+        initial_state = FROGGraphRAGState(
             question=question,
             use_cot=True,
             verbose=verbose,
@@ -585,7 +585,7 @@ Using entity: {entity_label}
         final_state_dict = self.graph.invoke(initial_state)
 
         # Convert the AddableValuesDict back to our state type
-        final_state = WikidataGraphRAGState(**dict(final_state_dict))
+        final_state = FROGGraphRAGState(**dict(final_state_dict))
 
         # Pass the approach information to the visualizer
         if boxology_verbose > 0 and visualizer and final_state.approach_used:

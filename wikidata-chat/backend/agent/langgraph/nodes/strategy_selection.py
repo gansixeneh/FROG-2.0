@@ -2,7 +2,7 @@
 # backend/agent/langgraph/nodes/strategy_selection.py
 import re
 from datetime import datetime
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 
 def contains_multiple_entities(question):
     """Check if the question has multiple entities"""
@@ -20,7 +20,7 @@ class StrategySelectionNode:
     def __init__(self):
         pass
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

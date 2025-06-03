@@ -4,7 +4,7 @@ from google import genai
 from google.genai import types
 import os
 import requests
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 class GoogleSearchNode:
@@ -53,7 +53,7 @@ class GoogleSearchNode:
                 # If both methods fail, return the original URL
                 return proxy_url
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

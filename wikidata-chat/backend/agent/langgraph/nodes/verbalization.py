@@ -6,7 +6,7 @@ import logging
 from SPARQLWrapper import SPARQLWrapper, JSON
 from sentence_transformers import SentenceTransformer
 import numpy as np
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 from ..utils.date_utils import format_reference_date
 from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
@@ -27,7 +27,7 @@ def separate_camel_case(s):
     separated = re.sub("([a-z])([A-Z])", r"\1 \2", s)
     return separated
 
-class WikidataVerbalization:
+class FROGVerbalization:
     SENTENCE_TEMPLATE = "{s}'s {p} is {o}"
     MANUAL_MAPPING_DICT = {"_": " "}
     
@@ -563,7 +563,7 @@ Select the most appropriate entity ID that best matches the target entity "{enti
             
         return None        
 
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         
@@ -573,7 +573,7 @@ Select the most appropriate entity ID that best matches the target entity "{enti
             self.verbalization.set_knowledge_source(knowledge_source)
         else:
             # Create verbalization if it doesn't exist
-            self.verbalization = WikidataVerbalization(
+            self.verbalization = FROGVerbalization(
                 model_name="jinaai/jina-embeddings-v3",
                 query_model_encode_kwargs={
                     "task": "retrieval.query",

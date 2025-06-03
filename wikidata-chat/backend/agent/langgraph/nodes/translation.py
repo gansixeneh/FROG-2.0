@@ -2,14 +2,14 @@
 # backend/agent/langgraph/nodes/translation.py
 from datetime import datetime
 from googletrans import Translator
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 
 class TranslationNode:
     """Node for translating non-English questions"""
     def __init__(self):
         self.translator = Translator()
     
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

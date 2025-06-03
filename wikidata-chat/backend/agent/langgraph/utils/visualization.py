@@ -561,7 +561,7 @@ class LogToRDF:
         return self.graph.serialize(format='turtle')
 
 class BoxologyVisualizer:
-    """Visualizer for displaying detailed process flow of the WikidataGraphRAG execution as a diagram using Mermaid Markdown"""
+    """Visualizer for displaying detailed process flow of the FROGGraphRAG execution as a diagram using Mermaid Markdown"""
     def __init__(self, verbose=1, debug_callback=None):
         self.logs = []
         self.verbose = verbose
@@ -791,7 +791,7 @@ class BoxologyVisualizer:
         mermaid_code = ["graph LR;"]
         
         # Add title with approach information
-        title_text = f"WikidataGraphRAG Process Flow"
+        title_text = f"FROGGraphRAG Process Flow"
         if self.approach_used:
             title_text += f" (Approach: {self.approach_used.title()})"
         
@@ -921,7 +921,7 @@ class BoxologyVisualizer:
         
         # Create markdown content with mermaid code
         approach_info = f" (Approach: {self.approach_used.title()})" if self.approach_used else ""
-        markdown_content = f"""# WikidataGraphRAG Process Flow{approach_info}
+        markdown_content = f"""# FROGGraphRAG Process Flow{approach_info}
 
 Question: {self.question}
 Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}

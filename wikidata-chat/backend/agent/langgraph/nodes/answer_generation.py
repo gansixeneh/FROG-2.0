@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 import googletrans
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class AnswerGenerationNode:
             logger.error(f"Failed to get model from factory: {e}")
             raise ValueError(f"Failed to initialize LLM provider: {e}")
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

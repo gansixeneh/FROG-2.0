@@ -6,7 +6,7 @@ import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 # Configure logging
@@ -17,7 +17,7 @@ class PropertyGenerationNode:
     def __init__(self, property_retrieval):
         self.property_retrieval = property_retrieval
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         

@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
-from ..utils.state import WikidataGraphRAGState
+from ..utils.state import FROGGraphRAGState
 from ..utils.date_utils import format_reference_date
 from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
@@ -71,7 +71,7 @@ class SparqlGenerationNode:
             except Exception as e:
                 return [], e
             
-    def _enhance_query_with_references(self, query: str, state: WikidataGraphRAGState):
+    def _enhance_query_with_references(self, query: str, state: FROGGraphRAGState):
         """
         Enhance a SPARQL query to include reference information if requested
         
@@ -241,7 +241,7 @@ class SparqlGenerationNode:
         
         return references
         
-    def __call__(self, state: WikidataGraphRAGState) -> WikidataGraphRAGState:
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
         # Start timing
         start_time = datetime.now()
         
