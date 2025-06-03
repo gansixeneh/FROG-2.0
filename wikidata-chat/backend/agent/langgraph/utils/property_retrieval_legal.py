@@ -148,6 +148,36 @@ WHERE {
             n_grams = ngrams(tokens, n)
             result.extend([" ".join(ng) for ng in n_grams])
         return result
+        
+    def get_related_entities(
+        self,
+        q: str,
+        entity_candidates: list[str] = [],
+        threshold: float = 0.6,
+        k: int = 5,
+    ) -> dict[str, list[str]]:
+        """Get related entity candidates for a query"""
+        tokens = self._preprocess_into_tokens(q)
+        ngrams = self._generate_ngrams(tokens)
+        result = {"entities": []}
+
+        # Search for entities with both entity candidates and ngrams
+        for ngram in ngrams + entity_candidates:
+            df_res = self.search_entities(ngram, k=k)
+            if not df_res.empty:
+                # Format entities
+                for _, row in df_res[df_res["score"] >= threshold].iterrows():
+                    entity_data = {
+                        "uri": row.get("uri"),
+                        "label": row.get("label", ""),
+                        "score": float(row["score"])
+                    }
+                    if entity_data not in result["entities"]:
+                        result["entities"].append(entity_data)
+
+        # Sort entities by score
+        result["entities"] = sorted(result["entities"], key=lambda x: x.get("score", 0), reverse=True)[:k]
+        return result
 
     def get_related_candidates(
         self,
@@ -162,7 +192,7 @@ WHERE {
         result = {"entities": [], "properties": []}
 
         # Search for properties
-        for ngram in ngrams + property_candidates:
+        for ngram in ngrams + property_candidates:  # Use ngrams + property_candidates
             df_res = self.search_properties(ngram, k=k)
             if not df_res.empty:
                 # Format properties like curriculum with idWithLabel
@@ -173,7 +203,7 @@ WHERE {
                         result["properties"].append(id_with_label)
 
         # Search for entities
-        for ngram in ngrams + [q]:
+        for ngram in ngrams + property_candidates:  # Use ngrams + property_candidates instead of ngrams + [q]
             df_res = self.search_entities(ngram, k=k)
             if not df_res.empty:
                 # Format entities

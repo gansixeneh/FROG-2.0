@@ -133,6 +133,58 @@ class UniversityPropertyRetrieval:
             result.extend([" ".join(ng) for ng in n_grams])
         return result
 
+    def get_related_entities(
+        self,
+        q: str,
+        entity_candidates: list[str] = [],
+        threshold: float = 0.6,
+        k: int = 5,
+    ) -> dict[str, list[str]]:
+        """Get related entity candidates for a query"""
+        tokens = self._preprocess_into_tokens(q)
+        ngrams_list = self._generate_ngrams(tokens)
+        result = {"entities": []}
+
+        # First, search for entity candidates if provided
+        for entity in entity_candidates:
+            df_res = self._search_entities(entity, k=k)
+            if not df_res.empty:
+                df_res = df_res[df_res["score"] >= threshold]
+                if not df_res.empty:
+                    for _, row in df_res.iterrows():
+                        entity_data = {
+                            "uri": row.get("short", ""),
+                            "label": row.get("label", ""),
+                            "score": float(row["score"])
+                        }
+                        if entity_data not in result["entities"]:
+                            result["entities"].append(entity_data)
+
+        # Then search for n-grams if we don't have enough entities
+        if len(result["entities"]) < k:
+            for ngram in ngrams_list + entity_candidates:  # Use ngrams + entity_candidates instead of ngrams + [q]
+                df_res = self._search_entities(ngram, k=k)
+                if not df_res.empty:
+                    df_res = df_res[df_res["score"] >= threshold]
+                    if not df_res.empty:
+                        for _, row in df_res.iterrows():
+                            entity_data = {
+                                "uri": row.get("short", ""),
+                                "label": row.get("label", ""),
+                                "score": float(row["score"])
+                            }
+                            if entity_data not in result["entities"]:
+                                result["entities"].append(entity_data)
+                                if len(result["entities"]) >= k:
+                                    break
+                if len(result["entities"]) >= k:
+                    break
+
+        # Sort entities by score
+        result["entities"] = sorted(result["entities"], key=lambda x: x.get("score", 0), reverse=True)
+        
+        return result
+
     def get_related_candidates(
         self,
         q: str,
@@ -146,7 +198,7 @@ class UniversityPropertyRetrieval:
         result = {"entities": [], "properties": []}
 
         # Search for properties
-        for ngram in ngrams_list + property_candidates:
+        for ngram in ngrams_list + property_candidates:  # Use ngrams + property_candidates
             df_res = self._search(ngram, k=k)
             if not df_res.empty:
                 # For university properties, use appropriate format
@@ -157,7 +209,7 @@ class UniversityPropertyRetrieval:
                     result["properties"] = list(set(result["properties"]))
 
         # Search for entities using the entity collection
-        for ngram in ngrams_list + [q]:
+        for ngram in ngrams_list + property_candidates:  # Use ngrams + property_candidates instead of ngrams + [q]
             df_res = self._search_entities(ngram, k=k)
             if not df_res.empty:
                 # For entities, extract relevant information

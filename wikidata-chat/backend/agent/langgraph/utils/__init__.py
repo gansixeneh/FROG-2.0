@@ -5,8 +5,6 @@ from .university_property_retrieval import UniversityPropertyRetrieval
 from .property_retrieval_legal import LegalPropertyRetrieval
 from .property_retrieval_gesis import GesisPropertyRetrieval
 from .property_retrieval_factory import get_property_retrieval_factory
-from .entity_retrieval import UniversityEntityRetrieval
-from .entity_retrieval_factory import get_entity_retrieval_factory
 from .state import FROGGraphRAGState
 from .tqdm_utils import DebugTqdm
 from .custom_encoding import encode_with_progress
@@ -20,8 +18,6 @@ __all__ = [
     "LegalPropertyRetrieval",
     "GesisPropertyRetrieval",
     "get_property_retrieval_factory",
-    "UniversityEntityRetrieval",
-    "get_entity_retrieval_factory", 
     "FROGGraphRAGState", 
     "DebugTqdm",
     "encode_with_progress",

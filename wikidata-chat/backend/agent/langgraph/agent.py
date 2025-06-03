@@ -173,10 +173,7 @@ class FROGGraphAgent:
         from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
         self.sparql_wrapper = SourceAwareSPARQLWrapper(source="wikidata")
 
-        # Initialize entity retrieval for all sources
-        from .utils.entity_retrieval_factory import get_entity_retrieval_factory
-        self.entity_factory = get_entity_retrieval_factory()
-        logger.info("Successfully initialized entity retrieval factory")
+        # Initialize property retrieval factory (will handle entity retrieval as well)
         
         # Initialize property retrieval for all sources
         from .utils.property_retrieval_factory import get_property_retrieval_factory

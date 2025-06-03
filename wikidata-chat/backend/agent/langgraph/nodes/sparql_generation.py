@@ -165,18 +165,18 @@ class SparqlGenerationNode:
         
     def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
         """Search for entities in knowledge base"""
-        # Use entity retrieval factory to get the appropriate entity retriever
-        from ..utils.entity_retrieval_factory import get_entity_retrieval_factory
-        entity_factory = get_entity_retrieval_factory()
-        entity_retriever = entity_factory.get_entity_retriever(source)
+        # Use property retrieval factory to get the appropriate entity retriever
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        property_factory = get_property_retrieval_factory()
+        property_retriever = property_factory.get_property_retriever(source)
         
-        if entity_retriever:
+        if property_retriever and hasattr(property_retriever, 'get_related_entities'):
             try:
-                # Only curriculum has entity retrieval
-                result = entity_retriever.get_related_entities(entity, [entity], k=k)
+                # Use the get_related_entities method
+                result = property_retriever.get_related_entities(entity, [entity], k=k)
                 return result.get("entities", []), None
             except Exception as e:
-                logger.error(f"Error using entity retriever for {source}: {e}")
+                logger.error(f"Error using property retriever for entity search in {source}: {e}")
                 return [], e
         
         # For legal and gesis, use property retrieval for entity search

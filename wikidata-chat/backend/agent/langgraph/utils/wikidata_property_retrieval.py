@@ -139,6 +139,7 @@ class WikidataPropertyRetrieval:
         ngrams = self._generate_ngrams(tokens)
         result = {"properties": []}
 
+        # Use property_candidates along with ngrams for search
         for ngram in ngrams + property_candidates:
             df_res = self._search(ngram, k=k)
             if not df_res.empty:

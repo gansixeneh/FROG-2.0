@@ -433,10 +433,7 @@ class VerbalizationNode:
         # Get property retrieval factory for different sources
         from ..utils.property_retrieval_factory import get_property_retrieval_factory
         self.property_factory = get_property_retrieval_factory()
-        
-        # Get entity retrieval factory for different sources
-        from ..utils.entity_retrieval_factory import get_entity_retrieval_factory
-        self.entity_factory = get_entity_retrieval_factory()
+        # This factory will also handle entity retrieval
         
         if not self.llm_factory:
             raise ValueError("llm_factory must be provided")
@@ -472,24 +469,14 @@ class VerbalizationNode:
         
     def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
         """Search for entities in Wikidata or other knowledge sources"""
-        # Use the appropriate entity retriever from the factory
+        # Use property retriever with get_related_entities method
         if source != "wikidata":
-            entity_retriever = self.entity_factory.get_entity_retriever(source)
-            if entity_retriever:
+            property_retriever = self.property_factory.get_property_retriever(source)
+            if property_retriever and hasattr(property_retriever, 'get_related_entities'):
                 try:
-                    # Only curriculum has entity retrieval
-                    result = entity_retriever.get_related_entities(entity, [entity], k=k)
+                    # Now all sources (curriculum, legal, gesis) have get_related_entities method
+                    result = property_retriever.get_related_entities(entity, [entity], k=k)
                     return result.get("entities", []), None
-                except Exception as e:
-                    logger.error(f"Error using entity retriever for {source}: {e}")
-            
-            # For legal and gesis, use property retrieval for entity search
-            if source in ["legal", "gesis"]:
-                try:
-                    property_retriever = self.property_factory.get_property_retriever(source)
-                    if property_retriever:
-                        result = property_retriever.get_related_candidates(entity, [entity], k=k)
-                        return result.get("entities", []), None
                 except Exception as e:
                     logger.error(f"Error using property retriever for entity search in {source}: {e}")
         
