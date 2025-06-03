@@ -61,7 +61,11 @@ const MessageInput: React.FC = () => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isProcessing ? getThinkingText() : `Ask FrOG a question about ${settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum'}...`}
+          placeholder={isProcessing ? getThinkingText() : `Ask FrOG a question about ${
+            settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 
+            settings.knowledgeSource === 'curriculum' ? 'Curriculum' :
+            settings.knowledgeSource === 'legal' ? 'Legal Documents' : 'GESIS Scholarly Articles'
+          }...`}
           className="flex-grow h-12 px-4 border-2 border-frog-DEFAULT rounded-full focus:outline-none focus:ring-2 focus:ring-frog-dark focus:border-transparent shadow-md"
           disabled={!currentChat || isProcessing}
         />
@@ -99,7 +103,12 @@ const MessageInput: React.FC = () => {
       
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | Connected to: {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum (https://generous-lark-duly.ngrok-free.app/curi/query)'}
+        FrOG: Framework of Open GraphRAG | Connected to: {
+          settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 
+          settings.knowledgeSource === 'curriculum' ? 'Curriculum (https://generous-lark-duly.ngrok-free.app/curi/query)' :
+          settings.knowledgeSource === 'legal' ? 'Legal Document KB (https://generous-lark-duly.ngrok-free.app/modified-lex2kg/query)' :
+          'GESIS Scholarly KB (https://generous-lark-duly.ngrok-free.app/gesis/query)'
+        }
       </div>
     </div>
   );

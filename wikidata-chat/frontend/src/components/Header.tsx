@@ -27,10 +27,12 @@ const Header: React.FC = () => {
 
   // Handler for changing the knowledge source
   const toggleKnowledgeSource = () => {
-    const newSource = settings.knowledgeSource === 'wikidata' ? 'curriculum' : 'wikidata';
+    const sourceOrder = ['wikidata', 'curriculum', 'legal', 'gesis'];
+    const currentIndex = sourceOrder.indexOf(settings.knowledgeSource);
+    const nextIndex = (currentIndex + 1) % sourceOrder.length;
     updateSettings({
       ...settings,
-      knowledgeSource: newSource
+      knowledgeSource: sourceOrder[nextIndex]
     });
   };
   
@@ -118,7 +120,11 @@ const Header: React.FC = () => {
             className={`px-4 py-2 ${
               settings.knowledgeSource === 'wikidata' 
                 ? 'bg-blue-500/50 hover:bg-blue-500/70' 
-                : 'bg-purple-500/50 hover:bg-purple-500/70'
+                : settings.knowledgeSource === 'curriculum'
+                ? 'bg-purple-500/50 hover:bg-purple-500/70'
+                : settings.knowledgeSource === 'legal'
+                ? 'bg-red-500/50 hover:bg-red-500/70'
+                : 'bg-green-500/50 hover:bg-green-500/70'
             } text-white rounded-full focus:outline-none font-semibold transition-colors shadow-md flex items-center`}
           >
             <svg
@@ -135,7 +141,9 @@ const Header: React.FC = () => {
                 d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum'}
+            {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 
+             settings.knowledgeSource === 'curriculum' ? 'Curriculum' :
+             settings.knowledgeSource === 'legal' ? 'Legal' : 'GESIS'}
           </button>
           
           <button

@@ -19,7 +19,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleSourceChange = (source: 'wikidata' | 'curriculum') => {
+  const handleSourceChange = (source: 'wikidata' | 'curriculum' | 'legal' | 'gesis') => {
     updateSettings({
       ...settings,
       knowledgeSource: source
@@ -93,6 +93,30 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                 <div className="ml-3">
                   <div className="font-medium text-gray-900">Curriculum</div>
                   <div className="text-sm text-gray-500">University curriculum knowledge graph (https://generous-lark-duly.ngrok-free.app/curi/query)</div>
+                </div>
+              </label>
+              <label className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                <input 
+                  type="radio" 
+                  checked={settings.knowledgeSource === 'legal'} 
+                  onChange={() => handleSourceChange('legal')}
+                  className="form-radio h-5 w-5 text-frog-dark mt-0.5 flex-shrink-0" 
+                />
+                <div className="ml-3">
+                  <div className="font-medium text-gray-900">Legal</div>
+                  <div className="text-sm text-gray-500">Indonesian legal document knowledge graph</div>
+                </div>
+              </label>
+              <label className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                <input 
+                  type="radio" 
+                  checked={settings.knowledgeSource === 'gesis'} 
+                  onChange={() => handleSourceChange('gesis')}
+                  className="form-radio h-5 w-5 text-frog-dark mt-0.5 flex-shrink-0" 
+                />
+                <div className="ml-3">
+                  <div className="font-medium text-gray-900">GESIS</div>
+                  <div className="text-sm text-gray-500">GESIS scholarly articles knowledge graph</div>
                 </div>
               </label>
             </div>
