@@ -331,7 +331,7 @@ class FROGGraphAgent:
 """
             # Add verbalization results
             if state.verbalization_result:
-                explanation += "#### Entity Information\n"
+                explanation += "#### Property Information\n"
                 for item in state.verbalization_result[:5]:  # Limit to first 5 results
                     for k, v in item.items():
                         explanation += f"- {k}: {v}\n"
