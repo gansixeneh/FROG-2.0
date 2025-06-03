@@ -38,7 +38,6 @@ class SourceAwareSPARQLWrapper:
     
     def execute_sparql(self, q: str) -> tuple:
         """Execute a SPARQL query"""
-        logger.debug(f"Executing SPARQL query on {self.source}: {q}")
         self.sparql.setQuery(q)
         try:
             results = self.sparql.query().convert()
