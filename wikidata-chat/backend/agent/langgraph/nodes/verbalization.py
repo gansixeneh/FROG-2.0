@@ -108,8 +108,9 @@ class WikidataVerbalization:
             else:
                 formatted_entity = f"<{entity}>"
         else:
-            # For Wikidata, always use the entity ID directly
-            formatted_entity = f"<{entity}>"
+            # For Wikidata, use the entity ID without additional angle brackets
+            # since the templates already expect the proper format (wd:Q123)
+            formatted_entity = entity
             
         query = self.PO_TEMPLATE.format(entity=formatted_entity)
         
@@ -157,8 +158,9 @@ class WikidataVerbalization:
             else:
                 formatted_entity = f"<{entity}>"
         else:
-            # For Wikidata, always use the entity ID directly
-            formatted_entity = f"<{entity}>"
+            # For Wikidata, use the entity ID without additional angle brackets
+            # since the templates already expect the proper format (wd:Q123)
+            formatted_entity = entity
             
         query = self.SP_TEMPLATE.format(entity=formatted_entity)
         
