@@ -372,16 +372,6 @@ class LogToRDF:
                 self.graph.add((query_uri, self.LOG.referencesProperty, prop_uri))
                 self.graph.add((prop_uri, RDF.type, self.LOG.WikidataProperty))
                 self.graph.add((prop_uri, self.LOG.wikidataId, Literal(f"P{prop_id}")))
-        else:
-            # For curriculum or other knowledge bases, extract general entity/property patterns
-            # Extract curriculum entities (assuming they might have a different pattern)
-            # This is a generic approach that can be customized based on the actual curriculum URI patterns
-            curriculum_entities = re.findall(r'ns1:(\w+)', query_text)
-            for entity_id in curriculum_entities:
-                entity_uri = self.LOGS_NS[f"CurriculumEntity_{entity_id}"]
-                self.graph.add((query_uri, self.LOG.referencesEntity, entity_uri))
-                self.graph.add((entity_uri, RDF.type, self.LOG.CurriculumEntity))
-                self.graph.add((entity_uri, self.LOG.entityId, Literal(entity_id)))
     
     def _add_template_pattern(self, event_uri, template, event_id):
         """Add template pattern information"""

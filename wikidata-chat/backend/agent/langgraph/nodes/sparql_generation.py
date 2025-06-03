@@ -255,8 +255,26 @@ class SparqlGenerationNode:
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
         
-        # Define the system prompt for SPARQL generation
-        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
+        # Define the system prompt based on the source
+        if knowledge_source == "curriculum":
+            system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
+
+Guidelines:
+1. First identify which entities from the list match the question's intent
+2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question
+3. When multiple entities have similar labels, choose the one whose description best matches the question's context
+4. From the properties list, choose which properties are needed to answer the question
+5. Select only the minimum necessary properties required to answer the question correctly
+6. Use ALL identified entities and necessary properties in your SPARQL query
+7. Use PREFIX NOTATION (e.g., ns1:entity_name) for entities and properties
+8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
+9. Return ONLY the raw SPARQL query with no explanations or comments in this format:
+   ```sparql
+   <your_sparql_query_here>
+   ```"""
+        else:
+            # Wikidata prompt
+            system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
 
 Guidelines:
 1. First identify which entities from the list match the question's intent
