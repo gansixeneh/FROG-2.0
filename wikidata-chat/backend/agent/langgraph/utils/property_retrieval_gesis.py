@@ -74,15 +74,12 @@ WHERE {
         self.model_embed = get_sentence_transformer(embedding_model_name, trust_remote_code=True)
         self.stopwords = set(stopwords.words("english"))
         
-        # Initialize SPARQL client (for fallback if CSV files not available)
+        # Initialize SPARQL client (for fallback if needed)
         self.sparql_client = SPARQLWrapper(endpoint_url)
         self.sparql_client.setReturnFormat(JSON)
         
-        # Load entities and properties from the endpoint
-        self.df_entities = self._extract_entities()
-        self.df_properties = self._extract_properties()
+        logger.info(f"Initialized GesisPropertyRetrieval for endpoint: {endpoint_url}")
         
-        logger.info(f"Loaded {len(self.df_entities)} entities and {len(self.df_properties)} properties")        
         # Connect to Weaviate
         if weaviate_client:
             self.client = weaviate_client
@@ -104,9 +101,9 @@ WHERE {
                 logger.error(f"Error connecting to Weaviate: {e}")
                 raise e
         
-        # Create/get collections
-        self.entities_collection = self._setup_collection("gesis_entities_db", self.df_entities)
-        self.properties_collection = self._setup_collection("gesis_properties_db", self.df_properties)
+        # Get collections (assume data is already loaded)
+        self.entities_collection = self.client.collections.get("gesis_entities_db")
+        self.properties_collection = self.client.collections.get("gesis_properties_db")
 
     def execute_sparql_query(self, query):
         """Execute a SPARQL query against the configured endpoint"""
@@ -117,175 +114,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error executing SPARQL query: {e}")
             raise e
-    def _extract_entities(self):
-        """Extract entities from the SPARQL endpoint (fallback method)"""
-        try:
-            logger.info("Extracting entities from SPARQL endpoint...")
-            results = self.execute_sparql_query(self.get_entities_query)
-            logger.info("Results received from SPARQL endpoint")
-            entities_data = []
-            
-            if results.get("results") and results["results"].get("bindings"):
-                for binding in results["results"]["bindings"]:
-                    entity_uri = binding.get("entity", {}).get("value")
-                    
-                    if entity_uri:
-                        # Try to get schema:name label first
-                        label = self._get_entity_name(entity_uri)
-                        if not label:
-                            # Fallback to gesis_entity_label function
-                            label = gesis_entity_label(entity_uri)
-                        
-                        # Generate short form using prefixes
-                        short = self._shorten_uri(entity_uri)
-                        
-                        entities_data.append({
-                            'label': label,
-                            'short': short,
-                            'uri': entity_uri
-                        })
-            
-            df = pd.DataFrame(entities_data)
-            logger.info(f"Extracted {len(df)} entities from SPARQL endpoint")
-            return df
-            
-        except Exception as e:
-            logger.error(f"Error extracting entities: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri'])
-    def _extract_properties(self):
-        """Extract properties from the SPARQL endpoint (fallback method)"""
-        try:
-            logger.info("Extracting properties from SPARQL endpoint...")
-            results = self.execute_sparql_query(self.get_properties_query)
-            logger.info("Results received from SPARQL endpoint")
-            properties_data = []
-            
-            if results.get("results") and results["results"].get("bindings"):
-                for binding in results["results"]["bindings"]:
-                    property_uri = binding.get("property", {}).get("value")
-                    
-                    if property_uri:
-                        # Try to get schema:name label first
-                        label = self._get_property_name(property_uri)
-                        if not label:
-                            # Fallback to gesis_property_label function
-                            label = gesis_property_label(property_uri)
-                        
-                        # Generate short form using prefixes
-                        short = self._shorten_uri(property_uri)
-                        
-                        properties_data.append({
-                            'label': label,
-                            'short': short,
-                            'uri': property_uri
-                        })
-            
-            df = pd.DataFrame(properties_data)
-            logger.info(f"Extracted {len(df)} properties from SPARQL endpoint")
-            return df
-            
-        except Exception as e:
-            logger.error(f"Error extracting properties: {e}")
-            return pd.DataFrame(columns=['label', 'short', 'uri'])
-    def _get_entity_name(self, entity_uri):
-        """Get the schema:name for an entity"""
-        try:
-            query = f"""
-            PREFIX schema: <https://schema.org/>
-            SELECT ?name WHERE {{
-                <{entity_uri}> schema:name ?name .
-            }}
-            LIMIT 1
-            """
-            results = self.execute_sparql_query(query)
-            
-            if results.get("results") and results["results"].get("bindings"):
-                name_binding = results["results"]["bindings"][0]
-                return name_binding.get("name", {}).get("value")
-            
-            return None
-        except Exception:
-            return None
-
-    def _get_property_name(self, property_uri):
-        """Get the schema:name for a property"""
-        try:
-            query = f"""
-            PREFIX schema: <https://schema.org/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?name WHERE {{
-                {{
-                    <{property_uri}> schema:name ?name .
-                }} UNION {{
-                    <{property_uri}> rdfs:label ?name .
-                }}
-            }}
-            LIMIT 1
-            """
-            results = self.execute_sparql_query(query)
-            
-            if results.get("results") and results["results"].get("bindings"):
-                name_binding = results["results"]["bindings"][0]
-                return name_binding.get("name", {}).get("value")
-            
-            return None
-        except Exception:
-            return None
-    def _shorten_uri(self, uri):
-        """Shorten a URI using known prefixes"""
-        prefixes = {
-            "https://schema.org/": "schema:",
-            "https://data.gesis.org/gesiskg/schema/": "gesiskg:",
-            "https://data.gesis.org/gesiskg/": "gesis:",
-            "https://rdf-vocabulary.ddialliance.org/discovery.html#": "disco:",
-            "https://nfdi.fiz-karlsruhe.de/ontology/": "nfdicore:",
-            "http://www.w3.org/2004/02/skos/core#": "skos:",
-            "http://rdfs.org/ns/void#": "void:"
-        }
-        
-        for namespace, prefix in prefixes.items():
-            if uri.startswith(namespace):
-                return prefix + uri[len(namespace):]
-        
-        return uri
-
-    def _setup_collection(self, collection_name: str, df: pd.DataFrame):
-        """Setup Weaviate collection for entities or properties"""
-        if not self.client.collections.exists(collection_name):
-            collection = self.client.collections.create(
-                name=collection_name,
-                vectorizer_config=weaviate.classes.config.Configure.Vectorizer.none(),
-            )
-            is_empty = True
-        else:
-            collection = self.client.collections.get(collection_name)
-            is_empty = False
-            
-        # Initialize collection with data if empty
-        if is_empty:
-            self._initialize_collection(collection, df)
-            
-        return collection
-    def _initialize_collection(self, collection, df: pd.DataFrame):
-        """Initialize the vector collection with data"""
-        logger.info(f"Initializing collection with {len(df)} items...")
-        
-        if len(df) == 0:
-            logger.warning("No data to initialize collection")
-            return
-            
-        # Generate embeddings for labels
-        labels = df["label"].fillna("").tolist()
-        embeddings = self.model_embed.encode(labels, show_progress_bar=True)
-
-        # Use batch import
-        with collection.batch.dynamic() as batch:
-            for i, row in df.iterrows():
-                batch.add_object(
-                    properties=row.to_dict(),
-                    vector=embeddings[i].tolist(),
-                )
-        logger.info("Collection initialized!")
 
     def search_entities(self, q: str, k: int = 5) -> pd.DataFrame:
         """Search entities using hybrid search"""
@@ -342,24 +170,41 @@ WHERE {
         threshold: float = 0.65,  # Default threshold for properties in GESIS is 0.65
         k: int = 5,
     ) -> dict[str, list[str]]:
-        """Get related property candidates for a query"""
+        """Get related entity and property candidates for a query"""
         tokens = self._preprocess_into_tokens(q)
         ngrams = self._generate_ngrams(tokens)
-        result = {"properties": []}  # Changed to match curriculum format
+        result = {"entities": [], "properties": []}
         
-        # Process properties with property-specific threshold
+        # Search for properties with threshold 0.65
+        property_threshold = 0.65
         for ngram in ngrams + property_candidates:
             df_res = self.search_properties(ngram, k=k)
             if not df_res.empty:
                 # Format properties like curriculum with idWithLabel
-                for _, row in df_res[df_res["score"] >= threshold].iterrows():
+                for _, row in df_res[df_res["score"] >= property_threshold].iterrows():
                     # Create idWithLabel format like curriculum
                     id_with_label = f"{row['short']} - {row['label']}"
                     if id_with_label not in result["properties"]:
                         result["properties"].append(id_with_label)
+
+        # Search for entities with threshold 0.7
+        entity_threshold = 0.7
+        for ngram in ngrams + [q]:
+            df_res = self.search_entities(ngram, k=k)
+            if not df_res.empty:
+                # Format entities
+                for _, row in df_res[df_res["score"] >= entity_threshold].iterrows():
+                    entity_data = {
+                        "uri": row.get("short", row.get("uri", "")),
+                        "label": row.get("label", ""),
+                        "score": float(row["score"])
+                    }
+                    if entity_data not in result["entities"]:
+                        result["entities"].append(entity_data)
         
-        # Sort the properties alphabetically
+        # Sort the results
         result["properties"] = sorted(result["properties"])
+        result["entities"] = sorted(result["entities"], key=lambda x: x.get("score", 0), reverse=True)[:k]
         return result
 
     def close(self):

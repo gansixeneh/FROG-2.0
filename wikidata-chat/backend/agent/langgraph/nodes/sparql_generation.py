@@ -172,29 +172,26 @@ class SparqlGenerationNode:
         
         if entity_retriever:
             try:
-                if hasattr(entity_retriever, 'get_related_entities'):
-                    # University/Curriculum entity retriever
-                    result = entity_retriever.get_related_entities(entity, [entity], k=k)
-                    return result.get("entities", []), None
-                elif hasattr(entity_retriever, 'get_related_candidates'):
-                    # Legal/GESIS entity retriever
-                    result = entity_retriever.get_related_candidates(entity, [entity], k=k)
-                    entities = []
-                    for ent in result.get("entities", []):
-                        if isinstance(ent, dict):
-                            entities.append(ent)
-                        else:
-                            # Convert string entity IDs to dictionary format
-                            entities.append({
-                                "uri": ent,
-                                "label": ent.split(":")[-1] if ":" in ent else ent,
-                                "description": ""
-                            })
-                    return entities, None
+                # Only curriculum has entity retrieval
+                result = entity_retriever.get_related_entities(entity, [entity], k=k)
+                return result.get("entities", []), None
             except Exception as e:
                 logger.error(f"Error using entity retriever for {source}: {e}")
                 return [], e
         
+        # For legal and gesis, use property retrieval for entity search
+        if source in ["legal", "gesis"]:
+            try:
+                from ..utils.property_retrieval_factory import get_property_retrieval_factory
+                property_factory = get_property_retrieval_factory()
+                property_retriever = property_factory.get_property_retriever(source)
+                
+                if property_retriever:
+                    result = property_retriever.get_related_candidates(entity, [entity], k=k)
+                    return result.get("entities", []), None
+            except Exception as e:
+                logger.error(f"Error using property retriever for entity search in {source}: {e}")
+                return [], e
         
         # Default to Wikidata API
         wikidata_api = "https://www.wikidata.org/w/api.php"

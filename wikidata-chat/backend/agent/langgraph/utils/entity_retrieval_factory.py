@@ -5,8 +5,6 @@ import os
 
 # Import source-specific entity retrieval classes
 from .entity_retrieval import UniversityEntityRetrieval
-from .property_retrieval_legal import LegalPropertyRetrieval
-from .property_retrieval_gesis import GesisPropertyRetrieval
 
 # Import knowledge graph metadata
 from .knowledge_graph_metadata import get_knowledge_graph_metadata
@@ -51,29 +49,8 @@ class EntityRetrievalFactory:
                 logger.error(f"Error creating UniversityEntityRetrieval: {e}")
                 return None
         
-        elif knowledge_source == "legal":
-            try:
-                # Get endpoint from metadata
-                endpoint = self.kg_metadata.get_endpoint(knowledge_source)
-                retriever = LegalPropertyRetrieval(endpoint_url=endpoint)
-                self._retrievers[knowledge_source] = retriever
-                return retriever
-            except Exception as e:
-                logger.error(f"Error creating LegalPropertyRetrieval: {e}")
-                return None
-                
-        elif knowledge_source == "gesis":
-            try:
-                # Get endpoint from metadata
-                endpoint = self.kg_metadata.get_endpoint(knowledge_source)
-                retriever = GesisPropertyRetrieval(endpoint_url=endpoint)
-                self._retrievers[knowledge_source] = retriever
-                return retriever
-            except Exception as e:
-                logger.error(f"Error creating GesisPropertyRetrieval: {e}")
-                return None
-        
-        # Default case - return None for wikidata as it doesn't use entity retrieval
+        # For legal and gesis, entity search is handled by property retrieval classes
+        # Return None so callers will use property retrieval instead
         logger.info(f"No specific entity retriever needed for {knowledge_source}")
         return None
         
