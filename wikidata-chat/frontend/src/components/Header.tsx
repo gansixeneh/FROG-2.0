@@ -27,7 +27,7 @@ const Header: React.FC = () => {
 
   // Handler for changing the knowledge source
   const toggleKnowledgeSource = () => {
-    const sourceOrder = ['wikidata', 'curriculum', 'legal', 'gesis'];
+    const sourceOrder: Array<"wikidata" | "curriculum" | "legal" | "gesis"> = ['wikidata', 'curriculum', 'legal', 'gesis'];
     const currentIndex = sourceOrder.indexOf(settings.knowledgeSource);
     const nextIndex = (currentIndex + 1) % sourceOrder.length;
     updateSettings({
