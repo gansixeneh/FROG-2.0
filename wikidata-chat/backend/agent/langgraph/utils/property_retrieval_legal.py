@@ -48,8 +48,7 @@ WHERE {
   ?subject ?property ?object.
   FILTER(STRSTARTS(STR(?property), STR(lex2kg-o:)))
 }
-"""
-    
+"""    
     def __init__(
         self,
         endpoint_url: str = "http://localhost:3030/modified-lex2kg/query",
@@ -96,7 +95,6 @@ WHERE {
         # Create/get collections
         self.entities_collection = self._setup_collection("legal_entities_db", self.df_entities)
         self.properties_collection = self._setup_collection("legal_properties_db", self.df_properties)
-
     def execute_sparql_query(self, query):
         """Execute a SPARQL query against the configured endpoint"""
         try:
@@ -139,7 +137,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error extracting entities: {e}")
             return pd.DataFrame(columns=['label', 'short', 'uri'])
-
     def _extract_properties(self):
         """Extract properties from the SPARQL endpoint using the provided SPARQL query"""
         try:
@@ -172,7 +169,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error extracting properties: {e}")
             return pd.DataFrame(columns=['label', 'short', 'uri'])
-
     def _setup_collection(self, collection_name: str, df: pd.DataFrame):
         """Setup Weaviate collection for entities or properties"""
         if not self.client.collections.exists(collection_name):
@@ -211,7 +207,6 @@ WHERE {
                     vector=embeddings[i].tolist(),
                 )
         logger.info("Collection initialized!")
-
     def search_entities(self, q: str, k: int = 5) -> pd.DataFrame:
         """Search entities using hybrid search"""
         return self._search(self.entities_collection, q, k)
@@ -252,7 +247,6 @@ WHERE {
             if tok not in self.stopwords:
                 result.append(tok)
         return result
-
     def _generate_ngrams(self, tokens: list[str]) -> list[str]:
         """Generate n-grams from a list of tokens using NLTK"""
         max_n = min(len(tokens), 3)
@@ -266,36 +260,27 @@ WHERE {
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.6,
+        threshold: float = 0.6,  # Using 0.6 as the default threshold for legal
         k: int = 5,
     ) -> dict[str, list[str]]:
-        """Get related entity and property candidates for a query"""
+        """Get related property candidates for a query"""
         tokens = self._preprocess_into_tokens(q)
         ngrams = self._generate_ngrams(tokens)
-        result = {"entities": [], "properties": []}
+        result = {"properties": []}  # Changed to match curriculum format
 
-        def search(ngram, search_type, threshold=threshold):
-            if search_type == "entities":
-                df_res = self.search_entities(ngram, k=k)
-            else:
-                df_res = self.search_properties(ngram, k=k)
-            
-            if df_res.empty:
-                return search_type, []
-                
-            result_list = (
-                df_res[df_res["score"] >= threshold]["short"]
-                .tolist()
-            )
-            return search_type, result_list
-
+        # First process properties
         for ngram in ngrams + property_candidates:
-            for search_type in result.keys():
-                search_result_type, df_res = search(ngram, search_type)
-                if df_res:
-                    result[search_result_type].extend(df_res)
-                    result[search_result_type] = list(set(result[search_result_type]))
+            df_res = self.search_properties(ngram, k=k)
+            if not df_res.empty:
+                # Format properties like curriculum with idWithLabel
+                for _, row in df_res[df_res["score"] >= threshold].iterrows():
+                    # Create idWithLabel format like curriculum
+                    id_with_label = f"{row['short']} - {row['label']}"
+                    if id_with_label not in result["properties"]:
+                        result["properties"].append(id_with_label)
 
+        # Sort the properties alphabetically
+        result["properties"] = sorted(result["properties"])
         return result
 
     def close(self):

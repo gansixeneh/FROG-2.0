@@ -1,7 +1,7 @@
-
 # backend/agent/langgraph/utils/__init__.py
 from .visualization import BoxologyVisualizer
-from .property_retrieval import WikidataPropertyRetrieval
+from .wikidata_property_retrieval import WikidataPropertyRetrieval
+from .university_property_retrieval import UniversityPropertyRetrieval
 from .property_retrieval_legal import LegalPropertyRetrieval
 from .property_retrieval_gesis import GesisPropertyRetrieval
 from .property_retrieval_factory import get_property_retrieval_factory
@@ -16,6 +16,7 @@ from .kg_schema_extractor import legal_entity_label, legal_property_label, gesis
 __all__ = [
     "BoxologyVisualizer", 
     "WikidataPropertyRetrieval",
+    "UniversityPropertyRetrieval",
     "LegalPropertyRetrieval",
     "GesisPropertyRetrieval",
     "get_property_retrieval_factory",

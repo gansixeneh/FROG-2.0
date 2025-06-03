@@ -39,8 +39,7 @@ WHERE {
     FILTER(isIRI(?entity))
   }
 }
-"""
-        
+"""        
     get_properties_query = """
 PREFIX schema: <https://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -83,8 +82,7 @@ WHERE {
         self.df_entities = self._extract_entities()
         self.df_properties = self._extract_properties()
         
-        logger.info(f"Loaded {len(self.df_entities)} entities and {len(self.df_properties)} properties")
-        
+        logger.info(f"Loaded {len(self.df_entities)} entities and {len(self.df_properties)} properties")        
         # Connect to Weaviate
         if weaviate_client:
             self.client = weaviate_client
@@ -119,7 +117,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error executing SPARQL query: {e}")
             raise e
-
     def _extract_entities(self):
         """Extract entities from the SPARQL endpoint (fallback method)"""
         try:
@@ -155,7 +152,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error extracting entities: {e}")
             return pd.DataFrame(columns=['label', 'short', 'uri'])
-
     def _extract_properties(self):
         """Extract properties from the SPARQL endpoint (fallback method)"""
         try:
@@ -191,7 +187,6 @@ WHERE {
         except Exception as e:
             logger.error(f"Error extracting properties: {e}")
             return pd.DataFrame(columns=['label', 'short', 'uri'])
-
     def _get_entity_name(self, entity_uri):
         """Get the schema:name for an entity"""
         try:
@@ -236,7 +231,6 @@ WHERE {
             return None
         except Exception:
             return None
-
     def _shorten_uri(self, uri):
         """Shorten a URI using known prefixes"""
         prefixes = {
@@ -272,7 +266,6 @@ WHERE {
             self._initialize_collection(collection, df)
             
         return collection
-
     def _initialize_collection(self, collection, df: pd.DataFrame):
         """Initialize the vector collection with data"""
         logger.info(f"Initializing collection with {len(df)} items...")
@@ -301,7 +294,6 @@ WHERE {
     def search_properties(self, q: str, k: int = 5) -> pd.DataFrame:
         """Search properties using hybrid search"""
         return self._search(self.properties_collection, q, k)
-
     def _search(self, collection, q: str, k: int = 5) -> pd.DataFrame:
         """Search the vector collection for similar items"""
         try:
@@ -334,7 +326,6 @@ WHERE {
             if tok not in self.stopwords:
                 result.append(tok)
         return result
-
     def _generate_ngrams(self, tokens: list[str]) -> list[str]:
         """Generate n-grams from a list of tokens using NLTK"""
         max_n = min(len(tokens), 3)
@@ -348,36 +339,27 @@ WHERE {
         self,
         q: str,
         property_candidates: list[str] = [],
-        threshold: float = 0.6,
+        threshold: float = 0.65,  # Default threshold for properties in GESIS is 0.65
         k: int = 5,
     ) -> dict[str, list[str]]:
-        """Get related entity and property candidates for a query"""
+        """Get related property candidates for a query"""
         tokens = self._preprocess_into_tokens(q)
         ngrams = self._generate_ngrams(tokens)
-        result = {"entities": [], "properties": []}
-
-        def search(ngram, search_type, threshold=threshold):
-            if search_type == "entities":
-                df_res = self.search_entities(ngram, k=k)
-            else:
-                df_res = self.search_properties(ngram, k=k)
-            
-            if df_res.empty:
-                return search_type, []
-                
-            result_list = (
-                df_res[df_res["score"] >= threshold]["short"]
-                .tolist()
-            )
-            return search_type, result_list
-
+        result = {"properties": []}  # Changed to match curriculum format
+        
+        # Process properties with property-specific threshold
         for ngram in ngrams + property_candidates:
-            for search_type in result.keys():
-                search_result_type, df_res = search(ngram, search_type)
-                if df_res:
-                    result[search_result_type].extend(df_res)
-                    result[search_result_type] = list(set(result[search_result_type]))
-
+            df_res = self.search_properties(ngram, k=k)
+            if not df_res.empty:
+                # Format properties like curriculum with idWithLabel
+                for _, row in df_res[df_res["score"] >= threshold].iterrows():
+                    # Create idWithLabel format like curriculum
+                    id_with_label = f"{row['short']} - {row['label']}"
+                    if id_with_label not in result["properties"]:
+                        result["properties"].append(id_with_label)
+        
+        # Sort the properties alphabetically
+        result["properties"] = sorted(result["properties"])
         return result
 
     def close(self):

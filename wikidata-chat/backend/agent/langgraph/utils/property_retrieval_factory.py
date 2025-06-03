@@ -4,7 +4,8 @@ from typing import Optional, Dict, Any
 import os
 
 # Import source-specific property retrieval classes
-from .property_retrieval import WikidataPropertyRetrieval
+from .wikidata_property_retrieval import WikidataPropertyRetrieval
+from .university_property_retrieval import UniversityPropertyRetrieval
 from .property_retrieval_legal import LegalPropertyRetrieval
 from .property_retrieval_gesis import GesisPropertyRetrieval
 
@@ -81,7 +82,6 @@ class PropertyRetrievalFactory:
         # For curriculum, return UniversityPropertyRetrieval
         elif knowledge_source == "curriculum":
             try:
-                from .property_retrieval import UniversityPropertyRetrieval
                 retriever = UniversityPropertyRetrieval()
                 self._retrievers[knowledge_source] = retriever
                 return retriever
