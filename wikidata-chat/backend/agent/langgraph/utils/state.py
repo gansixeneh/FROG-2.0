@@ -32,4 +32,5 @@ class FROGGraphRAGState(BaseModel):
     google_search_result: Optional[Dict] = None  # Google search results
     use_verbalization: Optional[bool] = True  # Runtime setting for verbalization
     use_google_search: Optional[bool] = True  # Runtime setting for Google search
+    use_translation: Optional[bool] = True  # Runtime setting for translation
     knowledge_source: Optional[str] = "wikidata"  # Knowledge source (wikidata or curriculum)

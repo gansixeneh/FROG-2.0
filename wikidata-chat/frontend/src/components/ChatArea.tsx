@@ -111,6 +111,11 @@ const ChatArea: React.FC = () => {
               <span className="font-medium">Current Settings:</span>
               <div className="flex flex-wrap gap-1 sm:gap-2 justify-center">
                 <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                  settings.useTranslation ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                }`}>
+                  {settings.useTranslation ? 'Translation ON' : 'Translation OFF'}
+                </span>
+                <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                   settings.useVerbalization ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
                 }`}>
                   {settings.useVerbalization ? 'Verbalization ON' : 'SPARQL Only'}

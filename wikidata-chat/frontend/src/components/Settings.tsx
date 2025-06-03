@@ -12,7 +12,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleToggle = (setting: 'useVerbalization' | 'useGoogleSearch') => {
+  const handleToggle = (setting: 'useVerbalization' | 'useGoogleSearch' | 'useTranslation') => {
     updateSettings({
       ...settings,
       [setting]: !settings[setting]
@@ -124,6 +124,42 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
 
           {/* Right Column: Settings Toggles */}
           <div className="space-y-4">
+            {/* Translation Setting */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 pr-4">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Use Translation</h3>
+                  <p className="text-sm text-gray-500 mb-3">
+                    When enabled, FrOG will automatically detect and translate non-English questions.
+                    When disabled, questions will be processed in their original language.
+                  </p>
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                    settings.useTranslation ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                  }`}>
+                    {settings.useTranslation ? 'Enabled: Translates non-English queries' : 'Disabled: Original language only'}
+                  </span>
+                </div>
+                <div className="flex-shrink-0">
+                  <button
+                    onClick={() => handleToggle('useTranslation')}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-frog-DEFAULT focus:ring-offset-2 ${
+                      settings.useTranslation ? 'bg-frog-light' : 'bg-gray-300'
+                    }`}
+                    role="switch"
+                    aria-checked={settings.useTranslation}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full shadow-lg transition-transform ${
+                        settings.useTranslation 
+                          ? 'translate-x-6 bg-frog-dark' 
+                          : 'translate-x-1 bg-gray-600'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Use Verbalization Setting */}
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-start justify-between">

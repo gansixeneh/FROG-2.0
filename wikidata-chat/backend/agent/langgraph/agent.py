@@ -600,6 +600,7 @@ class FROGGraphAgent:
             include_references=True,  # Enable references by default
             use_verbalization=settings.get("useVerbalization", True),  # Default to True
             use_google_search=settings.get("useGoogleSearch", True),  # Default to True
+            use_translation=settings.get("useTranslation", True),  # Default to True
             knowledge_source=knowledge_source,  # Set the knowledge source
         )
 

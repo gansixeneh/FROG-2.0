@@ -59,6 +59,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     return {
       useVerbalization: true,
       useGoogleSearch: true,
+      useTranslation: true,
       knowledgeSource: "wikidata",
     };
   });

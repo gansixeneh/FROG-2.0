@@ -22,6 +22,9 @@ class TranslationNode:
                 start_time=start_time
             )
             
+        # Check if translation is enabled
+        use_translation = getattr(state, 'use_translation', True)
+        
         # Detect language
         detected = self.translator.detect(state.question)
         state.original_lang = detected.lang
@@ -31,11 +34,11 @@ class TranslationNode:
             state.visualizer.log_event(
                 "Translation Node",
                 "language detection",
-                {"detected_language": detected.lang}
+                {"detected_language": detected.lang, "translation_enabled": use_translation}
             )
         
-        # Translate if not English
-        if state.original_lang != "en":
+        # Translate if not English and translation is enabled
+        if state.original_lang != "en" and use_translation:
             state.translated_question = self.translator.translate(state.question, dest="en").text
             
             # Log translation
@@ -51,11 +54,11 @@ class TranslationNode:
         else:
             state.translated_question = state.question
             
-            # Log no translation needed
+            # Log no translation needed/used
             if hasattr(state, 'visualizer') and state.visualizer:
                 state.visualizer.log_event(
                     "Translation Node",
-                    "no translation needed",
+                    "no translation " + ("needed" if state.original_lang == "en" else "enabled"),
                     {"question": state.question}
                 )
         
