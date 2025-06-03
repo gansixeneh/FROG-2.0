@@ -80,7 +80,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   
   // User icon
   const UserIcon = () => (
-    <div className="w-8 h-8 rounded-full bg-frog-accent flex items-center justify-center ml-2 shadow-md z-10">
+    <div className="w-8 h-8 rounded-full bg-frog-accent flex items-center justify-center ml-2 shadow-md">
       <svg 
         width="18" 
         height="18" 
@@ -99,7 +99,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   );
 
   const renderUserMessage = () => (
-    <div className="flex items-start justify-end relative z-5">
+    <div className="flex items-start justify-end relative z-[5]">
       <div className="user-bubble px-4 py-3 bg-frog-accent text-frog-dark rounded-2xl rounded-tr-none shadow-md max-w-full">
         <ReactMarkdown
           className="prose max-w-none"
