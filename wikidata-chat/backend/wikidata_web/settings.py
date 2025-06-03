@@ -106,6 +106,11 @@ PUSHER_KEY = '0379edb726d89ea8c1e9'
 PUSHER_SECRET = 'f463c5ed7feecb491a7c'
 PUSHER_CLUSTER = 'ap1'
 
+# Weaviate configuration
+WEAVIATE_URL = os.environ.get('WEAVIATE_URL', 'localhost')
+WEAVIATE_HTTP_PORT = int(os.environ.get('WEAVIATE_HTTP_PORT', 8080))
+WEAVIATE_GRPC_PORT = int(os.environ.get('WEAVIATE_GRPC_PORT', 50052))
+
 # Database
 DATABASES = {
     'default': {

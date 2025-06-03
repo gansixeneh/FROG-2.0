@@ -1,6 +1,7 @@
 # backend/agent/langgraph/utils/property_retrieval.py
 import pandas as pd
 import numpy as np
+import os
 from sentence_transformers import SentenceTransformer
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
@@ -30,13 +31,20 @@ class UniversityPropertyRetrieval:
             self.client = weaviate_client
         else:
             try:
+                # Get Weaviate connection details from environment variables
+                weaviate_host = os.environ.get("WEAVIATE_URL", "localhost")
+                weaviate_http_port = int(os.environ.get("WEAVIATE_HTTP_PORT", 8080))
+                weaviate_grpc_port = int(os.environ.get("WEAVIATE_GRPC_PORT", 50052))
+                
+                logger.info(f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})")
+                
                 self.client = weaviate.connect_to_local(
-                    host="localhost",
-                    port=8080,
-                    grpc_port=50052,
+                    host=weaviate_host,
+                    port=weaviate_http_port,
+                    grpc_port=weaviate_grpc_port,
                 )
             except Exception as e:
-                logger.error(f"Error connecting to local Weaviate: {e}")
+                logger.error(f"Error connecting to Weaviate: {e}")
                 raise e
         
         # Get collection for university properties
@@ -138,13 +146,20 @@ class WikidataPropertyRetrieval:
             self.client = weaviate_client
         else:
             try:
+                # Get Weaviate connection details from environment variables
+                weaviate_host = os.environ.get("WEAVIATE_URL", "localhost")
+                weaviate_http_port = int(os.environ.get("WEAVIATE_HTTP_PORT", 8080))
+                weaviate_grpc_port = int(os.environ.get("WEAVIATE_GRPC_PORT", 50052))
+                
+                logger.info(f"Connecting to Weaviate at {weaviate_host}:{weaviate_http_port} (gRPC: {weaviate_grpc_port})")
+                
                 self.client = weaviate.connect_to_local(
-                    host="localhost",
-                    port=8080,
-                    grpc_port=50052,
+                    host=weaviate_host,
+                    port=weaviate_http_port,
+                    grpc_port=weaviate_grpc_port,
                 )
             except Exception as e:
-                logger.error(f"Error connecting to local Weaviate: {e}")
+                logger.error(f"Error connecting to Weaviate: {e}")
                 raise e
         
         # Create/get collection
