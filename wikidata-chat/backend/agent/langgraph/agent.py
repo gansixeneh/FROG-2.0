@@ -293,7 +293,7 @@ class FROGGraphAgent:
 
         # Start with a header and the original question
         explanation = f"""## Question Answering Process
-**Question:** {state.question}
+**Question:** {state.question}  
 **Knowledge Source:** {source_name}
 
 """
@@ -326,7 +326,7 @@ class FROGGraphAgent:
                     pass
 
             explanation += f"""### Approach: Direct Verbalization
-Using entity: {entity_label}
+**Using entity**: {entity_label}
 
 """
             # Add verbalization results
