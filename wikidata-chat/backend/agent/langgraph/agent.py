@@ -28,7 +28,7 @@ from ..llm_factory import LLMFactory
 
 # Import visualization classes
 from .utils.visualization import BoxologyVisualizer
-from .utils.property_retrieval import WikidataPropertyRetrieval
+from .utils.wikidata_property_retrieval import WikidataPropertyRetrieval
 from .utils.state import FROGGraphRAGState
 from .utils.date_utils import format_reference_date
 from .utils.knowledge_graph_metadata import get_knowledge_graph_metadata
