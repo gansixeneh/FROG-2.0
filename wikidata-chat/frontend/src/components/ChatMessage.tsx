@@ -47,27 +47,38 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       .replace(/(```sparql)/g, "\n$1")
       .replace(/```(?!sparql)/g, "```\n");
 
-    // Format any SPARQL code blocks
+    // Extract SPARQL code blocks to protect them from URL processing
+    const sparqlBlocks: string[] = [];
     processedContent = processedContent.replace(
       /```sparql\s*([\s\S]*?)```/g,
       (match, code) => {
         try {
           // Use more spaces for better readability in the UI
           const formattedSparql = formatSparqlQuery(code, "default", 2);
-          return "```sparql\n" + formattedSparql + "\n```";
+          const placeholder = `__SPARQL_BLOCK_${sparqlBlocks.length}__`;
+          sparqlBlocks.push("```sparql\n" + formattedSparql + "\n```");
+          return placeholder;
         } catch (e) {
           console.error("Error formatting SPARQL:", e);
-          return match; // Return original if formatting fails
+          const placeholder = `__SPARQL_BLOCK_${sparqlBlocks.length}__`;
+          sparqlBlocks.push(match);
+          return placeholder;
         }
       }
     );
 
     // Look for URLs that aren't already in markdown link format: [text](url)
+    // Only in non-SPARQL content
     const urlRegex = /(?<!\]\()https?:\/\/[^\s)>]+/g;
     processedContent = processedContent.replace(
       urlRegex,
       (url) => `[${url}](${url})`
     );
+
+    // Put SPARQL blocks back in
+    sparqlBlocks.forEach((block, index) => {
+      processedContent = processedContent.replace(`__SPARQL_BLOCK_${index}__`, block);
+    });
 
     return processedContent;
   };
