@@ -165,16 +165,36 @@ class SparqlGenerationNode:
         
     def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
         """Search for entities in knowledge base"""
-        if source == "curriculum":
-            # Try to use UniversityEntityRetrieval if it exists
+        # Use entity retrieval factory to get the appropriate entity retriever
+        from ..utils.entity_retrieval_factory import get_entity_retrieval_factory
+        entity_factory = get_entity_retrieval_factory()
+        entity_retriever = entity_factory.get_entity_retriever(source)
+        
+        if entity_retriever:
             try:
-                from ..utils.entity_retrieval import UniversityEntityRetrieval
-                entity_retrieval = UniversityEntityRetrieval()
-                result = entity_retrieval.get_related_entities(entity, [entity], k=k)
-                return result.get("entities", []), None
+                if hasattr(entity_retriever, 'get_related_entities'):
+                    # University/Curriculum entity retriever
+                    result = entity_retriever.get_related_entities(entity, [entity], k=k)
+                    return result.get("entities", []), None
+                elif hasattr(entity_retriever, 'get_related_candidates'):
+                    # Legal/GESIS entity retriever
+                    result = entity_retriever.get_related_candidates(entity, [entity], k=k)
+                    entities = []
+                    for ent in result.get("entities", []):
+                        if isinstance(ent, dict):
+                            entities.append(ent)
+                        else:
+                            # Convert string entity IDs to dictionary format
+                            entities.append({
+                                "uri": ent,
+                                "label": ent.split(":")[-1] if ":" in ent else ent,
+                                "description": ""
+                            })
+                    return entities, None
             except Exception as e:
-                logger.error(f"Error using UniversityEntityRetrieval: {e}")
+                logger.error(f"Error using entity retriever for {source}: {e}")
                 return [], e
+        
         
         # Default to Wikidata API
         wikidata_api = "https://www.wikidata.org/w/api.php"
@@ -199,6 +219,7 @@ class SparqlGenerationNode:
             ]
             return parsed_data, None
         except Exception as e:
+            logger.error(f"Error searching for entities: {e}")
             return [], e
     
     def _extract_references_from_results(self, results):
@@ -302,16 +323,14 @@ Guidelines:
 
         # Get knowledge source and use appropriate property retrieval
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        current_property_retrieval = self.property_retrieval
         
-        if knowledge_source == 'curriculum':
-            try:
-                from ..utils.property_retrieval import UniversityPropertyRetrieval
-                current_property_retrieval = UniversityPropertyRetrieval()
-                logger.info("Using UniversityPropertyRetrieval for curriculum in SparqlGenerationNode")
-            except Exception as e:
-                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
-                logger.info("Falling back to standard property retrieval")
+        # Use property retrieval factory to get the appropriate property retrieval
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        property_factory = get_property_retrieval_factory()
+        current_property_retrieval = property_factory.get_property_retriever(
+            knowledge_source, 
+            df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
+        )
                 
         # Get ontology candidates
         ontology = current_property_retrieval.get_related_candidates(

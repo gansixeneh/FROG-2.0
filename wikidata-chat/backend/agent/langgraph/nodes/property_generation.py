@@ -23,16 +23,14 @@ class PropertyGenerationNode:
         
         # Get knowledge source and use appropriate property retrieval
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        current_property_retrieval = self.property_retrieval
         
-        if knowledge_source == 'curriculum':
-            try:
-                from ..utils.property_retrieval import UniversityPropertyRetrieval
-                current_property_retrieval = UniversityPropertyRetrieval()
-                logger.info("Using UniversityPropertyRetrieval for curriculum in PropertyGenerationNode")
-            except Exception as e:
-                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
-                logger.info("Falling back to standard property retrieval")
+        # Use property retrieval factory to get the appropriate property retrieval
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        property_factory = get_property_retrieval_factory()
+        current_property_retrieval = property_factory.get_property_retriever(
+            knowledge_source, 
+            df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
+        )
         
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:

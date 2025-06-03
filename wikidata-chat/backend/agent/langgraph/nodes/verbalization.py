@@ -423,10 +423,20 @@ class VerbalizationNode:
         """
         self.llm_factory = llm_factory
         self.property_retrieval = property_retrieval
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
+        
+        # Initialize a default SPARQL endpoint
         self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
         self.api.setReturnFormat(JSON)
         self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
-        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
+        
+        # Get property retrieval factory for different sources
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        self.property_factory = get_property_retrieval_factory()
+        
+        # Get entity retrieval factory for different sources
+        from ..utils.entity_retrieval_factory import get_entity_retrieval_factory
+        self.entity_factory = get_entity_retrieval_factory()
         
         if not self.llm_factory:
             raise ValueError("llm_factory must be provided")
@@ -461,17 +471,33 @@ class VerbalizationNode:
             return [], e
         
     def get_entities(self, entity: str, k: int = 5, source: str = "wikidata"):
-        """Search for entities in Wikidata or Curriculum"""
-        if source == "curriculum":
-            # Try to use UniversityEntityRetrieval if it exists
-            try:
-                from ..utils.entity_retrieval import UniversityEntityRetrieval
-                entity_retrieval = UniversityEntityRetrieval()
-                result = entity_retrieval.get_related_entities(entity, [entity], k=k)
-                return result.get("entities", []), None
-            except Exception as e:
-                logger.error(f"Error using UniversityEntityRetrieval: {e}")
-                return [], e
+        """Search for entities in Wikidata or other knowledge sources"""
+        # Use the appropriate entity retriever from the factory
+        if source != "wikidata":
+            entity_retriever = self.entity_factory.get_entity_retriever(source)
+            if entity_retriever:
+                try:
+                    if hasattr(entity_retriever, 'get_related_entities'):
+                        # University/Curriculum entity retriever
+                        result = entity_retriever.get_related_entities(entity, [entity], k=k)
+                        return result.get("entities", []), None
+                    elif hasattr(entity_retriever, 'get_related_candidates'):
+                        # Legal/GESIS entity retriever
+                        result = entity_retriever.get_related_candidates(entity, [entity], k=k)
+                        entities = []
+                        for ent in result.get("entities", []):
+                            if isinstance(ent, dict):
+                                entities.append(ent)
+                            else:
+                                # Convert string entity IDs to dictionary format
+                                entities.append({
+                                    "uri": ent,
+                                    "label": ent.split(":")[-1] if ":" in ent else ent,
+                                    "score": 0.9
+                                })
+                        return entities, None
+                except Exception as e:
+                    logger.error(f"Error using entity retriever for {source}: {e}")
         
         # Default to Wikidata API
         wikidata_api = "https://www.wikidata.org/w/api.php"
@@ -625,15 +651,11 @@ Select the most appropriate entity ID that best matches the target entity "{enti
             )
         
         # Use appropriate property retrieval based on knowledge source
-        current_property_retrieval = self.property_retrieval
-        if knowledge_source == 'curriculum':
-            try:
-                from ..utils.property_retrieval import UniversityPropertyRetrieval
-                current_property_retrieval = UniversityPropertyRetrieval()
-                logger.info("Using UniversityPropertyRetrieval for curriculum in VerbalizationNode")
-            except Exception as e:
-                logger.warning(f"Failed to initialize UniversityPropertyRetrieval: {e}")
-                logger.info("Falling back to standard property retrieval")
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        current_property_retrieval = self.property_factory.get_property_retriever(
+            knowledge_source, 
+            df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
+        )
         
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
