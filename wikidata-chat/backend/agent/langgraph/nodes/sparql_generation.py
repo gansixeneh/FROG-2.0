@@ -7,6 +7,7 @@ from typing import Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
 from ..utils.state import WikidataGraphRAGState
 from ..utils.date_utils import format_reference_date
+from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +86,10 @@ class SparqlGenerationNode:
         if not state.include_references:
             return query
             
-        # Skip references for curriculum source
-        if getattr(state, 'knowledge_source', 'wikidata') == 'curriculum':
+        # Check if the knowledge source supports references
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        kg_metadata = get_knowledge_graph_metadata()
+        if not kg_metadata.supports_references(knowledge_source):
             return query
             
         # Parse the query to find wdt: patterns
@@ -251,13 +254,18 @@ class SparqlGenerationNode:
                 start_time=start_time
             )
         
-        # Determine the knowledge source name for prompts
+        # Determine the knowledge source
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
         
-        # Define the system prompt based on the source
-        if knowledge_source == "curriculum":
-            system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
+        # Get knowledge graph metadata
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
+        instructions = kg_metadata.get_sparql_instructions(knowledge_source)
+        
+        # Build the system prompt based on metadata
+        instructions_text = "\n".join([f"{i+1}. {instruction}" for i, instruction in enumerate(instructions)])
+        
+        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
 
 Guidelines:
 1. First identify which entities from the list match the question's intent
@@ -266,27 +274,9 @@ Guidelines:
 4. From the properties list, choose which properties are needed to answer the question
 5. Select only the minimum necessary properties required to answer the question correctly
 6. Use ALL identified entities and necessary properties in your SPARQL query
-7. Use PREFIX NOTATION (e.g., ns1:entity_name) for entities and properties
+7. {instructions_text}
 8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
 9. Return ONLY the raw SPARQL query with no explanations or comments in this format:
-   ```sparql
-   <your_sparql_query_here>
-   ```"""
-        else:
-            # Wikidata prompt
-            system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
-
-Guidelines:
-1. First identify which entities from the list match the question's intent
-2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question
-3. When multiple entities have similar labels, choose the one whose description best matches the question's context
-4. From the properties list, choose which properties are needed to answer the question
-5. Select only the minimum necessary properties required to answer the question correctly
-6. Use ALL identified entities and necessary properties in your SPARQL query
-7. Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs
-8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
-9. Return entity IDs directly without using label services
-10. Return ONLY the raw SPARQL query with no explanations or comments in this format:
    ```sparql
    <your_sparql_query_here>
    ```"""
@@ -716,7 +706,8 @@ Please generate a better query. Try using different properties or restructuring 
         # Failed after all attempts
         use_google_search = getattr(state, 'use_google_search', True)
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
         
         if use_google_search:
             state.context_str = "I couldn't generate a working query to answer this question."

@@ -6,6 +6,7 @@ import logging
 from datetime import datetime
 from typing import Optional, Union
 from ..utils.state import WikidataGraphRAGState
+from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,8 @@ class EntityExtractionNode:
         
         # Determine the knowledge source name for prompts
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
         
         # Define system prompt from finetune-extract-entity-property.ipynb
         system_prompt = f"""You are an expert entity and property extractor for knowledge graph querying. Your task is to analyze a natural language question and identify the relevant entities and properties needed to create a SPARQL query for {source_name}.

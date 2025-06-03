@@ -7,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 from ..utils.state import WikidataGraphRAGState
+from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 # Configure logging
 logger = logging.getLogger(__name__)

@@ -8,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 from ..utils.state import WikidataGraphRAGState
 from ..utils.date_utils import format_reference_date
+from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 # Import our model singleton
 from ..utils.singletons.model_singletons import get_sentence_transformer
@@ -30,69 +31,6 @@ class WikidataVerbalization:
     SENTENCE_TEMPLATE = "{s}'s {p} is {o}"
     MANUAL_MAPPING_DICT = {"_": " "}
     
-    # Wikidata templates
-    WIKIDATA_PO_TEMPLATE = """
-SELECT distinct ?p ?o ?oLabel
-WHERE {{
-  BIND(wd:{entity} AS ?s) .
-  
-  ?s ?p ?o .
-  FILTER(?p != wd:P18)
-  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}
-  ?prop wikibase:directClaim ?p .
-  OPTIONAL {{
-    ?o rdfs:label ?oLabel .
-    FILTER (LANG(?oLabel) = "en")
-  }}
-}} LIMIT 1000
-"""
-    WIKIDATA_SP_TEMPLATE = """
-SELECT ?s ?sLabel ?p
-WHERE {{
-  BIND(wd:{entity} AS ?o) .
-  
-  ?s ?p ?o .
-  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}
-  ?prop wikibase:directClaim ?p .
-  OPTIONAL {{
-    ?s rdfs:label ?sLabel .
-    FILTER (LANG(?sLabel) = "en")
-  }}
-}} LIMIT 1000
-"""
-    
-    # Curriculum templates
-    CURRICULUM_PO_TEMPLATE = """
-PREFIX ns1: <http://example.org/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT distinct ?p ?o ?pLabel ?oLabel
-WHERE {{
-  {entity} ?p ?o .
-  OPTIONAL {{
-    ?p rdfs:label ?pLabel .
-  }}
-  OPTIONAL {{
-    ?o rdfs:label ?oLabel .
-  }}
-}} LIMIT 1000
-"""
-    CURRICULUM_SP_TEMPLATE = """
-PREFIX ns1: <http://example.org/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?s ?p ?sLabel ?pLabel
-WHERE {{
-  ?s ?p {entity} .
-  OPTIONAL {{
-    ?s rdfs:label ?sLabel .
-  }}
-  OPTIONAL {{
-    ?p rdfs:label ?pLabel .
-  }}
-}} LIMIT 1000
-"""
-
     def __init__(
         self,
         model_name="jinaai/jina-embeddings-v3",
@@ -109,37 +47,35 @@ WHERE {{
         # Use the singleton instead of creating a new instance
         self.model = get_sentence_transformer(model_name, **model_kwargs)
         
-        # Set up SPARQL endpoint based on source
-        if knowledge_source == "curriculum":
-            self.api = SPARQLWrapper("http://localhost:3030/curi/query")
-            self.PO_TEMPLATE = self.CURRICULUM_PO_TEMPLATE
-            self.SP_TEMPLATE = self.CURRICULUM_SP_TEMPLATE
-        else:
-            self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
-            self.PO_TEMPLATE = self.WIKIDATA_PO_TEMPLATE
-            self.SP_TEMPLATE = self.WIKIDATA_SP_TEMPLATE
-            
-        self.api.setReturnFormat(JSON)
-        # Set a user agent to be respectful
-        self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        # Get knowledge graph metadata
+        self.kg_metadata = get_knowledge_graph_metadata()
+        
+        # Set up SPARQL endpoint and templates based on metadata
+        self._setup_sparql_components()
+        
         logger.info(f"Initialized WikidataVerbalization with model: {model_name} for source: {knowledge_source}")
+    
+    def _setup_sparql_components(self):
+        """Setup SPARQL endpoint and templates from metadata"""
+        endpoint = self.kg_metadata.get_endpoint(self.knowledge_source)
+        user_agent = self.kg_metadata.get_user_agent(self.knowledge_source)
+        
+        self.api = SPARQLWrapper(endpoint)
+        self.api.setReturnFormat(JSON)
+        self.api.addCustomHttpHeader("User-Agent", user_agent)
+        
+        # Get templates from metadata
+        self.PO_TEMPLATE = self.kg_metadata.get_verbalization_template(self.knowledge_source, "po_template")
+        self.SP_TEMPLATE = self.kg_metadata.get_verbalization_template(self.knowledge_source, "sp_template")
+        
+        if not self.PO_TEMPLATE or not self.SP_TEMPLATE:
+            logger.warning(f"Missing verbalization templates for {self.knowledge_source}")
     
     def set_knowledge_source(self, knowledge_source):
         """Update the knowledge source and reconfigure templates and endpoint"""
         if knowledge_source != self.knowledge_source:
             self.knowledge_source = knowledge_source
-            
-            if knowledge_source == "curriculum":
-                self.api = SPARQLWrapper("http://localhost:3030/curi/query")
-                self.PO_TEMPLATE = self.CURRICULUM_PO_TEMPLATE
-                self.SP_TEMPLATE = self.CURRICULUM_SP_TEMPLATE
-            else:
-                self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
-                self.PO_TEMPLATE = self.WIKIDATA_PO_TEMPLATE
-                self.SP_TEMPLATE = self.WIKIDATA_SP_TEMPLATE
-                
-            self.api.setReturnFormat(JSON)
-            self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+            self._setup_sparql_components()
             logger.info(f"Updated WikidataVerbalization to use source: {knowledge_source}")
 
     def execute_sparql(self, q: str):
@@ -337,9 +273,9 @@ WHERE {{
         return None
 
     def get_references_for_property(self, entity: str, property_uri: str, knowledge_source: str = "wikidata"):
-        """Get reference information for a specific entity and property (Wikidata only)"""
-        # Only get references for Wikidata, not curriculum
-        if knowledge_source != "wikidata":
+        """Get reference information for a specific entity and property (if supported by knowledge source)"""
+        # Check if the knowledge source supports references using metadata
+        if not self.kg_metadata.supports_references(knowledge_source):
             return []
             
         try:
@@ -530,8 +466,9 @@ class VerbalizationNode:
         if not retrieved_entities:
             return None
         
-        # Determine the knowledge source name for prompts
-        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        # Get source name from metadata
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
         
         # Define system prompt
         system_prompt = f"""You are an expert entity selector for knowledge graph querying. Your task is to analyze a natural language question and select the most appropriate entity from a list of retrieved entities from {source_name}.

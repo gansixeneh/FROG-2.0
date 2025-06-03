@@ -31,6 +31,7 @@ from .utils.visualization import BoxologyVisualizer
 from .utils.property_retrieval import WikidataPropertyRetrieval
 from .utils.state import WikidataGraphRAGState
 from .utils.date_utils import format_reference_date
+from .utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 from .nodes import (
     TranslationNode,
     EntityExtractionNode,
@@ -50,23 +51,24 @@ logger = logging.getLogger(__name__)
 class WikidataAPI:
     def __init__(self, url="https://query.wikidata.org/sparql", source="wikidata") -> None:
         self.source = source
-        self.wikidata_url = "https://query.wikidata.org/sparql"
-        self.curriculum_url = "http://localhost:3030/curi/query"
+        self.kg_metadata = get_knowledge_graph_metadata()
+        
+        # Get endpoints from metadata
+        self.wikidata_url = self.kg_metadata.get_endpoint("wikidata") or "https://query.wikidata.org/sparql"
+        self.curriculum_url = self.kg_metadata.get_endpoint("curriculum") or "http://localhost:3030/curi/query"
+        
         self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
-        self.sparqlwd = SPARQLWrapper(
-            self.current_url,
-            agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.36",
-        )
+        user_agent = self.kg_metadata.get_user_agent(source)
+        
+        self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 
     def set_source(self, source: str) -> None:
         """Update the source and endpoint URL"""
         if source != self.source:
             self.source = source
             self.current_url = self.wikidata_url if source == "wikidata" else self.curriculum_url
-            self.sparqlwd = SPARQLWrapper(
-                self.current_url,
-                agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.36",
-            )
+            user_agent = self.kg_metadata.get_user_agent(source)
+            self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 
     def execute_sparql(self, q: str) -> tuple:
         """Execute a SPARQL query"""
@@ -286,7 +288,8 @@ class WikidataGraphAgent:
         """Create a detailed explanation of the process and results"""
         approach = state.approach_used if state.approach_used else "Unknown"
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
 
         # Start with a header and the original question
         explanation = f"""## Question Answering Process

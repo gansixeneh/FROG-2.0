@@ -5,6 +5,7 @@ from google.genai import types
 import os
 import requests
 from ..utils.state import WikidataGraphRAGState
+from ..utils.knowledge_graph_metadata import get_knowledge_graph_metadata
 
 class GoogleSearchNode:
     """Node for searching the internet using Google Search as a fallback"""
@@ -59,7 +60,8 @@ class GoogleSearchNode:
         # Log start
         if hasattr(state, 'visualizer') and state.visualizer:
             knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-            source_name = "curriculum knowledge base" if knowledge_source == "curriculum" else "Wikidata"
+            kg_metadata = get_knowledge_graph_metadata()
+            source_name = kg_metadata.get_name(knowledge_source)
             state.visualizer.log_event(
                 "Google Search Node", 
                 "start",

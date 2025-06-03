@@ -1,33 +1,32 @@
 # backend/agent/langgraph/utils/sparql_wrapper.py
 from SPARQLWrapper import SPARQLWrapper, JSON
 import logging
+from .knowledge_graph_metadata import get_knowledge_graph_metadata
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 class SourceAwareSPARQLWrapper:
-    """SPARQL wrapper that switches endpoints based on source"""
-    
-    WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
-    CURRICULUM_ENDPOINT = "http://localhost:3030/curi/query"
+    """SPARQL wrapper that switches endpoints based on source using metadata"""
     
     def __init__(self, source="wikidata") -> None:
         self.source = source
+        self.kg_metadata = get_knowledge_graph_metadata()
         self.sparql = self._create_sparql_wrapper()
         
     def _create_sparql_wrapper(self) -> SPARQLWrapper:
-        """Create a SPARQLWrapper with the appropriate endpoint"""
-        if self.source == "curriculum":
-            endpoint = self.CURRICULUM_ENDPOINT
-            logger.info(f"Using Curriculum SPARQL endpoint: {endpoint}")
-        else:
-            endpoint = self.WIKIDATA_ENDPOINT
-            logger.info(f"Using Wikidata SPARQL endpoint: {endpoint}")
+        """Create a SPARQLWrapper with the appropriate endpoint from metadata"""
+        endpoint = self.kg_metadata.get_endpoint(self.source)
+        user_agent = self.kg_metadata.get_user_agent(self.source)
+        
+        if not endpoint:
+            # Fallback to default Wikidata endpoint
+            endpoint = "https://query.wikidata.org/sparql"
+            logger.warning(f"No endpoint found for source {self.source}, using default: {endpoint}")
+        
+        logger.info(f"Using SPARQL endpoint for {self.source}: {endpoint}")
             
-        sparql = SPARQLWrapper(
-            endpoint,
-            agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.36",
-        )
+        sparql = SPARQLWrapper(endpoint, agent=user_agent)
         sparql.setReturnFormat(JSON)
         return sparql
     
