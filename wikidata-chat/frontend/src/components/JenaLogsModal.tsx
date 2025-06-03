@@ -221,7 +221,7 @@ ORDER BY ?date`
                 href="https://generous-lark-duly.ngrok-free.app/#/dataset/visualization-logs/query" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-6 py-3 bg-frog-DEFAULT text-white rounded-md hover:bg-frog-dark transition-colors inline-flex items-center border-2 border-frog-dark shadow-lg font-medium"
+                className="px-6 py-3 bg-frog-dark text-white rounded-md inline-flex items-center border-2 border-frog-dark shadow-lg font-medium"
               >
                 <svg 
                   className="w-5 h-5 mr-2" 
