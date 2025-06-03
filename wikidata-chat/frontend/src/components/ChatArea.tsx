@@ -118,7 +118,7 @@ const ChatArea: React.FC = () => {
                 <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                   settings.useGoogleSearch ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                 }`}>
-                  {settings.useGoogleSearch ? 'Google Search ON' : 'Wikidata Only'}
+                  {settings.useGoogleSearch ? 'Google Search ON' : 'Knowledge Graph Only'}
                 </span>
                 <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                   settings.knowledgeSource === 'wikidata' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
