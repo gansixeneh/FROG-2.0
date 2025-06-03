@@ -99,7 +99,7 @@ const MessageInput: React.FC = () => {
       
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | Connected to: {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum (localhost:3030/curi)'}
+        FrOG: Framework of Open GraphRAG | Connected to: {settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 'Curriculum (https://generous-lark-duly.ngrok-free.app/curi/query)'}
       </div>
     </div>
   );
