@@ -160,12 +160,12 @@ const ChatArea: React.FC = () => {
   const processedMessages = processMessages();
 
   return (
-    <div className="p-4 pb-20 h-full overflow-y-auto mx-auto max-w-4xl">
+    <div className="p-4 pb-20 h-full overflow-y-auto overflow-x-hidden mx-auto max-w-4xl">
       {/* Background lily pad */}
       <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full bg-frog-light/30 -z-10"></div>
       
       {/* Messages */}
-      <div className="flex flex-col space-y-4 relative">
+      <div className="flex flex-col space-y-4 relative w-full">
         {processedMessages.map((item, index) => {
           if (item.type === "systemGroup") {
             return (

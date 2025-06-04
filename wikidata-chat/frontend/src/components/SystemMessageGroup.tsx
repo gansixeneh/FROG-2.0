@@ -119,8 +119,8 @@ const SystemMessageGroup: React.FC<SystemMessageGroupProps> = ({ messages }) => 
         </div>
         
         {/* Use overflow-y-auto to ensure we get scrollbars when needed */}
-        <div className="overflow-y-auto pr-2 agent-trace-content" style={{ maxHeight: '100%' }}>
-          <pre className="whitespace-pre-wrap pb-4">{combinedContent}</pre>
+        <div className="overflow-y-auto overflow-x-auto pr-2 agent-trace-content" style={{ maxHeight: '100%' }}>
+          <pre className="whitespace-pre-wrap pb-4 break-words">{combinedContent}</pre>
         </div>
         
         {/* Lily pad decoration */}

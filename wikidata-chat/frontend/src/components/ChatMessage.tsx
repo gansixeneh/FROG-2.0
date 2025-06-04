@@ -111,9 +111,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   const renderUserMessage = () => (
     <div className="flex items-start justify-end relative z-[1]">
-      <div className="user-bubble px-4 py-3 bg-frog-accent text-frog-dark rounded-2xl rounded-tr-none shadow-md max-w-full">
+      <div className="user-bubble px-4 py-3 bg-frog-accent text-frog-dark rounded-2xl rounded-tr-none shadow-md max-w-[85%] overflow-hidden">
         <ReactMarkdown
-          className="prose max-w-none"
+          className="prose break-words w-full"
           remarkPlugins={remarkPlugins}
           rehypePlugins={rehypePlugins}
           remarkRehypeOptions={{ passThrough: ['link'] }}
@@ -121,18 +121,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             code: ({ node, inline, className, children, ...props }) => {
               const match = /language-(\w+)/.exec(className || "");
               return !inline && match ? (
-                <SyntaxHighlighter
-                  language={match[1]}
-                  style={tomorrow as any}
-                  PreTag="div"
-                  wrapLines={true}
-                  showLineNumbers={match[1] === "sparql"}
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
+                <div className="overflow-x-auto">
+                  <SyntaxHighlighter
+                    language={match[1]}
+                    style={tomorrow as any}
+                    PreTag="div"
+                    wrapLines={true}
+                    showLineNumbers={match[1] === "sparql"}
+                    {...props}
+                    customStyle={{ maxWidth: '100%' }}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                </div>
               ) : (
-                <code className={className} {...props}>
+                <code className="bg-frog-light/30 px-1 py-0.5 rounded text-frog-dark break-all" {...props}>
                   {children}
                 </code>
               );
@@ -148,6 +151,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                 {children}
               </a>
             ),
+            pre: ({ node, children, ...props }) => (
+              <pre className="overflow-x-auto w-full" {...props}>
+                {children}
+              </pre>
+            ),
           }}
         >
           {processedContent}
@@ -158,9 +166,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   );
 
   const renderAssistantMessage = () => (
-    <div className="flex items-start">
+    <div className="flex items-start w-full">
       <FrogIcon />
-      <div className="assistant-bubble px-4 py-3 bg-white rounded-2xl rounded-tl-none shadow-md max-w-full relative">
+      <div className="assistant-bubble px-4 py-3 bg-white rounded-2xl rounded-tl-none shadow-md w-full overflow-hidden relative">
         <button
           onClick={() => copyToClipboard(message.content)}
           className="absolute top-2 right-2 p-1 text-frog-dark/50 hover:text-frog-dark transition-colors"
@@ -199,7 +207,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           )}
         </button>
         <ReactMarkdown
-          className="prose max-w-none"
+          className="prose break-words w-full"
           remarkPlugins={remarkPlugins}
           rehypePlugins={rehypePlugins}
           remarkRehypeOptions={{ passThrough: ['link'] }}
@@ -226,19 +234,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                       </svg>
                     </button>
                   </div>
-                  <SyntaxHighlighter
-                    language={match[1]}
-                    style={tomorrow as any}
-                    PreTag="div"
-                    wrapLines={true}
-                    showLineNumbers={match[1] === "sparql"}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
+                  <div className="overflow-x-auto">
+                    <SyntaxHighlighter
+                      language={match[1]}
+                      style={tomorrow as any}
+                      PreTag="div"
+                      wrapLines={true}
+                      showLineNumbers={match[1] === "sparql"}
+                      {...props}
+                      customStyle={{ maxWidth: '100%' }}
+                    >
+                      {String(children).replace(/\n$/, "")}
+                    </SyntaxHighlighter>
+                  </div>
                 </div>
               ) : (
-                <code className="bg-frog-light/30 px-1 py-0.5 rounded text-frog-dark" {...props}>
+                <code className="bg-frog-light/30 px-1 py-0.5 rounded text-frog-dark break-all" {...props}>
                   {children}
                 </code>
               );
@@ -268,6 +279,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               <h3 className="text-md font-bold text-frog-dark mt-3 mb-1" {...props}>
                 {children}
               </h3>
+            ),
+            pre: ({ node, children, ...props }) => (
+              <pre className="overflow-x-auto w-full" {...props}>
+                {children}
+              </pre>
             ),
           }}
         >
