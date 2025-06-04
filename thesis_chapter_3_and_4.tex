@@ -1,0 +1,141 @@
+\chapter{\babTiga}
+\label{bab:3}
+
+In this chapter, we will explain the research methodology we employ, including the big picture of the experiment we conduct, the dataset and knowledge bases, as well as the evaluation metrics.
+
+% \section{Research Methodology}
+% The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+% \begin{enumerate}
+%     \item \textbf{Problem identification and motivation}: Na\"{i}ve RAG systems face challenges with interpretability due to their reliance on opaque vector representations. RAG with KG as the knowledge base, i.e., GraphRAG can partially alleviate this problem. However, there are very few generic frameworks for GraphRAG that solely leverage open-source components, work for all KGs, and do not require training at all. Yet, this is crucial as it allows the users to customize the system according to their preferences while enhancing transparency and accessibility.
+%     \item \textbf{Definition of the objectives for a solution}: Referring to the defined problem, our objective is to develop a RAG system with KG as the primary knowledge base using only open-source components. This framework will provide users with a transparent and flexible system that can be tailored to their specific needs without requiring additional training efforts.
+%     \item \textbf{Design and development}: The GraphRAG architecture is designed using only open-source components. Following the design phase, we develop the actual artifact of the RAG system, ensuring it functions accordingly.
+%     \item \textbf{Demonstration}: After developing the system, the functionality is demonstrated by applying it to the real use case, i.e., QA over Wikidata, DBpedia, and local KG.
+%     \item \textbf{Evaluation}: Quantitatively, the system's performance in generating correct answers will be assessed by employing the Jaccard similarity measure. This metric will ensure that the system not only produces contextually appropriate responses but also adheres to the objective of utilizing only open-source components.
+%     \item \textbf{Communication}: The architecture and implementation details of this pipeline are documented in a research report, such as this paper. Additionally, the experiment findings are also reported to ensure transparency and reproducibility.
+% \end{enumerate}
+\section{Research Methodology}
+The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+\begin{enumerate}
+    \item \textbf{Problem identification and motivation}: While the previous GraphRAG framework provided a foundation for leveraging open-source components with knowledge graphs, several limitations were identified that hindered optimal performance and scalability. First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios. Second, the single-agent architecture lacked the sophisticated reasoning capabilities needed for adaptive strategy selection and intelligent query routing. Third, the absence of specialized model training meant the system could not learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation, relying solely on few-shot prompting approaches. Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively.
+    \item \textbf{Definition of the objectives for a solution}: Building upon the original GraphRAG framework, our objective is to develop a significantly enhanced system that addresses the identified limitations through three main improvements: (1) developing comprehensive dataset generation methods using both template-based and random-walk approaches to create diverse, high-quality training data, (2) implementing specialized model finetuning using these generated datasets to improve NL2SPARQL generation accuracy and reasoning capabilities, and (3) designing a sophisticated multi-agent architecture that can intelligently route queries, adapt strategies based on query complexity and user settings, and provide robust fallback mechanisms while significantly enhancing transparency through comprehensive process visualization, database logging, and reviewable system diagrams that enable users to verify and audit the decision-making process.
+    \item \textbf{Design and development}: The enhanced GraphRAG architecture is developed as three integrated components using only open-source technologies. The first component implements dual dataset generation approaches: template-based generation for linguistically diverse questions and random-walk generation for comprehensive graph coverage through automatic pattern discovery from RDF data. These datasets are designed to be interchangeable based on user needs and knowledge domain requirements. The second component involves finetuning Large Language Models using LoRA (Low-Rank Adaptation) techniques on the generated NL2SPARQL (Natural Language to SPARQL) datasets to improve query generation capabilities and reasoning performance. The third component designs a multi-agent system using LangGraph that orchestrates specialized agents for translation, entity and property extraction, strategy selection, verbalization, entity and property search, SPARQL generation, and answer synthesis, with intelligent routing between different processing paths based on query complexity and user settings.
+    \item \textbf{Demonstration}: After developing the enhanced system, its functionality is demonstrated through comprehensive testing across multiple scenarios. The finetuned models are evaluated on SPARQL generation tasks using both the baseline QALD-9-Plus dataset and our newly generated synthetic datasets from template-based and random-walk approaches. The dataset generation components are tested for quality, diversity, and coverage across different knowledge domains including Wikidata and local knowledge graphs. The multi-agent architecture is demonstrated through real-time question-answering sessions with process visualization, showing adaptive routing between verbalization and SPARQL generation paths. The complete system is applied to multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and Gesis Knowledge Graph to enable comprehensive performance evaluation across different domains.
+    \item \textbf{Evaluation}: The enhanced system undergoes multi-faceted quantitative evaluation. Model finetuning effectiveness is assessed using precision, recall, F1-score, and success rate metrics on SPARQL generation tasks. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. The multi-agent system performance is measured using the original Jaccard similarity metric alongside additional metrics for component-wise analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
+    \item \textbf{Communication}: The enhanced architecture, implementation details, and experimental findings are documented in this research report. Additionally, the multi-agent system includes comprehensive process visualization, database logging, and semantic logging capabilities that provide enhanced transparency into the decision-making process, allowing users to review and audit system operations through saved execution traces and interactive diagrams. All code, datasets, and models are made available to ensure reproducibility and enable further research in open-source GraphRAG systems.
+\end{enumerate}
+
+% ===================================================================================
+
+% \section{Experiment Details}
+% \label{exp-detail}
+% In general, we will be experimenting with two different versions of the pipeline, with the architecture of the first pipeline being simpler than the second one. Additionally, the scope of the first pipeline is also narrower. The details are as follows.
+% \begin{enumerate}
+%     \item The first pipeline is used as the ``prototype'' and lays the foundation for building the second pipeline. As previously mentioned, this pipeline has a narrower scope, focusing specifically on Wikidata. The steps include the entities extraction and linking, SPARQL query generation, as well as answer generation. However, the property candidates are presented directly in the query generation prompt and obtained from the top-100 frequently used properties listed in Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}. This highlights the limitation of the types of questions the system can support, as properties are only taken from this predefined list.
+%     \item Departing from the limitation of the first pipeline, we refine the architecture by incorporating auxiliary vector databases to enable the usage of larger number of properties for the second pipeline. To enhance the performance for simple (single-hop) questions, we also include the text retrieval method using dense text embeddings encoded from verbalized triples (see Subsubsubsection \ref{local-question}). The steps for this pipeline are composed of the entities extraction and linking, retrieval, and answer generation. In the retrieval stage, the system initially attempts to find whether the question can be answered using the verbalized triples of the entity obtained in the first stage or not. If the system is unsure about the answer, the system proceeds with the SPARQL query generation, with the entities retrieved from the KG's corresponding API (if any) or vector database and properties retrieved from the vector database based on the user's question being passed as the prompt context.
+% \end{enumerate}
+
+% Due to the more specific scope covered by the first pipeline, we designed our own dataset to be tested on it (see Subsubsection \ref{dataset-isriti}). We test this first pipeline on two LLMs: Mistral 7B and Mistral NeMo. We use the instruction fine-tuned version of both models.
+
+% On the other hand, to ensure the flexibility of our pipeline, there are three knowledge bases being plugged into the second pipeline: Wikidata, DBpedia, and local KG (see Subsection \ref{knowledgebase}). The datasets we use are QALD-9-Plus \citep{perevalov2022qald9plus} for Wikidata and DBpedia, and the synthetic dataset generated by our dataset generator for the local KG (see Subsubsubsection \ref{dataset-generator}). The LLMs we use for the second pipeline are Mistral NeMo, LLaMA 3.1 8B, Qwen2.5 Coder 7B, and Qwen2.5 7B. Likewise, all models are the instruction fine-tuned versions.
+
+% Greedy decoding is employed for text generation using all models for standardization and reproducibility. For the first pipeline, the maximum number of new tokens allowed for generation is 1000, whereas the second one is 1500. The remaining parameters are left the same as the default ones.
+
+% Lastly, we conduct our evaluation locally using instances with GPU support that are rented on an hourly basis.
+
+\section{Experiment Details}
+\label{exp-detail}
+In general, we will be experimenting with an enhanced GraphRAG system that builds upon the original pipeline through three main improvements. The enhanced system integrates specialized model finetuning for both entity property extraction and SPARQL generation, comprehensive dataset generation, and a sophisticated multi-agent architecture. Additionally, the scope of our enhanced system extends beyond the original framework to provide more robust question-answering capabilities with intelligent strategy selection and adaptive processing paths, while significantly enhancing transparency through comprehensive process visualization, database logging, and reviewable system diagrams. The details are as follows.
+
+\subsection{Overall Architecture Overview}
+The enhanced GraphRAG system operates through a coordinated workflow that integrates our three main improvements into a cohesive question-answering pipeline. The system begins with a multi-agent orchestration layer that intelligently routes incoming questions through specialized processing agents. These agents leverage finetuned models for improved entity property extraction and SPARQL generation, and utilize enhanced datasets for training and evaluation purposes.
+
+The overall workflow follows this pattern: (1) a user question enters the multi-agent system through the translation and entity extraction agents, (2) the strategy selection agent determines the optimal processing path based on query complexity and user settings, (3) the system either follows a direct verbalization approach for simple queries or generates SPARQL queries using finetuned models for complex questions, with verbalization failure automatically falling back to SPARQL generation, (4) entity and property search agents utilize the comprehensive generated datasets to improve entity and property matching, and (5) the answer generation agent synthesizes the final response with appropriate fallback mechanisms.
+
+This integrated approach addresses the limitations of the previous adaptive processing system by providing enhanced routing mechanisms, specialized model capabilities for both entity property extraction and SPARQL generation, and comprehensive knowledge coverage through enhanced dataset generation.
+
+\subsection{Original Pipeline (Baseline)}
+To establish a proper comparison baseline, we maintain the original GraphRAG framework as described in the previous work. The original system consists of two pipeline versions: a prototype pipeline (v1) focused specifically on Wikidata with limited property scope, and a refined pipeline (v2) that supports multiple knowledge bases but lacks sophisticated reasoning capabilities.
+
+The original pipeline v1 serves as our initial baseline, with steps including entity extraction and linking, SPARQL query generation, and answer generation using a predefined list of top-100 frequently used Wikidata properties. The original pipeline v2 provides our main baseline comparison, incorporating entities extraction and linking, retrieval mechanisms, and answer generation with support for Wikidata, DBpedia, and local KGs.
+
+However, both original pipelines are limited by their single-agent architecture, lack of specialized model training, and constrained dataset generation capabilities. These limitations highlight the need for our enhanced approach.
+
+\subsection{Enhanced Pipeline Architecture}
+Departing from the limitations of the original pipelines, we develop a significantly enhanced architecture through our three main improvements. The enhanced system, implemented as the FrOG (Framework of Open GraphRAG) system, incorporates a sophisticated multi-agent workflow that can adaptively process questions of varying complexity.
+
+The enhanced pipeline operates through the following conceptual components:
+
+\begin{enumerate}
+    \item \textbf{Multi-Agent Orchestration}: The system employs a LangGraph-based workflow that coordinates multiple specialized agents, each responsible for specific aspects of the question-answering process. This includes translation agents for multilingual support, entity extraction agents using finetuned models, strategy selection agents for intelligent routing, and specialized processing agents for different query types.
+    
+    \item \textbf{Adaptive Strategy Selection}: Unlike the fixed processing paths of the original system, our enhanced architecture intelligently determines the optimal approach based on question complexity. Simple questions follow a direct verbalization path, while complex multi-hop queries utilize the sophisticated SPARQL generation pipeline with finetuned models. In cases where verbalization fails for simple questions, the system automatically falls back to SPARQL generation to ensure robust query processing.
+    
+    \item \textbf{Enhanced Model Integration}: The system incorporates finetuned Large Language Models specifically trained on both entity property extraction and NL2SPARQL tasks using our comprehensive generated datasets. These models provide improved accuracy in both entity and property identification as well as SPARQL query generation, offering better reasoning capabilities for complex knowledge graph queries.
+    
+    \item \textbf{Comprehensive Dataset Utilization}: The enhanced pipeline leverages both template-based and pattern-based generated datasets for training, evaluation, and property enhancement. This provides broader coverage of query types and improved handling of diverse knowledge domains beyond the limitations of predefined property lists.
+    
+    \item \textbf{Robust Fallback Mechanisms}: The system includes multiple levels of fallback processing, from verbalization failure to SPARQL generation, and from knowledge graph querying to web search when enabled, ensuring robust performance across different query scenarios.
+\end{enumerate}
+
+The enhanced architecture supports multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and Gesis Knowledge Graph, while providing significantly improved processing capabilities, broader query coverage, and more reliable performance through its integrated multi-component design.
+
+For model selection, we utilize multiple finetuned versions of state-of-the-art models. The LLMs we use for the enhanced pipeline are \texttt{Mistral NeMo}, \texttt{LLaMA 3.1}, \texttt{Qwen2.5 Coder}, and \texttt{Qwen2.5}. Likewise, all models are the instruction fine-tuned versions. The multi-agent system supports configurable model providers for different processing tasks. The evaluation encompasses both the original Jaccard similarity metrics and additional comprehensive metrics for component-wise analysis.
+
+Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to ensure computational scalability and reproducibility of our enhanced approach compared to the original baseline systems.
+
+% =============================================================================
+
+\section{Knowledge Bases}
+\subsection{Wikidata}
+\subsection{DBpedia}
+\subsection{Local KGs}
+
+\section{Ontology}
+\subsection{Wikidata}
+\subsection{DBpedia}
+\subsection{Local KGs}
+
+\section{Dataset Generation Methodology}
+\subsection{Template-Based Dataset Generation}
+\subsection{Random-Walk Dataset Generation}
+
+\section{Model Finetuning Methodology}
+\subsection{Entity and Property Extraction Model}
+\subsection{SPARQL Generation Model}
+
+\section{Multi-Agent Architecture Design}
+\subsection{Agent Workflow Design}
+\subsection{Strategy Selection and Fallback Mechanisms}
+
+\section{Evaluation Metrics}
+
+\chapter{System Implementation}
+\label{bab:4}
+
+\section{Dataset Generation Implementation}
+\subsection{Template-Based Implementation}
+\subsection{Random-Walk Implementation}
+\subsection{Post-Processing Pipeline}
+
+\section{Model Finetuning Implementation}
+\subsection{Finetuning Infrastructure}
+\subsection{Entity and Property Extraction Model}
+\subsection{SPARQL Generation Model}
+
+\section{Multi-Agent System Implementation}
+\subsection{LangGraph Architecture}
+\subsection{Specialized Agent Nodes}
+\subsection{Multi-LLM Factory Integration}
+
+\section{System Integration and Communication}
+\subsection{Backend Architecture}
+\subsection{Frontend Implementation}
+\subsection{Knowledge Graph Integration}
+
+\section{Visualization and Logging System}
+\subsection{RDF-Based Logging}
+\subsection{Real-Time Visualization}
+
+\section{Libraries and Resources}
+
+\section{Computational Setup}

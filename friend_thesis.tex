@@ -1,0 +1,695 @@
+\chapter{\babTiga}
+\label{bab:3}
+
+In this chapter, we will explain the research methodology we employ, including the big picture of the experiment we conduct, the dataset and knowledge bases, as well as the evaluation metrics.
+
+% \section{Research Methodology}
+% The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+% \begin{enumerate}
+%     \item \textbf{Problem identification and motivation}: Na\"{i}ve RAG systems face challenges with interpretability due to their reliance on opaque vector representations. RAG with KG as the knowledge base, i.e., GraphRAG can partially alleviate this problem. However, there are very few generic frameworks for GraphRAG that solely leverage open-source components, work for all KGs, and do not require training at all. Yet, this is crucial as it allows the users to customize the system according to their preferences while enhancing transparency and accessibility.
+%     \item \textbf{Definition of the objectives for a solution}: Referring to the defined problem, our objective is to develop a RAG system with KG as the primary knowledge base using only open-source components. This framework will provide users with a transparent and flexible system that can be tailored to their specific needs without requiring additional training efforts.
+%     \item \textbf{Design and development}: The GraphRAG architecture is designed using only open-source components. Following the design phase, we develop the actual artifact of the RAG system, ensuring it functions accordingly.
+%     \item \textbf{Demonstration}: After developing the system, the functionality is demonstrated by applying it to the real use case, i.e., QA over Wikidata, DBpedia, and local KG.
+%     \item \textbf{Evaluation}: Quantitatively, the system's performance in generating correct answers will be assessed by employing the Jaccard similarity measure. This metric will ensure that the system not only produces contextually appropriate responses but also adheres to the objective of utilizing only open-source components.
+%     \item \textbf{Communication}: The architecture and implementation details of this pipeline are documented in a research report, such as this paper. Additionally, the experiment findings are also reported to ensure transparency and reproducibility.
+% \end{enumerate}
+\section{Research Methodology}
+The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+\begin{enumerate}
+    \item \textbf{Problem identification and motivation}: While the previous GraphRAG framework provided a foundation for leveraging open-source components with knowledge graphs, several limitations were identified that hindered optimal performance and scalability. First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios. Second, the single-agent architecture lacked the sophisticated reasoning capabilities needed for adaptive strategy selection and intelligent query routing. Third, the absence of specialized model training meant the system could not learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation, relying solely on few-shot prompting approaches. Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively.
+    \item \textbf{Definition of the objectives for a solution}: Building upon the original GraphRAG framework, our objective is to develop a significantly enhanced system that addresses the identified limitations through three main improvements: (1) developing comprehensive dataset generation methods using both template-based and random-walk approaches to create diverse, high-quality training data, (2) implementing specialized model finetuning using these generated datasets to improve NL2SPARQL generation accuracy and reasoning capabilities, and (3) designing a sophisticated multi-agent architecture that can intelligently route queries, adapt strategies based on query complexity and user settings, and provide robust fallback mechanisms while significantly enhancing transparency through comprehensive process visualization, database logging, and reviewable system diagrams that enable users to verify and audit the decision-making process.
+    \item \textbf{Design and development}: The enhanced GraphRAG architecture is developed as three integrated components using only open-source technologies. The first component implements dual dataset generation approaches: template-based generation for linguistically diverse questions and random-walk generation for comprehensive graph coverage through automatic pattern discovery from RDF data. These datasets are designed to be interchangeable based on user needs and knowledge domain requirements. The second component involves finetuning Large Language Models using LoRA (Low-Rank Adaptation) techniques on the generated NL2SPARQL (Natural Language to SPARQL) datasets to improve query generation capabilities and reasoning performance. The third component designs a multi-agent system using LangGraph that orchestrates specialized agents for translation, entity and property extraction, strategy selection, verbalization, entity and property search, SPARQL generation, and answer synthesis, with intelligent routing between different processing paths based on query complexity and user settings.
+    \item \textbf{Demonstration}: After developing the enhanced system, its functionality is demonstrated through comprehensive testing across multiple scenarios. The finetuned models are evaluated on SPARQL generation tasks using both the baseline QALD-9-Plus dataset and our newly generated synthetic datasets from template-based and random-walk approaches. The dataset generation components are tested for quality, diversity, and coverage across different knowledge domains including Wikidata and local knowledge graphs. The multi-agent architecture is demonstrated through real-time question-answering sessions with process visualization, showing adaptive routing between verbalization and SPARQL generation paths. The complete system is applied to multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and Gesis Knowledge Graph to enable comprehensive performance evaluation across different domains.
+    \item \textbf{Evaluation}: The enhanced system undergoes multi-faceted quantitative evaluation. Model finetuning effectiveness is assessed using precision, recall, F1-score, and success rate metrics on SPARQL generation tasks. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. The multi-agent system performance is measured using the original Jaccard similarity metric alongside additional metrics for component-wise analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
+    \item \textbf{Communication}: The enhanced architecture, implementation details, and experimental findings are documented in this research report. Additionally, the multi-agent system includes comprehensive process visualization, database logging, and semantic logging capabilities that provide enhanced transparency into the decision-making process, allowing users to review and audit system operations through saved execution traces and interactive diagrams. All code, datasets, and models are made available to ensure reproducibility and enable further research in open-source GraphRAG systems.
+\end{enumerate}
+
+% ===================================================================================
+
+% \section{Experiment Details}
+% \label{exp-detail}
+% In general, we will be experimenting with two different versions of the pipeline, with the architecture of the first pipeline being simpler than the second one. Additionally, the scope of the first pipeline is also narrower. The details are as follows.
+% \begin{enumerate}
+%     \item The first pipeline is used as the ``prototype'' and lays the foundation for building the second pipeline. As previously mentioned, this pipeline has a narrower scope, focusing specifically on Wikidata. The steps include the entities extraction and linking, SPARQL query generation, as well as answer generation. However, the property candidates are presented directly in the query generation prompt and obtained from the top-100 frequently used properties listed in Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}. This highlights the limitation of the types of questions the system can support, as properties are only taken from this predefined list.
+%     \item Departing from the limitation of the first pipeline, we refine the architecture by incorporating auxiliary vector databases to enable the usage of larger number of properties for the second pipeline. To enhance the performance for simple (single-hop) questions, we also include the text retrieval method using dense text embeddings encoded from verbalized triples (see Subsubsubsection \ref{local-question}). The steps for this pipeline are composed of the entities extraction and linking, retrieval, and answer generation. In the retrieval stage, the system initially attempts to find whether the question can be answered using the verbalized triples of the entity obtained in the first stage or not. If the system is unsure about the answer, the system proceeds with the SPARQL query generation, with the entities retrieved from the KG's corresponding API (if any) or vector database and properties retrieved from the vector database based on the user's question being passed as the prompt context.
+% \end{enumerate}
+
+% Due to the more specific scope covered by the first pipeline, we designed our own dataset to be tested on it (see Subsubsection \ref{dataset-isriti}). We test this first pipeline on two LLMs: Mistral 7B and Mistral NeMo. We use the instruction fine-tuned version of both models.
+
+% On the other hand, to ensure the flexibility of our pipeline, there are three knowledge bases being plugged into the second pipeline: Wikidata, DBpedia, and local KG (see Subsection \ref{knowledgebase}). The datasets we use are QALD-9-Plus \citep{perevalov2022qald9plus} for Wikidata and DBpedia, and the synthetic dataset generated by our dataset generator for the local KG (see Subsubsubsection \ref{dataset-generator}). The LLMs we use for the second pipeline are Mistral NeMo, LLaMA 3.1 8B, Qwen2.5 Coder 7B, and Qwen2.5 7B. Likewise, all models are the instruction fine-tuned versions.
+
+% Greedy decoding is employed for text generation using all models for standardization and reproducibility. For the first pipeline, the maximum number of new tokens allowed for generation is 1000, whereas the second one is 1500. The remaining parameters are left the same as the default ones.
+
+% Lastly, we conduct our evaluation locally using instances with GPU support that are rented on an hourly basis.
+
+\section{Experiment Details}
+\label{exp-detail}
+In general, we will be experimenting with an enhanced GraphRAG system that builds upon the original pipeline through three main improvements. The enhanced system integrates specialized model finetuning for both entity property extraction and SPARQL generation, comprehensive dataset generation, and a sophisticated multi-agent architecture. Additionally, the scope of our enhanced system extends beyond the original framework to provide more robust question-answering capabilities with intelligent strategy selection and adaptive processing paths, while significantly enhancing transparency through comprehensive process visualization, database logging, and reviewable system diagrams. The details are as follows.
+
+\subsection{Overall Architecture Overview}
+The enhanced GraphRAG system operates through a coordinated workflow that integrates our three main improvements into a cohesive question-answering pipeline. The system begins with a multi-agent orchestration layer that intelligently routes incoming questions through specialized processing agents. These agents leverage finetuned models for improved entity property extraction and SPARQL generation, and utilize enhanced datasets for training and evaluation purposes.
+
+The overall workflow follows this pattern: (1) a user question enters the multi-agent system through the translation and entity extraction agents, (2) the strategy selection agent determines the optimal processing path based on query complexity and user settings, (3) the system either follows a direct verbalization approach for simple queries or generates SPARQL queries using finetuned models for complex questions, with verbalization failure automatically falling back to SPARQL generation, (4) entity and property search agents utilize the comprehensive generated datasets to improve entity and property matching, and (5) the answer generation agent synthesizes the final response with appropriate fallback mechanisms.
+
+This integrated approach addresses the limitations of the previous adaptive processing system by providing enhanced routing mechanisms, specialized model capabilities for both entity property extraction and SPARQL generation, and comprehensive knowledge coverage through enhanced dataset generation.
+
+\subsection{Original Pipeline (Baseline)}
+To establish a proper comparison baseline, we maintain the original GraphRAG framework as described in the previous work. The original system consists of two pipeline versions: a prototype pipeline (v1) focused specifically on Wikidata with limited property scope, and a refined pipeline (v2) that supports multiple knowledge bases but lacks sophisticated reasoning capabilities.
+
+The original pipeline v1 serves as our initial baseline, with steps including entity extraction and linking, SPARQL query generation, and answer generation using a predefined list of top-100 frequently used Wikidata properties. The original pipeline v2 provides our main baseline comparison, incorporating entities extraction and linking, retrieval mechanisms, and answer generation with support for Wikidata, DBpedia, and local KGs.
+
+However, both original pipelines are limited by their single-agent architecture, lack of specialized model training, and constrained dataset generation capabilities. These limitations highlight the need for our enhanced approach.
+
+\subsection{Enhanced Pipeline Architecture}
+Departing from the limitations of the original pipelines, we develop a significantly enhanced architecture through our three main improvements. The enhanced system, implemented as the FrOG (Framework of Open GraphRAG) system, incorporates a sophisticated multi-agent workflow that can adaptively process questions of varying complexity.
+
+The enhanced pipeline operates through the following conceptual components:
+
+\begin{enumerate}
+    \item \textbf{Multi-Agent Orchestration}: The system employs a LangGraph-based workflow that coordinates multiple specialized agents, each responsible for specific aspects of the question-answering process. This includes translation agents for multilingual support, entity extraction agents using finetuned models, strategy selection agents for intelligent routing, and specialized processing agents for different query types.
+    
+    \item \textbf{Adaptive Strategy Selection}: Unlike the fixed processing paths of the original system, our enhanced architecture intelligently determines the optimal approach based on question complexity. Simple questions follow a direct verbalization path, while complex multi-hop queries utilize the sophisticated SPARQL generation pipeline with finetuned models. In cases where verbalization fails for simple questions, the system automatically falls back to SPARQL generation to ensure robust query processing.
+    
+    \item \textbf{Enhanced Model Integration}: The system incorporates finetuned Large Language Models specifically trained on both entity property extraction and NL2SPARQL tasks using our comprehensive generated datasets. These models provide improved accuracy in both entity and property identification as well as SPARQL query generation, offering better reasoning capabilities for complex knowledge graph queries.
+    
+    \item \textbf{Comprehensive Dataset Utilization}: The enhanced pipeline leverages both template-based and pattern-based generated datasets for training, evaluation, and property enhancement. This provides broader coverage of query types and improved handling of diverse knowledge domains beyond the limitations of predefined property lists.
+    
+    \item \textbf{Robust Fallback Mechanisms}: The system includes multiple levels of fallback processing, from verbalization failure to SPARQL generation, and from knowledge graph querying to web search when enabled, ensuring robust performance across different query scenarios.
+\end{enumerate}
+
+The enhanced architecture supports multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and Gesis Knowledge Graph, while providing significantly improved processing capabilities, broader query coverage, and more reliable performance through its integrated multi-component design.
+
+For model selection, we utilize multiple finetuned versions of state-of-the-art models. The LLMs we use for the enhanced pipeline are \texttt{Mistral NeMo}, \texttt{LLaMA 3.1}, \texttt{Qwen2.5 Coder}, and \texttt{Qwen2.5}. Likewise, all models are the instruction fine-tuned versions. The multi-agent system supports configurable model providers for different processing tasks. The evaluation encompasses both the original Jaccard similarity metrics and additional comprehensive metrics for component-wise analysis.
+
+Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to ensure computational scalability and reproducibility of our enhanced approach compared to the original baseline systems.
+
+% =============================================================================
+
+\section{Knowledge Bases} \label{knowledgebase}
+In this subsection, we will explain the knowledge bases used in testing the system: Wikidata, DBpedia, and the local curriculum KG. We use Wikidata and DBpedia to represent open knowledge graphs, while the local curriculum KG serves as a representative of enterprise knowledge graphs.
+
+\subsection{Wikidata}
+Wikidata, originally launched in October 2012 by Wikimedia Foundation \citep{vrandevcic2014}, is an openly accessible, collaborative knowledge base that is editable by anyone \citep{waagmeester2020}. Consequently, the scope of knowledge covered by Wikidata is nearly boundless, just like its sister project, Wikipedia\footnote{\url{https://www.wikipedia.org/}}. However, in contrast to Wikipedia which provides knowledge primarily in the free text format, Wikidata represents information in the structured format \citep{waagmeester2020}. The core structure of Wikidata is made up of items, properties, and values, which are connected in statements that closely resemble RDF triples \citep{Cantallops2019ASL}. Finally, the knowledge in Wikidata can be retrieved by SPARQL querying through Wikidata Query Service (WDQS)\footnote{\url{https://query.wikidata.org/}}, whose interface can be seen in \pic~\ref{fig:wdqs-ui}. The query example used in \pic~\ref{fig:wdqs-ui} returns the URI of the instances (\texttt{wdt:P31}) of Cat (\texttt{wd:Q146}) alongside with its label. The Wikidata page of \texttt{wdt:P31} and \texttt{wd:Q146} can be seen in \pic~\ref{fig:wd-instanceof} and \pic~\ref{fig:wd-cat}, respectively.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/wdqs.png}
+    \caption{Wikidata Query Service's Interface}
+    \label{fig:wdqs-ui}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/wd-instanceof.png}
+    \caption{Wikidata Page of ``instance of'' (\texttt{wdt:P31})}
+    \label{fig:wd-instanceof}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/cat-wd.png}
+    \caption{Wikidata Page of ``house cat'' (\texttt{wd:Q146})}
+    \label{fig:wd-cat}
+\end{figure}
+
+\subsection{DBpedia}
+DBpedia project is an initiative to extract structured information on Wikipedia and making this information available in the Web \citep{BIZER2009154}. This structured information in the form of open linked data (KG) is represented in RDF triples. Each entity in DBpedia is identified by a URI in the form of \texttt{http://dbpedia.org/resource/\textbf{name}}, where \texttt{\textbf{name}} is obtained from the URL of the corresponding Wikipedia article, which is in the form of \texttt{http://en.wikipedia.org/wiki/\textbf{name}} \citep{auer2007dbpedia}. Similar to Wikidata, DBpedia also provides SPARQL endpoint\footnote{\url{https://dbpedia.org/sparql}} to query the knowledge base, which is hosted on Virtuoso Universal Server\footnote{\url{https://virtuoso.openlinksw.com/}}. Additionally, the ontology (schema) for DBpedia is available, created through crowdsourcing effort.
+
+The interface of the DBpedia's SPARQL Query Editor to query the knowledge base through its endpoint API can be seen in \pic~\ref{fig:dbpedia-qs}. The example query mentioned in \pic~\ref{fig:dbpedia-qs} returns the birth date (\texttt{dbo:birthDate}) of Lionel Messi (\texttt{dbr:Lionel\_Messi}). Just like Wikidata, each resource in DBpedia has its own dedicated page as well. The page for \texttt{dbo:birthDate} can be seen in \pic~\ref{fig:dbp-dob} and \texttt{dbr:Lionel\_Messi} in \pic~\ref{fig:dbp-messi}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbpedia-qs-ui.png}
+    \caption{DBpedia's SPARQL Query Editor Interface}
+    \label{fig:dbpedia-qs}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbp-dob.png}
+    \caption{DBpedia Page of ``birth date'' (\texttt{dbo:birthDate})}
+    \label{fig:dbp-dob}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbp-messi.png}
+    \caption{DBpedia Page of ``Lionel Messi'' (\texttt{dbr:Lionel\_Messi})}
+    \label{fig:dbp-messi}
+\end{figure}
+
+\subsection{Local KGs}
+\label{local-desc}
+For the local KG, we leverage Fasilkom UI's Computer Science Major curriculum knowledge graph built by \cite{githubdaniel} as hosted on GitHub. This KG is extracted from the Fasilkom UI's 2024 Curriculum Guidebook for Computer Science Major, which is publicly available through Fasilkom UI's LMS\footnote{\url{https://scele.cs.ui.ac.id/pluginfile.php/1279/block_html/content/buku_panduan_kur_2024_ilmu_komputer.pdf}}. Specifically, the content is obtained from page 122 to 186, covering the syllabus of all courses. Additionally, some auxiliary information is manually added by the creator. The retrieved content is then converted into KG with the help of GLiNER \citep{zaratiana2023glinergeneralistmodelnamed} to extract entities from the unstructured text data.
+
+The constructed KG is saved in the form of triples and exported into a \texttt{txt} file. In total, there are 1628 triples, containing the information of courses. The number of properties available in the dataset is 10, which includes \texttt{kode mata kuliah}, \texttt{kategori mata kuliah}, \texttt{disebut juga}, \texttt{prasyarat}, \texttt{bobot SKS}, \texttt{metode evaluasi}, \texttt{lab}, \texttt{deskripsi}, \texttt{topik}, and \texttt{cpmk}. Some triples about the ``Basis Data'' course can be seen in Code \ref{code:samples-triples}.
+
+\lstinputlisting[caption=Triples about ``Basis Data'' Course, label=code:samples-triples, style=uistyle]{assets/codes/sample-triples.txt}
+
+We convert the ``raw'' triples into RDF triples, since our system only supports SPARQL for query generation, with the total of 874 triples. Prior to this, each name is translated into English, except for the value of \texttt{disebut juga} property. We define the prefix to be \texttt{ns1:}, representing \texttt{http://example.org/}. The mapping of each property---with some exclusions on properties we think are unnecessary\footnote{The objects of such properties are not ``neat'' enough to be either entity or literal.}---is defined in Table \ref{table-propmap}. Additionally, we define \texttt{ns1:course}, \texttt{ns1:evaluation}, \texttt{ns1:course\_category}, and \texttt{ns1:research\_lab} as the classes. A more detailed ontology definition is described in Subsubsection \ref{ontology-local}. 
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.5\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Original Dataset}} & \textbf{RDF Dataset} \\
+    \hline
+    \RaggedRight{\texttt{kode mata kuliah}} & \texttt{ns1:has\_course\_code} \\
+    \hline
+    \RaggedRight{\texttt{kategori mata kuliah}} & \texttt{ns1:has\_course\_category} \\
+    \hline
+    \RaggedRight{\texttt{disebut juga}} & \texttt{ns1:also\_known\_as} \\
+    \hline
+    \RaggedRight{\texttt{prasyarat}} & \texttt{ns1:has\_prerequisite} \newline \texttt{ns1:has\_prerequisite\_course} \newline \texttt{ns1:has\_minimum\_credits} \\
+    \hline
+    \RaggedRight{\texttt{bobot SKS}} & \texttt{ns1:has\_credits} \\
+    \hline
+    \RaggedRight{\texttt{metode evaluasi}} & \texttt{ns1:has\_evaluation\_method} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Properties Mapping}
+\label{table-propmap}
+\end{table}
+
+The triples in Code \ref{code:samples-triples} if converted into RDF triples would result in the following triples, as in Code \ref{code:samples-triples-ttl}.
+
+\lstinputlisting[caption=RDF Version of Code \ref{code:samples-triples}, label={code:samples-triples-ttl}]{assets/codes/sample-triple.ttl}
+
+\section{Ontology}
+The ontology here refers to the properties and classes defined in the KG. In this section, we will delve into the ontology details for each KG.
+
+\subsection{Wikidata}
+For Wikidata, we obtain all properties that exist in the KG using its SPARQL endpoint. Specifically, the URI of each property and its human-readable label are retrieved to be provided as context using hybrid search. However, since the classes are searchable through Wikidata API (along with entities), we do not include them in this section.
+
+\subsection{DBpedia}
+For DBpedia, we use the provided DBpedia's T-Box Ontology\footnote{\url{https://www.dbpedia.org/resources/ontology/}}. This is an OWL file containing information on classes, object properties, and data properties that exist in DBpedia. However, the available information is limited to properties and classes whose prefix started with \texttt{dbo:} or \texttt{http://dbpedia.org/ontology/}. For each property or class, the human-readable label is retrieved for property and class linking purposes as in Subsubsection \ref{global-question} using hybrid search. Additionally, we also obtain the domain and range of each property (if applicable) which we include in the SPARQL query generation prompt for additional context.
+
+\subsection{Local KGs}
+\label{ontology-local}
+For the local curriculum KG as described in Subsubsection \ref{local-desc}, the properties and classes are obtained directly from the RDF graph. The complete ontology we defined is as follows in Table \ref{table-ont-localkg}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| c | c | c |}
+    \hline
+    \RaggedRight{\texttt{ns1:also\_known\_as}} & \texttt{rdfs:domain} & \texttt{ns1:course OR ns1:research\_lab}\\
+    \RaggedRight{\texttt{ns1:also\_known\_as}} & \texttt{rdfs:range} & \texttt{xsd:string}\\
+    \RaggedRight{\texttt{ns1:has\_course\_category}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_course\_category}} & \texttt{rdfs:range} & \texttt{ns1:course\_category}\\
+    \RaggedRight{\texttt{ns1:has\_course\_code}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_course\_code}} & \texttt{rdfs:range} & \texttt{xsd:string}\\
+    \RaggedRight{\texttt{ns1:has\_credits}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_credits}} & \texttt{rdfs:range} & \texttt{xsd:integer}\\
+    \RaggedRight{\texttt{ns1:has\_evaluation\_method}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_evaluation\_method}} & \texttt{rdfs:range} & \texttt{ns1:evaluation}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:range} & \texttt{xsd:integer}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:range} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_research\_group}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_research\_group}} & \texttt{rdfs:range} & \texttt{ns1:research\_lab}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:subPropertyOf} & \texttt{ns1:has\_prerequisite}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:subPropertyOf} & \texttt{ns1:has\_prerequisite}\\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ontology of the Local Curriculum KG}
+\label{table-ont-localkg}
+\end{table}
+
+\section{Dataset}
+We will explain the datasets we leverage to assess the performance of our proposed system.
+
+\subsection{Pipeline v1 Dataset}
+\label{dataset-isriti}
+Since the first pipeline is exclusively for Wikidata, we hand-crafted the dataset for evaluation from Wikidata as retrieved on August 28th, 2024. This was done to ensure that the dataset complies with the requirements, such as the used properties must be in the top-100 list and the SPARQL queries are designed to return a small number of rows. Additionally, this strategy helps maintain the output within the manageable limit of the LLM's context window. The questions in this evaluation dataset are also distinct from those used during few-shot learning to prevent any potential data leakage.
+
+The dataset consists of 31 rows encompassing three main domains (Wikidata classes): animal, artist, and written work. Specifically, there are 8 rows within the animal domain, 11 rows within the artist domain, and 12 rows within the written work domain. Some examples of the data are shown in Table \ref{table-queries-v1}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.35\textwidth} | m{0.55\textwidth} |  m{0.1\textwidth} |}
+    \hline
+    \textbf{Query Name} & \textbf{SPARQL Query} & \textbf{Category}\\
+    \hline
+    List of Mammals by Name & \texttt{SELECT ?mammal ?mammalLabel WHERE \{ ?mammal wdt:P31 wd:Q7377 . SERVICE wikibase:label \{ bd:serviceParam wikibase:language 'en' . \} \}\}} & Animal \\
+    \hline
+    Date of birth of Leonardo da Vinci & \texttt{SELECT ?date\_of\_birth WHERE \{ wd:Q762 wdt:P569 ?date\_of\_birth .\}} & Artist \\
+    \hline
+    Number of works authored by J. R. R. Tolkien & \texttt{SELECT (COUNT(*) AS ?count) WHERE \{ ?work wdt:P50 wd:Q892 .\}} & Written Work \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Queries from Dataset v1}
+\label{table-queries-v1}
+\end{table}
+
+
+\subsection{Pipeline v2 Dataset}
+For the second pipeline, we leverage these datasets.
+\subsubsection{Wikidata and DBpedia} \label{pipeline-v2-dataset-wikidata-dbpedia}
+For Wikidata and DBpedia, we leverage the QALD-9-Plus \citep{perevalov2022qald9plus} dataset. QALD-9-Plus is a multilingual KGQA benchmark dataset for Wikidata and DBpedia. It covers 10 languages: English, German, Russian, French, Spanish, Armenian, Belarusian, Lithuanian, Bashkir, and Ukrainian. The dataset consists of two splits: train split (408 unique questions) and test split (150 unique questions). However, in this work, we will only use the former split in the English language.
+
+Following our research scope and the obtained ontology information for DBpedia (which only supports properties and classes with the \texttt{dbo:} prefix), we filter out dataset entries whose queries incorporate resources that use other than \texttt{dbo:} prefix and return either resource or number only. We also ensure that each entry we take for DBpedia also has the equivalent Wikidata query.
+
+Upon filtering irrelevant entries, we downsample the filtered set to 14 entries for in-context learning in SPARQL generation (Subsubsection \ref{global-question}) and 65 entries for the evaluation of the entire system. We leverage the cosine similarity downsampling technique to obtain the subset of entries that are the least relevant to the others to ensure each ``cluster'' has at least a representative in the subset. The code used for this downsampling is available in Code \ref{code:downsampling}. In general, the steps taken are as follows.
+
+\begin{enumerate}
+    \item Encode all questions into \texttt{all-mpnet-base-v2} version of MPNet embeddings.
+    \item Compute pairwise cosine similarities for each question.
+    \item Average the cosine similarity values for each question.
+    \item Sort the question based on the average cosine similarity in ascending order.
+    \item Select the top-$k$ questions with the lowest average cosine similarity. In this case, we have obtained the $k$ questions that are the least similar to the rest.
+\end{enumerate}
+
+\lstinputlisting[language=python, caption=Python Code for Dataset Downsampling, label={code:downsampling}, breaklines=true]{assets/codes/downsampling.py}
+
+Some examples of downsampled data can be seen in the following Table \ref{table-queries-v2}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.2\textwidth} | m{0.4\textwidth} |  m{0.4\textwidth} |}
+    \hline
+    \textbf{Query Name} & \textbf{Wikidata Query} & \textbf{DBpedia Query}\\
+    \hline
+    Give me all movies with Tom Cruise. & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P161 wd:Q37079. \}} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:Film ; dbo:starring dbr:Tom\_Cruise \}} \\
+    \hline
+    In which countries can you pay using the West African CFA franc? & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P38 wd:Q861690 . \}} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri dbo:currency dbr:West\_African\_CFA\_franc \}} \\
+    \hline
+    How much did Pulp Fiction cost? & \texttt{SELECT DISTINCT ?value WHERE \{ wd:Q104123 wdt:P2130 ?value . \}} & \texttt{SELECT DISTINCT ?n WHERE \{ dbr:Pulp\_Fiction dbo:budget ?n \}} \\
+    \hline
+    Which countries have more than two official languages? & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P31 wd:Q6256 . ?uri wdt:P37 ?language . \} GROUP BY ?uri HAVING(COUNT(?language)>2)} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:Country ; dbo:officialLanguage ?language \} GROUP BY ?uri HAVING ( COUNT(?language) > 2 )} \\
+    \hline
+    How many languages are spoken in Turkmenistan? & \texttt{SELECT (COUNT(DISTINCT ?x) AS ?c) WHERE \{ dbr:Turkmenistan dbo:language ?x \}} & \texttt{SELECT (COUNT(DISTINCT ?uri) as ?c) WHERE \{ wd:Q874 wdt:P2936 ?uri . \}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Queries from Dataset v2 for Wikidata and DBpedia (QALD)}
+\label{table-queries-v2}
+\end{table}
+
+To evaluate the multilingual capabilities of the system, we also translated the English dataset into Indonesian using the GPT-4 model of ChatGPT. This translation allows us to test the system's performance in processing non-English queries and ensures broader applicability to diverse linguistic contexts.
+
+\subsubsection{Local KGs} \label{dataset-generator}
+Given this framework's KG-agnostic nature, we also provide an automatic dataset generation system which data can be used for training and testing, especially for local KGs. This system supports the generation of four types of questions, as described in Table \ref{table-questiontype}. Additionally, queries with \texttt{COUNT} clause can also be generated, leveraging the same triple patterns. The output of this system is a dataset that consists of three columns: the question in natural language, the appropriate SPARQL query, and the category of the question. Below are the five main steps required to generate one question.
+
+\begin{enumerate}
+    \item \textbf{Entity selection}. This step involves randomly selecting one entity (i.e., the instance of a class) from the given KG. 
+    % For open KG such as Wikidata and DBpedia, users can pre-define a list of classes from which the instances are going to be selected since the random selection is not feasible to be done on all entities in the KG due to its massive size.
+    \item \textbf{Random walk}. This step involves performing a random walk on the KG based on the category of the question category, starting from the node selected in the previous step. We also provide a facility if the users would like to exclude some properties from being used in the generated question. For instance, schematic properties like \texttt{rdfs:domain} and \texttt{rdfs:range} can be excluded if the users intend to focus more on the concrete, data graph.
+    \item \textbf{Resource label resolver}. This step involves resolving the natural language label for each property and entity found in the triples. 
+    \item \textbf{SPARQL query formation}. This step involves taking the triples retrieved in the second step and encompassing them into one SPARQL query using a pre-defined template, based on the question category.
+    \item \textbf{Question generation}. This step involves generating the question in natural language based on the generated SPARQL query and the resources' labels using LLM. The generation prompt leverages the zero-shot prompt template defined by \cite{Both2024TowardsLN} with off-the-shelf instructions fine-tuned LLM.
+\end{enumerate}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{|c | c|}
+\hline
+\RaggedRight{\textbf{Category}} & \textbf{Triple Pattern}\\
+\hline
+\RaggedRight{Simple 1} & \texttt{\{ s p ?o . \}}\\
+\RaggedRight{Simple 2} & \texttt{\{ ?s p o . \}}\\
+\RaggedRight{Complex 1} & \texttt{\{ ?s p1 o1; p2 o2 . \}}\\
+\RaggedRight{Complex 2} & \texttt{\{ ?s p1 ?o1 . ?o1 p2 o2 . \}}\\
+\hline
+\end{tabular}
+\vspace{1em}
+\caption{Supported Question Categories}
+\label{table-questiontype}
+\end{table}
+
+For the local curriculum KG, the proportion of each category for the test set includes 9 simple 1 questions, 8 simple 2 questions, 5 complex 1 questions, 5 complex 2 questions, 5 simple 1 \texttt{COUNT} questions, and 5 simple 2 \texttt{COUNT} questions. Meanwhile, the data in the train set (few-shot) composed of 2 simple 1 questions, 2 simple 2 questions, a complex 1 question, a complex 2 question, a simple 1 \texttt{COUNT} question, and a simple 2 \texttt{COUNT} question. The test set and train set are disjoint to prevent data leakage.
+
+We leverage \texttt{Qwen/Qwen2.5-3B-Instruct} for the verbalization process, i.e., converting the SPARQL query into the respective natural language question. The prompt used for generation can be seen below.\\
+
+\promptVerbalization
+
+Upon generating the set of questions, we realize that the quality of the generated sentences is quite low, due to the lack of context provided to the LLM. To ensure that the intent of the question is conveyed clearly, we refine some ambiguous questions generated by the LLM. Examples of some ready-to-use questions are mentioned in Table \ref{table-questions-local}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.2\textwidth} | m{0.1\textwidth} |  m{0.7\textwidth} |}
+    \hline
+    \textbf{Question} & \textbf{Category} & \textbf{SPARQL Query}\\
+    \hline
+    What is the course category of 'Spoken Language Processing'? & Simple 1 & \texttt{select ?x \{ ns1:spoken\_language\_processing ns1:has\_course\_category ?x . \}} \\
+    \hline
+    What courses that have 3 credits? & Simple 2 & \texttt{select ?x \{ ?x ns1:has\_credits '3'\textasciicircum\textasciicircum xsd:integer . \}} \\
+    \hline
+    What courses have 'Group Project' and 'Test' as evaluation methods and have the course code 'CSGE603130'? & Complex 1 & \texttt{select ?x \{ ?x ns1:has\_evaluation\_method ns1:group\_project . ?x ns1:has\_evaluation\_method ns1:test . ?x ns1:has\_course\_code 'CSGE603130' . \}} \\
+    \hline
+    What courses have study program mandatory courses as their prerequisites? & Complex 2 & \texttt{select ?x \{ ?x ns1:has\_prerequisite\_course ?y . ?y ns1:has\_course\_category ns1:study\_program\_mandatory\_course . \}} \\
+    \hline
+    How many courses are prerequisites for Calculus 2? & \texttt{COUNT} Simple 1 & \texttt{select (count(?x) as ?cnt) \{ ns1:calculus\_2 ns1:has\_prerequisite\_course ?x . \}} \\
+    \hline
+    How many courses are categorized as 'Faculty Mandatory Course'? & \texttt{COUNT} Simple 2 & \texttt{select (count(?x) as ?cnt) \{ ?x ns1:has\_course\_category ns1:faculty\_mandatory\_course . \}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Questions for the Local Curriculum KG}
+\label{table-questions-local}
+\end{table}
+
+\section{Evaluation Metric}
+\label{jaccard}
+We assess the performance of our system by comparing the output of Subsubsection \ref{sparql-gener} and Subsubsection \ref{question-spec}, i.e., the generated SPARQL query execution results and the ground truth SPARQL query execution results as provided in the dataset.
+Even though the component for generating natural language is provided within the pipeline, we do not evaluate the generated natural language text for these two reasons: 
+\begin{enumerate}
+    \item The dataset we use for evaluating the second pipeline for open KGs, 
+    QALD, only provides the ground truth in the form of SPARQL query and its 
+    execution result. It does not provide the natural language text, whereas using 
+    LLM to perform verbalization over the ground truth set might introduce bias
+    and discrepancies between the result set and its natural language text due
+    to LLM's hallucination phenomenon. Notably, the QALD 9 dataset itself is 
+    specifically designed to benchmark systems that return the correct set 
+    of answers or generate a SPARQL query to retrieve those 
+    answers, not the natural language text \citep{Usbeck20189thCO}.
+    \item We reckon the retrieved result set as the main reason for the 
+    correctness of answers generated by this particular RAG system, since
+    the generator (LLM) only wraps the values in the retrieved set in the form
+    of natural language. This is in contrast to na\"{i}ve RAG which requires
+    LLM's inherent knowledge to extract specific information from the
+    retrieved document chunk in order to answer the user's question.
+\end{enumerate}
+
+An automatic tool for evaluating the answers of QA over KG using this query execution result scheme, GERBIL QA 
+\citep{benchmarkqald}, is commonly used for systems that leverage QALD
+as the benchmark dataset. In this system, the set of URIs or literals
+generated by the system is compared to the ground truth set, and the
+traditional precision, recall, and F-measure are used for the
+evaluation. To be specific, for each set of answers, if the set of
+returned resources by the QA system intersects with the ground truth set,
+the answer is considered correct, i.e., counted as a true positive.
+However, the limitation of such evaluation schema is that it primarily
+focuses on the intersection between the ground truth and generated sets only,
+without adequately penalizing for irrelevant results or fully considering
+the completeness of the retrieved answers.
+
+To remedy the limitation in GERBIL QA, different evaluation schema was introduced.
+\cite{Usbeck20189thCO} proposed using recall and precision
+to evaluate the correctness of the answer sets for each question $q$, as in Equation \ref{recall-qa}
+and \ref{prec-qa}, respectively.
+\begin{equation}
+    \label{recall-qa}
+    \text{recall}(q) = \frac{\text{number of correct system answers for }q}{\text{number of gold standard answers for }q}
+\end{equation}
+\begin{equation}
+    \label{prec-qa}
+    \text{precision}(q) = \frac{\text{number of correct system answers for }q}{\text{number of system answers for }q}
+\end{equation}
+
+This evaluation schema further computes the micro and macro F-measure of
+the system over all test questions. The micro F-measure is calculated 
+by summing up all the true and false positives and negatives, and
+compute the precision, recall, and F-measure at the end. However, for the
+macro F-measure, precision, recall, and F-measure is calculated individually
+for each test question, then the final result is obtained by averaging those
+values for each metric.
+
+On the other hand, we propose using Jaccard Similarity to evaluate the result of our system. 
+Jaccard Similarity for two sets $A$ and $B$ is defined as the number of elements in the intersection of $A$ and $B$ divided by the number of elements in their union, mathematically expressed as in the following Equation \ref{eq:jaccard}.
+    \begin{equation}
+        \textnormal{Jaccard}(A, B)=\frac{|A \cap B|}{|A \cup B|}
+        \label{eq:jaccard}
+    \end{equation}
+
+By using Jaccard Similarity, the comparison between the generated and 
+ground truth sets of answers is quantified as a single similarity 
+score, representing the overall degree of overlap between the two sets. 
+While precision and recall offer more granular insights into the system's 
+accuracy by measuring the proportion of relevant items retrieved (precision) 
+and the proportion of retrieved items that are relevant (recall), they 
+focus only on specific subsets (retrieved/relevant). As a result, they 
+may overlook the holistic alignment between the two sets. In contrast, 
+Jaccard Similarity explicitly measures the proportion of overlapping 
+items between the predicted and ground truth sets, providing a more 
+holistic and intuitive approach to interpreting retrieval results. This 
+makes it easier to understand as a direct comparison of similarity.
+
+% , instead of just binary relevance. The score provides an 
+% intuitive measure of how closely the system's output matches the
+% ground truth. A higher Jaccard Similarity indicates a better alignment
+% of the output with the ground truth, whereas lower one suggests that the
+% predicted results either miss relevant answers or include extraneous ones.
+
+However, this metric can be very sensitive to the size of the result
+sets. As the union of the predicted and ground truth sets grows larger---particularly when many irrelevant results are included in the 
+predicted set---the score can decrease significantly, even when the
+intersection contains many relevant answers. Consequently, this metric
+can exhibit bias on large datasets, especially when the predicted set
+is disproportionately large or contains many irrelevant results. In such 
+cases, Jaccard Similarity may lead to a lower score that does not fully 
+reflect the system's ability to retrieve relevant answers.
+
+% Consequently, while this metric
+% provides a straightforward and intuitive evaluation, it may not always
+% reflect the trade-offs between precision and recall.
+
+For the implementation matter, since the original 
+SPARQL query execution results take the ordering of the rows into account to accommodate the \texttt{ORDER BY} clause, we have to transform both predicted and ground truth execution results into sets prior to applying this metric. Additionally, for further standardization, each row is treated as a tuple whose elements are ordered alphabetically. Thus, the $A$ and $B$ in Equation \ref{eq:jaccard} are sets of tuples. The detailed illustration of this evaluation schema can be seen in Figure \ref{fig:eval}.
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/pics/diagram jaccard new.png}
+    \caption{Evaluation Schema}
+    \label{fig:eval}
+\end{figure*}
+
+% On the other hand, \cite{Usbeck20189thCO} proposed 
+
+
+\chapter{\babEmpat}
+\label{bab:4}
+In this chapter, we will explain the detailed implementation of the pipeline and the libraries or resources we utilize.
+
+\section{Pipeline v1}
+\label{pipeline1}
+The initial pipeline is comprised of several stages, with a focus on QA over Wikidata KG only. This pipeline relies solely on generative LLM in determining appropriate resources and constructing SPARQL queries through in-context learning, i.e., a paradigm that allows language models to learn how to accomplish downstream tasks based on a few given examples \citep{brown2020gpt3}. The pipeline is illustrated in \pic~\ref{fig:pipeline-v1} and will be explained in detail subsequently.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pdfs/pipeline-ori.pdf}
+    \caption{The Initial Pipeline}
+    \label{fig:pipeline-v1}
+\end{figure}
+
+\subsection{Entities Extraction}
+\label{ent-ext}
+Given the user's question, the LLM identifies key entities mentioned within it. These entities serve as the ``anchors'' for generating the SPARQL query, which is subsequentially used to query the KG. In this stage, we employ few-shot prompting by providing the model with 11 handcrafted input-output examples. For instance, if the question is about \texttt{Humans born in Indonesia}, the LLM response is expected to be \texttt{[\textquotesingle Human\textquotesingle, \textquotesingle Indonesia\textquotesingle]}. The full prompt used for this task is shown below; however, only 3 of the 11 input-output pairs are displayed for brevity.\\
+\promptOne
+
+\subsection{Entity ID Retrieval}
+\label{ent-id}
+For every extracted entity obtained in the preceding step, the system conducts a keyword-based search using the Wikidata API\footnote{\url{https://www.wikidata.org/w/api.php}}, in which the top-5 matches are selected. The retrieved data includes the details below.
+\begin{itemize}
+    \item \textbf{URI (ID)}: The unique identifier of the entity in Wikidata.
+    \item \textbf{Label}: The human-readable label of the entity.
+    \item \textbf{Description}: A brief description or context about the entity.
+\end{itemize}
+
+\subsection{Entity Disambiguation and Selection}
+\label{ent-sel}
+In this stage, we utilize LLM to determine the most appropriate entity based on the context of the user's question. This stage relies on the LLM's capability to interpret the intent of the question and the description of the retrieved entities. This could narrow down the options of a particular entity to the most relevant ones, ensuring the accuracy of the generated SPARQL queries. Just like in the first stage, few-shot prompting is utilized by providing 4 input-output pairs. The prompt used for this stage is shown below, with only 1 example being provided out of 4.\\
+\promptTwo
+
+\subsection{SPARQL Query Generation}
+\label{sparql-gener}
+Given the specific entities obtained from the previous stage, the LLM will generate the corresponding SPARQL query to answer the user's question. We provide a list of top-100 frequently used properties as a reference to generate the SPARQL query, obtained from Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}. The SPARQL query must contain the given entities and properties only to reduce hallucination in the generation. Additionally, to enhance the generation, we leverage chain-of-thought prompting, which enables complex reasoning through a series of intermediate reasoning steps \citep{wei2024cot}. We further combine this with few-shot prompting by giving 9 input-output pairs as examples, with the chain of thoughts generated by ChatGPT\footnote{\url{https://chatgpt.com/}}, specifically the GPT-4o model. The prompt can be seen below, with only several properties and one input-output pair example being provided.\\
+\promptThree
+
+\subsection{Query Execution and Answer Generation}
+\label{answer-gen}
+The generated SPARQL query from the preceding stage is then executed against the Wikidata Query Service (WDQS) endpoint to fetch the query results, in the form of JSON. Upon obtaining the data, it will be augmented into the prompt to instruct the LLM to generate a relevant answer based on the user's question. We use a zero-shot prompting technique here, which means there is no input-output pair provided as a guide. By not constraining the LLM to generate a specific style of answer, we allow it to draw upon its pre-trained knowledge and contextual understanding to address a wide variety of potential questions posed by the user. The utilized prompt can be seen below.\\
+\promptFour
+
+\section{Pipeline v2}
+\label{pipeline2}
+We recognize the limitation of the initial pipeline, which restricts the usage of the properties to those only defined in the prompt. While this approach can help minimize the introduction of other external components, it lacks scalability. This raises a significant problem for large-scale KGs, where the number of properties can be thousands. Including all of these properties in the prompt explicitly is not possible due to the context window limitation and the weak performance of LLMs when dealing with lengthy prompts (i.e., long context scenarios) \citep{jiang-etal-2024-longllmlingua}. 
+
+In this upgraded version, we enable multilingual support and generalize the notion of the initial pipeline to accommodate all types of KGs, including large-scale ones, by introducing an external vector database component to select a relevant subset of properties needed for generating the accurate SPARQL query. This approach avoids the need to include the entire set of properties in the prompt explicitly. Furthermore, we incorporate several auxiliary steps aimed at improving the accuracy of the generated responses. The overall pipeline is illustrated in \pic~\ref{fig:pipeline-v2}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pdfs/pipeline2-cropped.pdf}
+    \caption{The Upgraded Pipeline}
+    \label{fig:pipeline-v2}
+\end{figure}
+
+Additionally, we optimize prompt construction by leveraging LangChain's \texttt{ChatPromptTemplate}\footnote{\url{https://python.langchain.com/api_reference/core/prompts/langchain_core.prompts.chat.ChatPromptTemplate.html}} and \texttt{FewShotChatMessagePromptTemplate}\footnote{\url{https://api.python.langchain.com/en/latest/prompts/langchain_core.prompts.few_shot.FewShotChatMessagePromptTemplate.html}}. By using these tools, the prompt can be organized into the system instructions and few shot examples (if applicable). In all system instruction prompts, we use \texttt{Pydantic} object format instructions to specify the desired output format, as defined in the variable \texttt{format\_instructions}.
+
+To formalize our definition, we are going to use several symbols within this section, where KG-specific objects will be denoted by the use of calligraphic font (such as $\mathcal{E}$) and general objects will be denoted by the use of normal text font (such as $E$).
+
+\subsection{Translation}
+\label{translation}
+To enable multilingual support, a dedicated translation stage is introduced to convert user queries into English. This step is essential because the system is designed to operate on an English-based knowledge graph. The translation is handled using the \texttt{googletrans} library.
+
+The process begins by determining the language of the user’s input. If the query is already in English, no translation is performed, and the original question is passed directly to the pipeline. However, if the query is in another language, it is translated into English before being processed by the system. This translated English version of the question then serves as the input for the subsequent stages of the pipeline, ensuring compatibility with the system's architecture while supporting multilingual capabilities.
+
+The decision to use the \texttt{googletrans} library instead of relying on large language model (LLM) calls for translation was driven by practical considerations. LLM-based translations can be significantly more costly due to the computational resources required for each call. Additionally, using an LLM introduces a high dependency on the multilingual capabilities of the specific LLM being used, which may vary across different languages. By opting for \texttt{googletrans}, we ensure a lightweight, cost-effective solution that maintains sufficient translation quality for the system's requirements.
+
+It is worth noting that while the \texttt{googletrans} library itself is open source, it uses the Google Translate service/API, which is proprietary and not open source. If avoiding the use of proprietary services is a priority, an alternative is to use a fully open-source library such as \texttt{argostranslate}. However, the performance and accuracy of \texttt{argostranslate} are currently unknown, as it has not been tested in our system. Another option is to leverage LLMs for translation though this would come at the expense of higher computational costs as previously mentioned.
+
+\subsection{Entities Linking} \label{entities-linking}
+% This is the most crucial stage within the pipeline, as it affects the relevance of the retrieved information.
+This stage is the combination of the Entities Extraction (Subsubsection \ref{ent-ext}), the Entity ID Retrieval (Subsubsection \ref{ent-id}), as well as the Entity Disambiguation and Selection (Subsubsection \ref{ent-sel}) in the initial pipeline. We leverage generative LLM through in-context learning with few-shot prompting to extract a set of relevant entities $E$ that appear in the question $q$. After that, we aim to find a set of top-$k$ most relevant entities $\mathcal{E}_i$ from the KG based on every entity $e_i \in E$. Formally, we define $E = \{e_1, e_2, ..., e_n\}$ and $\mathcal{E}=\bigcup_{i=1}^{n} \mathcal{E}_i=\bigcup_{i=1}^{n} topK(e_i)$. Furthermore, since $|E|=n$, $|\mathcal{E}| \leq (n \times k)$ will hold, with $|\mathcal{E}| = (n \times k)$ iff $\bigcap_{i=1}^{n} \mathcal{E}_i=\emptyset$.
+
+The methods of finding the corresponding entities can be adjusted accordingly based on the specifications of the KG. For open and remotely-hosted KGs, we can leverage the provided APIs (if any) to find the entity candidates based on the given keyword, such as Wikidata API\footnote{\url{https://www.wikidata.org/w/api.php}} (as implemented in Subsection \ref{ent-id}) and DBpedia Lookup\footnote{\url{https://lookup.dbpedia.org/api/search}} for Wikidata and DBpedia, respectively. Subsequently, LLM is employed to obtain the most appropriate entity based on the question and the entity candidates using zero-shot prompting. On the other hand, for local KGs, semantic search can be employed by leveraging the text embeddings. Another suitable approach for small-scale KGs is to augment the prompt of the entity extraction process with the set of entities defined in the KG directly. However, we will only focus on the former approach in this work.
+
+The system instruction prompt for the entities extraction and selection, as well as several few-shot examples, can be seen below. For the few-shot examples, we expand the set of few-shot examples defined in the initial pipeline to a total of 25 input-output pairs. We provide some examples in \tab~\ref{table-entlinking}.\\
+\promptFivePartOne
+
+\vspace{1em}
+
+\promptFivePartTwo
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.5\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Input}} & \textbf{Output} \\
+    \hline
+    \RaggedRight{Who wrote the Game of Thrones theme?} & \texttt{\{"names": ["Game of Thrones"]\}} \\
+    \RaggedRight{How many movies did Park Chan-wook direct?} & \texttt{\{"names": ["Park Chan-wook"]\}} \\
+    \RaggedRight{Give me all companies in the advertising industry.} & \texttt{\{"names": ["Company", "Advertising"]\}} \\
+    \RaggedRight{How many films did Leonardo DiCaprio star in?} & \texttt{\{"names": ["Leonardo DiCaprio"]\}} \\
+    \RaggedRight{In which films did Julia Roberts as well as Richard Gere play?} & \texttt{\{"names": ["Julia Roberts", "Richard Gere"]\}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Several Few-Shot Examples of Entity Extraction}
+\label{table-entlinking}
+\end{table}
+
+\subsection{Retrieval} \label{question-spec}
+There are two types of questions, each requiring a distinct retrieval method. The first category consists of questions with a narrower focus, centered around a specific entity and relying on one-hop information. The second category includes questions with a broader scope and requires more complex query patterns, often involving aggregate functions such as \texttt{COUNT}. We refer to the former category as \textit{simple questions}, and the latter as \textit{complex questions}.
+
+\subsubsection{Simple Question} \label{local-question}
+Generating SPARQL query using LLM is not quite effective, especially on LLMs with a smaller amount of parameters like \texttt{Llama-3.1-8B}, despite it performs excellently on huge, commercial LLMs like \texttt{gpt-4o} \citep{emonet2024llmbasedsparqlquerygeneration}. It is not efficient as well, due to the usage of LLMs which requires a significant amount of time and computational resources for inference. Thus, in answering simple questions, we avoid using SPARQL query generation directly. Instead, we opt to answer the question through the text retrieval method first. Specifically, the first step is to extract the most relevant entity \texttt{x} from $\mathcal{E}$ as obtained in the preceding stage using generative LLM. Next, a single-level (or known as single-hop) breadth-first traversal (BFS), will be employed to acquire the immediate neighbors of \texttt{x} in the conditions where \texttt{x} acts as an object (\texttt{?s ?p x}) and as a subject (\texttt{x ?p ?o}). The reason why we limit to the first depth is that most of the users' information needs can be resolved by one triple pattern only, which is evidenced by the fact that most of the top-100 frequently asked questions on Google are simple questions\footnote{\url{https://keywordtool.io/blog/most-asked-questions/}} (i.e., a question consists of a single triple pattern). Furthermore, these simple questions often serve as foundational elements in constructing more complex questions \citep{simpleqa}.
+
+From this set of triples, we will perform \textit{template-based verbalization} to convert each triple \texttt{(s, p, o)} into a sentence, with the following rule: \texttt{\{s\}'s \{p\} is \{o\}}. To improve efficiency and avoid disambiguity, we ensure that the triples we aim to verbalize have unique properties in each case where \texttt{x} serves as both subject and object. For instance, consider the KG in Figure \ref{fig:query-naive}, where entity \texttt{:LionelMessi} has connections to three different entities with the same property \texttt{:hasChild}. Here, only one sentence will be constructed, based on the first matching triple, such as \texttt{Lionel Messi's has child is Thiago Messi}. Do note that even if the sentence has grammatical inaccuracies, the embeddings can still effectively capture the intended semantics.
+
+The user's question and all verbalized triples are then encoded into embeddings to conduct a semantic search with QA objective, i.e., determining which generated sentence is the most probable answer to the user's question. The answer will be returned iff the similarity score exceeds a certain threshold $\tau_2$. Otherwise, the system proceeds with SPARQL query generation as in Subsubsection \ref{global-question} (e.g., for questions with multiple triple patterns or incorporating aggregate functions but being misclassified). To standardize results for evaluation, the answer sentence is not returned immediately. Instead, we output the object (or subject) of the selected triple, simulating the result of a SPARQL query execution, which only comprises entities or literals. 
+
+To give a clear example, the illustration of template-based verbalization can be seen in \pic~\ref{fig:tbv}, which is equivalent to retrieval using SPARQL query as in Code \ref{code:tbv-equiv}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pdfs/templatebasedverbalization.drawio-4-cropped.pdf}
+    \caption{Template-Based Verbalization Overview}
+    \label{fig:tbv}
+\end{figure}
+
+\lstinputlisting[language=SPARQL, caption=Equivalent SPARQL Query to Retrieval in \pic~\ref{fig:tbv}, label=code:tbv-equiv]{assets/codes/tbv-equiv.sparql}
+
+\subsubsection{Complex Question} \label{global-question} The aim of this stage is to generate an appropriate SPARQL query using generative LLM to answer the given question, similar to the SPARQL Query Generation stage (Subsubsection \ref{sparql-gener}) in the initial pipeline. In order to do so, the resources needed to generate a query, i.e., entities, properties, or classes, have to be explicitly stated in the prompt. Previously, we have acquired $\mathcal{E}$ as in Section \ref{entities-linking}. The next step is to retrieve the most relevant properties and classes that might appear in the query. A feasible way to perform this is by employing a hybrid search over sets of property labels $\mathcal{P}$ and class labels $\mathcal{C}$ as defined in the KG. However, we realize that comparing a long question like ``What is the birth date of Tom Cruise?'' with its appropriate short property label ``birth date'' will not produce an accurate result. Hence, we segment the question $q$ into smaller chunks by leveraging n-gram, with the output $N$ as the set of n-grams.
+
+Unfortunately, the n-gram approach might not work accurately in the case where properties are not explicitly stated in the question. Thus, we employ another approach that involves generating property candidates $P_G$ from $q$ solely based on its question structure, regardless of how it is represented in the specific KG. With this approach, we hope to find the ``starred in'' property from the question ``What films does Tom Cruise play in?'', as the property is not directly included in the question. This can be accomplished by using generative LLM through in-context learning with few-shot prompting. The system instruction prompt used for this can be seen below and the few-shot examples in \tab~\ref{table-relprop}.\\
+\promptSeven
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.5\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Input}} & \textbf{Output}\\
+    \hline
+    \RaggedRight{Who wrote the Game of Thrones theme?} & \texttt{\{"properties": ["composer", "music", "composition"]\}}\\
+    \RaggedRight{How many movies did Park Chan-wook direct?} & \texttt{\{"names": ["Park Chan-wook"]\}} \\
+    \RaggedRight{Give me all companies in the advertising industry.} & \texttt{\{"properties": ["company", "industry"]\}} \\
+    \RaggedRight{How many films did Leonardo DiCaprio star in?} & \texttt{\{"properties": ["starring", "film", "actor"]\}} \\
+    \RaggedRight{In which films did Julia Roberts as well as Richard Gere play?} & \texttt{\{"names": ["Julia Roberts", "Richard Gere"]\}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Several Few-Shot Examples of Related Properties Generation (DBpedia)}
+\label{table-relprop}
+\end{table}
+
+We then define $X$ as the set containing all property and class candidates retrieved in the preceding stage, i.e., $X = N \cup P_G$. For each candidate $x \in X$, a hybrid search is conducted within each vector database $V(\mathcal{P})$ and $V(\mathcal{C})$, which stores information about $\mathcal{P}$ and $\mathcal{C}$, respectively. The candidates are selected iff their similarity scores exceed a certain threshold $\tau_1$. 
+Auxiliary vector databases may be also constructed if needed, especially in the case where the property is separated into object property and data property, like in DBpedia's T-Box Ontology\footnote{\url{https://www.dbpedia.org/resources/ontology/}}.  
+
+The same as in the previous stage, if the KG is small enough, the property and class candidates might be included directly in the SPARQL generation prompt. We leverage in-context learning through few-shot and chain-of-thought prompting (generated by the GPT-4o model of ChatGPT) to enable the LLM to generate accurate SPARQL. The generated SPARQL query is designed to return a single-column result, containing either URIs or literals only. The system instruction prompt is provided below, while several few-shot examples for DBpedia are shown in Code \ref{code:fewshot-sparql}. Do note that in the prompt, \texttt{resources} refers to a set of entities, whereas \texttt{ontology} refers to a set of properties and classes.\\
+\promptEight
+
+\lstinputlisting[language=python, caption=Several Few-Shot Examples of SPARQL Generation (DBpedia), label=code:fewshot-sparql, breaklines=true]{assets/codes/sample-cot.py}
+
+Lastly, the SPARQL query will be executed over the KG to obtain the relevant information, which result is also the output of this stage. 
+
+
+\subsection{Answer Generation}
+After retrieving relevant data from the previous step, the final step is to generate the answer in natural language, like in Subsubsection \ref{answer-gen}. However, the data retrieved in the preceding stage is still in the URI format. Thus, we have to resolve the label of each of those URIs prior to the answer generation stage. We obtain the label of each URI using the query in Code \ref{code:query-wd} for Wikidata and the query in Code \ref{code:query-dbp} for DBpedia or other KGs that utilize \texttt{rdfs:label} to store information about labels of the resources.
+
+\lstinputlisting[language=SPARQL, caption=Wikidata SPARQL Query to Obtain Labels, label=code:query-wd]{assets/codes/wd.sparql}
+
+\lstinputlisting[language=SPARQL, caption=DBpedia (or other KGs) SPARQL Query to Obtain Labels, label=code:query-dbp]{assets/codes/dbp.sparql}
+
+We use generative LLM to generate the answer through in-context learning with the original user question and retrieved data provided as the context in the generation prompt. If the user’s query is in a language other than English, we explicitly include the instruction ``Answer in \{user's language\} language.'' within the prompt to direct the LLM to generate the response in the user’s language. This ensures seamless multilingual support and enhances the user experience by delivering answers in their preferred language.
+
+Below is an example of a prompt used for DBpedia, where \texttt{dbpedia\_context} contains the retrieved information from the previous pipeline stage and the user's language is Indonesian.
+
+\promptNine
+
+\section{Libraries and Resources}
+\label{libraries-resources}
+In developing the system, we use Python programming language due to its rich ecosystem of libraries and frameworks that are suitable for building a RAG system. Apart from the default Python's libraries, we leverage these libraries in constructing both pipelines.
+\begin{enumerate}
+    \item \texttt{pandas}: A powerful library for data manipulation and analysis. It provides data structures like DataFrame and Series, which make it easy to handle structured data and perform operations like filtering, grouping, and merging.
+    \item \texttt{transformers}: A popular library from HuggingFace that facilitates the loading, training, and fine-tuning of state-of-the-art large language models (LLMs). It supports numerous pre-trained models and can seamlessly integrate them into local systems for NLP tasks.
+    \item \texttt{torch}: PyTorch is an open-source deep learning framework that provides tools for building and training neural networks. 
+    \item \texttt{weaviate}: An open-source vector search engine that supports hybrid search, allowing for both traditional keyword-based and semantic search using embeddings.
+    \item \texttt{nltk}: The Natural Language Toolkit is a comprehensive library for text processing. It provides tools for tokenizing text, generating n-grams, removing stopwords, and performing other NLP tasks.
+    \item \texttt{sentence-transformers}: A library for generating dense vector representations (embeddings) of phrases, sentences, paragraphs, or even documents.
+    \item \texttt{rdflib}: A library for working with RDF (Resource Description Framework) graphs. It allows for the creation, manipulation, and querying of RDF data, making it essential for handling knowledge graphs and linking data in a structured manner.
+    \item \texttt{langchain}: A framework designed to simplify the development of applications using LLMs. It provides tools for chaining multiple LLM operations together and creating complex prompt templates that can be reused across different tasks.
+    \item \texttt{sparqlwrapper}: A Python library for querying SPARQL endpoints to interact with RDF-based knowledge graphs. It allows for executing SPARQL queries on remote endpoints and retrieving data in various formats.
+    \item \texttt{pydantic}: A data validation library that enforces type checks and ensures that data is consistent and meets the defined schema. 
+    \item \texttt{urllib}: A Python library for working with URLs. It provides tools for parsing, manipulating, and retrieving data from URLs.
+    \item \texttt{xmltodict}: A library to parse and work with XML data by converting it into Python dictionaries. This simplifies the extraction of data from XML files, a common format for structured data exchange.
+    \item \texttt{requests}: A simple and elegant HTTP library for Python, making it easy to send HTTP requests and handle responses. It supports various methods like GET, POST, PUT, DELETE, and is essential for interacting with web APIs.
+    \item \texttt{dotenv}: A library for loading environment variables from `.env` files into the environment. This helps manage configuration settings securely and ensures sensitive information is not hardcoded in the code.
+    \item \texttt{numpy}: A library for numerical computing in Python. It provides support for multi-dimensional arrays, matrices, and mathematical functions.
+    \item \texttt{googletrans}: A library for translating text between multiple languages using the Google Translate API. It supports automatic language detection and facilitates seamless integration of multilingual capabilities into applications.
+\end{enumerate}
+
+
+\section{Computational Setup}
+We conducted the evaluation using several GPU-supported instances rented on Vast.ai\footnote{\url{https://vast.ai/}}. Specifically, we utilized two GPUs, the A100 and A800, each with 80GB of VRAM, depending on the availability. The hourly costs ranged from \$1 to \$1.60, resulting in a total development cost of \$100 (approximately IDR 1,661,326 including additional fees).
+
+To streamline the setup process, we utilized the PyTorch (cuDNN Runtime) template available on Vast.ai. The steps to initiate an instance were as follows: 
+\begin{enumerate}
+    \item \textbf{Selecting a GPU:} Navigate to the ``Search'' page, select the desired GPU type (e.g., A100 or A800), and rent the instance.
+    \item \textbf{Launching the Instance:} Go to the ``Instances'' page and click ``Open'' on the instance just rented.
+\end{enumerate}
+The rented instances come pre-configured with essential software such as Jupyter Notebook and PyTorch, enabling a quick start. After accessing the instance, we only needed to install additional libraries as specified in Subsection \ref{libraries-resources}, ensuring a seamless environment for running our experiments.
+
