@@ -55,30 +55,18 @@ class WikidataAPI:
         self.source = source
         self.kg_metadata = get_knowledge_graph_metadata()
 
-        # Get endpoints from metadata
-        self.wikidata_url = (
-            self.kg_metadata.get_endpoint("wikidata")
-            or "https://query.wikidata.org/sparql"
-        )
-        self.curriculum_url = (
-            self.kg_metadata.get_endpoint("curriculum")
-            or "http://localhost:3030/curi/query"
-        )
-
-        self.current_url = (
-            self.wikidata_url if source == "wikidata" else self.curriculum_url
-        )
+        # Get endpoint directly from metadata for the current source
+        self.current_url = self.kg_metadata.get_endpoint(source) or url
         user_agent = self.kg_metadata.get_user_agent(source)
-
+        
         self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 
     def set_source(self, source: str) -> None:
         """Update the source and endpoint URL"""
         if source != self.source:
             self.source = source
-            self.current_url = (
-                self.wikidata_url if source == "wikidata" else self.curriculum_url
-            )
+            # Get endpoint directly from metadata for the new source
+            self.current_url = self.kg_metadata.get_endpoint(source) or "https://query.wikidata.org/sparql"
             user_agent = self.kg_metadata.get_user_agent(source)
             self.sparqlwd = SPARQLWrapper(self.current_url, agent=user_agent)
 

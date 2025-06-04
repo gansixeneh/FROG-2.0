@@ -434,14 +434,21 @@ SPARQL:"""
                 else:
                     sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
                 
-                # Add PREFIX declarations for curriculum if not already present
-                if sparql_query and knowledge_source == "curriculum":
+                # Add PREFIX declarations if not already present (for any knowledge source)
+                if sparql_query:
                     # Check if PREFIX declarations are already in the query
                     if not sparql_query.upper().startswith("PREFIX"):
                         # Get PREFIX declarations from metadata
                         prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
                         if prefixes_declaration:
                             sparql_query = prefixes_declaration + "\n\n" + sparql_query
+                            # Log prefix addition
+                            if hasattr(state, 'visualizer') and state.visualizer:
+                                state.visualizer.log_event(
+                                    "SPARQL Generation Node",
+                                    f"added prefixes for {knowledge_source}",
+                                    {"prefixes_added": prefixes_declaration}
+                                )
                 
                 # Enhance the query with references if requested
                 if sparql_query and state.include_references:
