@@ -590,42 +590,199 @@ This hybrid dataset generation methodology enables us to create comprehensive, h
 \end{figure}
 
 \section{Model Finetuning Methodology}
+\label{model-finetune}
+To overcome limitations in previous approaches that relied on few-shot prompting, we implement specialized model fine-tuning using Low-Rank Adaptation (LoRA) for two critical components: entity and property extraction, and SPARQL query generation. This methodology significantly improves performance over zero-shot or few-shot approaches by tailoring model weights specifically for knowledge graph tasks while maintaining efficient training requirements. We carefully select hyperparameters for each task based on their complexity and the nature of the output needed.
+
 \subsection{Entity and Property Extraction Model}
+\label{entity-prop-extract}
+The entity and property extraction model serves as the initial processing step in our pipeline, identifying relevant entities and properties mentioned in natural language questions. This enables accurate mapping between question terms and knowledge graph elements, which is essential for generating correct SPARQL queries.
+
+\subsubsection{Task Definition}
+Given a natural language question about a knowledge graph, the model must extract:
+\begin{itemize}
+    \item All entities mentioned in the question (e.g., people, organizations, concepts)
+    \item All properties relevant to answering the question (e.g., "author", "located in", "published date")
+\end{itemize}
+
+The output follows a structured JSON format with two keys: "entities" and "properties", each containing an array of relevant terms identified from the question. This structured output ensures consistent processing in subsequent pipeline stages.
+
+\subsubsection{Model Selection and Architecture}
+For this task, we experiment with several state-of-the-art large language models (LLMs) including Mistral, Qwen, and Llama families. These models are selected based on their demonstrated capabilities in understanding natural language semantics, contextual interpretation, and structured output generation. Specifically, we utilize instruction-tuned versions of these models as they have been optimized for following specific task instructions.
+
+Our fine-tuning methodology applies a lighter LoRA configuration since entity and property extraction is relatively less complex than SPARQL generation:
+
+\begin{itemize}
+    \item \textbf{Rank (r)}: 16 - A smaller rank is used as entity extraction requires less adaptation from the base model's capabilities
+    \item \textbf{Alpha (α)}: 16 - Matching the rank parameter for balanced adaptation
+    \item \textbf{Target modules}: Attention layers ("q\_proj", "k\_proj", "v\_proj", "o\_proj") and MLP layers ("gate\_proj", "up\_proj", "down\_proj")
+    \item \textbf{Dropout}: 0 - As the task benefits from deterministic behavior
+    \item \textbf{Bias training}: "none" - No bias parameters are trained to minimize trainable parameters
+    \item \textbf{LoRA type}: Standard LoRA without rank stabilization, as the task is less susceptible to instabilities
+\end{itemize}
+
+This configuration results in approximately 1-4 million trainable parameters (depending on model size), representing less than 0.1\% of the original model parameters, which enables efficient fine-tuning while capturing domain-specific extraction patterns.
+
+\subsubsection{Training Data Preparation}
+Training data for the entity extraction model consists of question-annotation pairs in the format:
+
+\begin{verbatim}
+Question: "Who is the author of 'Social Media Analysis Study'?"
+Entities: ["Social Media Analysis Study"]
+Properties: ["author"]
+\end{verbatim}
+
+We prepare this data from:
+\begin{itemize}
+    \item Manually curated examples that demonstrate diverse entity and property extraction patterns
+    \item Automatically generated examples from our template-based dataset generation system
+    \item Entity-property annotations derived from our random walk generated queries
+\end{itemize}
+
+To ensure optimal learning, we structure the training prompts with:
+\begin{itemize}
+    \item \textbf{System instruction}: Detailed description of the entity and property extraction task
+    \item \textbf{User input}: Natural language question for which entities and properties need to be extracted
+    \item \textbf{Assistant response}: Structured JSON output containing the identified entities and properties
+\end{itemize}
+
+For models with chat templates, we leverage their native formats, while for those without, we concatenate system instructions, user input, and expected output with appropriate separators.
+
+\subsubsection{Training Methodology}
+The fine-tuning process utilizes SFTTrainer from the TRL library with the following configuration:
+
+\begin{itemize}
+    \item \textbf{Batch size}: 1 per device with gradient accumulation steps of 4
+    \item \textbf{Learning rate}: 2e-5 with linear schedule
+    \item \textbf{Number of epochs}: 5 (empirically determined to avoid overfitting)
+    \item \textbf{Weight decay}: 0.01 for regularization
+    \item \textbf{Sequence length}: 2048 tokens
+    \item \textbf{Precision}: BF16 where supported, FP16 otherwise
+    \item \textbf{Optimizer}: AdamW 8-bit for memory efficiency
+    \item \textbf{Evaluation frequency}: Every 20 steps
+\end{itemize}
+
+We use unpacked training to preserve the structure of individual examples and enable better learning of the structured output format. The trainer is configured to load the best model based on evaluation loss, ensuring optimal performance while preventing overfitting.
+
 \subsection{SPARQL Generation Model}
+\label{sparql-gen}
+The SPARQL generation model represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries that accurately represent the user's information need. This task is considerably more complex than entity extraction, requiring understanding of graph query patterns, SPARQL syntax, and the domain-specific knowledge graph structure.
+
+\subsubsection{Task Definition}
+Given a natural language question and lists of candidate entities and properties with their URIs and labels, the model must generate a valid, executable SPARQL query that correctly answers the question. The model must:
+
+\begin{itemize}
+    \item Select the most appropriate entities and properties from the candidates
+    \item Determine the correct query structure (selection, filtering, aggregation)
+    \item Generate syntactically correct SPARQL with proper prefixes for the specific knowledge graph
+    \item Include appropriate variable binding, filtering, and result formatting
+    \item Provide step-by-step reasoning about query construction (chain-of-thought)
+\end{itemize}
+
+\subsubsection{Model Selection and Architecture}
+For SPARQL generation, we apply a more intensive LoRA configuration due to the task's complexity and the need for precise syntax generation:
+
+\begin{itemize}
+    \item \textbf{Rank (r)}: 64 - A higher rank provides more capacity to learn complex SPARQL syntax patterns
+    \item \textbf{Alpha (α)}: 64 - Matching the rank parameter
+    \item \textbf{Target modules}: Same attention and MLP layers as in entity extraction
+    \item \textbf{Dropout}: 0.1 - Higher dropout for better generalization on this more complex task
+    \item \textbf{Bias training}: "all" - Training bias parameters to better learn syntax patterns
+    \item \textbf{LoRA type}: Rank-Stabilized LoRA (RSLoRA) to prevent instabilities during training
+\end{itemize}
+
+This configuration results in approximately 4-16 million trainable parameters (depending on model size), still a small fraction of the full model, but providing sufficient capacity to learn complex SPARQL patterns across different knowledge graph domains.
+
+\subsubsection{Training Data Preparation}
+The SPARQL generation training data consists of complex examples with:
+
+\begin{itemize}
+    \item Natural language questions
+    \item Lists of candidate entities with their URIs, labels, and descriptions
+    \item Lists of candidate properties with their URIs, labels, and descriptions
+    \item Step-by-step reasoning chains (thoughts) explaining the query construction process
+    \item Target SPARQL queries with correct syntax for the specific knowledge graph
+\end{itemize}
+
+For each knowledge graph domain (Wikidata, CURI, Legal, GESIS), we adapt the training data to use the appropriate prefixes and URI patterns specific to that domain. For example:
+
+\begin{itemize}
+    \item Wikidata: Uses \texttt{wd:} and \texttt{wdt:} prefixes
+    \item CURI: Uses \texttt{ns1:} prefix with university course entities
+    \item Legal: Uses \texttt{lex2kg-o:} prefix with legal document entities
+    \item GESIS: Uses \texttt{schema:} and domain-specific prefixes for scholarly resources
+\end{itemize}
+
+The training prompt structure includes:
+\begin{itemize}
+    \item \textbf{System instruction}: Comprehensive guidelines for SPARQL generation for the specific knowledge graph
+    \item \textbf{User input}: Question and lists of candidate entities and properties
+    \item \textbf{Assistant response}: Chain-of-thought reasoning followed by the SPARQL query
+\end{itemize}
+
+\subsubsection{Training Methodology}
+The SPARQL generation model uses a more intensive training configuration:
+
+\begin{itemize}
+    \item \textbf{Batch size}: 1 per device with gradient accumulation steps of 16 (larger effective batch)
+    \item \textbf{Learning rate}: 1e-5 (lower to ensure careful convergence)
+    \item \textbf{Weight decay}: 0.1 (stronger regularization)
+    \item \textbf{Number of epochs}: 10 (longer training for this complex task)
+    \item \textbf{Learning rate schedule}: Polynomial decay
+    \item \textbf{Warmup ratio}: 0.1 (10\% of training steps)
+    \item \textbf{Label smoothing}: 0.05 for SPARQL syntax tokens
+    \item \textbf{Evaluation frequency}: Every 25 steps
+    \item \textbf{Sequence packing}: Enabled for efficient training with varied sequence lengths
+\end{itemize}
+
+We employ additional optimizations including gradient checkpointing and group-by-length batching to handle the longer sequences involved in SPARQL generation training.
+
+\subsection{Cross-Domain Adaptation Strategy}
+\label{cross-domain}
+A key innovation in our fine-tuning methodology is the cross-domain adaptation strategy, which enables efficient transfer of knowledge between different knowledge graph domains. Rather than training separate models from scratch for each domain, we employ a sequential fine-tuning approach:
+
+\begin{enumerate}
+    \item \textbf{Base fine-tuning}: Initial fine-tuning on the Wikidata domain, which has the most diverse entity and property types
+    \item \textbf{Domain adaptation}: Further fine-tuning on domain-specific data (CURI, Legal, GESIS) using the Wikidata-finetuned model as a starting point
+\end{enumerate}
+
+This approach significantly reduces training time and computational requirements while enabling the model to leverage general knowledge graph reasoning capabilities across domains. The key adaptations for each domain include:
+
+\begin{itemize}
+    \item \textbf{Domain-specific prefixes}: Adapting URI patterns and namespace prefixes
+    \item \textbf{Schema awareness}: Incorporating domain-specific ontology structures
+    \item \textbf{Query patterns}: Learning domain-specific query patterns (e.g., legal document hierarchies, academic course relationships)
+\end{itemize}
+
+\subsection{Memory Optimization Techniques}
+To enable fine-tuning of large language models on limited computational resources, we implement several memory optimization techniques:
+
+\begin{itemize}
+    \item \textbf{4-bit quantization}: Models are loaded in 4-bit precision, reducing memory requirements by up to 8x compared to FP32
+    \item \textbf{Parameter-Efficient Fine-Tuning (PEFT)}: LoRA reduces trainable parameters to less than 1\% of the full model
+    \item \textbf{Gradient checkpointing}: Trading computation for memory by recomputing activations during backward pass
+    \item \textbf{Optimizer state compression}: Using 8-bit Adam optimizer to reduce optimizer state memory footprint
+    \item \textbf{Gradient accumulation}: Enabling larger effective batch sizes without increasing memory requirements
+\end{itemize}
+
+These optimizations allow us to fine-tune large models (7-8 billion parameters) on single consumer GPUs with 16-24GB of VRAM, making our approach accessible for researchers with limited computational resources.
+
+\subsection{Evaluation During Fine-Tuning}
+Throughout the fine-tuning process, we monitor several key metrics to ensure model quality:
+
+\begin{itemize}
+    \item \textbf{Loss curves}: Training and validation loss to detect overfitting
+    \item \textbf{Entity extraction accuracy}: Precision, recall, and F1 score for entity and property identification
+    \item \textbf{SPARQL syntax validity}: Percentage of generated queries with valid syntax
+    \item \textbf{Query execution success}: Percentage of generated queries that execute without errors
+    \item \textbf{Answer correctness}: Comparison of query results with ground truth answers
+\end{itemize}
+
+Models are saved at checkpoints and evaluated on a held-out validation set, with the best-performing checkpoint (based on validation loss) selected for deployment. This comprehensive evaluation ensures that the fine-tuned models maintain high quality across different domains and query types.
+
+This fine-tuning methodology provides significant advantages over the few-shot prompting approach used in the original GraphRAG system, enabling more accurate entity extraction and SPARQL generation across diverse knowledge graph domains while maintaining computational efficiency through parameter-efficient fine-tuning techniques.
 
 \section{Multi-Agent Architecture Design}
 \subsection{Agent Workflow Design}
 \subsection{Strategy Selection and Fallback Mechanisms}
 
 \section{Evaluation Metrics}
-
-\chapter{System Implementation}
-\label{bab:4}
-
-\section{Dataset Generation Implementation}
-\subsection{Template-Based Implementation}
-\subsection{Random-Walk Implementation}
-\subsection{Post-Processing Pipeline}
-
-\section{Model Finetuning Implementation}
-\subsection{Finetuning Infrastructure}
-\subsection{Entity and Property Extraction Model}
-\subsection{SPARQL Generation Model}
-
-\section{Multi-Agent System Implementation}
-\subsection{LangGraph Architecture}
-\subsection{Specialized Agent Nodes}
-\subsection{Multi-LLM Factory Integration}
-
-\section{System Integration and Communication}
-\subsection{Backend Architecture}
-\subsection{Frontend Implementation}
-\subsection{Knowledge Graph Integration}
-
-\section{Visualization and Logging System}
-\subsection{RDF-Based Logging}
-\subsection{Real-Time Visualization}
-
-\section{Libraries and Resources}
-
-\section{Computational Setup}
