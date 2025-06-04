@@ -34,10 +34,10 @@ const SideNav: React.FC = () => {
         </svg>
       </button>
       
-      <div className="p-4">
+      <div className="p-4 pb-20 h-full overflow-hidden flex flex-col">
         <button
           onClick={startNewChat}
-          className="w-full py-2 px-4 bg-frog-accent text-frog-dark rounded-md mb-6 flex items-center justify-center font-semibold hover:bg-white transition-colors"
+          className="w-full py-2 px-4 bg-frog-accent text-frog-dark rounded-md mb-6 flex items-center justify-center font-semibold hover:bg-white transition-colors flex-shrink-0"
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -57,7 +57,7 @@ const SideNav: React.FC = () => {
         </button>
         
         {/* Frog decoration */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 flex-shrink-0">
           <div className="relative">
             <svg width="80" height="40" viewBox="0 0 180 100">
               <path 
@@ -76,31 +76,33 @@ const SideNav: React.FC = () => {
           </div>
         </div>
         
-        <h2 className="text-sm font-semibold text-frog-accent uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-frog-accent uppercase tracking-wider mb-3 flex-shrink-0">
           Chat History
         </h2>
         
-        <div className="space-y-2">
-          {chats.length === 0 ? (
-            <div className="text-frog-light text-sm p-2">No chat history</div>
-          ) : (
-            chats.map(chat => (
-              <button
-                key={chat.id}
-                onClick={() => loadChat(chat.id)}
-                className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
-                  currentChat?.id === chat.id 
-                    ? 'bg-frog-DEFAULT/30 border-l-4 border-frog-accent' 
-                    : 'text-frog-light hover:bg-frog-DEFAULT/10 border-l-4 border-transparent'
-                } lily-pad`}
-              >
-                <div className="text-sm font-medium truncate">{chat.title}</div>
-                <div className="text-xs text-frog-light/70 mt-1">
-                  {formatDistanceToNow(new Date(chat.updated_at), { addSuffix: true })}
-                </div>
-              </button>
-            ))
-          )}
+        <div className="flex-1 overflow-y-auto">
+          <div className="space-y-2">
+            {chats.length === 0 ? (
+              <div className="text-frog-light text-sm p-2">No chat history</div>
+            ) : (
+              chats.map(chat => (
+                <button
+                  key={chat.id}
+                  onClick={() => loadChat(chat.id)}
+                  className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
+                    currentChat?.id === chat.id 
+                      ? 'bg-frog-DEFAULT/30 border-l-4 border-frog-accent' 
+                      : 'text-frog-light hover:bg-frog-DEFAULT/10 border-l-4 border-transparent'
+                  } lily-pad`}
+                >
+                  <div className="text-sm font-medium truncate">{chat.title}</div>
+                  <div className="text-xs text-frog-light/70 mt-1">
+                    {formatDistanceToNow(new Date(chat.updated_at), { addSuffix: true })}
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
         </div>
       </div>
       
