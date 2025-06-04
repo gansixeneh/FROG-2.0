@@ -285,7 +285,7 @@ class WikidataVerbalization:
             if not pLabel:
                 pLabel = separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
             
-            label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
+            label_s = sLabel if sLabel else replace_using_dict(s.strip("/").split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
             label_p = pLabel
             label_o = oLabel if oLabel else replace_using_dict(entity_uri.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
 
@@ -390,7 +390,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
                 
                 if o.startswith("http") or ":" in o:
-                    label_o = oLabel if oLabel else replace_using_dict(o.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
+                    label_o = oLabel if oLabel else replace_using_dict(o.strip("/").split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
                 else:
                     label_o = o
                 result.append({label_p: o if output_uri else label_o})
@@ -405,7 +405,7 @@ SELECT DISTINCT ?p ?o ?sLabel ?propLabel ?oLabel ?refUrl ?refDate WHERE {{
             if p == property_uri:
                 # Use pLabel if available, otherwise fall back to camelCase separation
                 label_p = pLabel if pLabel else separate_camel_case(p.split("/")[-1].split(":")[-1])  # Handle prefixed URIs
-                label_s = sLabel if sLabel else replace_using_dict(s.split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
+                label_s = sLabel if sLabel else replace_using_dict(s.strip("/").split("/")[-1].split(":")[-1], self.MANUAL_MAPPING_DICT)
                 result.append({label_p: s if output_uri else label_s})
                 
         return result
