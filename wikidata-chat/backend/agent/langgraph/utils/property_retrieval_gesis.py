@@ -182,7 +182,7 @@ WHERE {
                 # Format entities
                 for _, row in df_res[df_res["score"] >= threshold].iterrows():
                     entity_data = {
-                        "uri": row.get("short", row.get("uri", "")),
+                        "uri": row.get("uri"),
                         "label": row.get("label", ""),
                         "score": float(row["score"])
                     }
@@ -225,7 +225,7 @@ WHERE {
                 # Format entities
                 for _, row in df_res[df_res["score"] >= entity_threshold].iterrows():
                     entity_data = {
-                        "uri": row.get("short", row.get("uri", "")),
+                        "uri": row.get("uri"),
                         "label": row.get("label", ""),
                         "score": float(row["score"])
                     }

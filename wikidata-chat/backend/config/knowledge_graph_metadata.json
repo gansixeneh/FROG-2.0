@@ -82,12 +82,12 @@
       "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
     },
     "sparql_instructions": [
-      "Use PREFIX NOTATION (e.g., schema:property, gesiskg:entity) for properties",
+      "Use PREFIX NOTATION (e.g., schema:property, gesiskg:property) for properties",
       "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed"
     ],
     "verbalization_templates": {
-      "po_template": "PREFIX schema: <https://schema.org/>\nPREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT distinct ?p ?o ?pLabel ?oLabel\nWHERE {{\n  {entity} ?p ?o .\n  OPTIONAL {{\n    ?p rdfs:label ?pLabel .\n  }}\n  OPTIONAL {{\n    ?o schema:name ?oLabel .\n  }}\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n  }}\n}} LIMIT 1000",
-      "sp_template": "PREFIX schema: <https://schema.org/>\nPREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?s ?p ?sLabel ?pLabel\nWHERE {{\n  ?s ?p {entity} .\n  OPTIONAL {{\n    ?s schema:name ?sLabel .\n  }}\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n  }}\n  OPTIONAL {{\n    ?p rdfs:label ?pLabel .\n  }}\n}} LIMIT 1000"
+      "po_template": "PREFIX schema: <https://schema.org/>\nPREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT distinct ?p ?o ?pLabel ?oLabel\nWHERE {{\n  <{entity}> ?p ?o .\n  OPTIONAL {{\n    ?p rdfs:label ?pLabel .\n  }}\n  OPTIONAL {{\n    ?o schema:name ?oLabel .\n  }}\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n  }}\n}} LIMIT 1000",
+      "sp_template": "PREFIX schema: <https://schema.org/>\nPREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?s ?p ?sLabel ?pLabel\nWHERE {{\n  ?s ?p <{entity}> .\n  OPTIONAL {{\n    ?s schema:name ?sLabel .\n  }}\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n  }}\n  OPTIONAL {{\n    ?p rdfs:label ?pLabel .\n  }}\n}} LIMIT 1000"
     },
     "user_agent": "FROG Wikidata Agent/1.0",
     "entity_uri_format": "{entity_id}",
