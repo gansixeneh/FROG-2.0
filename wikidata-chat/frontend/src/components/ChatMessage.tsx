@@ -46,24 +46,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     processedContent = processedContent
       .replace(/(```sparql)/g, "\n$1")
       .replace(/```(?!sparql)/g, "```\n");
-      
-    // Format "Related Properties" section with bullets and bold text
-    processedContent = processedContent.replace(
-      /(## Related Properties\s*\n)([\s\S]*?)(?=\n##|$)/g,
-      (match, heading, propertiesList) => {
-        // Replace each property line with a bullet point and bold text
-        const formattedList = propertiesList
-          .split('\n')
-          .filter((line: string) => line.trim() && line.includes(' - ')) // Filter non-empty lines with hyphen
-          .map((line: string) => {
-            const [property, description] = line.split(' - ');
-            return `* **${property.trim()}** - ${description.trim()}`;
-          })
-          .join('\n');
-        
-        return `${heading}${formattedList}`;
-      }
-    );
 
     // Extract SPARQL code blocks to protect them from URL processing
     const sparqlBlocks: string[] = [];
