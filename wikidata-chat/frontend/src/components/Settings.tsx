@@ -92,7 +92,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                 />
                 <div className="ml-3">
                   <div className="font-medium text-gray-900">Curriculum</div>
-                  <div className="text-sm text-gray-500">University curriculum knowledge graph (https://generous-lark-duly.ngrok-free.app/curi/query)</div>
+                  <div className="text-sm text-gray-500">University curriculum knowledge graph</div>
                 </div>
               </label>
               <label className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
