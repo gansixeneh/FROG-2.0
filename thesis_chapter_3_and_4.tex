@@ -3,6 +3,16 @@
 
 In this chapter, we will explain the research methodology we employ, including the big picture of the experiment we conduct, the dataset and knowledge bases, as well as the evaluation metrics.
 
+% \section{Research Methodology}
+% The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+% \begin{enumerate}
+%     \item \textbf{Problem identification and motivation}: Na\"{i}ve RAG systems face challenges with interpretability due to their reliance on opaque vector representations. RAG with KG as the knowledge base, i.e., GraphRAG can partially alleviate this problem. However, there are very few generic frameworks for GraphRAG that solely leverage open-source components, work for all KGs, and do not require training at all. Yet, this is crucial as it allows the users to customize the system according to their preferences while enhancing transparency and accessibility.
+%     \item \textbf{Definition of the objectives for a solution}: Referring to the defined problem, our objective is to develop a RAG system with KG as the primary knowledge base using only open-source components. This framework will provide users with a transparent and flexible system that can be tailored to their specific needs without requiring additional training efforts.
+%     \item \textbf{Design and development}: The GraphRAG architecture is designed using only open-source components. Following the design phase, we develop the actual artifact of the RAG system, ensuring it functions accordingly.
+%     \item \textbf{Demonstration}: After developing the system, the functionality is demonstrated by applying it to the real use case, i.e., QA over Wikidata, DBpedia, and local KG.
+%     \item \textbf{Evaluation}: Quantitatively, the system's performance in generating correct answers will be assessed by employing the Jaccard similarity measure. This metric will ensure that the system not only produces contextually appropriate responses but also adheres to the objective of utilizing only open-source components.
+%     \item \textbf{Communication}: The architecture and implementation details of this pipeline are documented in a research report, such as this paper. Additionally, the experiment findings are also reported to ensure transparency and reproducibility.
+% \end{enumerate}
 \section{Research Methodology}
 The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
 \begin{enumerate}
@@ -13,6 +23,24 @@ The research methodology we employ is the development and application studies. S
     \item \textbf{Evaluation}: The enhanced system undergoes multi-faceted quantitative evaluation. Model finetuning effectiveness is assessed using precision, recall, F1-score, and success rate metrics on SPARQL generation tasks. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. The multi-agent system performance is measured using the original Jaccard similarity metric alongside additional metrics for component-wise analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
     \item \textbf{Communication}: The enhanced architecture, implementation details, and experimental findings are documented in this research report. Additionally, the multi-agent system includes comprehensive process visualization, database logging, and semantic logging capabilities that provide enhanced transparency into the decision-making process, allowing users to review and audit system operations through saved execution traces and interactive diagrams. All code, datasets, and models are made available to ensure reproducibility and enable further research in open-source GraphRAG systems.
 \end{enumerate}
+
+% ===================================================================================
+
+% \section{Experiment Details}
+% \label{exp-detail}
+% In general, we will be experimenting with two different versions of the pipeline, with the architecture of the first pipeline being simpler than the second one. Additionally, the scope of the first pipeline is also narrower. The details are as follows.
+% \begin{enumerate}
+%     \item The first pipeline is used as the ``prototype'' and lays the foundation for building the second pipeline. As previously mentioned, this pipeline has a narrower scope, focusing specifically on Wikidata. The steps include the entities extraction and linking, SPARQL query generation, as well as answer generation. However, the property candidates are presented directly in the query generation prompt and obtained from the top-100 frequently used properties listed in Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}. This highlights the limitation of the types of questions the system can support, as properties are only taken from this predefined list.
+%     \item Departing from the limitation of the first pipeline, we refine the architecture by incorporating auxiliary vector databases to enable the usage of larger number of properties for the second pipeline. To enhance the performance for simple (single-hop) questions, we also include the text retrieval method using dense text embeddings encoded from verbalized triples (see Subsubsubsection \ref{local-question}). The steps for this pipeline are composed of the entities extraction and linking, retrieval, and answer generation. In the retrieval stage, the system initially attempts to find whether the question can be answered using the verbalized triples of the entity obtained in the first stage or not. If the system is unsure about the answer, the system proceeds with the SPARQL query generation, with the entities retrieved from the KG's corresponding API (if any) or vector database and properties retrieved from the vector database based on the user's question being passed as the prompt context.
+% \end{enumerate}
+
+% Due to the more specific scope covered by the first pipeline, we designed our own dataset to be tested on it (see Subsubsection \ref{dataset-isriti}). We test this first pipeline on two LLMs: Mistral 7B and Mistral NeMo. We use the instruction fine-tuned version of both models.
+
+% On the other hand, to ensure the flexibility of our pipeline, there are three knowledge bases being plugged into the second pipeline: Wikidata, DBpedia, and local KG (see Subsection \ref{knowledgebase}). The datasets we use are QALD-9-Plus \citep{perevalov2022qald9plus} for Wikidata and DBpedia, and the synthetic dataset generated by our dataset generator for the local KG (see Subsubsubsection \ref{dataset-generator}). The LLMs we use for the second pipeline are Mistral NeMo, LLaMA 3.1 8B, Qwen2.5 Coder 7B, and Qwen2.5 7B. Likewise, all models are the instruction fine-tuned versions.
+
+% Greedy decoding is employed for text generation using all models for standardization and reproducibility. For the first pipeline, the maximum number of new tokens allowed for generation is 1000, whereas the second one is 1500. The remaining parameters are left the same as the default ones.
+
+% Lastly, we conduct our evaluation locally using instances with GPU support that are rented on an hourly basis.
 
 \section{Experiment Details}
 \label{exp-detail}
@@ -57,19 +85,509 @@ Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to 
 
 % =============================================================================
 
-\section{Knowledge Bases}
-\subsection{Wikidata}
-\subsection{DBpedia}
-\subsection{Local KGs}
+\section{Knowledge Bases} \label{knowledgebase}
+Our enhanced GraphRAG system is designed to work across multiple knowledge domains to demonstrate its versatility and adaptability. We utilize four distinct knowledge bases that represent different types of structured information:
 
-\section{Ontology}
+\begin{itemize}
+    \item A large-scale public knowledge graph (Wikidata)
+    \item A domain-specific curriculum knowledge graph
+    \item A legal document knowledge graph
+    \item A scholarly research knowledge graph
+\end{itemize}
+
+Each knowledge base presents unique challenges and characteristics that allow us to comprehensively evaluate our enhanced approach across diverse domains and query complexities.
+
 \subsection{Wikidata}
-\subsection{DBpedia}
-\subsection{Local KGs}
+
+Wikidata, originally launched in October 2012 by Wikimedia Foundation \citep{vrandevcic2014}, is an openly accessible, collaborative knowledge base that is editable by anyone \citep{waagmeester2020}. Consequently, the scope of knowledge covered by Wikidata is nearly boundless, just like its sister project, Wikipedia\footnote{\url{https://www.wikipedia.org/}}. However, in contrast to Wikipedia which provides knowledge primarily in the free text format, Wikidata represents information in the structured format \citep{waagmeester2020}. 
+
+The core structure of Wikidata is made up of items, properties, and values, which are connected in statements that closely resemble RDF triples \citep{Cantallops2019ASL}. The knowledge in Wikidata can be retrieved by SPARQL querying through Wikidata Query Service (WDQS)\footnote{\url{https://query.wikidata.org/}}, whose interface can be seen in Figure~\ref{fig:wdqs-ui}. The query example used in Figure~\ref{fig:wdqs-ui} returns the URI of the instances (\texttt{wdt:P31}) of Cat (\texttt{wd:Q146}) alongside with its label.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/wdqs.png}
+    \caption{Wikidata Query Service's Interface}
+    \label{fig:wdqs-ui}
+\end{figure}
+
+For our enhanced GraphRAG system, Wikidata serves as the primary large-scale knowledge graph for demonstrating scalability and handling complex multi-hop reasoning scenarios. The vast scale of Wikidata, with millions of entities and thousands of properties, provides an excellent testbed for our enhanced dataset generation methods and finetuned models. Our system utilizes a curated collection of 11,830 Wikidata properties stored in our Weaviate vector database to enable efficient property retrieval and matching during question processing.
+
+\vspace{0.5cm}
+\subsection{Curriculum Knowledge Graph}
+\label{curriculum-kg}
+
+The Curriculum Knowledge Graph represents a domain-specific knowledge base built from Fasilkom UI's Computer Science Major curriculum. This knowledge graph is extracted from the Fasilkom UI's 2024 Curriculum Guidebook for Computer Science Major, which is publicly available through Fasilkom UI's LMS\footnote{\url{https://scele.cs.ui.ac.id/pluginfile.php/1279/block_html/content/buku_panduan_kur_2024_ilmu_komputer.pdf}}. Specifically, the content is obtained from pages 122 to 186, covering the syllabus of all courses.
+
+The curriculum knowledge graph is constructed by extracting entities from the unstructured text data using GLiNER \citep{zaratiana2023glinergeneralistmodelnamed} and converting them into structured RDF triples. The knowledge graph contains comprehensive information about university courses, including course codes, categories, prerequisites, credit values, evaluation methods, and research group associations.
+
+\subsubsection{Knowledge Graph Schema}
+The curriculum knowledge graph utilizes a custom ontology with the prefix \texttt{ns1:} representing \texttt{http://example.org/}. The schema includes 8 main properties that capture various aspects of course information, as shown in Table~\ref{table-curriculum-properties}.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.4\textwidth} | m{0.6\textwidth} |}
+    \hline
+    \textbf{Property} & \textbf{Description} \\
+    \hline
+    \texttt{ns1:has\_course\_code} & Links courses to their unique identifiers \\
+    \hline
+    \texttt{ns1:has\_course\_category} & Links courses to their classification categories \\
+    \hline
+    \texttt{ns1:also\_known\_as} & Alternative names or abbreviations for courses \\
+    \hline
+    \texttt{ns1:has\_prerequisite\_course} & Links courses to their required prerequisites \\
+    \hline
+    \texttt{ns1:has\_credits} & Links courses to their credit values \\
+    \hline
+    \texttt{ns1:has\_evaluation\_method} & Links courses to their assessment techniques \\
+    \hline
+    \texttt{ns1:has\_research\_group} & Links courses to associated research groups \\
+    \hline
+    \texttt{ns1:has\_minimum\_credits} & Links courses to minimum credit requirements \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\caption{Curriculum Knowledge Graph Properties}
+\label{table-curriculum-properties}
+\end{table}
+
+The knowledge graph also defines four main classes: \texttt{ns1:course}, \texttt{ns1:evaluation}, \texttt{ns1:course\_category}, and \texttt{ns1:research\_lab}, which provide the structural foundation for organizing curriculum information. For efficient processing in our enhanced GraphRAG system, we maintain 108 entities and 8 properties in our Weaviate vector database for semantic search and retrieval.
+
+\subsubsection{Sample Data}
+The following code shows sample triples about a "Basis Data" (Database) course in RDF Turtle format:
+
+\lstinputlisting[caption=Sample RDF Triples for Curriculum Knowledge Graph, label=code:curriculum-sample, style=uistyle, language=turtle]{assets/codes/sample-triple.ttl}
+
+The curriculum knowledge graph contains 874 RDF triples in total, providing rich information about course relationships, prerequisites, and academic structure that enables complex reasoning about curriculum pathways and course dependencies.
+
+\vspace{0.5cm}
+\subsection{Legal Knowledge Graph}
+\label{legal-kg}
+\hrulefill
+
+The Legal Knowledge Graph is based on the Lex2KG framework \citep{abdurahman2021lex2kg}, which converts Indonesian legal documents from PDF format into structured RDF triples. This knowledge graph contains 784 Indonesian laws (Undang-Undang) with a total size of over 1.1 million triples, making it one of the largest structured legal knowledge bases for Indonesian legislation.
+
+\subsubsection{Knowledge Graph Structure and Modification}
+The legal knowledge graph captures various types of legal information including metadata, document structures, textual content, and relationships between legal resources. Table~\ref{table-legal-statistics} shows the distribution of information types in the knowledge graph before our modifications.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{| l | r |}
+\hline
+\textbf{Information Type} & \textbf{Number of Triples} \\
+\hline
+Metadata & 6,869 \\
+Structure & 714,888 \\
+Text & 152,301 \\
+Citations in the same law & 22,829 \\
+Citations between laws & 1,401 \\
+Citations to non-existing resources & 7,095 \\
+Amendments & 1,252 \\
+Class assignments & 256,416 \\
+\hline
+\textbf{Total} & \textbf{1,163,051} \\
+\hline
+\end{tabular}
+\caption{Legal Knowledge Graph Statistics (Before Modification)}
+\label{table-legal-statistics}
+\end{table}
+
+To improve data quality and consistency for our enhanced GraphRAG system, we applied several modifications to the original Lex2KG dataset:
+
+\begin{itemize}
+    \item \textbf{Location Standardization}: Fixed inconsistent city names in the \texttt{lex2kg-o:disahkanDi} property (e.g., "Jakart", "Jakar" → "Jakarta")
+    \item \textbf{URI Cleanup}: Removed unnecessary "/text" suffixes from URIs and moved textual content properties to their appropriate parent entities
+    \item \textbf{Person Name Standardization}: Normalized variations in person names in the \texttt{lex2kg-o:disahkanOleh} property (e.g., "JOKO WIDODO" → "Joko Widodo")
+    \item \textbf{Position Title Correction}: Standardized official position titles in the \texttt{lex2kg-o:jabatanPengesah} property
+    \item \textbf{Structural Simplification}: Connected entities directly without intermediate "daftar" (list) entities to reduce query complexity
+    \item \textbf{Orphaned Entity Removal}: Removed entities that only appeared as subjects in type declarations without meaningful relationships
+\end{itemize}
+
+These modifications resulted in a cleaner, more consistent knowledge graph that better supports our enhanced dataset generation and query processing capabilities. Our vector database contains 243,708 legal entities and 28 legal properties for efficient semantic search.
+
+\subsubsection{Examples of Inconsistencies Before Modification}
+We found several inconsistencies in the original legal knowledge graph that required standardization. Figures~\ref{fig:legal-position-query1} and~\ref{fig:legal-position-query2} show SPARQL query examples to retrieve position titles (\texttt{jabatanPengesah}) from the legal knowledge graph, where position titles were inconsistently formatted as "PRESIDEN REPUBLIK INDONESIA" (without comma) and "PRESIDEN REPUBLIK INDONESIA," (with comma) respectively.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/legal-position-query1.png}
+    \caption{SPARQL query showing position title formatted as "PRESIDEN REPUBLIK INDONESIA"}
+    \label{fig:legal-position-query1}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/legal-position-query2.png}
+    \caption{SPARQL query showing position title formatted as "PRESIDEN REPUBLIK INDONESIA," with comma}
+    \label{fig:legal-position-query2}
+\end{figure}
+Figure~\ref{fig:legal-document-sample} shows a sample of an Indonesian law document signed by President Joko Widodo, where the document uses "PRESIDEN REPUBLIK INDONESIA" in all capital letters. These inconsistencies were standardized to "Presiden Republik Indonesia" in our modified knowledge graph.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/pics/legal-document-sample.png}
+    \caption{Sample of Indonesian law document showing all-caps formatting of position titles}
+    \label{fig:legal-document-sample}
+\end{figure}
+
+These modifications resulted in a cleaner, more consistent knowledge graph that better supports our enhanced dataset generation and query processing capabilities. Our vector database contains 243,708 legal entities and 28 legal properties for efficient semantic search.
+
+\subsubsection{Legal Domain Properties}
+Key properties in the modified legal knowledge graph include:
+
+\begin{itemize}
+    \item \texttt{lex2kg-o:tentang} - Links legal documents to their titles or subject matter
+    \item \texttt{lex2kg-o:disahkanPada} - Links documents to their enactment dates
+    \item \texttt{lex2kg-o:disahkanOleh} - Links documents to their enacting authorities
+    \item \texttt{lex2kg-o:pasal} - Links laws to their articles
+    \item \texttt{lex2kg-o:bab} - Links laws to their chapters
+    \item \texttt{lex2kg-o:mengubah} - Links amendments to the documents they modify
+    \item \texttt{lex2kg-o:merujuk} - Links document sections to what they reference
+\end{itemize}
+
+This structure enables complex legal reasoning, such as finding all laws that amend a specific regulation, tracing citation networks between legal documents, and analyzing the evolution of legislation over time.
+
+\vspace{0.5cm}
+\subsection{GESIS Knowledge Graph}
+\label{gesis-kg}
+
+The GESIS Knowledge Graph (GESIS KG) represents metadata of scientific resources available in the GESIS Search and their semantic relationships in an integrated and consistent form \citep{biswas2025gesis}. GESIS is the Leibniz Institute for the Social Sciences, and their knowledge graph contains comprehensive information about social science research data, publications, and related scholarly resources.
+
+\subsubsection{Knowledge Graph Content and Processing}
+The GESIS Knowledge Graph comprises several types of scientific resources and entities, as shown in Table~\ref{table-gesis-resources}.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{| l | l | r |}
+\hline
+\textbf{Resource Type} & \textbf{Class} & \textbf{Count} \\
+\hline
+\multicolumn{3}{|c|}{\textbf{Scientific Resources}} \\
+\hline
+Publications & schema:ScholarlyArticle & 583,085 \\
+Datasets & schema:Dataset & 7,546 \\
+Instruments & ddi:Instrument & 532 \\
+Variables & ddi:Variable & 1,395,499 \\
+\hline
+\multicolumn{3}{|c|}{\textbf{Entities in Metadata}} \\
+\hline
+Persons & schema:Person & 466,265 \\
+Organizations & schema:Organization & 20,533 \\
+Locations & schema:Place & 28,314 \\
+Keywords/Concepts & schema:DefinedTerm & 18,297 \\
+\hline
+\textbf{Total Scientific Resources} & & \textbf{1,986,662} \\
+\hline
+\end{tabular}
+\caption{GESIS Knowledge Graph Resources (Before Modification)}
+\label{table-gesis-resources}
+\end{table}
+
+\subsubsection{Dataset Modifications}
+For our enhanced GraphRAG system, we applied quality improvements to the GESIS dataset to ensure better performance:
+
+\begin{itemize}
+    \item \textbf{Duplicate Removal}: Eliminated entities of type \texttt{schema:DuplicateMetadata} to avoid redundant information
+    \item \textbf{Incomplete Entity Filtering}: Removed \texttt{schema:ScholarlyArticle} entities that lack essential \texttt{schema:name} properties, ensuring all publications in our dataset have proper identifiers
+\end{itemize}
+
+After processing, our enhanced dataset contains 358,530 entities and 33 properties stored in our Weaviate vector database for efficient semantic search and property matching.
+
+\subsubsection{Example of a GESIS Entity}
+Figure~\ref{fig:gesis-entity-example} shows an example of a GESIS entity (gesis-bib-43272) as accessible through the GESIS knowledge graph interface. This entity represents a scholarly article titled "The topicality of the problem of the person in Islamic thought" published in the International Social Science Journal.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/gesis-entity-example.png}
+    \caption{Example of a GESIS entity (gesis-bib-43272) with its properties and values}
+    \label{fig:gesis-entity-example}
+\end{figure}
+
+The entity contains various properties including author information (Arkoun\_Mohamed), publication details, language (English), and library location. We can examine this entity using SPARQL queries through the GESIS knowledge graph interface.
+
+A detailed examination of this entity can be performed through different SPARQL queries. Figure~\ref{fig:gesis-entity-subject} shows all properties where gesis-bib-43272 is the subject, revealing its attributes such as title, language, and publication information.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/gesis-entity-subject.png}
+    \caption{SPARQL query results showing properties where gesis-bib-43272 is the subject}
+    \label{fig:gesis-entity-subject}
+\end{figure}
+
+Additionally, Figure~\ref{fig:gesis-entity-object} shows relationships where gesis-bib-43272 is the object, demonstrating how this scholarly article is referenced by other entities in the knowledge graph.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/gesis-entity-object.png}
+    \caption{SPARQL query results showing triples where gesis-bib-43272 is the object}
+    \label{fig:gesis-entity-object}
+\end{figure}
+
+\subsubsection{Scholarly Domain Schema}
+The GESIS Knowledge Graph uses established standards and vocabularies, such as schema.org and DDI (Data Documentation Initiative), to ensure interoperability. Key properties include:
+
+\begin{itemize}
+    \item \texttt{schema:author} - Links publications to their authors
+    \item \texttt{schema:publisher} - Links publications to their publishers
+    \item \texttt{schema:datePublished} - Publication dates
+    \item \texttt{schema:about} - Links publications to their topics
+    \item \texttt{schema:citation} - Citation relationships between publications
+    \item \texttt{gesiskg:libraryLocation} - Physical location of resources
+    \item \texttt{schema:keywords} - Keywords associated with publications
+\end{itemize}
+
+\subsubsection{Link Statistics}
+The GESIS Knowledge Graph contains extensive linking between resources, enabling complex scholarly reasoning. Table~\ref{table-gesis-links} shows the distribution of different types of links before our modification process.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{| l | r |}
+\hline
+\textbf{Link Type} & \textbf{Count} \\
+\hline
+Automatically generated links between publications and datasets & 78,733 \\
+Manually curated links between publications and datasets & 49,509 \\
+Links between publications and instruments & 5,813 \\
+Links between datasets and variables & 1,393,842 \\
+Links between publications & 313,899 \\
+Links between publications and variables & 2,954 \\
+\hline
+\textbf{Total Links} & \textbf{1,861,964} \\
+\hline
+\end{tabular}
+\caption{GESIS Knowledge Graph Link Statistics (Before Modification)}
+\label{table-gesis-links}
+\end{table}
+
+The GESIS Knowledge Graph serves as an excellent testbed for scholarly domain reasoning, enabling queries about research collaboration networks, publication trends, dataset usage patterns, and the relationships between different types of scholarly resources.
+
+\vspace{0.5cm}
+\subsection{Multi-Domain Knowledge Graph Integration}
+
+Our enhanced GraphRAG system's ability to work across these four diverse knowledge domains—general world knowledge (Wikidata), academic curriculum (Curriculum KG), legal documents (Legal KG), and scholarly research (GESIS KG)—demonstrates the versatility and domain-agnostic nature of our approach. Each knowledge graph presents unique challenges:
+
+\begin{itemize}
+    \item \textbf{Scale Variation}: From 874 triples (Curriculum) to over 1 million triples (Legal, GESIS)
+    \item \textbf{Schema Diversity}: Different ontologies and property patterns across domains
+    \item \textbf{Query Complexity}: Varying levels of reasoning complexity from simple property lookups to complex multi-hop reasoning with aggregations
+    \item \textbf{Domain Specificity}: From general-purpose world knowledge to highly specialized legal and academic domains
+    \item \textbf{Vector Database Integration}: All knowledge graphs are supported by Weaviate collections for efficient semantic search, with collection sizes ranging from 108 entities (University) to 358,530 entities (GESIS)
+\end{itemize}
+
+This diversity enables comprehensive evaluation of our enhanced dataset generation methods, finetuned models, and multi-agent architecture across different knowledge representation challenges and domain-specific reasoning requirements. The careful data cleaning and quality improvements applied to each knowledge graph ensure that our enhanced GraphRAG system operates on high-quality, consistent data foundations.
 
 \section{Dataset Generation Methodology}
+To overcome the limitations of existing GraphRAG systems that rely on limited dataset coverage and diversity, we develop a comprehensive methodology for generating high-quality Natural Language to SPARQL (NL2SPARQL) training datasets. Our approach employs two complementary strategies: template-based generation and random-walk generation. These methods enable us to create diverse, domain-specific datasets that can be used for model fine-tuning across various knowledge domains. The dual approach ensures both linguistic diversity and comprehensive graph coverage, essential for enhancing model performance on complex question-answering tasks.
+
+% Place the overview Mermaid diagram here
+% ```mermaid
+% flowchart TD
+%     A[Dataset Generation] --> B[Template-Based Generation]
+%     A --> C[Random-Walk Generation]
+%     B --> D[Natural Language Questions + SPARQL]
+%     C --> E[SPARQL Patterns]
+%     E --> F[LLM-Based Question Generation]
+%     D --> G[Complete Dataset]
+%     F --> G
+% ```
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{image.png}
+    \caption{Overview of the dual dataset generation methodology combining template-based and random-walk approaches}
+    \label{fig:enter-label}
+\end{figure}
+
 \subsection{Template-Based Dataset Generation}
+The template-based dataset generation methodology follows a discovery-first approach where predefined question templates are instantiated with valid entity-property combinations discovered through graph exploration. This ensures that generated questions have corresponding valid and executable SPARQL queries that return meaningful results from the knowledge graph.
+
+\subsubsection{Template Structure}
+Each template contains the following components:
+
+\begin{enumerate}
+    \item \textbf{Question Templates}: Multiple natural language formulations of a question type, allowing for linguistic diversity. For multilingual support, templates can include variations in different languages.
+    
+    \item \textbf{SPARQL Template}: A parameterized SPARQL query pattern with placeholders for entities and properties that will be discovered from the knowledge graph.
+    
+    \item \textbf{Chain of Thoughts}: Step-by-step reasoning explanations that describe the process of translating the natural language question to a SPARQL query, providing valuable training signals for models.
+    
+    \item \textbf{Complexity Classification}: Each template is categorized by complexity level (basic, intermediate, advanced) to ensure balanced coverage across difficulty levels.
+    
+    \item \textbf{Category}: Domain classification (e.g., scholarly, legal) to organize templates by knowledge domain.
+\end{enumerate}
+
+Templates are designed with varying complexity levels to provide comprehensive coverage:
+
+\begin{itemize}
+    \item \textbf{Basic Templates (40\%)}: Simple one-hop relationships focusing on direct subject-predicate-object patterns.
+    \item \textbf{Intermediate Templates (30\%)}: Two-hop relationships and queries with aggregation functions like COUNT.
+    \item \textbf{Advanced Templates (30\%)}: Complex multi-hop relationships with filters, nested patterns, and sophisticated aggregations.
+\end{itemize}
+
+% Place the template-based approach workflow diagram here
+% ```mermaid
+% flowchart TD
+%     A[Template Definition] --> B[Placeholder Extraction]
+%     B --> C[Discovery Query Generation]
+%     C --> D[KG Query Execution]
+%     D --> E[Valid Entity-Property Selection]
+%     E --> F[Template Instantiation]
+%     F --> G[Question + SPARQL Generation]
+%     G --> H[Chain of Thoughts Generation]
+%     H --> I[Entity-Property Matching]
+% ```
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{image.png}
+    \caption{Workflow of the template-based dataset generation process showing the discovery-first approach}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsubsection{Discovery-First Instantiation Process}
+The key innovation in our template-based approach is the discovery-first methodology that guarantees valid instantiations:
+
+\begin{enumerate}
+    \item \textbf{Placeholder Extraction}: Identify all placeholders in the template (e.g., \texttt{\{entity\}}, \texttt{\{property\}}).
+    
+    \item \textbf{Discovery Query Generation}: Transform the SPARQL template into a discovery query that finds all valid combinations of entities and properties that would yield results in the knowledge graph.
+    
+    \item \textbf{Validation and Selection}: Execute the discovery query against the knowledge graph and randomly select valid combinations from the results.
+    
+    \item \textbf{Template Instantiation}: Replace placeholders in both the question and SPARQL templates with the selected entities and properties.
+    
+    \item \textbf{Chain of Thoughts Generation}: Generate step-by-step reasoning using the thoughtsTemplate, with context-aware replacement of URIs and labels.
+\end{enumerate}
+
+This discovery-first methodology ensures that all generated question-SPARQL pairs are valid and executable, eliminating the need for post-generation validation and filtering.
+
+\subsubsection{Entity and Property Matching}
+To enhance the dataset's utility for training entity linking and property matching components, our methodology incorporates a sophisticated matching system:
+
+\begin{enumerate}
+    \item \textbf{Vector Embedding}: All entities and properties in the knowledge graph are encoded using sentence transformer models to create semantic vector representations.
+    
+    \item \textbf{N-gram Analysis}: Questions are processed into n-grams to capture multi-word expressions and handle cases where properties are not explicitly stated.
+    
+    \item \textbf{Hybrid Search}: A combination of keyword-based and semantic similarity search identifies relevant entities and properties mentioned in the question.
+    
+    \item \textbf{Match Recording}: For each question-SPARQL pair, the system records which entities and properties from the SPARQL query were successfully matched in the question text, creating valuable training data for entity and property extraction models.
+\end{enumerate}
+
 \subsection{Random-Walk Dataset Generation}
+While the template-based approach provides high-quality, linguistically diverse questions, it may not capture the full range of structural patterns present in a knowledge graph. To address this limitation, we developed a pattern-based random walk methodology that discovers valid query patterns directly from the graph structure.
+
+\subsubsection{Pattern Discovery}
+The random walk methodology systematically explores the knowledge graph to discover valid query patterns with increasing complexity:
+
+\begin{enumerate}
+    \item \textbf{1-Property Patterns (50\%)}: Basic patterns involving a single triple pattern with one fixed entity and one variable:
+    \begin{itemize}
+        \item Subject Target: \texttt{?target property fixedEntity}
+        \item Object Target: \texttt{fixedEntity property ?target}
+    \end{itemize}
+    
+    \item \textbf{2-Property Patterns (30\%)}: Intermediate patterns involving two connected triple patterns:
+    \begin{itemize}
+        \item Literal Target Pattern: \texttt{fixedEntity prop1 ?hidden . ?hidden prop2 ?target} 
+        \item Branching Pattern: \texttt{?target prop1 ?hidden . ?hidden prop2 fixedEntity}
+    \end{itemize}
+    
+    \item \textbf{3-Property Patterns (20\%)}: Advanced patterns involving three connected triple patterns:
+    \begin{itemize}
+        \item Linear End Pattern: \texttt{entity prop1 ?h1 . ?h1 prop2 ?h2 . ?h2 prop3 ?target}
+        \item Linear Middle Pattern: \texttt{entity1 prop1 ?h . ?h prop2 ?target . ?target prop3 entity2}
+        \item Star Pattern: \texttt{?hidden prop1 entity1 . ?hidden prop2 entity2 . ?hidden prop3 ?target}
+    \end{itemize}
+\end{enumerate}
+
+% Place the random-walk approach workflow diagram here
+% ```mermaid
+% flowchart TD
+%     A[Knowledge Graph] --> B[Pattern Discovery]
+%     B --> C1[1-Property Patterns]
+%     B --> C2[2-Property Patterns]
+%     B --> C3[3-Property Patterns]
+%     C1 --> D[Pattern Validation]
+%     C2 --> D
+%     C3 --> D
+%     D --> E[Variation Generation]
+%     E --> F[SPARQL Query Formulation]
+%     F --> G[Entity/Property Extraction]
+%     G --> H[LLM-Based Question Generation]
+% ```
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{image.png}
+    \caption{Workflow of the random-walk dataset generation process showing pattern discovery and question generation}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsubsection{Validation and Variation Generation}
+To ensure diversity and quality, our methodology includes:
+
+\begin{enumerate}
+    \item \textbf{Pattern Validation}: Each generated pattern is validated by executing it against the knowledge graph to ensure it returns non-empty results.
+    
+    \item \textbf{Structural Variations}: For each pattern type, multiple variations are generated by systematically reversing the direction of triple patterns. For example, a 3-property pattern can generate up to $2^3 = 8$ different variations.
+    
+    \item \textbf{Quality Filtering}: Low-quality patterns involving system properties or very common properties are excluded to ensure meaningful and diverse queries.
+\end{enumerate}
+
+\subsubsection{Natural Language Question Generation}
+Since the random walk approach generates SPARQL queries without natural language questions, we employ a sophisticated question generation process:
+
+\begin{enumerate}
+    \item \textbf{Entity and Property Extraction}: For each generated SPARQL query, we extract the entities and properties used in the query.
+    
+    \item \textbf{Template Context Transfer}: Using templates from the template-based approach as examples, we create contextual prompts for Large Language Models.
+    
+    \item \textbf{LLM-Based Generation}: We employ Large Language Models to generate natural language questions and step-by-step reasoning chains for each SPARQL query, ensuring linguistic quality and diversity.
+    
+    \item \textbf{Quality Control}: Generated questions are filtered to ensure they accurately represent the information need expressed by the SPARQL query.
+\end{enumerate}
+
+\subsection{Hybrid Approach Benefits}
+The combination of template-based and random-walk methodologies provides several advantages:
+
+\begin{enumerate}
+    \item \textbf{Comprehensive Coverage}: Template-based generation ensures linguistic diversity and question quality, while random-walk discovery captures the full range of structural patterns in the knowledge graph.
+    
+    \item \textbf{Guaranteed Validity}: Both approaches ensure that generated SPARQL queries are valid and return results when executed against the knowledge graph.
+    
+    \item \textbf{Balanced Complexity}: The stratified approach to complexity levels ensures a balanced distribution of query types for effective model training.
+    
+    \item \textbf{Domain Adaptability}: The methodology can be applied to different knowledge domains by adapting templates and discovery parameters to domain-specific requirements.
+\end{enumerate}
+
+This hybrid dataset generation methodology enables us to create comprehensive, high-quality training datasets for fine-tuning language models on Natural Language to SPARQL translation tasks, addressing the limitations of previous approaches that relied on limited, manually crafted examples or synthetic data without structural diversity.
+
+% Place another diagram showing the complete hybrid approach here if desired
+% ```mermaid
+% flowchart TD
+%     A[Knowledge Graph] --> B[Template-Based]
+%     A --> C[Random-Walk]
+%     B --> D[High-Quality Questions]
+%     C --> E[Diverse Structural Patterns]
+%     D --> F[Complete NL2SPARQL Dataset]
+%     E --> F
+%     F --> G[Model Fine-tuning]
+%     G --> H[Improved NL2SPARQL Performance]
+% ```
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{image.png}
+    \caption{Benefits of the hybrid approach combining template-based linguistic quality with random-walk structural diversity}
+    \label{fig:enter-label}
+\end{figure}
 
 \section{Model Finetuning Methodology}
 \subsection{Entity and Property Extraction Model}
