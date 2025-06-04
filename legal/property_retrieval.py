@@ -302,3 +302,6 @@ WHERE {
         """Close the Weaviate client connection"""
         if hasattr(self.client, 'close'):
             self.client.close()
+            
+if __name__ == '__main__':
+    LegalPropertyRetrieval()
