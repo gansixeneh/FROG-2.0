@@ -305,9 +305,13 @@ class FROGGraphAgent:
 
         # Add information about the extracted entities
         if state.extracted_entities:
+            # Format each entity with bullet points
+            formatted_entities = []
+            for entity in state.extracted_entities:
+                formatted_entities.append(f"- {entity}")
+            
             explanation += f"""### Extracted Entities
-{", ".join(state.extracted_entities)}
-
+{chr(10).join(formatted_entities)}
 """
 
         # Add approach information
@@ -378,11 +382,19 @@ class FROGGraphAgent:
                 explanation += f"\n**Total references found**: {len(state.verbalization_references)}\n\n"
 
         elif approach == "sparql":
-            # Add property information if available
+        # Add property information if available
             if state.related_properties:
+                # Format each property with bullet points and bold property names
+                formatted_properties = []
+                for prop in state.related_properties[:10]:
+                    if " - " in prop:
+                        property_name, description = prop.split(" - ", 1)
+                        formatted_properties.append(f"- **{property_name}** - {description}")
+                    else:
+                        formatted_properties.append(f"- **{prop}**")
+                
                 explanation += f"""### Related Properties
-{", ".join(state.related_properties[:10])}
-
+{chr(10).join(formatted_properties)}
 """
 
             # Add SPARQL query if available
