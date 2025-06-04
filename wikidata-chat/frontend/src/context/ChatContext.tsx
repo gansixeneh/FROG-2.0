@@ -48,20 +48,28 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
   // Initialize settings from localStorage or use defaults
   const [settings, setSettings] = useState<AgentSettings>(() => {
-    try {
-      const savedSettings = localStorage.getItem("frog-settings");
-      if (savedSettings) {
-        return JSON.parse(savedSettings);
-      }
-    } catch (error) {
-      console.error("Error loading settings from localStorage:", error);
-    }
-    return {
+    const defaultSettings: AgentSettings = {
       useVerbalization: true,
       useGoogleSearch: true,
       useTranslation: true,
       knowledgeSource: "wikidata",
     };
+
+    try {
+      const savedSettings = localStorage.getItem("frog-settings");
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        // Merge saved settings with defaults to ensure all properties are present
+        return {
+          ...defaultSettings,
+          ...parsed,
+        };
+      }
+    } catch (error) {
+      console.error("Error loading settings from localStorage:", error);
+    }
+    
+    return defaultSettings;
   });
 
   // Monitor Pusher connection status
