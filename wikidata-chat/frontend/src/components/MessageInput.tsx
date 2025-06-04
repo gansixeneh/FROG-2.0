@@ -54,7 +54,7 @@ const MessageInput: React.FC = () => {
   );
   
   return (
-    <div className="border-t border-frog-dark/10 bg-white p-4 fixed bottom-0 left-0 right-0 bg-opacity-90 backdrop-blur-sm">
+    <div className="border-t border-frog-dark/10 bg-white p-4 fixed bottom-0 left-0 right-0 bg-opacity-90 backdrop-blur-sm z-20">
       <form onSubmit={handleSubmit} className="flex items-center mx-auto max-w-4xl relative">
         <LilyPad />
         <input

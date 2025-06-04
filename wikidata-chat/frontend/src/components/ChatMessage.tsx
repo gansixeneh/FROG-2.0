@@ -46,6 +46,24 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     processedContent = processedContent
       .replace(/(```sparql)/g, "\n$1")
       .replace(/```(?!sparql)/g, "```\n");
+      
+    // Format "Related Properties" section with bullets and bold text
+    processedContent = processedContent.replace(
+      /(## Related Properties\s*\n)([\s\S]*?)(?=\n##|$)/g,
+      (match, heading, propertiesList) => {
+        // Replace each property line with a bullet point and bold text
+        const formattedList = propertiesList
+          .split('\n')
+          .filter((line: string) => line.trim() && line.includes(' - ')) // Filter non-empty lines with hyphen
+          .map((line: string) => {
+            const [property, description] = line.split(' - ');
+            return `* **${property.trim()}** - ${description.trim()}`;
+          })
+          .join('\n');
+        
+        return `${heading}${formattedList}`;
+      }
+    );
 
     // Extract SPARQL code blocks to protect them from URL processing
     const sparqlBlocks: string[] = [];
@@ -110,7 +128,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   );
 
   const renderUserMessage = () => (
-    <div className="flex items-start justify-end relative z-[5]">
+    <div className="flex items-start justify-end relative z-[1]">
       <div className="user-bubble px-4 py-3 bg-frog-accent text-frog-dark rounded-2xl rounded-tr-none shadow-md max-w-full">
         <ReactMarkdown
           className="prose max-w-none"
