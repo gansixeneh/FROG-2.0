@@ -243,6 +243,15 @@ def process_json(json_data):
             item['sparql'] = format_sparql_query(item['sparql'])
             item['sparql'] = remove_spaces_before_chars(item['sparql'])
             item['sparql'] = fix_broken_uris(item['sparql'])
+        
+        # Add prefix to property IDs in properties_matches
+        if 'properties_matches' in item:
+            for prop in item['properties_matches']:
+                if 'id' in prop and prop['id'].startswith('https://example.org/lex2kg/ontology/'):
+                    # Extract the property name from the full URI
+                    prop_name = prop['id'].split('/')[-1]
+                    # Replace the full URI with the prefixed version
+                    prop['id'] = f"lex2kg-o:{prop_name}"
     
     return json_data
 
