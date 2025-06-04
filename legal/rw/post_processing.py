@@ -216,6 +216,24 @@ def format_ask_query(query):
     # Fallback
     return query
 
+def fix_broken_uris(sparql_query):
+    """Fix URIs that have been broken by newlines during formatting."""
+    # Find URIs that have been broken across lines using regex
+    pattern = r'<([^>]*?\n[^>]*?)>'
+    
+    # Keep searching until no more broken URIs are found
+    while re.search(pattern, sparql_query):
+        match = re.search(pattern, sparql_query)
+        if match:
+            # Get the broken URI content
+            broken_uri = match.group(1)
+            # Fix it by removing newlines and extra spaces
+            fixed_uri = re.sub(r'\s+', '', broken_uri)
+            # Replace in the original string
+            sparql_query = sparql_query.replace(f'<{broken_uri}>', f'<{fixed_uri}>')
+    
+    return sparql_query
+
 def process_json(json_data):
     """Process the JSON data and add entity and property labels."""
     for item in json_data:
@@ -224,6 +242,7 @@ def process_json(json_data):
             item['sparql'] = replace_uri_with_prefix(item['sparql'])
             item['sparql'] = format_sparql_query(item['sparql'])
             item['sparql'] = remove_spaces_before_chars(item['sparql'])
+            item['sparql'] = fix_broken_uris(item['sparql'])
         
         # Add prefix to property IDs in properties_matches
         if 'properties_matches' in item:
