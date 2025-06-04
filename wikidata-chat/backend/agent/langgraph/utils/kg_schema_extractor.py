@@ -70,7 +70,18 @@ def gesis_entity_label(url):
     if url.startswith("http"):
         parts = url.strip("/").split("/")
         last_part = parts[-1]
-        return separate_camel_case(last_part).lower()
+        
+        # Clean up the label - replace underscores, camelCase, etc.
+        label = separate_camel_case(last_part)
+        
+        # Replace underscore with space
+        label = label.replace("_", " ")
+        
+        # Replace dash with space
+        label = label.replace("-", " ")
+        
+        # Convert to lowercase for consistency
+        return label.lower()
     return url
 
 def gesis_property_label(x):

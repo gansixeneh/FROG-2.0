@@ -575,7 +575,7 @@ SPARQL:"""
                     if not result:
                         state.context_str = "I couldn't find information to answer this question."
                     else:
-                        # Check if we need to process entity URIs (only for Wikidata)
+                        # Check if we need to process entity URIs based on knowledge source
                         if knowledge_source == "wikidata":
                             has_wikidata_entities = False
                             entity_uris = []
@@ -650,6 +650,100 @@ SPARQL:"""
                                         state.visualizer.log_event(
                                             "SPARQL Generation Node",
                                             "labeled results",
+                                            {"results": result[:10] if len(result) > 10 else result}
+                                        )
+                        elif knowledge_source == "gesis":
+                            # Add handling for GESIS entities
+                            has_gesis_entities = False
+                            entity_uris = []
+                            print(result)
+                            
+                            for item in result:
+                                for key, value in item.items():
+                                    if isinstance(value, str) and (
+                                        # Common patterns for GESIS URIs
+                                        "gesis" in value.lower() and 
+                                        value.startswith("http")
+                                    ):
+                                        has_gesis_entities = True
+                                        entity_uris.append(value)
+                            
+                            # If we have GESIS entities, get their labels
+                            if has_gesis_entities:
+                                # Generate query for entity labels
+                                values_str = " ".join([f"<{uri}>" for uri in entity_uris])
+                                label_query = f"""
+                                PREFIX schema: <https://schema.org/>
+                                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                
+                                SELECT ?item ?itemLabel WHERE {{
+                                  VALUES ?item {{ {values_str} }}
+                                  # Try schema:name first (preferred for GESIS)
+                                  OPTIONAL {{ ?item schema:name ?itemLabel }}
+                                  # Then try schema:title as fallback
+                                  OPTIONAL {{ ?item schema:title ?itemLabel }}
+                                  # Finally try rdfs:label as last resort
+                                  OPTIONAL {{ ?item rdfs:label ?itemLabel }}
+                                }}
+                                """
+                                
+                                # Get entity labels
+                                entity_labels = {}
+                                try:
+                                    # Log label query
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "gesis entity label lookup",
+                                            {"label_query": label_query, "entity_uris": entity_uris}
+                                        )
+                                        
+                                    label_results, _ = self.execute_sparql(label_query, state)
+                                    for item in label_results:
+                                        if "item" in item and "itemLabel" in item:
+                                            uri = item["item"]
+                                            # Extract a more readable ID from the URI
+                                            entity_id = uri.split("/")[-1]
+                                            entity_labels[uri] = f"{item['itemLabel']} ({entity_id})"
+                                    
+                                    # If no labels found, use the kg_schema_extractor utility
+                                    from ..utils.kg_schema_extractor import gesis_entity_label
+                                    for uri in entity_uris:
+                                        if uri not in entity_labels:
+                                            label = gesis_entity_label(uri)
+                                            entity_labels[uri] = label
+                                            
+                                except Exception as e:
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "gesis entity label lookup error",
+                                            {"error": str(e)}
+                                        )
+                                        
+                                    if state.verbose > 0:
+                                        print(f"Error getting GESIS entity labels: {e}")
+                                
+                                # Replace URIs with labels
+                                if entity_labels:
+                                    labeled_result = []
+                                    for item in result:
+                                        new_item = {}
+                                        for key, value in item.items():
+                                            if isinstance(value, str) and value in entity_labels:
+                                                new_item[key] = entity_labels[value]
+                                            else:
+                                                new_item[key] = value
+                                        labeled_result.append(new_item)
+                                    
+                                    result = labeled_result
+                                    state.query_result = result
+                                    
+                                    # Log labeled results
+                                    if hasattr(state, 'visualizer') and state.visualizer:
+                                        state.visualizer.log_event(
+                                            "SPARQL Generation Node",
+                                            "gesis labeled results",
                                             {"results": result[:10] if len(result) > 10 else result}
                                         )
                         

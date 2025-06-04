@@ -527,23 +527,42 @@ class FROGGraphAgent:
 
             # Format the query results as a markdown table
             if state.query_result:
+                # Process results based on knowledge source
+                processed_results = state.query_result
+                
+                # Ensure GESIS entity labels are properly displayed
+                if knowledge_source == "gesis" and processed_results:
+                    # Entity labels should already be processed by SPARQL generation node,
+                    # but we can double-check here for any remaining URI values
+                    
+                    from .utils.kg_schema_extractor import gesis_entity_label
+                    
+                    for i, row in enumerate(processed_results):
+                        for key, value in row.items():
+                            # If value looks like a GESIS URI and not already processed to a label
+                            if isinstance(value, str) and value.startswith("http") and "gesis" in value.lower():
+                                # Extract label from URI as fallback
+                                label = gesis_entity_label(value)
+                                entity_id = value.split("/")[-1]
+                                processed_results[i][key] = f"{label} ({entity_id})"
+                
                 # Get column headers
-                headers = list(state.query_result[0].keys())
+                headers = list(processed_results[0].keys())
 
                 # Create table header
                 explanation += "| " + " | ".join(headers) + " |\n"
                 explanation += "| " + " | ".join(["---"] * len(headers)) + " |\n"
 
                 # Add rows (limit to 10 rows for readability)
-                max_rows = min(10, len(state.query_result))
-                for row in state.query_result[:max_rows]:
+                max_rows = min(10, len(processed_results))
+                for row in processed_results[:max_rows]:
                     explanation += (
                         "| " + " | ".join(str(row.get(h, "")) for h in headers) + " |\n"
                     )
 
-                if len(state.query_result) > 10:
+                if len(processed_results) > 10:
                     explanation += (
-                        f"\n*...and {len(state.query_result) - 10} more rows*\n"
+                        f"\n*...and {len(processed_results) - 10} more rows*\n"
                     )
             else:
                 explanation += "*No results found*\n"
