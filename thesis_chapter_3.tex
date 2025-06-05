@@ -50,14 +50,14 @@ The original pipeline v1 (Figure \ref{fig:pipeline_v1}) serves as our initial ba
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{assets/pdfs/pipeline-ori.pdf}
+    \includegraphics[width=1\textwidth]{assets/pdfs/pipeline-ori.pdf}
     \caption{The Initial Pipeline (Pipeline v1) \citep{ongris2024frog}}
     \label{fig:pipeline_v1}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{assets/pdfs/pipeline2-cropped.pdf}
+    \includegraphics[width=1\textwidth]{assets/pdfs/pipeline2-cropped.pdf}
     \caption{The Upgraded Pipeline (Pipeline v2) \citep{ongris2024frog}}
     \label{fig:pipeline_v2}
 \end{figure}
@@ -449,7 +449,7 @@ Templates are designed with varying complexity levels to provide comprehensive c
 
 \begin{lstlisting}[
   language=json, 
-  caption=Example of a Generated Dataset Entry, 
+  caption=Example of a Generated Dataset Entry with Formatted SPARQL, 
   label=lst:dataset_example,
   breaklines=true,
   breakatwhitespace=true,
@@ -469,9 +469,8 @@ Templates are designed with varying complexity levels to provide comprehensive c
   "id": "q1",
   "question": "How many credits does the Algorithm Design 
     and Analysis course have?",
-  "sparql": "SELECT ?value WHERE { 
-    <http://example.org/algorithm_design_and_analysis> 
-    <http://example.org/has_credits> ?value . }",
+  "sparql": "SELECT?value\n
+  WHERE {\n  ns1:algorithm_design_and_analysis ns1:has_credits?value.\n}",
   "category": "university",
   "complexity": "basic",
   "templateId": "course-credits",
@@ -516,8 +515,8 @@ Templates are designed with varying complexity levels to provide comprehensive c
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.75\linewidth]{assets/pics/template.png}
-    \caption{Workflow of the template-based dataset generation process showing the discovery-first approach}
+    \includegraphics[width=0.75\linewidth]{assets/pics/template2.jpg}
+    \caption{Workflow of the template-based dataset generation process showing the discovery-first approach and SPARQL post-processing}
     \label{fig:enter-label}
 \end{figure}
 
@@ -555,8 +554,8 @@ To enhance the dataset's utility for training entity linking and property matchi
 While the template-based approach provides high-quality, linguistically diverse questions, it may not capture the full range of structural patterns present in a knowledge graph. To address this limitation, we developed a pattern-based random walk methodology that discovers valid query patterns directly from the graph structure.
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{assets/pics/salib1.jpg}
-    \caption{Workflow of the random-walk dataset generation process showing pattern discovery and question generation}
+    \includegraphics[width=0.5\linewidth]{assets/pics/salib2.jpg}
+    \caption{Workflow of the random-walk dataset generation process showing pattern discovery, question generation, and SPARQL post-processing}
     \label{fig:enter-label}
 \end{figure}
 
@@ -641,6 +640,68 @@ The combination of template-based and random-walk methodologies provides several
 \end{enumerate}
 
 For Wikidata, while we do not generate new question-SPARQL pairs, our enhancement process adds similar benefits by incorporating thoughts generation, entity/property matching with noise, and structured training formats that align with our generated datasets for other knowledge graphs. This ensures consistency in training data format across all domains while leveraging the high-quality QALD-9-Plus foundation.
+
+\subsection{Dataset Post-Processing and SPARQL Formatting}
+\label{sec:dataset-postprocessing}
+
+To enhance the quality of training data and improve model learning efficiency, we apply comprehensive post-processing to all generated datasets across both Wikidata and domain-specific knowledge graphs. Our empirical observations revealed that base language models tend to generate SPARQL queries with specific formatting patterns, including uppercase keywords, proper indentation, and specific spacing conventions. To align our training data with these natural tendencies, we implement a systematic post-processing pipeline.
+
+\subsubsection{SPARQL Query Formatting Pipeline}
+
+The post-processing pipeline consists of four key transformations applied to all SPARQL queries in our datasets:
+
+\begin{enumerate}
+    \item \textbf{Keyword Capitalization}: All SPARQL keywords (SELECT, WHERE, FILTER, BIND, UNION, ORDER BY, COUNT, AS, GROUP BY, LIMIT, OFFSET, DISTINCT, ASK) are converted to uppercase to match the conventional SPARQL formatting style.
+    
+    \item \textbf{URI to Prefix Conversion}: Full URIs are replaced with prefixed notation for improved readability. For example, \texttt{<http://example.org/has\_credits>} becomes \texttt{ns1:has\_credits}, making queries more concise and easier for models to process.
+    
+    \item \textbf{Query Structure Formatting}: SPARQL queries are reformatted with proper indentation and line breaks:
+    \begin{itemize}
+        \item WHERE clauses are placed on separate lines with proper brace alignment
+        \item Triple patterns within WHERE clauses are indented consistently
+        \item Special clauses (FILTER, BIND, UNION) are formatted on separate lines
+        \item ORDER BY, GROUP BY, and LIMIT clauses are properly separated
+    \end{itemize}
+    
+    \item \textbf{Whitespace Normalization}: Spaces before question marks (\texttt{?}) and dots (\texttt{.}) are removed to ensure consistent spacing patterns throughout the queries.
+\end{enumerate}
+
+\subsubsection{Example of Post-Processing Transformation}
+
+Before post-processing:
+\begin{lstlisting}[language=SPARQL, caption=SPARQL query before post-processing]
+select ?value where { <entity> <property> ?value . }
+\end{lstlisting}
+
+After post-processing:
+\begin{lstlisting}[language=SPARQL, caption=SPARQL query after post-processing]
+SELECT?value
+WHERE {
+  ns1:entity ns1:property?value.
+}
+\end{lstlisting}
+
+This formatting approach significantly improves model performance by:
+\begin{itemize}
+    \item Reducing the learning complexity for SPARQL syntax patterns
+    \item Providing consistent formatting that aligns with model generation preferences
+    \item Enhancing query readability for debugging and validation
+    \item Standardizing the representation across different knowledge graph domains
+\end{itemize}
+
+The post-processing is applied uniformly to:
+\begin{itemize}
+    \item Enhanced QALD-9-Plus dataset for Wikidata
+    \item Template-based generated datasets for domain-specific KGs
+    \item Random-walk generated datasets for domain-specific KGs
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/asdf.jpg}
+    \caption{SPARQL Query Post-Processing Pipeline showing the four-stage transformation process}
+    \label{fig:sparql-postprocessing}
+\end{figure}
 
 % ---------------------------------------
 
@@ -752,6 +813,8 @@ Our methodological approach for SPARQL generation focused on the transformation 
     \item Incorporation of step-by-step reasoning to explain query construction
 \end{itemize}
 
+The training data preparation incorporates our comprehensive SPARQL post-processing pipeline (see Section~\ref{sec:dataset-postprocessing}), ensuring that all training examples follow consistent formatting patterns that align with the natural generation tendencies of language models. This formatting consistency significantly improves the model's ability to generate syntactically correct and properly formatted SPARQL queries.
+
 \subsubsection{Model Adaptation Strategy}
 For SPARQL generation, we designed a more intensive adaptation configuration due to the task's complexity and the need for precise syntax generation:
 
@@ -775,6 +838,8 @@ Our SPARQL generation training data methodology focused on creating comprehensiv
     \item Step-by-step reasoning chains explaining query construction logic
     \item Syntactically correct target SPARQL queries for each knowledge graph domain
 \end{itemize}
+
+All SPARQL queries in our training datasets undergo comprehensive post-processing to align with the natural generation patterns observed in base language models. This includes converting keywords to uppercase, replacing full URIs with prefixed notation, applying consistent indentation and formatting, and normalizing whitespace. This preprocessing step ensures that our fine-tuned models learn from consistently formatted examples that match their inherent generation preferences, leading to more reliable SPARQL query generation. The post-processing pipeline is detailed in Figure~\ref{fig:sparql-postprocessing}.
 
 For Wikidata, we enhanced the QALD-9-Plus dataset by:
 \begin{itemize}
