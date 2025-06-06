@@ -1,0 +1,146 @@
+%-----------------------------------------------------------------------------%
+\chapter{\babSatu}
+\label{bab:1}
+%-----------------------------------------------------------------------------%
+In this chapter, we will explain the background motivation and problems we aim to resolve through this research.
+
+
+%-----------------------------------------------------------------------------%
+\section{Overview}
+\label{sec:latarBelakang}
+%-----------------------------------------------------------------------------%
+Recent advancements in the field of large language models (LLMs) have transformed the paradigm of Information Retrieval (IR) applications \citep{irparadigm}. This phenomenon can be seen nowadays, where numerous LLM-powered services like OpenAI's ChatGPT, Google's Gemini, and Microsoft's Copilot are employed for IR tasks, such as question-answering (QA) and text summarization. Specifically, for search engines, existing works focus on leveraging LLMs to improve query rewriting, retrieval, reranking, and content reading \citep{zhu2024largelanguagemodelsinformation}.
+
+LLMs can contribute significantly to the field of IR due to their impressive ability to understand natural language semantically and generate natural language text fluently. These skills are acquired during the pre-training phase, where massive amounts of textual data are fed into models to optimize their parameters. The knowledge learned during this phase is embedded within the models' parameters, making such models known as \textit{parametric models}. These foundation models can be further fine-tuned with instruction datasets or specific examples to perform many different downstream tasks \citep{ziegler2020finetuninglanguagemodelshuman}. Additionally, they can also learn from human feedback and in-context learning, i.e., the model uses natural language instructions stated in the prompt as a guidance to complete similar tasks by simply predicting which token will come up next \citep{brown2020gpt3}.
+
+Despite their performance, there are still several limitations of LLMs: the difficulties in expanding or updating the knowledge, the lack of transparency or interpretability (or the \textit{black-box} problem of AI), and the ``hallucination'' phenomena \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, where the generated response is plausible but nonfactual. These limitations---especially the last one---have led to significant concerns about the trustworthiness of LLMs. Consequently, people tend to be reluctant when it comes to leveraging LLMs for decision-making in critical fields like law, healthcare, finance, and other sectors, where accountability and accuracy are the most important aspects.
+
+To get rid of these problems while still maintaining the excellent performance of LLMs, \textit{retrieval-augmented generation} (RAG) was introduced \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. This approach does not rely solely on parametric models but also incorporates external \textit{non-parametric models} which perform retrieval on a knowledge base. By using this component, the knowledge can be easily expanded or updated as it is not embedded in the parameters. Moreover, this component also allows direct inspection of the retrieved data, partially addressing the black-box problem. However, while this approach does not guarantee that hallucinations will disappear completely, it reduces them by not depending solely on the knowledge embedded within the LLMs.
+
+The original na\"{i}ve RAG approach as proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} uses Dense Passage Retriever (DPR) as the non-parametric component \citep{karpukhin2020densepassageretrievalopendomain}. This method encodes both query and documents into dense embeddings, such as using BERT\textsubscript{BASE} \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. The maximum inner product search (MIPS) algorithm is then employed to find the top-$K$ most relevant documents given the query. However, despite DPR outperforming traditional scoring algorithms like BM25, it still suffers from the black-box problem due to the nature of dense embeddings which are generally less interpretable. Furthermore, the process of splitting large documents into smaller ones for encoding (i.e., chunking) can potentially lead to the loss of contextual information and disrupt the coherence of the original content if related information is split across different chunks \citep{sarmah2024hybridragintegratingknowledgegraphs}.
+
+Therefore, to address those issues, one approach is to use a different knowledge base to store the knowledge to be retrieved, instead of a corpus of text chunks. One of the most versatile knowledge bases is the knowledge graph (KG), which stores information in the form of a graph structure. Leveraging KG as the knowledge base offers several advantages: the entities in the KG which are contextualized through their connections to other entities within the KG that can provide meaningful semantic relationships, the graph structure that supports graph theory algorithms (e.g., community detection) to extract meaningful information, and the ability to provide reasoning over retrieval results through graph walks (i.e., tracing the paths connecting one entity to another) \citep{informatics9010006}. To sum up all the advancements in QA systems as explained before, we provide \pic~\ref{fig:qa-evol}.
+
+% TODO: UNCOMMENT THIS
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pdfs/evolution-new-lower.pdf}
+    \caption{The Evolution of QA Systems}
+    \label{fig:qa-evol}
+\end{figure}
+
+Considering the lack of interpretability and transparency problems exhibited by most LLMs and na\"{i}ve RAG, we propose \textbf{FrOG: Framework of Open GraphRAG}. FrOG is a RAG system that uses a KG as the primary knowledge base, which relies solely on open-source components. This approach offers direct tracing of the retrieved knowledge, making the system's reasoning process more transparent and interpretable. Additionally, we are using off-the-shelf open-source LLMs, allowing users to implement the system directly without fine-tuning, which process requires significant computational resources. By building the system with open-source components, we also promote accessibility and flexibility, making it easier to tailor the system for domain-specific applications.
+
+%-----------------------------------------------------------------------------%
+\section{Research Questions}
+\label{sec:masalah}
+The main goal of this research is to design and implement a KG-agnostic RAG system composed of only open-source components. To guide our investigation, we formulate our research questions below.
+\begin{enumerate}
+% ASK THIS WHETHER THIS SUITS THE OBJECTIVE OR NOT
+    \item How to implement RAG using KG as the primary knowledge base, leveraging only open-source components? % answer: design
+    % \item How to evaluate the performance of the architecture in terms of the accuracy of the generated answers? % answer: jaccard in comparing SPARQL query execution result
+    % \item Which open-source LLM among LLaMA 3.1, Mistral 7B, Mistral NeMo, Qwen 2.5 7B, and Qwen 2.5 7B Coder demonstrates the best performance?
+    \item Which open-source LLM that serves as the basis for this GraphRAG architecture and achieves the highest answer accuracy?
+    \item Which specific component within the architecture plays the most crucial role in ensuring the generation of accurate answers? % can be determined through ablation study
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\section{Research Objectives}
+\label{sec:tujuan}
+%-----------------------------------------------------------------------------%
+Based on the aforementioned research questions, the research objectives we aim to achieve are as follows.
+\begin{enumerate}
+    \item To develop a RAG system using KG as the primary knowledge base, leveraging only open-source components.
+    % \item To determine the best-performing open-source LLM among LLaMA 3.1, Mistral 7B, Mistral NeMo, Qwen 2.5 7B, and Qwen 2.5 7B Coder.
+    \item To identify open-source LLM that serves as the basis for this GraphRAG architecture and achieves the highest answer accuracy.
+    \item To determine the most influential components within the architecture that contribute to the accuracy of generated answers.
+\end{enumerate}
+
+
+%-----------------------------------------------------------------------------%
+% \section{Posisi Penelitian}
+% \label{sec:posisiPenelitian}
+% %-----------------------------------------------------------------------------%
+% \todo{
+% 	Sebutkan posisi penelitian Anda. Ada baiknya jika Anda menggunakan gambar atau diagram.
+% 	Template ini telah menyediakan contoh cara memasukkan gambar.
+% 	}
+
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=0.4\textwidth]{assets/pics/makara.png}
+% 	\caption{Penjelasan singkat terkait gambar.}
+% 	\label{fig:research_position}
+% \end{figure}
+
+% \noindent\todo{Jelaskan \pic~\ref{fig:research_position} di sini.}
+
+
+%-----------------------------------------------------------------------------%
+\section{Research Scopes}
+\label{sec:batasanPenelitian}
+%-----------------------------------------------------------------------------%
+To ensure a more focused and manageable research, we limit the research scopes as follows.
+\begin{enumerate}
+    \item The proposed system is not designed to handle descriptive questions. The system focuses on factoid questions, which are questions with a single and concise answer, such as specific entities, dates, or numerical values, e.g., ``Who is the richest person in the world?''. Additionally, listing questions are also supported, e.g., ``Mention all books written by Shakespeare.''.
+    \item We evaluate the system on five generative LLMs: LLaMA 3.1 8B, Mistral 7B, Mistral NeMo, Qwen 2.5 7B, and Qwen 2.5 7B Coder. These models were chosen for their popularity within the AI community, their open-source nature, and their alignment with our system's requirements. Specifically, we focus on models within the 7B-12B parameter range due to the feasibility of implementation. 
+    % \item The system only supports questions formulated in English only. This limitation is motivated by the consideration that most state-of-the-art LLMs, like LLaMA, Mistral, and BERT are trained predominantly on large corpora of English text, which leads to outstanding capabilities in understanding and generating responses in English. Additionally, our knowledge bases, DBpedia and Wikidata primarily provide comprehensive and well-structured information in English.
+    \item Our system implementation supports three knowledge bases: Wikidata, DBpedia, and a locally developed curriculum-related KG. Wikidata and DBpedia are selected as representatives of open KGs, while the curriculum KG serves as an example of an enterprise KG.
+    \item For DBpedia, our proposed system can only handle questions incorporating \texttt{http://dbpedia.org/ontology/} or \texttt{:dbo} prefix. This limitation arises because the system relies on the T-Box ontology, which defines the schema and vocabulary of DBpedia for the \texttt{:dbo} namespace only.
+    \item For the local knowledge graph, our current implementation uses a curriculum-related knowledge graph, which is relatively compact, consisting of 874 triples. The underlying implementation leverages \texttt{rdflib} to store the graph in memory, showcasing its capability to handle substantial graph sizes effectively, depending on the available system memory. For example, on an Ubuntu 12.04 amd64 system with 8 GB of RAM, \texttt{rdflib} has been shown to load up to 15.7M triples (from a 738MB Turtle file) while using approximately 4.8 GB of memory\footnote{\url{https://groups.google.com/g/rdflib-dev/c/EZqiUs7qTUc?pli=1}}.
+\end{enumerate}
+%-----------------------------------------------------------------------------%
+\section{Research Stages}
+\label{sec:langkahPenelitian}
+The research is carried out in several stages, as outlined below.
+
+\begin{enumerate}
+    \item Problem Definition \\
+    This stage focuses on formulating the research objectives and identifying the key problems the study aims to address.
+
+    \item Literature Review \\
+    In this stage, the necessary background knowledge for the research is gathered. Topics of focus include Knowledge Graphs (KGs), Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and GraphRAG.
+
+    \item Framework Design \\
+    The design of the GraphRAG framework takes place in this stage, ensuring alignment with the research objectives.
+
+    \item Framework Implementation \\
+    Here, the designed framework is implemented into a functional system, adhering to the established specifications.
+
+    \item Experimentation and Evaluation \\
+    Several experiments are conducted to evaluate the performance of the implemented system, providing insights into its effectiveness and potential limitations.
+
+    \item Conclusion \\
+    This final stage summarizes the research outcomes based on the evaluation results. It also explores possible directions for future work and improvements.
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+% Berikut ini adalah langkah penelitian yang telah dilakukan:
+% \begin{enumerate}
+% 	\item Tinjauan literatur \\
+% 	Pada tahap ini, dipelajari teori-teori yang terkait dengan penelitian ini untuk mendapatkan konsep dasar yang dibutuhkan dalam mencapai tujuan penelitian.
+% 	\item Analisis implementasi dan kesimpulan \\
+% 	Pada tahap ini, digunakan studi kasus untuk analisis terkait kegunaan \f{template}.
+% 	Setelah melakukan analisis tersebut, ditarik kesimpulan keseluruhan dari penelitian ini.
+% \end{enumerate}
+
+
+%-----------------------------------------------------------------------------%
+\section{Outline}
+\label{sec:sistematikaPenulisan}
+%-----------------------------------------------------------------------------%
+This report is organized as follows.
+\begin{itemize}
+	\item Chapter 1 \babSatu \\
+	    This chapter introduces the research by providing the background for the study, problem definition (i.e., research questions, research objectives, and research scopes), and research stages.
+	\item Chapter 2 \babDua \\
+	    This chapter elaborates on the theoretical foundations and prior research related to the study. It discusses the topics on the KG, LLM, RAG, and GraphRAG.
+	\item Chapter 3 \babTiga \\
+	    This chapter outlines the research methodologies we employ in this study, including the general framework, knowledge bases, datasets, and evaluation metrics.
+	\item Chapter 4 \babEmpat \\
+		This chapter details the practical implementation of the research, including the specific pipeline explanation and the libraries utilized to construct the system.
+	\item Chapter 5 \babLima \\
+	    This chapter presents the outcomes of the research, including the results of system testing and a detailed analysis of the findings. Furthermore, it includes an ablation study to evaluate the contributions of individual components of the system.
+	\item Chapter 6 \kesimpulan \\
+	    This chapter summarizes the research findings and their implications. Additionally, it also provides recommendations for future research and development.
+\end{itemize}
