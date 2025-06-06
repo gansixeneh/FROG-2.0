@@ -908,24 +908,26 @@ def _create_linear_end_pattern(self, data, pattern_index):
 
 After generating SPARQL queries through pattern discovery, we use Large Language Models to generate natural language questions and reasoning chains. We implemented a specialized prompt template for this purpose:
 
-\begin{tcolorbox}[title=SPARQL to Question and Thoughts Generation Prompt, colback=red!5!white, colframe=red!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\begin{tcolorbox}[title=SPARQL to Question and Thoughts Generation Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
 \small
-You are a SPARQL question generation expert. Your task is to generate a natural language question and step-by-step reasoning chain for the given SPARQL query.
+\textbf{\#\# INSTRUCTIONS} \\
+You are a SPARQL question generation expert. Your task is to generate a natural language question and step-by-step reasoning chain for the given SPARQL query.\\
 
-SPARQL Query:
-{sparql_query}
+\textbf{\#\# SPARQL QUERY} \\
+\{sparql\_query\}\\
 
-Entity and Property Information:
-- Entities: {entity_info}
-- Properties: {property_info}
+\textbf{\#\# ENTITY AND PROPERTY INFORMATION} \\
+- Entities: \{entity\_info\}\\
+- Properties: \{property\_info\}\\
 
-Please generate:
-1. A clear, concise natural language question that would be answered by this SPARQL query
-2. A step-by-step reasoning chain (5-7 steps) that explains how to translate the natural language question into the SPARQL query
+\textbf{\#\# OUTPUT REQUIREMENTS} \\
+Please generate:\\
+1. A clear, concise natural language question that would be answered by this SPARQL query\\
+2. A step-by-step reasoning chain (5-7 steps) that explains how to translate the natural language question into the SPARQL query\\
 
-Output Format:
+\textbf{\#\# OUTPUT FORMAT} \\
 ```json
-{
+\{
   "question": "Your generated natural language question here",
   "thoughts": [
     "1. First reasoning step...",
@@ -933,8 +935,8 @@ Output Format:
     "3. Third reasoning step...",
     "..."
   ]
-}
-```
+\}
+```\\
 
 Make sure the question accurately represents what the SPARQL query is asking, and the reasoning steps provide a clear explanation of how to translate from the question to the SPARQL.
 \end{tcolorbox}
