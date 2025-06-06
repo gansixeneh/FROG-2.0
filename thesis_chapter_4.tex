@@ -28,6 +28,13 @@ The implementation follows a modular design pattern where each component is impl
 
 The foundation of our dataset generation system is the knowledge graph schema extractor, which provides a unified interface for extracting schema information from different knowledge graph sources, including remote SPARQL endpoints and local RDF files.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.65\linewidth]{kgschema_41.jpg}
+    \caption{Knowledge Graph Schema Extraction Pipeline}
+    \label{fig:enter-label}
+\end{figure}
+
 \subsubsection{Unified Schema Extraction Interface}
 
 We implemented the schema extraction interface through the \texttt{KGSchemaExtractor} class, which provides multiple extraction methods to handle different knowledge graph sources:
@@ -132,6 +139,13 @@ The GESIS and Legal schema processors follow similar patterns but with domain-sp
 \subsection{Vector Search Integration}
 
 To enable efficient entity and property matching, we integrated Weaviate vector search capabilities with n-gram processing and sentence embeddings. This integration is critical for both template-based and random-walk approaches.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{entity_prop_match_41.jpg}
+    \caption{N-gram Based Entity and Property Matching System}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsubsection{N-gram Processing Implementation}
 
@@ -356,6 +370,13 @@ This integrated approach for entity and property matching is used by both the te
 \subsection{Template-Based Dataset Generation}
 
 The template-based generator creates diverse question-SPARQL pairs by defining question templates with placeholders that are instantiated with valid entity-property combinations discovered from the knowledge graph.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{template-dataset41.jpg}
+    \caption{Discovery-First Template Instantiation Process}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsubsection{Template Structure and Initialization}
 
@@ -698,6 +719,13 @@ def get_appropriate_replacement(self, thought_text, placeholder, mapping):
 \subsection{Random-Walk Dataset Generation}
 
 The random-walk generator complements the template-based approach by discovering valid query patterns directly from the knowledge graph structure, ensuring comprehensive coverage of possible query patterns.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{rw_41.jpg}
+    \caption{Random-Walk Pattern Discovery and Question Generation}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsubsection{Pattern Discovery Implementation}
 
@@ -1308,6 +1336,13 @@ def parse_gesis_triple(self, triple):
 \subsection{Post-Processing Pipeline}
 
 The post-processing pipeline is essential for standardizing the format of SPARQL queries in the generated datasets. This standardization improves training efficiency by providing consistent formatting patterns that align with the natural generation tendencies of language models.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{post_processing_41.jpg}
+    \caption{SPARQL Query Standardization and Dataset Preparation}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsubsection{SPARQL Query Formatting}
 
