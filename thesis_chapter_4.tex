@@ -136,6 +136,129 @@ def parse_university_course_graph(self, graph):
 
 The GESIS and Legal schema processors follow similar patterns but with domain-specific property categorization and label extraction logic.
 
+\subsection{Query Optimization for Large Knowledge Graphs}
+\label{query-optimization}
+
+A critical aspect of our dataset generation implementation is the optimization of SPARQL queries, particularly when working with large knowledge graphs such as GESIS KG. Query performance can significantly impact the efficiency of the dataset generation process, especially during the discovery-first instantiation phase where multiple queries need to be executed to find valid entity-property combinations.
+
+\subsubsection{Triple Pattern Ordering}
+
+We discovered that the order of triple patterns within SPARQL queries can dramatically affect execution time. Consider the following example from our work with the GESIS Knowledge Graph (before modification):
+
+\begin{lstlisting}[language=SPARQL, caption=Original query - execution time: 2.155 seconds]
+SELECT ?authorName WHERE {
+  ?author schema:name ?authorName .
+  ?publication schema:author ?author .
+}
+GROUP BY ?author ?authorName
+ORDER BY DESC(COUNT(?publication))
+LIMIT 1
+\end{lstlisting}
+
+By simply reordering the triple patterns, we achieved a significant performance improvement:
+
+\begin{lstlisting}[language=SPARQL, caption=Reordered query - execution time: 0.698 seconds]
+SELECT ?authorName WHERE {
+  ?publication schema:author ?author .
+  ?author schema:name ?authorName .
+}
+GROUP BY ?author ?authorName
+ORDER BY DESC(COUNT(?publication))
+LIMIT 1
+\end{lstlisting}
+
+This performance difference occurs because of how SPARQL query execution engines process the patterns. In the first query, \texttt{?author schema:name ?authorName} instantiates all entities with a name property, including many that aren't actually authors. This creates a large intermediate result set that must then be filtered by the second triple pattern.
+
+In contrast, the reordered query first identifies publications and their authors with \texttt{?publication schema:author ?author}, creating a much smaller intermediate result set of only actual authors, before retrieving their names. This pattern ordering ensures that we don't instantiate unnecessary triples during query execution.
+
+\subsubsection{Query Structure Optimization}
+
+We implemented further optimizations by restructuring queries to minimize redundant operations. For example, we can enhance the previous query by moving the \texttt{schema:name} property retrieval outside of the grouping operation:
+
+\begin{lstlisting}[language=SPARQL, caption=Fully optimized query with nested structure]
+PREFIX schema: <https://schema.org/>
+PREFIX ns1: <http://example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX lex2kg-o: <https://example.org/lex2kg/ontology/>
+PREFIX gesiskg: <https://data.gesis.org/gesiskg/schema/>
+SELECT ?authorName WHERE {
+  {
+    SELECT ?author WHERE {
+      ?publication schema:author ?author .
+    }
+    GROUP BY ?author
+    ORDER BY DESC(COUNT(?publication))
+    LIMIT 1
+  }
+  ?author schema:name ?authorName .
+}
+\end{lstlisting}
+
+This structure ensures that we only retrieve the name for the single author with the largest number of publications, rather than retrieving names for all authors before filtering. This optimization is particularly valuable when working with large knowledge graphs containing millions of entities.
+
+\subsubsection{Validation and Performance Monitoring}
+
+To systematically identify and address performance issues in our query templates, we implemented a comprehensive query validation and execution monitoring system. Rather than relying on an automated optimization function, we developed a manual optimization workflow using our \texttt{validate\_gesis\_sparql.py} script:
+
+\begin{lstlisting}[language=python, caption=Query validation and performance monitoring implementation]
+def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
+    """
+    Validates and executes SPARQL queries from a JSON file against the Fuseki server.
+    """
+    # Start timing the entire process
+    process_start_time = time.time()
+    
+    # Initialize the SPARQL executor
+    sparql_exec = SparqlExecutor()
+
+    # Read the input JSON file with queries
+    with open(input_json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Process each query
+    print(f"Executing {len(data)} SPARQL queries...")
+    total_execution_time = 0
+    
+    for i, item in enumerate(data):
+        # Extract query information
+        query_id = item.get("id", f"query_{i+1}")
+        sparql = item.get("sparql", "")
+
+        # Start timing the query execution
+        start_time = time.time()
+        
+        try:
+            # Execute the SPARQL query
+            query_results = sparql_exec.execute_query(sparql, return_format="dict")
+            
+            # Calculate execution time
+            execution_time = time.time() - start_time
+            
+            # Flag slow queries for manual optimization
+            if execution_time > 2.0:
+                print(f"  ⚠️  SLOW QUERY - Execution time: {execution_time:.3f}s ⚠️")
+            else:
+                print(f"  ✅ Execution time: {execution_time:.3f}s")
+                
+        except Exception as e:
+            # Handle errors in SPARQL execution
+            execution_time = time.time() - start_time
+            print(f"  ❌ Error: {e}")
+\end{lstlisting}
+
+This script allows us to run all generated queries against the target knowledge graph and identify those that exceed our performance threshold (typically 2 seconds). When slow queries are identified, we manually analyze them to determine the cause of the performance issue and apply appropriate optimizations:
+
+\begin{enumerate}
+    \item Reordering triple patterns to prioritize selective patterns first
+    \item Restructuring queries with nested subqueries to optimize operations
+    \item Removing unnecessary graph patterns that don't contribute to the result
+    \item Adding explicit type constraints to limit intermediate result size
+\end{enumerate}
+
+The manual optimization approach, while more labor-intensive than an automated system, ensures that each template in our dataset generation system produces efficient queries that can be executed reliably against large knowledge graphs. This was particularly important for the GESIS Knowledge Graph, which contains millions of triples describing scholarly publications, authors, and related metadata.
+
+By systematically identifying and optimizing slow-performing queries, we significantly improved the overall efficiency of our dataset generation process, reducing the average query execution time by approximately 60\% across our template library.
+
 \subsection{Vector Search Integration}
 
 To enable efficient entity and property matching, we integrated Weaviate vector search capabilities with n-gram processing and sentence embeddings. This integration is critical for both template-based and random-walk approaches.
