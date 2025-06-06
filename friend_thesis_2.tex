@@ -1,0 +1,731 @@
+%-----------------------------------------------------------------------------%
+\chapter{\babDua}
+\label{bab:2}
+%-----------------------------------------------------------------------------%
+In this chapter, we will explain several theoretical foundations and prior research works related to our work.
+
+\section{Semantic Web and Knowledge Graphs}
+\label{sec:kg}
+The concept of knowledge graphs originates from the notion of the Semantic Web. The Semantic Web itself is considered as an extension of the Web, aiming to make it understandable by computers, not only humans. To achieve this behavior, large collections of structured information and sets of inference rules are needed by computers to perform reasoning \citep{semweb2001}. This structured approach enables computers to interpret and derive meaningful insights from a variety of data sources. 
+% Thus, it improves information retrieval results by providing a more detailed and holistic information, with the hope of fulfilling users' information needs.
+
+% talk about KG as the implementation of semweb
+On the other hand, knowledge graphs take the principles of the Semantic Web further by putting them into practical use. Introduced by Google in 2012, knowledge graphs represent information in the form of a graph, where entities are depicted as nodes and semantic relationships between entities are depicted as edges. With knowledge graphs, information retrieval results can be enhanced significantly by capturing the context and entities related to the query, not just relying on conventional text-matching techniques \citep{kg2012}. Furthermore, knowledge graphs also can be utilized to increase the explainability of retrieval algorithms, as part of \textit{explainable information retrieval} (XIR), since most state-of-the-art vector-based algorithms fail to explain why a certain document is retrieved as a result of a certain query \citep{xir2023}.
+% apakah citingnya sdh benar? yg blog google kg2012
+
+% talk about components of semweb 
+Leveraging structured data, the Semantic Web (and knowledge graph, in general) require a standardized format to describe the entities and relationships. This format forms the backbone of the Semantic Web's general architecture, which is known as the Semantic Web Layer Cake, as displayed in \pic~\ref{fig:semweb-layer-cake}. The Semantic Web Layer Cake illustrates the hierarchical structure of the Semantic Web, where each layer utilizes the capabilities of the layers below.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/new-swlayercake.png}
+    \caption{Semantic Web Layer Cake \citep{obitko-semantic-web}}
+    \label{fig:semweb-layer-cake}
+\end{figure}
+
+Components of the Semantic Web, as visualized in \pic~\ref{fig:semweb-layer-cake}, will be described in detail in the subsequent subsubchapters.
+\subsection{Identifier: Uniform Resource Identifier (URI)}
+As the Semantic Web adopts the structured approach, standardized identifiers are needed to uniquely distinguish items in the Semantic Web. This is because the name of the item itself is not adequate to differentiate between different items, as they may have the same name. For instance, the term ``Taj Mahal'' can refer to two different things: the famous mausoleum in India and the American Blues musician. If those items are represented in the Semantic Web, they will be mapped to different URIs.
+
+The concept of URI is actually a generalization of the Uniform Resource Locator (URL), which is used to identify web pages in the Web. The Semantic Web works at the level of the data rather than at the level of the presentation \citep{swont2011}, i.e., the web page. Hence, instead of having URLs to refer to web pages like the Web, the Semantic Web uses URIs to refer to data items (entities and relationships).
+
+\subsection{Character Set: Unicode}
+Unicode is a standardized text encoding scheme maintained by The Unicode Consortium. The scheme supports all international character sets, therefore, making all human languages can be represented using it. Moreover, it also encodes various kinds of symbols, dingbats, and even emojis. As of June 14\textsuperscript{th}, 2024, the latest version of Unicode is 15.1.0, which supports a total of 149,813 characters \citep{unicode}. In the realm of the Semantic Web, the usage of Unicode ensures that the information is encoded in a consistent and universally-understood format.
+
+\subsection{Syntax}
+Within the context of the Semantic Web, there are several standardized syntaxes to represent information in the form of Resource Description Framework (RDF): RDF/XML, Turtle, N-Triples, RDF-a, and JSON-LD \citep{ldm2014}. Originally, the World Wide Web Consortium (W3C) recommends the use of RDF/XML for RDF serialization, since the Web infrastructures are accustomed to representing information in HTML \citep{swont2011}, which is the specific form of XML. However, since JSON is the most popular way to serialize data in web applications nowadays, it would be relatively easy for many programmers to interpret the format of JSON-LD. In terms of human readability, the Turtle serialization stands out, thanks to its intuitive representation of triples, by simply listing three resources in subject/predicate/object order using QName abbreviations\footnote{Short representations of URIs, will be explained in \ref{turtle}.}, followed by a period \citep{swont2011}. Each syntax will be explained subsequently.
+
+\subsubsection{RDF/XML}
+RDF/XML utilizes the XML syntax in representing RDF data. Just like HTML, XML is a markup language which mainly used for storing data in structured format, i.e. the tag format. However, in XML, users are allowed to define their own tags based on the data characteristics they want to work on \citep{xmlrdf2000}. To give a context, an XML document consists of tags, with each tag is denoted by a pair of angle brackets, with text between them to indicate the name of the element which the tag creates. Furthermore, other XML elements can be placed as the contents of an XML element.
+
+Despite being the most well-known and widely-supported RDF serialization due to its XML structure, there are several downsides on the usages of RDF/XML. The main problem lies within the representation itself: the mixture of a tree-like document and a triple-based graph \citep{rdfser2019}, which presents an awkward representation of the RDF data. It does not explicitly reflect the triple model, so it might be quite difficult and cumbersome for people to interpret RDF/XML compared to other serialization methods.
+
+\subsubsection{JSON-LD}
+As stated in the name, the JSON-LD uses JSON structure to represent RDF data. JSON (JavaScript Object Notation) is a standardized, language-independent data interchange format which stores data in the form of two structures: a collection of name-value pairs and an ordered list of values \citep{json}. It is used commonly in web applications to transmit data \citep{MDNJSON} due to its simple structure and intuitiveness.
+
+JSON-LD itself is an extension of the plain JSON. It is easier to read and understand JSON-LD compared to RDF/XML, making it as one of the most common RDF representations nowadays. To justify this, according to surveys by \cite{W3TechsJSONLD}, as of July 13\textsuperscript{th}, 2024, JSON-LD is used by approximately 48.6\% of all the websites, including the ones established by big companies, such as Google, Microsoft, Apple, YouTube, and many more. Nevertheless, the disadvantage of using JSON-LD is that it is difficult and costly to parse, especially when the RDF data is needed instead of the JSON object, since the parsing often involves requesting data from the internet \citep{rdfser2019}. 
+
+\subsubsection{Turtle}
+\label{turtle}
+Besides JSON-LD, Turtle (the Terse RDF Triple Language) is considerably one of the most popular RDF serialization techniques nowadays. Turtle is known for its simple, concise, and highly readable syntax. It is the subset of Notation3 (N3) serialization and also a much simpler version of it. Consequently, parsing Turtle is way simpler than parsing N3, albeit it is more costly to parse Turtle compared to N-Triples \citep{rdfser2019}. Despite this, Turtle serialization is widely used, including the usage within the Semantic Web architecture itself. For instance, in SPARQL, the syntax of Turtle is used to define the query pattern for data retrieval.
+
+Turtle representation usually starts with the prefix declaration, which denoted by \texttt{@prefix}. Within this section, bindings between namespace prefixes and global URIs are defined. Another commonly used term is QName, which is the short and compact representation of URI that combines a namespace prefix and a local name (identifier) for the resource. For instance, the namespace prefix \texttt{rdf} is associated with the URI \texttt{http://www.w3.org/1999/02/22-rdf-syntax-ns\#}, which is declared within \texttt{@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns\#> .} On the other hand, whenever a QName like \texttt{rdf:type} is called, it refers to the URI \texttt{http://www.w3.org/1999/02/22-rdf-syntax-ns\#type}, constructed by appending the local name \texttt{type} to the namespace URI.
+
+Once the namespace prefixes have been defined, the triples can be easily expressed by listing three resources using QName abbreviations in subject/predicate/object order, followed by a period \citep{swont2011}. Furthermore, Turtle also provides concise representation for several triples which share the same subject to avoid verbosity. In this representation, the subject is only specified once in the first triple; the rest of the triples only need to specify the predicates and objects. However, there is a slight difference in terms of syntax. Instead of terminating each triple that shares the same subject with a period, it uses a semicolon. Only the latter one uses a period as the terminating symbol.
+
+\subsection{Data Interchange: Resource Description Framework (RDF)}
+Resource Description Framework (RDF) is the foundation of the Semantic Web. It provides a standardized model for data interchange in the Semantic Web \citep{libsw2014}. As expressed by the name, RDF is a framework to describe information about resources. All things in the world can be referred to as \textit{resources} in the Semantic Web \citep{swont2011}. This term is actually synonymous with \textit{entity}---introduced earlier---although according to \citet{swont2011}, despite its intuitiveness, the usages of \textit{entity} have certain issues.
+
+The main component of RDF is called the \textit{triple}. Following the notion of the elementary linguistics grammar, a triple consists of a subject, a predicate, and an object. A subject is an information resource represented by its URI, a predicate describes the relationship between the subject and the object, and it is also represented by its URI, while an object can be a value or a URI to another resource \citep{libsw2014}. To put it simply, an object is what a predicate of a subject describes.
+
+It is very common to represent RDF datasets---which consist of triples---as directed labeled graphs, with subjects and objects depicted as vertices and predicates depicted as edges \citep{ldm2014}. This representation is useful when dealing with multiple triples that refer to a single resource, as it eases interpretation. Furthermore, it allows data from multiple sources to be merged easily by simply forming a graph composed by all triples from these sources, i.e., individual graphs \citep{swont2011}.
+
+An example of simple RDF graph about an entity that represents Julian Hillyer can be seen in \pic~\ref{fig:sample-rdf} with the triples in \tab~\ref{tab:sample-rdf}. Due to long representations, the resources are represented using QNames, which namespace prefixes are defined in \tab~\ref{tab:sample-rdf-qname}. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/example-rdf-graph.png}
+    \caption{RDF Graph Example \citep{heardlibrary_serialization}}
+    \label{fig:sample-rdf}
+\end{figure}
+
+% need to shrink this
+\begin{table}
+    \centering
+    \begin{adjustbox}{width=\textwidth}
+        \begin{tabular}{|c|c|c|}
+            \hline
+             \textbf{Subject} & \textbf{Predicate} & \textbf{Object} \\
+            \hline
+             orcid:0000-0002-3178-0201 & dcterms:created & 2014-12-22T22:25:56.900Z \\
+             orcid:0000-0002-3178-0201 & mads:hasAffiliation & http://www.grid.ac/institutes/grid.152326.1 \\
+             orcid:0000-0002-3178-0201 & rdf:type & foaf:Person \\
+             orcid:0000-0002-3178-0201 & rdfs:label & ``Julian Hillyer" \\
+            \hline
+        \end{tabular}
+    \end{adjustbox}
+    \caption{RDF Triples about Julian Hillyer \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+         \textbf{Namespace Prefix} & \textbf{URI} \\
+        \hline
+         \texttt{rdf} & http://www.w3.org/1999/02/22-rdf-syntax-ns\# \\
+         \texttt{rdfs} & http://www.w3.org/2000/01/rdf-schema\# \\
+         \texttt{xsd} & http://www.w3.org/2001/XMLSchema\# \\
+         \texttt{foaf} & http://xmlns.com/foaf/0.1/ \\
+         \texttt{dcterms} & http://purl.org/dc/terms/ \\
+         \texttt{orcid} & http://orcid.org/ \\
+         \texttt{mads} & http://www.loc.gov/mads/rdf/v1\# \\
+        \hline
+    \end{tabular}
+    \caption{Namespace Prefixes and Corresponding URIs \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf-qname}
+\end{table}
+
+Representations of these triples in RDF/XML, JSON-LD, and Turtle will be explained subsequently.
+
+\subsubsection{RDF/XML}
+The RDF/XML representation of the triples in \tab~\ref{tab:sample-rdf} can be seen in \pic~\ref{fig:rdf-xml}.
+
+% convert to code?
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/rdf-xml-code.png}
+    \caption{RDF/XML for Triples in \tab~\ref{tab:sample-rdf}}
+    \label{fig:rdf-xml}
+\end{figure}
+
+At the top of the RDF/XML document, the version and encoding scheme of the XML are stated within the \texttt{xml} tag. The triple data are defined within the \texttt{rdf:RDF} element, which acts as the root element. The namespace declaration is placed inside the opening \texttt{<rdf:RDF>} tag, where namespace prefixes are specified as attributes with their URIs as the values. Triples about a certain entity, i.e., Julian Hillyer are put inside an element. In this case, the element refers to an instance of \texttt{Person} class whose ID is \texttt{0000-0002-3178-0201}. This element acts as the subject. Other predicate and object pairs that relate to the \texttt{Person} instance as the subject, i.e. \texttt{dcterms:created}, \texttt{mads:hasAffiliation}, and \texttt{rdfs:label} are declared inside it. For literal objects, such as \texttt{Julian Hillyer} and \texttt{2014-12-22T22:25:56.900Z}, paired tags are used with the objects being the content of the elements. Meanwhile, for resource object like \texttt{affiliation}, unpaired tag is used with the resource attribute is used to point to the relevant URI.
+
+\subsubsection{JSON-LD}
+The JSON-LD representation of the triples in \tab~\ref{tab:sample-rdf} can be seen in \pic~\ref{fig:json-ld}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/jsonld-example.png}
+    \caption{JSON-LD for Triples in \tab~\ref{tab:sample-rdf}}
+    \label{fig:json-ld}
+\end{figure}
+
+In JSON-LD, the concept of grouping triples related to a certain entity is achieved using JSON objects. Specifically, the key in the JSON object refers to the predicate, and the value refers to the object.  The value can be literal object or another JSON object. The use of JSON object as the value allows one to define literal object with specified datatype or non-literal object, i.e. the one that points to another URI (using \texttt{@id}). Meanwhile, the subject itself is defined within the same JSON object, with its ID specified as the value of \texttt{@id} and its type as the value of \texttt{@type}. Furthermore, the use of QName is also supported here. The namespace declaration is done in the JSON object as the value of the key \texttt{@context}. Another version of JSON-LD in \pic~\ref{fig:json-ld} with namespace declaration can be seen in \pic~\ref{fig:json-ld-context}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets//pics/json-ld-context.png}
+    \caption{JSON-LD with \texttt{@context} for Triples in \tab~\ref{tab:sample-rdf}}
+    \label{fig:json-ld-context}
+\end{figure}
+% For a literal object without specific datatype, it can be specified directly as the value of the key.
+
+\subsubsection{Turtle}
+The Turtle representation of the triples in \tab~\ref{tab:sample-rdf} can be seen in \pic~\ref{fig:ttl}.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/ttl-rdf.png}
+    \caption{Turtle for Triples in \tab~\ref{tab:sample-rdf}}
+    \label{fig:ttl}
+\end{figure}
+
+Turtle representation usually starts with the namespace declaration to define namespace prefixes. Each namespace prefix declaration is indicated by the use of \texttt{@prefix}, which is followed by the prefix name and its URI. The triples are defined afterward by listing three resources in subject/predicate/object order with QNames. In \pic~\ref{fig:ttl}, the compact version of the syntax is used, with only the first triple is defined fully, the rest of triples only specify the predicates and the objects, since they share the same subject with the first one.
+
+\subsection{Taxonomy: RDF Schema (RDFS)}
+RDF Schema is considered as a semantic extension to RDF and commonly known as the schema language for RDF. It ``extends" RDF by providing a set of distinguished resources into the language \citep{swont2011} to describe properties and classes of RDF resources in a standardized manner. The main concepts of RDFS incorporating classes and properties. Resources can be divided into groups called classes, which the members of a class are known as the instances of a class, whereas properties describe relations between subject resources and object resources \citep{rdfsw3c}. Several examples of RDFS syntax can be seen in  \tab~\ref{tab:rdfs-syntax}.
+
+\begin{table}
+    \centering
+    \begin{tabularx}{\textwidth}{|c|X|}
+        \hline
+         \textbf{Syntax} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+         \texttt{rdfs:subPropertyOf} & Describes how two properties relate to each other \\
+         \texttt{rdfs:subClassOf} & Describes how two classes relate to each other \\
+         \texttt{rdfs:domain} & Refers to the subject of any triple that uses a certain predicate \\
+         \texttt{rdfs:range} & Refers to the object of any triple that uses a certain predicate \\
+         \texttt{rdfs:label} & Provides a printable name for any resource \\
+         \texttt{rdfs:seeAlso} & Specifies links of supplementary information about a resource \\
+         \texttt{rdfs:isDefinedBy} & Specifies a link to the primary source of information about a resource \\
+         \texttt{rdfs:comment} & Provides natural language comments about a model \\
+        \hline
+    \end{tabularx}
+    \caption{RDFS Syntax Examples \citep{swont2011}}
+    \label{tab:rdfs-syntax}
+\end{table}
+
+% part ini dari satu dokumen saja, citingnya gmn?
+\subsection{Rule: Rule Interchange Format (RIF)}
+Rule Interchange Format (RIF) is a standard established by W3C for exchanging rules among different rule systems \citep{w3crif}. RIF was developed with the understanding that no single rule language could satisfy all the diverse needs of various paradigms in knowledge representation and business modelling. Consequently, RIF focuses on specifying rule exchange format rather than creating a universal rule language. 
+
+Taking this notion of rule exchange, the RIF Working Group designed a family of rule-based languages, called \textit{dialects}, with specified syntax and semantics \citep{w3crif}. These dialects are designed to be both \textit{uniform} and \textit{extensible}. Uniformity ensures the dialects share as much common syntax and semantics as possible to facilitate an easier rule exchange, whereas extensibility allows experts to add new dialects as extensions of the existing ones, with the desired new functionalities.
+
+% need to revise this more (or paraphrase)
+The RIF Working Group has focused on two families of dialects: \textit{logic dialects} and \textit{production rule dialects} \citep{rifboleykifer}. The logic dialects are designed to cover rule systems related to logic programming, deductive databases, and first-order logic, whereas the production rule dialects are designed to cover many commercial condition-action rule systems.
+
+\subsection{Ontology: Web Ontology Language (OWL)}
+\label{chap2:owl}
+In the Semantic Web framework, an ontology is a formal description of knowledge that outlines a domain's concepts and the relationships between them \citep{ontotext_ontologies}. Following this, an ontology language is a language used to construct ontology.
+
+Web Ontology Language (OWL) is the ontology language for the Web. It extends RDF and RDFS by providing additional vocabularies (terminologies) with formal semantics \citep{libsw2014}. Specifically, it extends the expresiveness of RDFS by allowing users to define classes, properties, instances (individuals), and meta-descriptions with more accuracy \citep{rdf-sws}. 
+
+% provide example? consult about the scope of this owl explanation
+OWL provides three sublanguages: OWL Lite, OWL DL, and OWL Full. The latest version of OWL, the OWL 2, which published in 2009, includes many new features that extend the limited semantics of RDFS \citep{tuominen_2020}, for instance:
+\begin{itemize}[noitemsep]
+    \item equivalence (classes) and equality (individuals)
+    \item disjointness (classes) and difference (individuals)
+    \item boolean combination of classes
+    \item local scope of properties
+    \item special relational characteristics of properties
+    \item cardinality of properties
+\end{itemize}
+
+\subsection{Querying: SPARQL}
+Every data model has its own mechanism for retrieving data, and the RDF data model is no exception. To query and manipulate RDF data, SPARQL (SPARQL Protocol and RDF Query Language) is used. SPARQL's syntax is adopted from the well-known Structured Query Language (SQL) of relational database. Specifically, the \texttt{SELECT <result template> FROM <data set definition> WHERE <query pattern>} query pattern of SQL is adapted for use in SPARQL \citep{rdf-sws}. Nonetheless, the execution approach is different. SPARQL follows a navigational-based approach, where it starts at a specific node and traverses along certain edges to reach the target node. On the other hand, SQL approach relies on joins between tables \citep{rdf-sws}.
+
+The similarity between SQL and SPARQL lies within the semantic meaning of the syntax. In SPARQL, the \texttt{SELECT} clause defines which part of the query results will be retrieved. This is analogous to SQL, where columns to retrieve are listed in the \texttt{SELECT} clause. Both languages also use the \texttt{WHERE} clause to restrict the retrieved data to those that match the specified query patterns. However, the \texttt{FROM} clause---which is used to define the datasets to query---is optional in SPARQL. If there is no \texttt{WHERE} clause specified in the query, the dataset that will be used is the default graph. In addition, the optional \texttt{PREFIX} clause can also be used to declare abbreviations that will be used to reference URIs in the query \citep{anzograph-sparql}. Lastly, query modifiers such as \texttt{ORDER BY}, \texttt{OFFSET}, \texttt{LIMIT}, \texttt{GROUP BY}, and \texttt{HAVING} can be applied to refine query results.
+
+In defining query patterns in the \texttt{WHERE} clause, triples in the format of Turtle are used. These triples often contain variables, which store data from the RDF graph matching and can later be combined in other triples to form more complex queries. A variable is denoted by having a question mark (\texttt{?}), which followed by the variable's name. For instance, a variable with the name \texttt{user} is written as \texttt{?user}.
+
+An example of SQL query with its corresponding SPARQL query is provided in \pic~\ref{fig:sql-sparql} to compare the syntaxes between the two. Both queries aim to retrieve the name and salary of the employees from the IT department in descending order.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/sql-sparql.png}
+    \caption{SQL and SPARQL Syntax Comparison}
+    \label{fig:sql-sparql}
+\end{figure}
+
+The explanation for the SPARQL query in \pic~\ref{fig:sql-sparql} is as follows.
+\begin{itemize}[noitemsep]
+    \item The \texttt{ex} prefix is declared, which  associated with \texttt{http://example.org/employees\#} to avoid the need to repeatedly write the full URI.
+    \item The \texttt{SELECT} clause specifies the name of the variables to be returned. In this case, those variables are \texttt{?name} and \texttt{?salary}, which store the employee names and salaries respectively.
+    \item The \texttt{WHERE} clause specifies the condition to be fulfilled. There are three match conditions here: it matches triples where the predicate is \texttt{ex:name} and binds the object to \texttt{?name}, it matches triples where the predicate is \texttt{ex:salary} and binds the object to \texttt{?salary}, as well as it matches triples where the predicate is \texttt{ex:department} and the object is the literal ``IT".
+    \item The \texttt{ORDER BY} clause sorts the results by \texttt{?salary} in descending order.
+\end{itemize}
+
+\subsection{Other Components}
+The previously-explained components---especially the RDF, OWL, and SPARQL---are the main building blocks of the Semantic Web. The next components to be discussed are the unifying logic, proof, trust, cryptography, and the user interface and applications, which add intelligence, verification, credibility, and usability to the Semantic Web.
+
+The unifying logic and proof is a thinking framework set built on top of the ontology structure to enable them to derive new knowledge \citep{juneja2017semanticweb}. Above that lies the trust layer, which addresses the credibility and reliability of the data and derived knowledge. The topmost layer with the highest layer is the user interface and applications layer. It serves as the medium for end-users to interact with the Semantic Web. Meanwhile, the layer that encapsulates all layers from the lowest layers, i.e., identifiers and character set layers until the proof layer is the cryptography layer. This layer ensures that the data is reliable, secure, and has not been altered during the transmission. Therefore, the integrity and authenticity of the information can be maintained perfectly. An example of this layer is the utilization of digital signatures for verification of the origin of the data sources \citep{juneja2017semanticweb}.
+
+\section{Large Language Model (LLM)}
+Large Language Models (LLMs) are deep neural networks trained on vast amount of text data that are designed to understand, generate, and respond to human-like text. This allows LLMs to capture deeper contextual information and subtleties of human language compared to traditional natural language processing (NLP) methods, such as rule-based systems, bag-of-words models, and many more. As a result, LLMs have significantly improved performance across various NLP tasks, such as text translation, sentiment analysis, question answering, and numerous others. Before the advent of LLMs, traditional methods excelled at categorization tasks and straightforward pattern recognition. Unfortunately, they typically underperformed in language tasks that required complex understanding and generation abilities. For example, previous generations of language models could not write an email from a list of keywords, which is a trivial task for contemporary LLMs \citep{raschka2024build}.
+
+LLMs utilize an architecture called Transformer, which is a deep neural network architecture introduced by \cite{vaswani2023attentionneed} (covered in more detail in Subsubsection \ref{chap2:transformer}). This architecture enables them to pay selective attention to various parts of the input during predictions, making them particularly adept at managing the nuances and complexities of human language \citep{raschka2024build}.
+
+\subsection{General Architecture of Transformer}
+\label{chap2:transformer}
+Before the inception of the Transformer, sequential architectures like Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) \citep{hochreiter1997lstm} used to be the state-of-the-art approaches in sequence modeling and transduction problems, such as language modeling and machine translation \citep{sutskever2014sequencesequencelearningneural, bahdanau2016neuralmachinetranslationjointly, cho2014learningphraserepresentationsusing}. However, RNNs process data sequentially, which limits parallelization and slows down training, especially for long sequences. Furthermore, RNNs also struggle to learn dependencies between distant positions in sequences due to \textit{vanishing gradient problem} (VGP), making it hard to capture long-term patterns \citep{hochreiter2001gradient}.
+
+On the other hand, the Transformer is a model architecture that relies exclusively on attention mechanisms, eliminating the need for recurrence and convolutions. This mechanism is used to establish global dependencies between input and output. Therefore, this architecture enables much greater parallelization and eliminates the sequential problem in RNNs, making training process more efficient, especially for longer sequences. Unlike RNNs, Transformers capture long-range dependencies effectively using self-attention mechanisms (covered in more detail in Subsection \ref{chap2:attention}) \citep{vaswani2023attentionneed}.
+
+The Transformer follows the architecture illustrated in \pic~\ref{fig:transformer-architecture}. It consists of two key components: the encoder (Subsubsubsection \ref{chap2:encoder}), shown on the left side of the figure and the decoder (Subsubsubsection \ref{chap2:decoder}), depicted on the right side. The encoder and decoder are composed of stacked self-attention and point-wise, fully connected layers. The encoder processes the input sequence, and the decoder generates the output sequence. At each step, the model operates auto-regressively \citep{graves2014generatingsequencesrecurrentneural}, consuming the previously-generated symbols as additional input when generating the next.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{assets/pdfs/transformer_architecture.pdf}
+    \caption{The Transformer's Architecture \citep{vaswani2023attentionneed}}
+    \label{fig:transformer-architecture}
+\end{figure}
+
+\subsubsection{Encoder}
+\label{chap2:encoder}
+The encoder is depicted on the left side of \pic~\ref{fig:transformer-architecture}. The encoder processes the input sequence and converts it into a continuous representation. It is composed of a stack of $N = 6$ identical layers, each with two sub-layers: a multi-head self-attention mechanism and a position-wise fully connected feed-forward network. Residual connections \citep{he2015deepresiduallearningimage} and layer normalization \citep{ba2016layernormalization} are applied around each sub-layer, i.e., the output of each sub-layer is computed as $LayerNorm(x + Sublayer(x))$, where $Sublayer(x)$ represents the function implemented by the sub-layer itself and $x$ represents the input of the sub-layer. Continuing, to support the residual connections, all sub-layers and embedding layers produce outputs with uniform dimension of $d_{model} = 512$ \citep{vaswani2023attentionneed}. These outputs are numerical representations of the input words, with each word assigned a unique dense vector based on its semantic meaning. 
+
+However, another challenge arises: a word can have multiple meanings depending on the context. Information about the relative or absolute position of the tokens in the sequence must be injected to solve this issue. Since the model contains no recurrence and no convolution, it needs a way to utilize the order of the sequence. To address this, \cite{vaswani2023attentionneed} added \textit{positional encodings} to the input embeddings at the bottoms of the encoder and decoder stacks. These vectors provide context by indicating the position of each word within a sentence.
+
+
+
+\subsubsection{Decoder}
+\label{chap2:decoder}
+The decoder is depicted on the right side of \pic~\ref{fig:transformer-architecture}. The decoder generates the output sequence from the encoder's representation. It is also composed of a stack of $N = 6$ identical layers, but with an additional sub-layer for multi-head attention over the encoder's output. Similar to the encoder, residual connections and layer normalization are also applied in the decoder. The decoder masks all the values for subsequent positions relative to a certain position to ensure the predictions for that position only depend on known outputs at previous positions, i.e., to preserve the auto-regressive property of the decoder \citep{vaswani2023attentionneed}.
+
+\subsubsection{Attention}
+\label{chap2:attention}
+The attention layer in the Transformer architecture is a mechanism that allows the model to focus on different parts of the input sequence when generating each part of the output sequence. An attention function maps a query and a set of key-value pairs to an output, where the query, keys, values, and output are all represented as vectors. The output is calculated as a weighted sum of the values, where the weight of each value is determined by a function which describes the compatibility of the query with the corresponding key \citep{vaswani2023attentionneed}. Therefore, it enables the model to dynamically weigh the importance of different input tokens with certain weighting factors.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/attention_variety.png}
+    \caption{Scaled Dot-Product Attention and Multi-Head Attention \citep{vaswani2023attentionneed}}
+    \label{fig:attention-variety}
+\end{figure}
+
+The core component of an attention layer is called \textit{scaled dot-product attention}, as depicted on the left side of \pic~\ref{fig:attention-variety}. Assume that the input consists of queries and keys with a dimension of $d_k$ and values with the same dimension of $d_v$. It calculates the dot products between the query and all keys, divides each by $\sqrt{d_k}$ for standardization, and applies a softmax function to obtain the weights for the values. However, in practice, a set of $n$ queries are computed simultaneously on the attention function, packed into a matrix $\mathbf{Q}$, where $\mathbf{Q} \in \mathbb{R}^{n \times d_k}$. The keys and values are also packed into matrices $\mathbf{K}$ and $\mathbf{V}$, where $\mathbf{K} \in \mathbb{R}^{m \times d_k}$, $\mathbf{V} \in \mathbb{R}^{m \times d_v}$, and $m$ yields the number of key-value pairs \citep{vaswani2023attentionneed}. Hence, the matrix of outputs is computed as in \equ~\ref{equ:attention}:
+
+\noindent
+\begin{equation}\label{equ:attention}
+	\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = 
+	\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{T}}{\sqrt{d_k}}\right)\mathbf{V} \in \mathbb{R}^{n \times d_v}
+\end{equation}
+
+Instead of performing a single attention function with $d_{model}$-dimensional keys, values, and queries, \cite{vaswani2023attentionneed} proposed to use \textit{multi-head attention}. With this mechanism, the queries, keys, and values are projected $h$ times with different, learned linear projections to $d_k$, $d_k$, and $d_v$ dimensions, respectively. It is possible by applying the attention function in parallel on each of their projected versions, yielding $d_v$-dimensional output values. These outputs are then concatenated and projected again to produce the final values, as depicted on the right side of \pic~\ref{fig:attention-variety}. Multi-head attention allows the model to join the information from different representation subspaces at different positions. It enhances the model’s ability to capture diverse features and therefore, improves performance.
+
+
+\subsection{Example Models}
+The advent of the Transformer architecture \citep{vaswani2023attentionneed} marked a significant milestone, leading to the development of foundation models like BERT \citep{devlin2019bertpretrainingdeepbidirectional}, T5 \citep{raffel2023exploringlimitstransferlearning}, and GPT \citep{radford2019language}. These models were built on this concept to adapt this architecture for different tasks \citep{raschka2024build}. We will explain those models along with other models utilized in this work subsequently.
+
+\subsubsection{BERT (Bidirectional Encoder Representations for Transformers)}
+\label{chap2:bert}
+
+BERT (\textbf{B}idirectional \textbf{E}ncoder \textbf{R}epresentations for \textbf{T}ransformers) is a language representation model designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. BERT utilizes the Transformer encoder architecture (Subsubsubsection \ref{chap2:encoder}). It operates in two main steps: pre-training and fine-tuning \citep{devlin2019bertpretrainingdeepbidirectional}. During pre-training, the model is trained on unlabeled data, i.e., enormous amount of text, through two unsupervised tasks:
+\begin{itemize}
+    \item \textbf{Masked Language Model (MLM)}: Unlike traditional language models that predict the next word in a sequence, MLM randomly masks some tokens in the input by a special token (typically \texttt{[MASK]}) and predicts the original tokens based on the context provided by the surrounding words. This helps BERT learn the representations of individual words in context by taking preceding and subsequent words into account. For example, given the input ``That \texttt{[MASK]} is flying in the sky'', the model must predict the word ``plane'' to ensure the sentence is coherent and meaningful.
+    
+    \item \textbf{Next Sentence Prediction (NSP)}: NSP helps the model understand the relationship between two sentences, which is crucial for tasks like Question Answering (QA) and Natural Language Inference (NLI). During NSP training, the model is given pairs of sentences. In 50\% of the cases, the second sentence follows the first one in the original text (labeled as \texttt{IsNext}), and in the other 50\%, the second sentence is randomly selected from the corpus (labeled as \texttt{NotNext}). The model then has to correctly predict whether the second sentence follows the first one or not. For example, given the input a pair of two sentences, ``The cat sat on the mat" and ``It looked very comfortable", the model has to predict that the latter sentence follows the former, since both sentences are related. 
+\end{itemize}
+
+For fine-tuning, the BERT model is initialized with pre-trained parameters, which are then refined using labeled data specific to downstream tasks. Each downstream task has a separate fine-tuned model, even though they are initialized with the same pre-trained parameters. This approach allows BERT to achieve state-of-the-art results on various NLP tasks, such as question answering and language inference, without requiring substantial task-specific architectural modifications.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pics/bert_architecture.jpg}
+    \caption{Pre-Training and Fine-Tuning in BERT \citep{devlin2019bertpretrainingdeepbidirectional}}
+    \label{fig:bert-architecture}
+\end{figure}
+
+\pic~\ref{fig:bert-architecture} illustrates the pre-training and fine-tuning process with question-answering task as an example. Except for the output layers, the architectures used in pre-training and fine-tuning are identical. The same pre-trained model parameters are used to initialize models for different downstream tasks, and all parameters are fine-tuned during this process. The special symbol \texttt{[CLS]} is added at the beginning of every input example and \texttt{[SEP]} is used as a separator token (e.g., separating questions/answers).
+
+\subsubsection{T5 (Text-To-Text Transfer Transformer)}
+\label{chap2:t5}
+
+Another model based on the Transformer architecture is T5 (\textbf{T}ext-\textbf{T}o-\textbf{T}ext \textbf{T}ransfer \textbf{T}ransformer). T5 introduces a unified framework where all NLP tasks are treated as text-to-text problems, meaning both inputs and outputs are handled as text sequences. For instance, to translate the sentence “That is good.” from English to German, the model would be given the input ``translate English to German: That is good.'' and trained to produce the output ``Das ist gut.'' as illustrated in \pic~\ref{fig:t5_diagram}. In text classification tasks, the model predicts a single word corresponding to the target label. This approach allows for the usage of the same model, objective, training procedure, and decoding process across a wide range of tasks \citep{raffel2023exploringlimitstransferlearning}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/t5_example.jpg}
+    \caption{Usages of T5 \citep{raffel2023exploringlimitstransferlearning}}
+    \label{fig:t5_diagram}
+\end{figure}
+
+Unlike BERT (Subsection \ref{chap2:bert}), which is an encoder-only model, T5 uses a standard encoder-decoder Transformer as proposed by \cite{vaswani2023attentionneed}. The encoder converts the input text into a fixed-size vector representation, which the decoder then uses to generate the output text. While other modern approaches utilize a Transformer architecture with only a single ``stack", \cite{raffel2023exploringlimitstransferlearning} found that employing a standard encoder-decoder structure achieved excellent results on both generative and classification tasks. The key innovation of T5 lies in its formulation of diverse tasks into a text-to-text format, enabling the same architecture to be applied across various tasks. T5 also provides a simple way to train a single model on a wide range of text tasks using the same loss function and decoding procedure. Despite its simplicity, T5 obtained comparable performance to task-specific architectures and ultimately produced state-of-the-art results when combined with scale.
+
+
+
+\subsubsection{GPT (Generative Pre-trained Transformer)}
+\label{chap2:gpt}
+
+GPT (\textbf{G}enerative \textbf{P}re-trained \textbf{T}ransformer) is a family of Transformer-based models introduced by OpenAI. This family has been crucial in advancing LLMs, powering generative AI applications like ChatGPT. NLP tasks such as question answering, machine translation, reading comprehension, and summarization are usually approached using supervised learning on specific datasets. However, \cite{radford2019language} demonstrated that language models could begin learning these tasks without explicit supervision when trained on a vast dataset of millions of webpages, known as WebText. This led to the development of the GPT-2 model, a Transformer with 1.5 billion parameters that achieved state-of-the-art results on 7 out of 8 language modeling benchmarks in a zero-shot (without example) setting. GPT-2 is a foundational model that paved the way for more advanced models like GPT-3 and GPT-4. GPT-2 demonstrated that increasing the dataset size and the number of parameters significantly enhances a language model’s ability to comprehend tasks and outperform existing benchmarks in zero-shot scenarios. It also indicated that even larger language models could further improve natural language understanding \citep{kublik2022gpt}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pdfs/bert_vs_gpt.pdf}
+    \caption{BERT vs. GPT \citep{raschka2024build}}
+    \label{fig:bert-vs-gpt}
+\end{figure}
+
+Unlike models such as BERT, which are designed for bidirectional understanding, GPT-2 is autoregressive, generating one token at a time based on the preceding tokens, i.e., next token prediction training scheme. This makes it particularly well-suited for tasks like text generation, completion, and summarization. As illustrated in \pic~\ref{fig:bert-vs-gpt}, GPT-2 is constructed using transformer decoder blocks (Subsubsubsection \ref{chap2:decoder}), in contrast to BERT, which utilizes transformer encoder blocks \citep{alammar2019illustrated}. 
+
+To create a more robust and powerful language model, OpenAI developed GPT-3 \citep{brown2020gpt3}, significantly larger than its predecessor, GPT-2, with 175 billion parameters and a dataset two orders of magnitude larger. Despite the increase in size, GPT-3 retains a similar architecture to GPT-2. It excels in various NLP tasks, even in zero-shot and few-shot (with few examples) settings. GPT-3 can generate human-like text and perform tasks it wasn't explicitly trained for, such as summing numbers, writing SQL queries, and coding in React and JavaScript based on plain English descriptions. While GPT-2 demonstrated some zero-shot abilities, GPT-3 can handle even more novel tasks when provided with contextual examples \citep{kublik2022gpt}.
+
+The latest advancement of GPT model is GPT-4, which the first version of the technical report was published by \cite{openai2024gpt4technicalreport}. The model was released in March 14\textsuperscript{th}, 2023. The same as its predecessors, GPT-4 leverages the Transformer model to generate text. However, the difference is that GPT-4 is \textit{multimodal}, which can take both image and text as the inputs. This model outperforms most large language models and state-of-the-art systems after being evaluated on a suite of traditional NLP benchmarks \citep{openai2024gpt4technicalreport}.
+
+\subsubsection{MPNet}
+MPNet \citep{mpnetsong} is a discriminative LLM that combines both MLM and permuted language modeling (PLM) in pre-training. It addresses both MLM's issue of ignoring masked tokens dependencies and PLM's issue of lacking position information in the permuted sentence. The main benefit of MPNet compared to BERT (Subsubsubsection \ref{chap2:bert}) and XLNet \citep{yang2020xlnetgeneralizedautoregressivepretraining} which rely solely on MLM and PLM, respectively, is its ability to condition on more contextual information when predicting masked tokens. This model has been pre-trained on large-scale text corpora as utilized in RoBERTa \citep{liu2019robertarobustlyoptimizedbert} pre-training and further fine-tuned on various downstream benchmarking tasks. Experiment results by \cite{mpnetsong} show that this model outperforms well-known MLM and PLM-based models on several benchmarks, such as GLUE \citep{wang-etal-2018-glue}, SQuAD \citep{rajpurkar-etal-2016-squad}, RACE \citep{lai-etal-2017-race}, and IMDB \citep{maas-etal-2011-learning}.
+
+The base model is published by Microsoft in HunggingFace\footnote{\url{https://huggingface.co/microsoft/mpnet-base}} with MIT license. Several fine-tuned versions of the model by \texttt{sentence-transformers} using Sentence-BERT's approach \citep{reimers-2019-sentence-bert} are also available on HuggingFace, such as \texttt{all-mpnet-base-v2}\footnote{\url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}} for general purposes and \texttt{multi-qa-mpnet-base-cos-v1}\footnote{\url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}} for semantic search purposes.
+
+\subsubsection{LLaMA 3.1}
+LLaMA 3.1 \citep{llama3dubey} is a set foundation models for language in three versions of parameters: 8B, 70B, and 405B, which support 128K context window length. These models are pre-trained on a corpus of 15T multilingual tokens with the use of decoder-only dense transformer architecture with next token prediction training, like in GPT (Subsubsubsection \ref{chap2:gpt}). Additionally, LLaMA 3.1 leverages grouped query attention with 8 key-value heads, an attention mask that prevents self-attention between different documents within the same sequence, a vocabulary consisting of 128K tokens, and the Rotary Positional Encoding (RoPE) \citep{su2024} which base hyperparameter has been increased to 500,000. The pre-training of this model consists of three stages: initial pre-training, long-context pre-training, and annealing. Several rounds of post-training are also applied, with each round composed of supervised fine-tuning (SFT) and Direct Preference Optimization (DPO) \citep{rafailov2024}. 
+
+The open-source LLaMA 3.1 base models with several parameters options are available on HuggingFace: \texttt{Llama-3.1-8B}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-8B}}, \texttt{Llama-3.1-70B}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-70B}}, and \texttt{Llama-3.1-405B}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-405B}}. Additionally, the corresponding instruction supervised fine-tuned version of the models are also available on HuggingFace: \texttt{Llama-3.1-8B-Instruct}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct}}, \texttt{Llama-3.1-70B-Instruct}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct}}, and \texttt{Llama-3.1-405B-Instruct}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct}}. The most popular version of this model is the \texttt{Llama-3.1-8B-Instruct} which in November 2024 has been downloaded 6,192,025 times.
+
+\subsubsection{Jina Embeddings v3}
+Jina Embeddings v3 \citep{sturua2024jinaembeddingsv3multilingualembeddingstask} is a text embedding model developed by Jina AI. This model implements XLM-RoBERTa, a variant of BERT (as described in Subsubsubsection \ref{chap2:bert}) that supports multilingual data with 570 million parameters. Several modifications are employed to enhance its ability to encode long text effectively, support task-specific encoding, and improve overall model efficiency. Specifically, this model leverages FlashAttention2 \citep{dao2023flashattention2fasterattentionbetter} for more efficient performance and RoPE \citep{su2024} to handle long text sequences. The output dimension of this model is flexibly determined by the user, with the default dimension of $1024$, but it can be as low as $32$ without sacrificing much performance thanks to the implementation of Matryoshka Representation Learning (MRL) \citep{kusupati2024}.
+
+The architecture for this model is illustrated in \pic~\ref{fig:jina-arch}. The model receives a document with a maximum of 8192 tokens and the task type, which can be \texttt{retrieval.passage}, \texttt{retrieval.query}, \texttt{separation}, \texttt{classification}, or \texttt{text-matching}. The core model is composed of a base \texttt{jina-XLM-RoBERTa} model and a task-specific LoRA \citep{hu2021loralowrankadaptationlarge} adapter to optimize the embeddings. To obtain the sentence embedding, mean pooling is used to aggregate the embeddings from each token. The training of this model involves three stages: pre-training the base model with MLM objective, fine-tuning the model for the embedding task with Sentence-BERT's contrastive approach \citep{reimers-2019-sentence-bert}, and training the five distinctive task-specific LoRA adapters. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets//pics/jina.png}
+    \caption{Jina Embeddings v3 Model Architecture \citep{sturua2024jinaembeddingsv3multilingualembeddingstask}}
+    \label{fig:jina-arch}
+\end{figure}
+
+This model is available on HuggingFace, published by \texttt{jinaai} under the name of \texttt{jina-embeddings-v3} with the license of Creative Commons Attribution Non Commercial 4.0 (CC-BY-NC-4.0).
+
+\subsubsection{Mistral 7B}
+\label{chap2:mistral-7b}
+Mistral 7B \citep{jiang2023mistral7b} is a decoder-only generative LLM with 7 billion parameters and 8192 context length developed by Mistral AI. In the implementation, it offers several improvements to the vanilla attention mechanism by incorporating grouped-query attention (GQA) \citep{ainslie-etal-2023-gqa} and sliding window attention (SWA) \citep{beltagy2020longformerlongdocumenttransformer,child2019generatinglongsequencessparse}. GQA accelerates the inference speed and decreases the amount of memory needed for decoding, whereas SWA enables long sequence handling. The model is further fine-tuned on instruction datasets to create the Mistral 7B -- Instruct model. This fine-tuned model outperforms all 7B models on MT-Bench and is comparable to 13B chat (instruction fine-tuned) models.
+
+The base models of Mistral 7B are available on HuggingFace in two versions: \texttt{Mistral-7B-v0.1}\footnote{\url{https://huggingface.co/mistralai/Mistral-7B-v0.1}} and \texttt{Mistral-7B-v0.3}\footnote{\url{https://huggingface.co/mistralai/Mistral-7B-v0.3}}. Notably, \texttt{Mistral-7B-v0.2} was not released, as one of the team members mentioned they inadvertently forgot to do so\footnote{\url{https://x.com/dchaplot/status/1772489690341605472}}. For the instruction fine-tuned model, the three versions are available on HuggingFace: \texttt{Mistral-7B-v0.1-Instruct}\footnote{\url{https://huggingface.co/mistralai/Mistral-7B-v0.1-Instruct}}, \texttt{Mistral-7B-v0.2-Instruct}\footnote{\url{https://huggingface.co/mistralai/Mistral-7B-v0.2-Instruct}}, and \texttt{Mistral-7B-v0.3-Instruct}\footnote{\url{https://huggingface.co/mistralai/Mistral-7B-v0.3-Instruct}}. All of these models are released under the Apache 2.0 License, which indicates that the models can be used without restrictions.
+
+\subsubsection{Mistral NeMo}
+Mistral NeMo \citep{mistralnemo} is a 12B parameter model developed through a collaboration between NVIDIA and Mistral AI, featuring support for a 128K context window. It is tailored for multilingual tasks, demonstrating strong performance in languages such as English, French, German, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Arabic, and Hindi. The model employs the Tekken tokenizer, which is based on Tiktoken, and trained on over 100 languages. This tokenizer has shown improved efficiency, achieving a better compression for approximately 85\% of all languages.
+
+There are two versions of this model: the base model (\texttt{Mistral-Nemo-Base-2407}\footnote{\url{https://huggingface.co/mistralai/Mistral-Nemo-Base-2407}}) and the instruction fine-tuned model (\texttt{Mistral-Nemo-Instruct-2407}\footnote{\url{https://huggingface.co/mistralai/Mistral-Nemo-Instruct-2407}}). Both are hosted on HuggingFace and released under the Apache 2.0 License, just like the Mistral 7B (Subsubsubsection \ref{chap2:mistral-7b}).
+
+\subsubsection{Qwen2.5}
+Qwen2.5 is a series of dense, decoder-only, open-source LLMs created by Alibaba Cloud. During its pre-training, the model utilizes a vast and up-to-date dataset consisting of up to 18 trillion tokens. It also supports a context window of up to 128K tokens and can produce up to 8K tokens. In comparison to its predecessor, Qwen2, Qwen2.5 offers enhanced capabilities in coding and mathematics tasks, along with a broader knowledge base \citep{qwen25}. Additionally, there are two domain expert LLMs based on this model: Qwen2.5-Coder (explained in Subsubsubsection \ref{qwen25coder}) for coding and Qwen2.5-Math for mathematics.
+
+There are 7 different sizes of Qwen2.5, all hosted on HuggingFace: \texttt{0.5B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-0.5B}}, \texttt{1.5B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-1.5B}}, \texttt{3B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-3B}}, \texttt{7B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-7B}}, \texttt{14B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-14B}}, and \texttt{32B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-32B}}. Each size of the model has its own instruction fine-tuned version, which is denoted by the \texttt{-Instruct} suffix in the model name. These models are licensed under Apache 2.0, except for the \texttt{3B} version which is under Qwen Research license and the \texttt{72B} which is under Qwen license.
+
+\subsubsection{Qwen2.5-Coder}
+\label{qwen25coder}
+Qwen2.5-Coder \citep{hui2024qwen25codertechnicalreport} is a family of domain expert (coding tasks) LLMs released by Alibaba Cloud, based on Qwen2.5's architecture and tokenizer. These models are trained on extensive datasets of 5.5T tokens and fine-tuned on instruction datasets curated for coding tasks. Specifically, the training pipeline consists of three stages, as visualized in \pic~\ref{fig:qwen}. In the first stage, the model learns from individual code files through the next token prediction and fill-in-the-middle \citep{bavarian2022efficienttraininglanguagemodels}, with a maximum context length of 8,192 tokens. The next stage aims to enhance the model's long-context capabilities up to 131,072 tokens. Lastly, supervised fine-tuning with the instruction dataset and direct preference optimization (DPO) \citep{rafailov2024} are conducted for further alignment of the LLM.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/qwen-training.png}
+    \caption{Qwen2.5-Coder Training Pipeline \citep{hui2024qwen25codertechnicalreport}}
+    \label{fig:qwen}
+\end{figure}
+
+Just like Qwen2.5, Qwen2.5-Coder is publicly accessible through HuggingFace and it comes in 7 different sizes: \texttt{0.5B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-0.5B}}, \texttt{1.5B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B}}, \texttt{3B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-3B}}, \texttt{7B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-7B}}, \texttt{14B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-14B}}, and \texttt{32B}\footnote{\url{https://huggingface.co/Qwen/Qwen2.5-Coder-32B}}. Likewise, each base model has its instruction fine-tuned version, which is denoted by the \texttt{-Instruct} suffix in the model name. The same license, Apache 2.0, applies for all models, except for the \texttt{3B} which is licensed under the Qwen Research license.
+
+\section{Retrieval-Augmented Generation (RAG)}
+\label{sec:rag}
+Pre-trained large language models have successfully shown their capabilities in learning vast amount of knowledge. These models store the knowledge they have learned in their parameters, without utilizing any other external memory; known as parameterized implicit knowledge base (\citealp{raffel2023exploringlimitstransferlearning}; \citealp{roberts2020knowledgepackparameterslanguage}, as cited in \citealp{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}). Whilst they do fine on downstream NLP tasks \citep{9412102}, these models have several major limitations, as stated by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. Firstly, it is very hard to expand or revise their knowledge. One might assume that fine-tuning an LLM on domain-specific knowledge would enable it to adapt to the new data effectively while retaining the information acquired during pre-training. However, this is not always the case. Fine-tuning LLMs on domain-specific knowledge may lead to performance degradation, known as \textit{catastrophic forgetting} \citep{kaushik2021understandingcatastrophicforgettingremembering}. In this phenomenon, a model's recent learning overshadows its previously acquired knowledge, causing a major decline in performance on previous tasks \citep{liu2024catastrophicforgettingintegratinggeneral}.
+
+The second problem is also encountered by most state-of-the-art deep learning models nowadays. This problem is commonly referred as \textit{the black-box problem} of AI \citep{blackboxai}, due to the lack of transparency and interpretability in deep learning models. The inference processes in these models, i.e., how these models reach conclusions, are opaque or hidden. Without a proper understanding of these matters, it is still not clear to what extent one can trust those AI systems \citep{blackboxai}. Consequently, such systems sometimes are insufficiently reliable for decision-making, particularly in critical areas, such as security, healthcare, and safety.
+
+The last problem is about the ``hallucinations" LLMs can exhibit. Hallucination refers to a condition where an LLM generates factually incorrect information, yet sounds plausible \citep{llmhallucination}. This phenomenon occurs if LLMs encounter questions which answers incorporate knowledge that has not been trained on them before \citep{llmhallu1}. Even though this phenomenon may seem inevitable due to the evolving nature of knowledge, there are some strategies that can be used to reduce hallucinations in LLMs. This includes the use of \textit{retrieval-augmented generation} (RAG) approach to generate more reliable responses.
+
+Instead of relying solely on parametric memory, RAG takes a hybrid approach by combining parametric and non-parametric (i.e., retrieval-based) memory. The use of non-parametric memory is vital here, as it provides a knowledge base that can be expanded and revised, and the accessed knowledge can be inspected and interpreted \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. In short, RAG is a technique that retrieves information from the non-parametric memory based on the user's query and utilizes the retrieved results to generate AI responses using parametric memory \citep{larson2024graphrag}. This concept is implemented in frameworks such as LlamaIndex\footnote{\url{https://www.llamaindex.ai/}} and LangChain\footnote{\url{https://www.langchain.com/}}.
+
+
+\subsection{RAG vs. Fine-tuning}
+The enhancement of LLMs has attracted significant interest due to their increasing prevalence. Among the optimization techniques, RAG is frequently compared with \textit{fine-tuning} (FT). RAG excels in dynamic environments by offering real-time knowledge updates and effectively leveraging external sources, though it comes with higher latency and ethical considerations. On the other hand, FT enables deep customization of a model’s behavior and style, but requires substantial computational resources and re-training for updates. Apart from the \textit{catastrophic forgetting} phenomenon discussed in Subsection \ref{sec:rag}, various evaluations of performance on diverse knowledge-intensive tasks have shown that RAG consistently outperforms unsupervised fine-tuning. \cite{ovadia2024finetuningretrievalcomparingknowledge} demonstrated that although unsupervised fine-tuning offers some improvements, RAG excels in handling both previously-encountered knowledge and entirely new information. Furthermore, it was observed that LLMs struggle to learn new factual information through unsupervised fine-tuning. Therefore, the choice between RAG and FT depends on the specific requirements for data dynamics, customization, and computational resources in the application context. Both methods can complement each other, enhancing a model’s capabilities at different levels \citep{gao2024retrievalaugmentedgenerationlargelanguage}.
+
+\subsection{Components}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pdfs/rag_lewis.pdf}
+    \caption{RAG Approach Overview \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} }
+    \label{fig:rag-lewis}
+\end{figure}
+
+RAG has two components corresponding to the types of memory used: \textit{retriever} and \textit{generator}. These components work together as shown in \pic~\ref{fig:rag-lewis}. A pre-trained retriever, composed of a \textit{query encoder} and a \textit{document index}, is combined with a pre-trained sequence-to-sequence (seq2seq) model as the generator. The flow of RAG as proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} is straightforward: given a query $x$, it is first encoded into dense representation $\textbf{q}(x)$ using the \textit{query encoder} $\textbf{q}$, which is based on the BERT\textsubscript{BASE}. Maximum Inner Product Search (MIPS) is then employed to retrieve a set of top-$K$ documents $\{z_i \colon z_i \in Z; 1 \leq i \leq K\}$ from a collection of documents (corpus) $Z$ utilizing the dense representation of $z$, i.e. $\textbf{d}(z)$ which is also produced by a BERT\textsubscript{BASE} \textit{document encoder} $\textbf{d}$. For the final prediction $y$, $z$ is treated as a latent variable, and the seq2seq model’s predictions are marginalized over the different retrieved documents \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. Each component will be explained subsequently.
+
+\subsubsection{Retriever}
+\label{chap2:rag-retriever}
+The retriever in RAG corresponds to the non-parametric memory. The choice of retriever typically depends on the type of retrieval source, which can include text, semi-structured data (e.g., PDF files), and structured data (e.g., knowledge graphs). In the architecture proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}---which is usually referred to as na\"{i}ve or vector-based RAG---a Dense Passage Retriever (DPR) was used, although different retrievers may be employed based on the type of the retrieval source. Generally, for text retrieval, the retriever is classified into three categories.
+\begin{enumerate}
+    \item \textbf{Sparse retriever (keyword search)}: This type of retriever relies on exact keyword matching between the terms in the query and documents. A more advanced version like BM25 \citep{robertsonbm25} incorporates factors like term frequency (TF), inverse of document frequency (IDF), and specific weighting schemes to enhance retrieval effectiveness. In this approach, both query and documents are encoded into the same BM25 vector space, and cosine similarity is used to measure the relevance between them. A higher similarity score indicates a greater relevance of the document to the query.
+    \item \textbf{Dense retriever (dense vector search)}: This retriever behaves similarly to the sparse retriever, except that it uses lower-dimensional dense representations instead of sparse ones. Discriminative LLMs, such as BERT \citep{devlin2019bertpretrainingdeepbidirectional} or MPNet \citep{mpnetsong} are often used to generate these dense embeddings. Likewise, relevance is then determined by computing cosine similarity between the query and document embeddings. DPR \citep{karpukhin2020densepassageretrievalopendomain} is based on this approach, where two BERT models (each for query and document) are fine-tuned such that the inner product (which is proportional to cosine similarity) values for relevant query-document pairs are high, and vice versa. A simpler approach is to use off-the-shelf discriminative LLMs which have already been fine-tuned on query-document pairs to encode the query and documents.
+    \item \textbf{Hybrid retriever (hybrid search)}: This retriever combines both keyword search and dense vector search. For instance, an approach by Weaviate\footnote{\url{https://weaviate.io/blog/hybrid-search-fusion-algorithms}}, the relative score fusion algorithm scales the similarity scores from both sparse and dense retrievers to $[0, 1]$. The final relevance score is then calculated as the scaled sum of these two scores, effectively leveraging the strengths of both retrieval approaches.
+\end{enumerate}
+
+\subsubsection{Generator}
+The posed query and selected documents from the retriever are combined into a coherent prompt, to which a generator, i.e., LLM is given a task to formulate the response. The generator component can be modeled using any encoder-decoder architecture \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. The model’s approach to answering may vary, depending on the task-specific criteria, allowing it to either draw upon its inherent parametric knowledge or restrict its responses to the information contained within the provided documents. For ongoing dialogues, any existing conversational history can be integrated into the prompt, enabling the model to effectively engage in multi-turn dialogue interactions \citep{gao2024retrievalaugmentedgenerationlargelanguage}. 
+
+In the architecture proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, BART-large \citep{lewis2019bartdenoisingsequencetosequencepretraining}, a pre-trained seq2seq transformer with 400 million parameters, serves as the generator. When generating response from BART, the query input $x$ is concatenated with the retrieved content $z$.
+
+\subsection{GraphRAG}
+GraphRAG is a RAG system that leverages KG as the knowledge base. The implementation involves retrieving graph elements that contain knowledge pertinent to the given query from a graph database \citep{peng2024graphretrievalaugmentedgenerationsurvey}. GraphRAG provides several advantages over na\"{i}ve RAG, including the ability to capture connections between entities for a more comprehensive retrieval of relational information, to represent knowledge in a more efficient and effective format rather than lengthy passages, and to capture a broader context of information, which enables answering \textit{query-focused summarization} (QFS) tasks \citep{peng2024graphretrievalaugmentedgenerationsurvey}. 
+
+The primary distinction between na\"{i}ve RAG and GraphRAG is their knowledge bases and retrievers. Generally, na\"{i}ve RAG relies on textual data as the knowledge base and utilizes DPR as the retriever. In contrast, GraphRAG can employ various types of retrievers to perform retrieval from a KG as its knowledge base. Specifically, \cite{peng2024graphretrievalaugmentedgenerationsurvey} classify graph retrievers into three main categories, as follows.
+
+\begin{enumerate}
+    \item \textbf{Non-parametric retriever}, which does not incorporate deep learning models to perform retrieval. Instead, it leverages heuristic rules and graph search algorithms. For instance, multihop paths retrieval over the topic entities can be employed to capture answer entities \citep{yasunaga-etal-2021-qa,grapeqa}.
+    \item \textbf{LM-based retriever}, which incorporates LM in the retrieval due to its outstanding natural language understanding capabilities. For instance, RoBERTa \citep{liu2019robertarobustlyoptimizedbert} can be trained as a retriever by expanding the paths from the topic entities and retrieving relevant paths through a sequential decision process \citep{Zhang_2022}. Another approach, KG-GPT \citep{kim-etal-2023-kg}, integrates an LLM to produce top-$K$ relevant relations given a specific entity.
+    \item \textbf{Graph neural network (GNN)-based retriever}, which incorporates GNN to comprehend the structure of the graph effectively. For instance, the approach by \cite{mavromatis2024gnnraggraphneuralretrieval}, GNN-RAG, leverages the encoded graph to retrieve relevant entities based on the given query.
+\end{enumerate}
+
+Apart from the aforementioned approaches, another approach is to perform retrieval by querying the graph, i.e., query-based GraphRAG, where the query language can be either SPARQL for RDF data model or Cypher for Neo4j. In this approach, query generation is the most critical task and can be accomplished through manual and semi-automatic approaches, schema-based approaches, or other approaches that incorporate deep learning (DL) \citep{ronysgpt}. However, recent developments in DL and LLM have shown a growing interest in the latter approach. For instance, \cite{ronysgpt} introduced SGPT that leverages a stack of Transformer encoders to encode both linguistic features of a question and its subgraph information which are then provided into GPT-2 \citep{radford2019language} to generate the appropriate query. Few other approaches \citep{emonet2024llmbasedsparqlquerygeneration,Kovriguina2023SPARQLGENOP} do not require training at all, leveraging in-context learning only with $n$-shot prompting.
+
+This query-generation approach provides enhanced flexibility to address a wide range of questions, especially questions that require information based on the structure of the graph or a broader context of the graph rather than just a conventional text retrieval. Consider the question posed in Figure \ref{fig:query-naive}, ``How many children does Lionel Messi have?'' By leveraging RDF-based KG, the answer to the question can be easily obtained using SPARQL query execution. In contrast, text retrieval struggles in such cases. The retriever will perform accurately iff there exists a document chunk that explicitly states Lionel Messi has three children. Otherwise, consider the situation illustrated in Figure \ref{fig:query-naive}, where information about Lionel Messi's children is spread into three different chunks. If the retriever only selects the top-2 chunks, then the generator may conclude that Lionel Messi has only two children, omitting the third chunk which contains information about his other child. Additionally, by not providing the ``explicit'' knowledge to the generator and letting the generator infer the number of children that Lionel Messi has, the likelihood of the generator hallucinating will be subsequently increased. Thus, this approach heavily relies on the top-$k$ retrieved chunks and their contents, which might not always explicitly reflect the complete information needed. 
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pdfs/naive-graphrag.pdf}
+    \caption{Query-based GraphRAG vs. Na\"{i}ve Text-based RAG}
+    \label{fig:query-naive}
+\end{figure*}
+
+\section{Comparison of Several QA Systems based on KG or LLM}
+There are several types of QA systems based on KG or LLM: KG-based QA 
+systems, LLM-based QA systems, text-based RAG QA systems, and GraphRAG 
+QA systems.
+
+\subsection{KG-based QA Systems}
+Traditional QA systems that are based on KG and do not incorporate LLMs 
+mainly leverage pre-defined templates or rules to parse questions
+into logical forms \citep{fu2020surveycomplexquestionanswering}. Several
+approaches include using a bottom-up parser \citep{Berant2013SemanticPO}, 
+mapping questions to templates which are then ranked to obtain the 
+answers \citep{bastqafreebase2015}, and leveraging an automated template
+generation model which utilizes dependency parsing and rule-based methods
+to generate query and question templates to be ranked to provide the
+final answer \citep{abujabaltemplategeneration}. Additionally, other 
+approaches choose to translate the natural language question into a 
+SPARQL query, which can then be used to retrieve the desired 
+information \citep{Diefenbach2018}. The latter technique is mainly
+composed of five tasks: question analysis, phrase mapping, 
+disambiguation, query construction, and querying distributed knowledge.
+
+Intuitively, this approach costs the lowest compared to other approaches
+that leverage LLMs in the process, due to the computational efficiency 
+of pre-defined rules and template-based methods, which typically do not 
+require the large-scale computational power typically associated with 
+LLMs. Since LLMs perform autoregressively, the computational time is also 
+often slower than traditional approaches. However, the trade-off is a 
+lack of flexibility and adaptability. 
+Since the system heavily depends on pre-defined templates and rules, it 
+can struggle with handling more complex 
+questions that do not fit into the predefined structures. This 
+rigidity limits the system's ability to generalize across a wide variety 
+of question types, especially those involving diverse queries, 
+thus reducing its effectiveness in dynamic scenarios where questions are 
+often more varied and nuanced.
+
+% In terms of the storage of the KG and the query execution, there might
+% be less problem when using the remotely-hosted KGs, such as Wikidata and
+% DBpedia. The query service API can be used to execute the query 
+
+\subsection{LLM-based QA Systems}
+\label{llmqa}
+The emergence of LLMs have transformed the QA landscape by enabling systems
+to understand and generate natural language text with a high degree of
+accuracy and fluency. Unlike traditional KG-based QA systems that rely
+on pre-defined templates or rules, LLM-based QA systems fully rely on
+the vast knowledge encoded in the parameters of the models as a result
+of being trained on large, diverse datasets. This allows LLM-based systems
+to handle a broader range of questions, including those that are more
+complex and open-ended.
+
+However, LLM-based QA systems face several problems related to the black-box
+nature of LLMs, difficulty in expanding or revising the knowledge, and 
+may produce hallucinations, where the model outputs a plausible but nonfactual
+responses \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}.
+Thus, despite they perform well in general natural language tasks,
+they might be not reliable in knowledge-intensive tasks.
+
+As explained before, the computational cost of training and deploying LLMs is
+significant, requiring substantial resource consumption.
+In terms of latency, LLMs tend to generate responses more slowly than
+traditional methods due to the autoregressive nature, where each token
+is generated sequentially.
+
+\subsection{Text-based RAG QA Systems}
+RAG \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} was introduced to remedy the limitations of LLMs for QA on 
+knowledge-intensive tasks, by combining retrieval model with LLMs. This
+approach improves the accuracy and reliability of answers by allowing
+the system to retrieve relevant information as the context before generating
+responses. Through this method, the more up-to-date knowledge can be
+incorporated in the generation as it is easier to update the knowledge
+stored in the retrieval model compared to the LLM. 
+
+Despite this, text-based RAG systems have several drawbacks. One major
+challenge is the interpretability of the text representations used in
+the retrieval process. Vector representations (i.e., embeddings) of 
+text are encoded as arrays of real numbers, making them inherently 
+opaque and difficult to interpret. This lack of transparency complicates 
+the understanding of how the retrieval model identifies and selects 
+relevant documents.
+
+Additionally, the retrieval process requires auxiliary
+storage to accomodate the corpus of documents and substantial computational 
+resources to encode, index, search, and rank
+large datasets effectively. These demands are further exacerbated by 
+the use of discriminative neural language models for encoding documents, like in DPR \citep{karpukhin2020densepassageretrievalopendomain}. 
+While these models consume fewer resources compared to massive 
+generative models, they still require more computational 
+power than traditional ranking algorithms. Moreover, advanced techniques 
+such as learning-to-rank models are often employed to rerank 
+retrieved documents, which further increases the computational time and the required memory.
+
+Lastly, while the RAG can reduce hallucinations compared to pure LLM-based
+systems, it does not completely eliminate them, as the LLM still plays
+a significant role in generating the final output. The final response
+may still include fabricated information, even when the retrieved information
+is valid. This limitation arises because RAG systems still rely on the generator (i.e., LLM) to 
+comprehend the retrieved documents and extract relevant information to 
+answer the specific question posed by the user. The generation process can 
+introduce errors, particularly if the LLM misinterprets 
+the retrieved content.
+
+\subsection{GraphRAG QA Systems}
+GraphRAG QA systems, particularly those that leverage query-based 
+retrieval mechanisms, address several limitations observed in 
+text-based RAG systems.
+Firstly, since these systems generate structured queries (e.g., SPARQL) 
+to interact with the KG and retrieve the relevant answers. This approach
+significantly enhances the interpretability of the retrieval process, 
+as the queries explicitly describe the relationships and entities
+involved in obtaining the answer. Unlike vague vector embeddings, 
+the query structure is more transparent and human-readable, 
+allowing for easier debugging and validation of the system's 
+reasoning process.
+
+Secondly, querying a KG using SPARQL is faster and more resource-efficient
+compared to the document ranking process in text-based RAG systems.
+KG queries directly retrieve relevant information through a navigational-based
+approach (i.e., graph traversal) \citep{rdf-sws}. In contrast, 
+text-based RAG systems require embeddings generation, similarity 
+computations, and advanced reranking, all of which are computationally 
+intensive and time-consuming. Moreover, the compact nature of RDF-based KGs---which are 
+stored as triples---reduces memory requirements compared to the 
+extensive storage needed for document corpora and embeddings in 
+text-based systems.
+
+Lastly, these systems can ``bypass'' the need for LLMs to interpret
+retrieved text documents. The execution of SPARQL queries directly
+retrieves the specific information required to answer a question.
+This contrasts with text-based RAG systems, where the LLM must process
+and comprehend unstructured text documents to extract relevant information, 
+which can introduce potential errors due to hallucinations.
+
+Despite all these advantages, the problem regarding interpretability
+still remains within the GraphRAG systems, albeit in different forms.
+While structured queries like SPARQL provide transparency, the translation
+of a natural language question into a SPARQL query often relies on
+complex query generation mechanisms. While traditional methods like rule-based
+methods or template-based methods may not encounter this problem,
+they lack flexibility and adaptability for handling diverse questions. 
+On the other hand, employing LLMs for this translation task significantly 
+enhances flexibility and adaptability but reintroduces interpretability 
+issues due to their black-box nature.
+
+While LLMs can offer more flexible and context-aware query generation, 
+their usage significantly increases computational overhead. This is 
+because generating SPARQL queries typically requires multiple stages, 
+such as question analysis, entity recognition, relation linking, and 
+query construction, all of which may involve LLM inference. The 
+autoregressive nature of LLMs further adds to processing time, 
+especially when compared to simpler deterministic methods. 
+This complexity also increases the risk of error propagation, where 
+mistakes in earlier stages of query generation can cascade, 
+affecting the accuracy of the final result. 
+Therefore, while GraphRAG systems excel in efficiency and 
+transparency in certain aspects, the reliance on intricate 
+query generation mechanisms can pose significant challenges in 
+terms of resource usage and system reliability.
+
+In conclusion, despite the two aforementioned limitations, we chose
+a GraphRAG QA system primarily for its transparency and
+reduced risk of hallucination, which are critical for ensuring reliability
+in high-stakes tasks. Compared to text-based RAG systems which rely on
+less-interpretable embeddings, GraphRAG leverages structured queries like
+SPARQL, providing a more clear and interpretable process for retrieving
+information. This transparency is very important for debugging, 
+validation, and trust in the system's reasoning. Furthermore, GraphRAG
+minimizes hallucinations by generating answers directly from precise 
+data retrieved from the KG, eliminating the need for LLMs to interpret long,
+unstructured text---a task where LLM's performance tends to degrade
+\citep{hosseini2024efficientsolutionsintriguingfailure}.
+These qualities make GraphRAG an optimal choice for applications
+demaning high reliability and accountability.
+
+\subsection{Performance and Accuracy Comparison}
+While there is no work that directly accounts for the comparison between
+all the previously mentioned systems, \cite{vrandecicyoutube} compared
+the use of an LLM (ChatGPT), a search engine (Google), and a KG (Wikidata)
+for answering the question ``Who created The School of Athens?'' As discussed in
+Subsubsection \ref{llmqa}, ChatGPT, despite running on the fastest hardware
+available, took approximately 5 seconds to answer the question, with
+almost one second spent parsing and processing the question before 
+generating a response. However, ChatGPT did not provide a direct answer; 
+instead, it generated extensive contextual information that was not 
+requested. On the other hand, Google took roughly 0.5 seconds to retrieve
+27,900,000 results and generate a summary from the relevant result. Lastly, 
+a relevant SPARQL query was executed over the Wikidata Query Service, 
+retrieving the corresponding result in nearly 0.2 seconds. We henceforth
+will use this information in the analysis of the computational time. 
+
+Rooting from the previous analysis on the comparison results, it can be 
+inferred that conventional KG-based QA systems will generally offer the 
+lowest latency due to the usages of templates or rules without any advanced
+machine learning algorithms. However, there is no
+existing work that directly addresses the computational time for such systems
+in a comprehensive manner. Therefore, based on the execution time of a
+SPARQL query, we can reasonably estimate that
+the latency of such systems will be greater than 0.2 seconds. The exact 
+time will depend on factors such as the complexity of the query, the 
+underlying KG, and the system implementation.
+
+For LLM-based QA systems, the latency fully depends on the LLM itself.
+Based on previous explanation, we can estimate the latency
+to be around 5 seconds, though this can vary in practice depending
+on factors such as the number of generated tokens and the hardware
+specifications. On the other hand, the latency of text-based RAG
+is a combination of both the retrieval and generation processes.
+The retrieval phase typically takes around 0.5 seconds, while the 
+generation phase, which involves the LLM processing the retrieved 
+context and generating the answer, takes approximately 5 seconds. 
+Therefore, the total latency for text-based RAG systems is 
+approximately 5.5 seconds. However, because text-based RAG systems 
+often provide a longer document context to the LLM, the generation 
+phase may take slightly longer time. Consequently, the overall 
+latency for text-based RAG systems is likely to exceed 5.5 seconds.
+Lastly, for GraphRAG systems, which typically involve multiple 
+LLM calls, the latency can be much higher. At least two LLM calls are 
+involved in this pipeline: one for SPARQL query generation and another 
+for answer generation. Combined with the query execution, the overall '
+latency will likely exceed 10.2 seconds, though it can be shorter for 
+simpler questions that require a shorter SPARQL query and a more 
+concise answer.
+
+In terms of memory consumption, systems which leverage LLMs tend to
+have significantly higher memory requirements. Particularly, GPUs with
+massive VRAM capacity are needed. For instance, to load a 8B model in
+the full form, i.e., in FP16, 16GB VRAM is typically required \citep{huggingface_llama31}.
+To represent knowledge, RDF triples are more concise compared to raw text.
+In GraphDB\footnote{\url{https://graphdb.ontotext.com/}}, 9GB of RAM is needed
+to load 150M of triples\footnote{\url{https://graphdb.ontotext.com/documentation/10.8/requirements.html}}.
+This level of storage efficiency is far superior when compared to 
+storing knowledge in unstructured text, where the verbosity of natural 
+language and the lack of direct associations between concepts can cause 
+significant memory overhead. As a result, raw text storage becomes more 
+resource-intensive, especially for large-scale knowledge bases, 
+highlighting the memory efficiency of RDF for structured data 
+representation. With the assumption of using UTF-8 encoding, a sentence composed of 20 words\footnote{\url{https://languagetool.org/insights/post/sentence-length/}}, and
+a word composed of 5 characters\footnote{\url{https://charactercounter.com/characters-to-words}}, 9GB of memory can only store approximately
+96M sentences. The calculation steps are as follows.
+\begin{itemize}
+    \item Using UTF-8 encoding, a single character typically requires 1 byte of memory.
+    \item Assuming that each word consists of an average of 5 characters, a single word requires 5 bytes.
+    \item Assuming that a sentence is composed of 20 words, the size of a single sentence is calculated as: $5 \times 20=100$ bytes.
+    \item Since 1 GB = 1073741824 bytes, then 9 GB = 9663676416 bytes.
+    \item Hence, the total number of sentences that can fit into 9GB of memory is $\left|\frac{9663676416}{100}\right|=96636764\approx$ 96M.
+\end{itemize}
+
+Thus, if we were to rank the memory requirements from the most 
+demanding to the least, the order would be: GraphRAG, text-based RAG, 
+LLM-based QA, and KG-based QA.
+
+Lastly, in terms of accuracy, RAG systems outperform those relying 
+solely on parametric models (i.e., closed-book QA) for answering 
+questions on various benchmarking datasets \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. 
+Moreover, experiments conducted by \cite{aws_graphrag_accuracy} 
+demonstrated that GraphRAG outperforms traditional text-based RAG across 
+diverse datasets, including Amazon financial reports, scientific texts 
+on COVID-19 vaccines, technical specifications from aeronautics, and 
+European environmental directives. The evaluation results showed that 
+GraphRAG achieved an accuracy of 80\% in providing correct answers, 
+significantly surpassing the 50.83\% accuracy attained by 
+traditional RAG systems. However, we are unable to make any conclusions
+regarding the performance comparison between the KG-based and LLM-based
+QA systems due to the lack of available related work. Furthermore, the 
+performance of KG-based systems often depends on the complexity of the 
+KG and the query generation method. For instance, template-based 
+approaches might offer high precision for more direct, clear questions but may 
+struggle with handling more diverse or ambiguous questions. 
+Conversely, LLM-based systems offer greater flexibility and can handle 
+a wider range of natural language inputs, but they often require 
+additional mechanisms such as fine-tuning or integration with external 
+knowledge sources (like in RAG) to achieve competitive accuracy.
