@@ -103,6 +103,15 @@ Our enhanced GraphRAG system is designed to work across multiple knowledge domai
 
 Each knowledge base presents unique challenges and characteristics that allow us to comprehensively evaluate our enhanced approach across diverse domains and query complexities.
 
+Originally, we planned to include DBpedia as one of our evaluation knowledge bases to demonstrate cross-platform compatibility. However, during our implementation phase, we discovered that the DBpedia Lookup service\footnote{\url{https://lookup.dbpedia.org/}} was unavailable, preventing us from implementing the necessary entity retrieval functionality. Figure~\ref{fig:dbpedia-down} shows the error encountered when attempting to access the service. It should be noted that while the service was down during the development process of this thesis, it became operational again on June 6, 2025. Consequently, we focused our evaluation on the four knowledge bases described below: Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and GESIS Knowledge Graph.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/dbpedia-down.png}
+    \caption{Screenshot showing DBpedia Lookup service unavailability}
+    \label{fig:dbpedia-down}
+\end{figure}
+
 \subsection{Wikidata}
 
 Wikidata, originally launched in October 2012 by Wikimedia Foundation \citep{vrandevcic2014}, is an openly accessible, collaborative knowledge base that is editable by anyone \citep{waagmeester2020}. Consequently, the scope of knowledge covered by Wikidata is nearly boundless, just like its sister project, Wikipedia\footnote{\url{https://www.wikipedia.org/}}. However, in contrast to Wikipedia which provides knowledge primarily in the free text format, Wikidata represents information in the structured format \citep{waagmeester2020}. 
@@ -118,7 +127,9 @@ The core structure of Wikidata is made up of items, properties, and values, whic
 
 For our enhanced GraphRAG system, Wikidata serves as the primary large-scale knowledge graph for demonstrating scalability and handling complex multi-hop reasoning scenarios. The vast scale of Wikidata, with millions of entities and thousands of properties, provides an excellent testbed for our enhanced dataset generation methods and finetuned models. Our system utilizes a curated collection of 11,830 Wikidata properties stored in our Weaviate vector database to enable efficient property retrieval and matching during question processing.
 
-\vspace{0.5cm}
+For entity retrieval and matching in our enhanced GraphRAG system, we utilize the Wikidata API directly rather than storing all Wikidata entities in our Weaviate vector database. This design decision is driven by the massive scale of Wikidata, which contains 117,632,118 entities as of June 6, 2025\footnote{\url{https://wikidata.org/wiki/Wikidata:Main_Page}}. Storing and indexing this vast number of entities in a vector database would be computationally prohibitive and unnecessary for our use case. Instead, we leverage the Wikidata API's efficient search capabilities for real-time entity retrieval, while maintaining only the 11,830 Wikidata properties in our Weaviate vector database for efficient property matching during question processing.
+
+
 \subsection{Curriculum Knowledge Graph}
 \label{curriculum-kg}
 
@@ -169,7 +180,6 @@ The following code shows sample triples about a "Basis Data" (Database) course i
 
 The curriculum knowledge graph contains 874 RDF triples in total, providing rich information about course relationships, prerequisites, and academic structure that enables complex reasoning about curriculum pathways and course dependencies.
 
-\vspace{0.5cm}
 \subsection{Legal Knowledge Graph}
 \label{legal-kg}
 
@@ -253,7 +263,6 @@ Key properties in the modified legal knowledge graph include:
 
 This structure enables complex legal reasoning, such as finding all laws that amend a specific regulation, tracing citation networks between legal documents, and analyzing the evolution of legislation over time.
 
-\vspace{0.5cm}
 \subsection{GESIS Knowledge Graph}
 \label{gesis-kg}
 
@@ -371,7 +380,6 @@ Links between publications and variables & 2,954 \\
 
 The GESIS Knowledge Graph serves as an excellent testbed for scholarly domain reasoning, enabling queries about research collaboration networks, publication trends, dataset usage patterns, and the relationships between different types of scholarly resources.
 
-\vspace{0.5cm}
 \subsection{Multi-Domain Knowledge Graph Integration}
 
 Our enhanced GraphRAG system's ability to work across these four diverse knowledge domains---general world knowledge (Wikidata), academic curriculum (Curriculum KG), legal documents (Legal KG), and scholarly research (GESIS KG)---demonstrates the versatility and domain-agnostic nature of our approach. Each knowledge graph presents unique challenges:
@@ -402,7 +410,7 @@ For Wikidata, we leverage the established QALD-9-Plus dataset containing 558 val
 \begin{enumerate}
     \item \textbf{Thoughts Generation}: For each question-SPARQL pair, we use Large Language Models to generate step-by-step reasoning chains that explain how to translate the natural language question into the corresponding SPARQL query.
     
-    \item \textbf{Entity Enhancement}: We extract entities from both questions and SPARQL queries, then use the Wikidata API to retrieve matching entity URIs and labels. We intentionally add noise entities to improve model robustness during training.
+    \item \textbf{Entity Enhancement}: We extract entities from both questions and SPARQL queries, then use the Wikidata API to retrieve matching entity URIs and labels. The decision to use the Wikidata API directly, rather than pre-storing entities in our vector database, is driven by Wikidata's massive scale of over 117 million entities. We intentionally add noise entities to improve model robustness during training.
     
     \item \textbf{Property Enhancement}: We identify properties used in SPARQL queries and retrieve matching properties from our Weaviate vector database containing 11,830 Wikidata properties. Similar to entities, we add noise properties to enhance training diversity.
     
@@ -463,29 +471,22 @@ Templates are designed with varying complexity levels to provide comprehensive c
   xleftmargin=0pt,
   xrightmargin=0pt,
   linewidth=\linewidth,
-  resetmargins=true
+  resetmargins=true,
+  breaklines=true
 ]
 {
   "id": "q1",
-  "question": "How many credits does the Algorithm Design 
-    and Analysis course have?",
-  "sparql": "SELECT?value\n
-  WHERE {\n  ns1:algorithm_design_and_analysis ns1:has_credits?value.\n}",
+  "question": "How many credits does the Algorithm Design and Analysis course have?",
+  "sparql": "SELECT?value\nWHERE {\n  ns1:mobile_technology ns1:has_credits?value.\n}",
   "category": "university",
   "complexity": "basic",
   "templateId": "course-credits",
   "thoughts": [
-    "1. The question asks for the credit value of 
-    Algorithm Design and Analysis.",
-    "2. The entity 'Algorithm Design and Analysis' 
-    represents a course in the university domain.",
-    "3. The property 'has_credits' links a course 
-    to its credit value.",
-    "4. To solve this, retrieve the credit value 
-    linked to Algorithm Design and Analysis via 
-    the 'has_credits' property.",
-    "5. Construct a SPARQL query to retrieve the 
-    credit value for Algorithm Design and Analysis."
+    "1. The question asks for the credit value of Algorithm Design and Analysis.",
+    "2. The entity 'Algorithm Design and Analysis' represents a course in the university domain.",
+    "3. The property 'has_credits' links a course to its credit value.",
+    "4. To solve this, retrieve the credit value linked to Algorithm Design and Analysis via the 'has_credits' property.",
+    "5. Construct a SPARQL query to retrieve the credit value for Algorithm Design and Analysis."
   ],
   "entities": ["Algorithm Design and Analysis"],
   "properties": ["has_credits"],
@@ -653,7 +654,7 @@ The post-processing pipeline consists of four key transformations applied to all
 \begin{enumerate}
     \item \textbf{Keyword Capitalization}: All SPARQL keywords (SELECT, WHERE, FILTER, BIND, UNION, ORDER BY, COUNT, AS, GROUP BY, LIMIT, OFFSET, DISTINCT, ASK) are converted to uppercase to match the conventional SPARQL formatting style.
     
-    \item \textbf{URI to Prefix Conversion}: Full URIs are replaced with prefixed notation for improved readability. For example, \texttt{<http://example.org/has\_credits>} becomes \texttt{ns1:has\_credits}, making queries more concise and easier for models to process.
+    \item \textbf{URI to Prefix Conversion}: Full URIs are replaced with prefixed notation for improved readability. For example, \texttt{<http://example.org/has\_credits>} becomes \texttt{ns1:has\_credits}, making queries more concise and easier for models to process. However, for Legal and GESIS knowledge graphs, entity URIs are not converted to prefixed notation because many entities in these knowledge graphs contain forward slash characters in their identifiers (e.g., \texttt{lex2kg:uu/1950/1}), which would result in invalid SPARQL syntax when combined with prefix notation. Therefore, these entities remain in their full URI format enclosed in angle brackets.
     
     \item \textbf{Query Structure Formatting}: SPARQL queries are reformatted with proper indentation and line breaks:
     \begin{itemize}

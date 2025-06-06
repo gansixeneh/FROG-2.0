@@ -1,10 +1,839 @@
-\chapter{System Implementation}
+\chapter{Implementation}
 \label{bab:4}
 
 \section{Dataset Generation Implementation}
-\subsection{Template-Based Implementation}
-\subsection{Random-Walk Implementation}
+
+This section details the implementation of our dataset generation system, which supports both template-based and random-walk/pattern-based approaches. The implementation is designed to be modular, extensible, and compatible with different knowledge graph domains including university course, legal, and GESIS knowledge graphs. We describe the key components, their interactions, and how they collectively enable the generation of high-quality NL2SPARQL datasets.
+
+Our dataset generation implementation consists of three main components: (1) template-based generation for linguistically diverse questions, (2) random-walk/pattern-based generation for comprehensive graph coverage, and (3) post-processing pipeline for standardizing SPARQL query format. The implementation is enhanced with LLM-assisted generation of natural language questions and reasoning chains.
+
+\subsection{Knowledge Graph Schema Extraction}
+
+The first step in dataset generation is extracting schema information from the knowledge graph. This process provides the foundation for both template-based and random-walk generation approaches by identifying classes, properties, and entity examples within the knowledge graph. Figure \ref{fig:schema-extraction} illustrates the schema extraction process with its domain-specific adaptations and example outputs.
+
+
+
+We implemented a unified schema extraction approach through the \texttt{KGSchemaExtractor} class, which is adapted for different knowledge graph types:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Knowledge Graph Schema Extractor Initialization, label=code:schema-extractor]
+class KGSchemaExtractor:
+    """
+    Extract schema information from the knowledge graph.
+    """
+    
+    def __init__(self, options=None):
+        """
+        Initialize a new schema extractor
+        
+        Args:
+            options (dict): Configuration options
+        """
+        self.options = {
+            "sparql_endpoint": None,
+            "sample_size": 1000,
+            "debug": False,  # Debug flag
+            "prefixes": {
+                'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+                'owl': 'http://www.w3.org/2002/07/owl#',
+                'xsd': 'http://www.w3.org/2001/XMLSchema#',
+                # Domain-specific prefixes added by domain adapters
+            }
+        }
+        
+        if options:
+            self.options.update(options)
+            
+        self.schema_info = {
+            "properties": [],
+            "types": [],
+            "numericProperties": [],
+            "dateProperties": [],
+            "textProperties": [],
+            "booleanProperties": []
+        }
+        
+        self.entity_examples = []
+        self.graph = None  # Store the graph for later use
+\end{lstlisting}
+
+The schema extractor provides multiple methods for extracting schema information:
+
+\begin{enumerate}
+    \item \texttt{extract\_from\_endpoint}: For SPARQL endpoints (used primarily for Wikidata and GESIS KG)
+    \item \texttt{extract\_from\_file}: For local RDF files (used for Curriculum KG and Legal KG)
+    \item \texttt{extract\_from\_string}: For RDF content provided as strings
+\end{enumerate}
+
+For each knowledge graph domain, we implemented domain-specific adaptations to handle the unique characteristics of each schema.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{assets/pics/kgschema2.jpg}
+\caption{Knowledge Graph Schema Extraction implementation, showing the extraction process flow from different input types, domain-specific handlers, and example output schema structure.}
+\label{fig:schema-extraction}
+\end{figure}
+
+\subsection{Template-Based Generation Implementation}
+
+The template-based generation implements our discovery-first approach to create linguistically diverse questions with guaranteed executable SPARQL queries. Figure \ref{fig:template-based} provides a detailed view of the implementation flow, from template definition to complete dataset entry generation with concrete examples.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1\textwidth]{assets/pics/template_flow.jpg}
+\caption{Template-Based Generation implementation workflow, showing the discovery-first approach from template definition through discovery query generation, entity-property selection, and generation of the complete dataset entry.}
+\label{fig:template-based}
+\end{figure}
+
+The template-based generation is implemented through the \texttt{NL2SPARQLGenerator} class, which manages a collection of templates and instantiates them with valid entity-property combinations discovered from the knowledge graph.
+\subsubsection{Template Initialization and Structure}
+
+Templates are structured as dictionaries with predefined fields that specify question patterns, SPARQL patterns, and additional metadata:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Template Structure Definition, label=code:template-structure]
+def initialize_templates(self):
+    """
+    Initialize question-query template pairs for university course data with enhanced complexity
+    
+    Returns:
+        list: Templates for different question types and complexity levels
+    """
+    # Basic course information templates - with multiple question variations
+    basic_templates = [
+        {
+            "id": "course-credits",
+            "category": "university",
+            "questionTemplates": [
+                "How many credits does the {entity} course have?",
+                "What is the credit value for {entity}?",
+                "Can you tell me the number of credits for the {entity} course?"
+            ],
+            "sparqlTemplate": """
+                SELECT ?value WHERE {
+                {entity} ns1:has_credits ?value .
+                }
+            """,
+            "thoughtsTemplate": [
+                "1. The question asks for the credit value of {entity}.",
+                "2. The entity '{entity}' represents a course in the university domain.",
+                "3. The property 'ns1:has_credits' links a course to its credit value.",
+                "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
+                "5. Construct a SPARQL query to retrieve the credit value for {entity}."
+            ],
+            "complexity": "basic"
+        },
+        # Additional templates...
+    ]
+\end{lstlisting}
+
+For each knowledge graph domain, we implemented specialized templates with domain-specific patterns and questions.
+
+\subsubsection{Discovery-First Template Instantiation}
+
+The key innovation in our implementation is the discovery-first approach that ensures all generated question-SPARQL pairs are valid and executable. This is implemented through the \texttt{instantiate\_template\_with\_discovery} method:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Discovery-First Template Instantiation, label=code:discovery-instantiation]
+def instantiate_template_with_discovery(self, template):
+    """
+    Instantiate a template using a discovery-based approach that guarantees valid placeholder values
+    
+    Args:
+        template (dict): The template to instantiate
+        
+    Returns:
+        dict: The instantiated question and SPARQL query or None if failed
+    """ 
+    # Extract placeholders from the template
+    placeholders = self.extract_placeholders(template)
+    
+    # Create a discovery query that includes all placeholders in the SELECT clause
+    discovery_query = self.create_discovery_query(template, placeholders)
+    
+    if not discovery_query:
+        print(f"Could not create discovery query for template: {template['id']}")
+        return self.instantiate_template(template)
+    
+    # Execute the discovery query
+    try:
+        print(f"Executing discovery query for template {template['id']}...")
+        results = self.sparql_exec.execute_query(discovery_query)
+        
+        if not results:
+            print(f"No valid combinations found for template: {template['id']}")
+            print("Query: ", discovery_query)
+            return self.instantiate_template(template)
+        
+        print(f"Found {len(results)} valid combinations for template: {template['id']}")
+        
+        # Randomly select one complete valid combination of values
+        selected = random.choice(results)
+        
+        # Create a mapping of placeholders to their values from the selected combination
+        replacements = {}
+        
+        # Extract values for each placeholder
+        for placeholder in placeholders:
+            # Skip if placeholder doesn't exist in result
+            if placeholder not in selected:
+                print(f"Warning: Placeholder {placeholder} not found in query results")
+                continue
+            
+            value = selected[placeholder]
+            
+            # Skip if value is None
+            if value is None:
+                print(f"Warning: Placeholder {placeholder} has None value")
+                continue
+            
+            # Try to get the label for entity placeholders
+            if placeholder.startswith("entity"):
+                entity_uri = str(value)
+                
+                # Look for a label variable for this entity
+                label_var = f"{placeholder}Label"
+                if label_var in selected and selected[label_var] is not None:
+                    entity_label = str(selected[label_var])
+                else:
+                    # Extract label using legal_entity_label function
+                    entity_label = legal_entity_label(entity_uri)
+                
+                replacement = {
+                    "value": self.shorten_uri(entity_uri),
+                    "label": entity_label,
+                    "uri": entity_uri,
+                }
+            elif placeholder == "value" or placeholder.endswith("Value"):
+                # ... [value handling logic] ...
+            else:
+                # ... [other placeholder handling] ...
+                
+            replacements[placeholder] = replacement
+        
+        # ... [Question and SPARQL generation with replacements] ...
+        
+        return {"question": question, "englishQuestion": english_question, "sparql": sparql}
+        
+    except Exception as e:
+        print(f"Error executing discovery query for template {template['id']}: {e}")
+        # Fall back to the old method
+        return self.instantiate_template(template)
+\end{lstlisting}
+
+\subsubsection{Chain of Thoughts Generation}
+
+A key feature of our implementation is the generation of step-by-step reasoning chains that explain how to translate natural language questions into SPARQL queries. This is implemented in the \texttt{generate\_chain\_of\_thoughts} method:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Chain of Thoughts Generation, label=code:chain-of-thoughts]
+def generate_chain_of_thoughts(self, question, sparql, template):
+    """
+    Generate a chain of thoughts explaining how to translate the question to SPARQL
+    Args:
+        question (str): Natural language question
+        sparql (str): SPARQL query
+        template (dict): Template used to generate the question-query pair
+    Returns:
+        list: List of thought steps
+    """
+    if "thoughtsTemplate" not in template:
+        # Fallback for templates without thoughtsTemplate
+        return [
+            "1. The question seeks specific information from the knowledge graph.",
+            "2. The query involves entities and relationships defined in the domain ontology.",
+            "3. Properties in the knowledge graph connect entities to their various attributes and relationships.",
+            "4. The SPARQL query is constructed to retrieve the requested information efficiently.",
+            "5. The result provides valuable insights for data analysis and information retrieval."
+        ]
+    
+    # Get the thoughts template
+    thoughts_template = template["thoughtsTemplate"]
+    
+    # Extract entity and property URIs from SPARQL
+    entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+    
+    # Create mappings for replacement
+    all_mappings = {}
+    
+    # Add entity mappings
+    for i, uri in enumerate(entity_uris):
+        key = "entity" if i == 0 else f"entity{i+1}"
+        label = legal_entity_label(uri)
+        all_mappings[key] = {
+            'uri': uri,
+            'label': label,
+            'prefixed': self.shorten_uri(uri)
+        }
+    
+    # Add value mappings from SPARQL
+    numeric_pattern = r'\b(\d+)\b'
+    numeric_values = re.findall(numeric_pattern, sparql)
+    string_pattern = r'"([^"]+)"'
+    string_values = re.findall(string_pattern, sparql)
+    
+    if numeric_values:
+        all_mappings['value'] = {
+            'value': numeric_values[0],
+            'label': numeric_values[0]
+        }
+    elif string_values:
+        all_mappings['value'] = {
+            'value': string_values[0],
+            'label': string_values[0]
+        }
+    
+    # Replace placeholders in thoughts
+    processed_thoughts = []
+    for thought in thoughts_template:
+        processed_thought = thought
+        
+        # Replace each placeholder with the appropriate value
+        for placeholder, mapping in all_mappings.items():
+            pattern = r'\{' + re.escape(placeholder) + r'\}'
+            replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+            processed_thought = re.sub(pattern, replacement_value, processed_thought)
+        
+        # ... [special handling for first entity] ...
+        
+        processed_thoughts.append(processed_thought)
+    
+    return processed_thoughts
+\end{lstlisting}
+
+\subsubsection{Entity and Property Matching}
+
+To enhance the dataset's utility for training entity linking and property matching models, we implemented a sophisticated matching system that identifies which entities and properties from the SPARQL query are mentioned in the question:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity and Property Matching Implementation, label=code:entity-property-matching]
+def get_entities_and_properties(self, question, sparql):
+    """
+    Extract entities and properties from SPARQL query and get their labels
+    
+    Args:
+        question (str): Natural language question
+        sparql (str): SPARQL query
+        
+    Returns:
+        tuple: (entities_list, properties_list, entity_matches, property_matches)
+    """
+    # Extract actual URIs from SPARQL query
+    entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+    
+    # Get labels for entities and properties
+    entities_list = []
+    properties_list = []
+    
+    # Get entity labels
+    for uri in entity_uris:
+        label = legal_entity_label(uri)
+        if label:
+            entities_list.append(label)
+    
+    # Get property labels
+    for uri in property_uris:
+        label = legal_property_label(uri)
+        if label:
+            properties_list.append(label)
+    
+    # Get entity and property candidates for entities_matches and properties_matches
+    property_candidates = entities_list + properties_list
+    related_candidates = self.get_related_candidates(
+        question, 
+        property_candidates=property_candidates,
+        threshold=0.6,
+        k=5
+    )
+    
+    # Format entity matches
+    entity_matches = []
+    if "entities" in related_candidates:
+        for entity in related_candidates["entities"]:
+            expanded_id = self.expand_uri(entity['short'])
+            entity_matches.append({
+                "id": expanded_id,
+                "label": entity['label'],
+            })
+    
+    # Format property matches
+    property_matches = []
+    if "properties" in related_candidates:
+        for property in related_candidates["properties"]:
+            property_matches.append({
+                "id": property['short'],
+                "label": property['label'],
+            })
+    
+    return entities_list, properties_list, entity_matches, property_matches
+\end{lstlisting}
+
+\subsection{Pattern-based/Random-Walk Implementation}
+
+The pattern-based/random-walk implementation complements the template-based approach by discovering valid query patterns directly from the knowledge graph structure. It systematically explores the graph to find patterns with increasing complexity levels.
+
+\subsubsection{Pattern Discovery Implementation}
+
+We implemented a pattern discovery algorithm that traverses the knowledge graph to find valid query patterns with varying complexity levels:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Pattern-based Dataset Generation, label=code:pattern-based-generation]
+def generate_dataset(self, size=1000):
+    """Generate dataset based on pattern weights using discovery-first approach"""
+    dataset = []
+
+    # Calculate number of queries for each complexity level
+    num_1_prop = int(size * self.pattern_weights[1])
+    num_2_prop = int(size * self.pattern_weights[2])
+    num_3_prop = size - num_1_prop - num_2_prop
+
+    print(f"Generating {num_1_prop} 1-property, {num_2_prop} 2-property, {num_3_prop} 3-property patterns...")
+
+    try:
+        # Generate patterns using discovery-first approach
+        patterns_1 = self.generate_1_property_patterns(num_1_prop)
+        print(f"Generated {len(patterns_1)} 1-property patterns")
+
+        patterns_2 = self.generate_2_property_patterns(num_2_prop)
+        print(f"Generated {len(patterns_2)} 2-property patterns")
+
+        patterns_3 = self.generate_3_property_patterns(num_3_prop)
+        print(f"Generated {len(patterns_3)} 3-property patterns")
+
+        print(f"Generated {len(patterns_1)} 1-prop, {len(patterns_2)} 2-prop, {len(patterns_3)} 3-prop patterns")
+
+        all_patterns = patterns_1 + patterns_2 + patterns_3
+        random.shuffle(all_patterns)
+
+        # Convert to final format and assign sequential IDs
+        for i, pattern in enumerate(all_patterns[:size]):
+            print(f"\n--- Processing pattern {i+1}/{min(size, len(all_patterns))} ---")
+            
+            # Generate a simple question for the pattern
+            question = self._generate_simple_question(pattern)
+            
+            # Extract entities and properties from the SPARQL query with Weaviate search
+            sparql = pattern["sparql"]
+            print(f"SPARQL: {sparql}")
+            
+            entities_list, properties_list, entity_matches, property_matches = self.get_entities_and_properties(question, sparql)
+            
+            # Add to dataset with enhanced fields
+            dataset.append(
+                {
+                    "id": f"q{i+1}",
+                    "sparql": pattern["sparql"],
+                    "pattern_type": pattern["pattern_type"],
+                    "complexity": pattern["complexity"],
+                    "category": "legal",  # Fixed category for legal domain
+                    "entities": entities_list,
+                    "properties": properties_list,
+                    "entities_matches": entity_matches,
+                    "properties_matches": property_matches
+                }
+            )
+    except Exception as e:
+        print(f"Error in dataset generation: {e}")
+
+    return dataset
+\end{lstlisting}
+
+The pattern discovery generates structurally diverse patterns with three main categories:
+\begin{itemize}
+    \item 1-property patterns: Basic subject-property-object triples with a single relationship
+    \item 2-property patterns: Two connected triples forming paths or star-shaped patterns
+    \item 3-property patterns: Three connected triples forming more complex structures
+\end{itemize}
+
+The pattern generation is weighted to produce a balanced distribution of query complexity, with approximately 50\% basic (1-property), 30\% intermediate (2-property), and 20\% advanced (3-property) patterns.
+
+\subsubsection{Entity and Property Extraction}
+
+After generating SPARQL queries, the system extracts entities and properties mentioned in each query:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity and Property Extraction, label=code:entity-property-extraction]
+def _extract_entities_and_properties_from_sparql(self, sparql):
+    """
+    Extract entity URIs and property URIs from a SPARQL query (improved version)
+
+    Args:
+        sparql (str): SPARQL query to analyze
+
+    Returns:
+        tuple: (entity_uris, property_uris)
+    """
+    entity_uris = []
+    property_uris = []
+
+    # Extract URIs in angle brackets
+    uri_pattern = r'<([^>]+)>'
+    angle_bracket_uris = re.findall(uri_pattern, sparql)
+
+    # Extract prefixed URIs (like lex2kg-o:propertyName)
+    prefixed_pattern = r'lex2kg-o:(\w+)'
+    prefixed_properties = re.findall(prefixed_pattern, sparql)
+
+    # Convert prefixed properties to full URIs
+    for prop_name in prefixed_properties:
+        full_uri = f"https://example.org/lex2kg/ontology/{prop_name}"
+        property_uris.append(full_uri)
+
+    # Classify URIs from angle brackets as entities or properties based on structure
+    for uri in angle_bracket_uris:
+        if self._is_property_uri(uri):
+            property_uris.append(uri)
+        else:
+            entity_uris.append(uri)
+
+    return entity_uris, property_uris
+\end{lstlisting}
+
+\subsection{LLM-Assisted Question and Reasoning Generation}
+
+A key innovation in our approach is the use of a large language model (LLM) to generate natural language questions and reasoning chains for each SPARQL query, especially for the pattern-based generation approach which initially produces only SPARQL queries without natural language questions.
+
+\subsubsection{Data Simplification}
+
+To optimize the LLM context window usage, we first simplify the dataset by filtering out irrelevant entities and properties:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Data Simplification for LLM Processing, label=code:data-simplification]
+def extract_namespaced_identifiers(sparql_query):
+    """Extract all ns1: prefixed identifiers from a SPARQL query."""
+    pattern = r'ns1:[a-zA-Z_][a-zA-Z0-9_]*'
+    return set(re.findall(pattern, sparql_query))
+
+def filter_matches(matches_list, used_identifiers):
+    """Filter matches list to only include items whose id is in used_identifiers."""
+    return [match for match in matches_list if match['id'] in used_identifiers]
+
+def process_json_file(file_path):
+    """Process the JSON file and output filtered results."""
+    
+    # Read the JSON file
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    results = []
+    
+    for item in data:
+        # Extract identifiers used in the SPARQL query
+        used_identifiers = extract_namespaced_identifiers(item['sparql'])
+        
+        # Filter entities_matches and properties_matches
+        filtered_entities = filter_matches(item['entities_matches'], used_identifiers)
+        filtered_properties = filter_matches(item['properties_matches'], used_identifiers)
+        
+        # Create filtered result
+        filtered_item = {
+            'id': item['id'],
+            'sparql': item['sparql'],
+            'entities_matches': filtered_entities,
+            'properties_matches': filtered_properties
+        }
+        
+        results.append(filtered_item)
+    
+    return results
+\end{lstlisting}
+
+\subsubsection{LLM-Generated Content and Data Merging}
+
+The simplified data is sent to an LLM (e.g., Claude), which generates natural language questions and step-by-step reasoning chains. After obtaining the LLM-generated content, it is merged back with the original dataset:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Data Merging, label=code:data-merging]
+def merge_json_files():
+    # Read the content from both files
+    with open('legal_rw.json', 'r') as file1:
+        paste1_data = json.loads(file1.read())
+    
+    with open('legal_claude.json', 'r') as file2:
+        paste2_data = json.loads(file2.read())
+    
+    # Create a dictionary from paste2 data for easy lookup by id
+    paste2_dict = {item['id']: item for item in paste2_data}
+    
+    # Create a new list with updated items
+    merged_data = []
+    for item in paste1_data:
+        # Check if this item exists in paste2
+        if item['id'] in paste2_dict:
+            # Update question and thoughts fields
+            item['question'] = paste2_dict[item['id']]['question']
+            item['thoughts'] = paste2_dict[item['id']]['thoughts']
+        
+        merged_data.append(item)
+    
+    # Write the merged data to a new file
+    with open('legal.json', 'w') as output_file:
+        json.dump(merged_data, output_file, indent=2)
+    
+    print("Merged JSON file created")
+\end{lstlisting}
+
 \subsection{Post-Processing Pipeline}
+
+The post-processing pipeline is essential for standardizing the format of SPARQL queries in the generated datasets. This standardization improves training efficiency by providing consistent formatting patterns that align with the natural generation tendencies of language models.
+
+\subsubsection{SPARQL Query Formatting}
+
+The post-processing pipeline includes several components for formatting SPARQL queries:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Query Post-Processing, label=code:sparql-postprocessing]
+def process_json(json_data, ttl_content):
+    """Process the JSON data and add entity and property labels."""
+    for item in json_data:
+        if 'sparql' in item:
+            item['sparql'] = upper_case_sparql(item['sparql'])
+            item['sparql'] = replace_uri_with_prefix(item['sparql'])
+            item['sparql'] = format_sparql_query(item['sparql'])
+            item['sparql'] = remove_spaces_before_chars(item['sparql'])
+    
+    return json_data
+
+def upper_case_sparql(sparql_query):
+    """Convert SPARQL keywords to uppercase."""
+    # Define a list of SPARQL keywords
+    keywords = [
+        "SELECT", "WHERE", "FILTER", "BIND", "UNION", "ORDER BY", "COUNT", "AS",
+        "GROUP BY", "LIMIT", "OFFSET", "DISTINCT", "ASK"
+    ]
+    
+    # Convert each keyword to uppercase
+    for keyword in keywords:
+        sparql_query = re.sub(r'\b' + keyword + r'\b', keyword.upper(), sparql_query, flags=re.IGNORECASE)
+    
+    return sparql_query
+
+def format_sparql_query(query):
+    """
+    Format a SPARQL query with proper indentation.
+    Comprehensive handling of various SPARQL clauses.
+    """
+    # Clean up the query
+    query = query.strip()
+    
+    # Fix common formatting issues
+    query = re.sub(r'BYDESC', 'BY DESC', query, flags=re.IGNORECASE)
+    
+    # Format basic query structure
+    if "WHERE" in query and "{" in query and "}" in query:
+        # Split the query at WHERE
+        before_where, after_where = query.split("WHERE", 1)
+        before_where = before_where.strip()
+        after_where = after_where.strip()
+        
+        # Handle the WHERE clause
+        opening_brace_index = after_where.find("{")
+        closing_brace_index = after_where.rfind("}")
+        
+        if opening_brace_index != -1 and closing_brace_index != -1:
+            # Get the content inside braces
+            content = after_where[opening_brace_index+1:closing_brace_index].strip()
+            
+            # Format the content with proper indentation
+            indented_content = format_where_content(content)
+            
+            # Get any clauses after the closing brace
+            after_clause = after_where[closing_brace_index+1:].strip()
+            formatted_after = format_after_clauses(after_clause)
+            
+            # Build the formatted query
+            formatted_query = f"{before_where}\nWHERE {{\n{indented_content}\n}}"
+            
+            # Add any remaining clauses
+            if formatted_after:
+                formatted_query += formatted_after
+            
+            return formatted_query
+    
+    # Special case for ASK queries
+    if query.startswith("ASK") and "WHERE" in query:
+        return format_ask_query(query)
+    
+    # If we can't format it well, return as is
+    return query
+\end{lstlisting}
+
+\subsubsection{Fix Broken URIs Function}
+
+For knowledge graphs using full URIs, we implemented a function to fix URIs that might be broken across lines during formatting:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Fix Broken URIs, label=code:fix-broken-uris]
+def fix_broken_uris(sparql_query):
+    """Fix URIs that have been broken by newlines during formatting."""
+    # Find URIs that have been broken across lines using regex
+    pattern = r'<([^>]*?\n[^>]*?)>'
+    
+    # Keep searching until no more broken URIs are found
+    while re.search(pattern, sparql_query):
+        match = re.search(pattern, sparql_query)
+        if match:
+            # Get the broken URI content
+            broken_uri = match.group(1)
+            # Fix it by removing newlines and extra spaces
+            fixed_uri = re.sub(r'\s+', '', broken_uri)
+            # Replace in the original string
+            sparql_query = sparql_query.replace(f'<{broken_uri}>', f'<{fixed_uri}>')
+    
+    return sparql_query
+\end{lstlisting}
+
+\subsubsection{Dataset Splitting and Export}
+
+The final step in the post-processing pipeline is splitting the dataset into training and testing sets and exporting them in JSON format:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Dataset Splitting and Export, label=code:dataset-splitting]
+def main():
+    # Load the JSON file
+    with open('legal.json', 'r') as f:
+        json_data = json.load(f)
+
+    # Process the data
+    result = process_json(json_data)
+    
+    # Handle more than 150 rows by randomly sampling
+    if len(result) > 150:
+        print(f"Dataset has {len(result)} rows. Randomly sampling 150 rows.")
+        result = random.sample(result, 150)
+    
+    # Split into train (100) and test (50) sets
+    random.shuffle(result)  # Shuffle to ensure random distribution
+    
+    train_data = result[:100]
+    test_data = result[100:150]
+    
+    # Save training data
+    train_file = 'legal_train.json'
+    with open(train_file, 'w') as f:
+        json.dump(train_data, f, indent=2)
+    
+    # Save test data
+    test_file = 'legal_test.json'
+    with open(test_file, 'w') as f:
+        json.dump(test_data, f, indent=2)
+
+    print(f"Processing complete.")
+    print(f"Training data ({len(train_data)} rows) saved to {train_file}.")
+    print(f"Test data ({len(test_data)} rows) saved to {test_file}.")
+\end{lstlisting}
+
+\subsection{Integration with Vector Search}
+
+To enable efficient entity and property matching, we integrated the dataset generation system with vector search capabilities through vector search implementations for each knowledge graph domain:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Vector Search Integration, label=code:vector-search]
+class LegalPropertyRetrieval:
+    """Class for managing Legal document properties and entities retrieval and search"""
+    
+    # ... [initialization code] ...
+    
+    def _setup_collection(self, collection_name: str, df: pd.DataFrame):
+        """Setup Weaviate collection for entities or properties"""
+        if not self.client.collections.exists(collection_name):
+            collection = self.client.collections.create(
+                name=collection_name,
+                vectorizer_config=weaviate.classes.config.Configure.Vectorizer.none(),
+            )
+            is_empty = True
+        else:
+            collection = self.client.collections.get(collection_name)
+            is_empty = False
+            
+        # Initialize collection with data if empty
+        if is_empty:
+            self._initialize_collection(collection, df)
+            
+        return collection
+
+    def _initialize_collection(self, collection, df: pd.DataFrame):
+        """Initialize the vector collection with data"""
+        logger.info(f"Initializing collection with {len(df)} items...")
+        
+        if len(df) == 0:
+            logger.warning("No data to initialize collection")
+            return
+            
+        # Generate embeddings for labels
+        labels = df["label"].fillna("").tolist()
+        embeddings = self.model_embed.encode(labels, show_progress_bar=True)
+
+        # Use batch import
+        with collection.batch.dynamic() as batch:
+            for i, row in df.iterrows():
+                batch.add_object(
+                    properties=row.to_dict(),
+                    vector=embeddings[i].tolist(),
+                )
+        logger.info("Collection initialized!")
+
+    def search_entities(self, q: str, k: int = 5) -> pd.DataFrame:
+        """Search entities using hybrid search"""
+        return self._search(self.entities_collection, q, k)
+
+    def search_properties(self, q: str, k: int = 5) -> pd.DataFrame:
+        """Search properties using hybrid search"""
+        return self._search(self.properties_collection, q, k)
+\end{lstlisting}
+
+\subsection{Domain-Specific Customizations}
+
+Each knowledge graph domain (university course, legal, and GESIS) has customizations in the generator implementation to handle domain-specific patterns and properties.
+
+\subsubsection{GESIS Knowledge Graph Integration}
+
+For the GESIS Knowledge Graph, we implemented specialized components to handle the scholarly domain schema and data characteristics:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=GESIS-Specific Configuration, label=code:gesis-config]
+# GESIS-specific configuration for dataset generation
+gesis_config = {
+    "prefixes": {
+        "schema": "http://schema.org/",
+        "ddi": "https://www.ddialliance.org/Specification/DDI-Lifecycle/",
+        "gesiskg": "https://www.gesis.org/kg/"
+    },
+    "excluded_properties": [
+        "http://schema.org/DuplicateMetadata",
+        "http://schema.org/validUntil",
+        "http://schema.org/contentUrl"
+    ],
+    "entity_classes": [
+        "http://schema.org/ScholarlyArticle",
+        "http://schema.org/Dataset",
+        "http://schema.org/Person",
+        "http://schema.org/Organization",
+        "http://schema.org/Place",
+        "http://schema.org/DefinedTerm"
+    ],
+    "primary_entity_class": "http://schema.org/ScholarlyArticle"
+}
+\end{lstlisting}
+
+The GESIS-specific templates cover various scholarly questions, including author identification, publication date retrieval, citation networks, and topic exploration. These templates are integrated into the template-based dataset generation pipeline to create comprehensive training data for the scholarly domain.
+
+\subsubsection{Legal Knowledge Graph Customizations}
+
+For the legal knowledge graph, we implemented specialized property exclusion filters:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Legal KG Customizations, label=code:legal-customizations]
+# Properties to exclude for better quality
+self.excluded_properties = {
+    # Universal properties (same value everywhere)
+    "https://example.org/lex2kg/ontology/jenisPeraturan",
+    # "https://example.org/lex2kg/ontology/yurisdiksi",
+    "https://example.org/lex2kg/ontology/bahasa",
+    # Technical/internal properties
+    "https://example.org/lex2kg/ontology/segmen",
+    # Over-granular properties
+    "https://example.org/lex2kg/ontology/nomor",
+}
+\end{lstlisting}
+
+\subsection{End-to-End Workflow}
+The complete dataset generation workflow consists of:
+\begin{enumerate}
+    \item \textbf{Knowledge graph schema extraction}: Extract schema information from the knowledge graph
+    \item \textbf{Template-based or pattern-based generation}: Create structurally diverse SPARQL queries using templates or pattern discovery
+    \item \textbf{Entity and property extraction}: Extract entities and properties from the queries and retrieve their labels
+    \item \textbf{LLM-based enhancement}: Generate natural language questions and reasoning chains
+    \item \textbf{Data merging}: Combine LLM-generated content with the original dataset
+    \item \textbf{Post-processing}: Format queries, fix broken URIs, sample, and split into training/testing sets
+\end{enumerate}
+
+This approach ensures the creation of diverse and high-quality NL2SPARQL datasets that capture the complexities of each knowledge domain while maintaining consistency in structure and format. The integration of LLM-assisted content generation with template-based and pattern-based SPARQL generation provides a balance between structural diversity and linguistic naturalness.
 
 \section{Model Finetuning Implementation}
 \subsection{Finetuning Infrastructure}
