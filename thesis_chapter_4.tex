@@ -1600,9 +1600,900 @@ def generate_dataset(domain_config, output_prefix, size=200):
 This comprehensive implementation of the dataset generation system enables the creation of high-quality NL2SPARQL datasets for different knowledge graph domains, supporting both template-based and random-walk approaches with extensive customization options and post-processing capabilities.
 
 \section{Model Finetuning Implementation}
-\subsection{Finetuning Infrastructure}
+
+Our model finetuning implementation builds upon the dataset generation system to create specialized models for entity property extraction and SPARQL generation. This section details the technical implementation of our finetuning approach across multiple large language models, the prompt design methodology, and the comprehensive evaluation processes employed to validate model performance.
+
+\subsection{Finetuning Infrastructure and Model Selection}
+
+The foundation of our finetuning approach is a modular, efficient infrastructure designed to enable adaptation of large language models with minimal computational requirements. We implement parameter-efficient fine-tuning techniques that allow us to adapt models containing billions of parameters using standard research hardware.
+
+\begin{figure}
+    \centering
+    % This should be a diagram showing the finetuning infrastructure
+    % with Unsloth, 4-bit quantization, and gradient optimization
+    \caption{Model Finetuning Infrastructure with Parameter-Efficient Techniques}
+    \label{fig:finetuning-infrastructure}
+\end{figure}
+
+\subsubsection{Model Selection Strategy}
+
+Our finetuning implementation supports multiple state-of-the-art large language models to enable comprehensive performance comparison across different architecture families. We selected four diverse, instruction-tuned foundation models for adaptation:
+
+\begin{itemize}
+    \item \texttt{Qwen/Qwen2.5-Coder-7B-Instruct}: Specialized for code generation tasks with enhanced structured output capabilities
+    \item \texttt{Qwen/Qwen2.5-7B-Instruct}: General-purpose instruction-following model with balanced reasoning capabilities
+    \item \texttt{meta-llama/Llama-3.1-8B-Instruct}: Latest model from Meta's Llama family with improved instruction following
+    \item \texttt{mistralai/Mistral-Nemo-Instruct-2407}: Specialized model based on Mistral architecture with enhanced reasoning capabilities
+\end{itemize}
+
+This diverse model selection enables us to evaluate how different architecture families respond to our finetuning approach, with parameter counts ranging from 7 billion to 8 billion parameters.
+
+\subsubsection{Technical Foundation and Libraries}
+
+Our implementation is built on the Unsloth library, which provides optimized fine-tuning capabilities for large language models:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Finetuning Infrastructure Implementation, label=code:finetuning-infrastructure]
+from unsloth import FastLanguageModel
+import torch
+from trl import SFTTrainer
+from transformers import TrainingArguments
+from unsloth import is_bfloat16_supported
+from datasets import Dataset
+from typing import Optional
+from torch.nn.parallel import DataParallel
+import gc
+from huggingface_hub import HfApi, create_repo
+import shutil
+
+# Model loading implementation
+def load_model(model_name: str):
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_name,
+        max_seq_length=max_seq_length,
+        dtype=dtype,
+        load_in_4bit=load_in_4bit,
+    )
+        
+    # Set chat template for models that need it
+    if not hasattr(tokenizer, "chat_template") and tokenizer.chat_template is not None and 'qwen' in model.config.name_or_path:
+        tokenizer.chat_template = "<|im_start|>system\n{{ messages[0]['content'] }}<|im_end|>\n{% for message in messages[1:] %}<|im_start|>{{ message['role'] }}\n{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        print("Model's tokenizer has been set.")
+    
+    return model, tokenizer
+\end{lstlisting}
+
+\subsubsection{Memory Optimization Techniques}
+
+A key challenge in fine-tuning large language models is managing memory constraints. Our implementation incorporates several techniques to optimize memory usage:
+
+\begin{enumerate}
+    \item \textbf{4-bit Quantization}: Models are loaded with 4-bit precision, reducing memory requirements by up to 8x compared to full precision.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=4-bit Quantization Implementation, label=code:4bit-quantization]
+    # Load model with 4-bit quantization
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_name,
+        max_seq_length=max_seq_length,
+        load_in_4bit=True,  # Enable 4-bit quantization
+        dtype=None          # Auto-detect precision based on hardware
+    )
+    # Memory usage before: ~28GB for 7B model
+    # Memory usage after: ~3.5GB for 7B model
+    \end{lstlisting}
+    
+    \item \textbf{Gradient Checkpointing}: Implemented via the \texttt{use\_gradient\_checkpointing} parameter, this technique trades computation for memory by recomputing intermediate activations during backpropagation rather than storing them.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=Gradient Checkpointing Implementation, label=code:gradient-checkpointing]
+    # Enable gradient checkpointing in LoRA configuration
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=64,
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+        use_gradient_checkpointing="unsloth",  # Enable optimized checkpointing
+        # Other parameters...
+    )
+    
+    # Also enable in training arguments
+    training_args = TrainingArguments(
+        # Other arguments...
+        gradient_checkpointing=True,  # Recompute activations instead of storing
+        # Other arguments...
+    )
+    \end{lstlisting}
+    
+    \item \textbf{Memory-Efficient Optimizers}: We use 8-bit optimizers to reduce the memory footprint of optimizer states.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=8-bit Optimizer Implementation, label=code:8bit-optimizer]
+    # Configure 8-bit Adam optimizer in training arguments
+    training_args = TrainingArguments(
+        # Other arguments...
+        optim="adamw_8bit",  # Use 8-bit version of AdamW
+        # Standard AdamW requires 8 bytes per parameter
+        # 8-bit version requires only 1 byte per parameter
+        
+        # Additional precision settings based on hardware
+        fp16=not is_bfloat16_supported(),
+        bf16=is_bfloat16_supported(),
+        # Other arguments...
+    )
+    \end{lstlisting}
+    
+    \item \textbf{Aggressive Memory Clearing}: Between training phases, we employ aggressive memory clearing with explicit synchronization to ensure maximum memory availability.
+
+    \begin{lstlisting}[breaklines=true,language=python, caption=Memory Optimization Implementation, label=code:memory-optimization]
+    def clear_memory():
+        """Aggressively clear GPU memory"""
+        import gc
+        import torch
+        
+        # Clear CUDA cache
+        torch.cuda.empty_cache()
+        
+        # Force garbage collection
+        gc.collect()
+        
+        # Add synchronization
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+            
+        # Log memory status
+        if torch.cuda.is_available():
+            print(f"GPU memory allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+            print(f"GPU memory reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
+    \end{lstlisting}
+
+\end{enumerate}
+
+These optimizations enable us to fine-tune 7-8 billion parameter models on a single GPU with 24GB of memory, making our approach accessible to researchers with limited computational resources.
+
 \subsection{Entity and Property Extraction Model}
+
+The Entity and Property Extraction model serves as the foundation for our question-answering pipeline, transforming natural language questions into structured entity and property identifications that can be used for subsequent SPARQL generation.
+
+\begin{figure}
+    \centering
+    % This should be a diagram showing the entity extraction model architecture
+    % with LoRA adaptation and structured output format
+    \caption{Entity and Property Extraction Model Architecture}
+    \label{fig:entity-extraction-model}
+\end{figure}
+
+\subsubsection{Task Definition and Prompt Design}
+
+The entity and property extraction task is framed as a structured generation problem. We designed a comprehensive system prompt that specifies the extraction task parameters and expected output format:
+
+\begin{tcolorbox}[title=Entity and Property Extraction System Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+You are an expert entity and property extractor for knowledge graph querying. Your task is to analyze a natural language question and identify the relevant entities and properties needed to create a SPARQL query for Wikidata. \\
+
+Guidelines: \\
+1. For each question, extract ALL entities mentioned in the question \\
+2. For each question, extract ALL relevant properties needed to answer the question \\
+3. Format your response as a structured JSON object with 'entities' and 'properties' keys \\
+4. Each key should contain an array of strings with the entity or property names \\
+5. Focus ONLY on extracting, not on generating SPARQL queries \\
+
+Your output should look like: \\
+```json \\
+\{ \\
+  "entities": ["entity1", "entity2", ...], \\
+  "properties": ["property1", "property2",  \\...] \\
+\} \\
+```
+\end{tcolorbox}
+
+Example user prompts follow this pattern:
+
+\begin{tcolorbox}[title=Entity and Property Extraction User Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+Question: What is the population of France? \\
+
+Extract all entities and properties from this question that would be needed to generate a SPARQL query for Wikidata.
+\end{tcolorbox}
+
+The expected assistant output is a structured JSON response:
+
+\begin{tcolorbox}[title=Entity and Property Extraction Assistant Response, colback=orange!5!white, colframe=orange!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+```json \\
+\{ \\
+  "entities": ["France"], \\
+  "properties": ["population"] \\
+\} \\
+```
+\end{tcolorbox}
+
+\subsubsection{Low-Rank Adaptation Implementation}
+
+For the entity extraction task, we implemented a specialized LoRA configuration optimized for structured extraction tasks:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction LoRA Configuration, label=code:entity-extraction-lora]
+def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num_epochs=5):
+    """
+    Fine-tune a model with LoRA for entity and property extraction
+    """
+    model, tokenizer = load_model(model_name)
+    
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=16,                             # Rank of update matrices
+        target_modules=[                  # Attention and MLP layers
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj"
+        ],
+        lora_alpha=16,                    # Scaling factor for updates
+        lora_dropout=0,                   # No dropout for deterministic behavior
+        bias="none",                      # No bias parameters to minimize trainable params
+        use_gradient_checkpointing="unsloth",  # Memory optimization
+        random_state=42,                  # Reproducibility
+        use_rslora=False,                 # Standard LoRA for stability
+        loftq_config=None,                # No quantization for adapter weights
+    )
+    
+    trainer = SFTTrainer(
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=train_dataset,
+        eval_dataset=val_dataset,
+        dataset_text_field="text",
+        max_seq_length=max_seq_length,
+        dataset_num_proc=2,
+        packing=False,                    # No packing to preserve structure
+        args=TrainingArguments(
+            # Training parameters
+            per_device_train_batch_size=1,
+            per_device_eval_batch_size=1,
+            gradient_accumulation_steps=4,
+            warmup_steps=5,
+            num_train_epochs=num_epochs,
+            learning_rate=2e-5,
+            
+            # Precision options
+            fp16=not is_bfloat16_supported(),
+            bf16=is_bfloat16_supported(),
+            optim="adamw_8bit",
+            weight_decay=0.01,
+            lr_scheduler_type="linear",
+            
+            # Evaluation strategy
+            eval_strategy="steps",
+            save_strategy="steps",
+            save_steps=20,
+            eval_steps=20,
+            logging_steps=10,
+            
+            # Checkpoint management
+            save_total_limit=5,
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            
+            # Output directory
+            output_dir="outputs",
+            report_to="none",
+            seed=42,
+        ),
+    )
+
+    trainer.train()
+
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    
+    return model, tokenizer
+\end{lstlisting}
+
+This configuration uses a moderate rank (r=16) which we determined empirically to provide sufficient capacity for the entity extraction task while maintaining computational efficiency. The approach achieves approximately 99% parameter efficiency compared to full model fine-tuning, using only about 40-60 million trainable parameters depending on the base model size.
+
 \subsection{SPARQL Generation Model}
+
+The SPARQL Generation model represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries. This task requires more sophisticated adaptation to capture complex syntax patterns and domain-specific knowledge.
+
+\begin{figure}
+    \centering
+    % This should be a diagram showing the SPARQL generation model
+    % with enhanced LoRA configuration and reasoning chain generation
+    \caption{SPARQL Generation Model with Enhanced LoRA Configuration}
+    \label{fig:sparql-generation-model}
+\end{figure}
+
+\subsubsection{Task Definition and Prompt Design}
+
+The SPARQL generation task is structured as a reasoning-enhanced generation problem. We designed a comprehensive system prompt that specifies both the reasoning process and query generation requirements:
+
+\begin{tcolorbox}[title=SPARQL Generation System Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+You are a SPARQL generator expert for Wikidata knowledge graph. Your task is to convert the following natural language question to a SPARQL query for Wikidata using the provided entity and property resolutions. \\
+
+Guidelines: \\
+1. First identify which entities from the list match the question's intent \\
+2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question \\
+3. When multiple entities have similar labels, choose the one whose description best matches the question's context \\
+4. From the properties list, choose which properties are needed to answer the question \\
+5. Select only the minimum necessary properties required to answer the question correctly \\
+6. Use ALL identified entities and necessary properties in your SPARQL query \\
+7. Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs \\
+8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed \\
+9. Return entity IDs directly without using label services \\
+10. Return ONLY the raw SPARQL query with no explanations or comments in this format: \\
+   ```sparql \\
+   <your\_sparql\_query\_here> \\
+   ``` \\
+
+IMPORTANT: Before generating the SPARQL query, provide your step-by-step reasoning about how to construct the query. \\
+\end{tcolorbox}
+
+Example user prompts include the question and candidate entities and properties:
+
+\begin{tcolorbox}[title=SPARQL Generation User Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+Question: What is the population of France? \\
+Entities: \\
+- id: Q142, label: France, description: republic in Western Europe \\
+Properties: \\
+- id: P1082, label: population, description: number of people inhabiting the place \\
+- id: P31, label: instance of, description: that class of which this subject is a particular example and member \\
+- id: P17, label: country, description: sovereign state of this item \\
+SPARQL: \\
+\end{tcolorbox}
+
+The expected assistant output includes both reasoning steps and the SPARQL query:
+
+\begin{tcolorbox}[title=SPARQL Generation Assistant Response, colback=orange!5!white, colframe=orange!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+Let me analyze this step by step: \\
+
+1. The question asks for the population of France. \\
+2. From the entities list, "France" (Q142) is clearly the relevant entity. \\
+3. From the properties list, "population" (P1082) is the property needed to get the population value. \\
+4. I need to construct a query that retrieves the population value of France. \\
+5. The structure will be a simple triple pattern: wd:Q142 wdt:P1082 ?population. \\
+
+```sparql \\
+SELECT ?population WHERE \{ \\
+  wd:Q142 wdt:P1082 ?population. \\
+\} \\
+``` \\
+\end{tcolorbox}
+
+\subsubsection{Enhanced LoRA Configuration for SPARQL Generation}
+
+For the SPARQL generation task, we implemented a more extensive LoRA configuration with higher rank and additional adaptations:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation LoRA Configuration, label=code:sparql-generation-lora]
+def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, num_epochs=10):
+    """
+    Fine-tune a model with enhanced LoRA for SPARQL generation
+    """
+    model, tokenizer = load_model(model_name)
+
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r = 64,                           # Higher rank for more capacity
+        target_modules = [                # Comprehensive layer selection
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj"
+        ],
+        lora_alpha = 64,                  # Scaling factor matching rank
+        lora_dropout = 0.1,               # Dropout for generalization
+        bias = "all",                     # Include bias for syntax learning
+        use_gradient_checkpointing = "unsloth",
+        random_state = 42,
+        use_rslora = True,                # Rank-Stabilized LoRA for stability
+        loftq_config = None,
+    )
+    
+    trainer = SFTTrainer(
+        model = model,
+        tokenizer = tokenizer,
+        train_dataset = train_dataset,
+        eval_dataset = val_dataset,
+        dataset_text_field = "text",
+        max_seq_length = max_seq_length,
+        dataset_num_proc = 4,             # More processors for complex data
+        packing = True,                   # Enable packing for efficiency
+        args = TrainingArguments(
+            # Batch sizing
+            per_device_train_batch_size = 1,
+            per_device_eval_batch_size = 1,
+            gradient_accumulation_steps = 16,  # Larger effective batch
+            
+            # Learning rate
+            learning_rate = 1e-5,         # Lower learning rate for convergence
+            weight_decay = 0.1,           # Stronger regularization
+            
+            # Schedule
+            num_train_epochs = num_epochs,
+            lr_scheduler_type = "polynomial",  # Better for syntax learning
+            warmup_ratio = 0.1,           # 10% warmup period
+            
+            # Precision
+            fp16 = not is_bfloat16_supported(),
+            bf16 = is_bfloat16_supported(),
+            optim = "adamw_8bit",
+            
+            # Evaluation
+            eval_strategy = "steps",
+            save_strategy = "steps",
+            eval_steps = 25,
+            save_steps = 25,
+            logging_steps = 5,
+            
+            # Checkpoint management
+            save_total_limit = 5,
+            load_best_model_at_end = True,
+            metric_for_best_model = "eval_loss",
+            greater_is_better = False,
+            
+            # Additional settings
+            group_by_length = True,
+            gradient_checkpointing = True,
+            dataloader_drop_last = False,
+            
+            # Label smoothing for SPARQL syntax tokens
+            label_smoothing_factor = 0.05,
+            
+            # Output
+            output_dir = "outputs",
+            report_to = "tensorboard",
+            seed = 42,
+        ),
+    )
+    
+    trainer.train()
+
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    
+    return model, tokenizer
+\end{lstlisting}
+
+This enhanced configuration uses a higher rank (r=64) to provide greater capacity for learning complex SPARQL syntax patterns. We also implemented rank-stabilized LoRA (RSLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
+
+\subsection{Dataset Formatting and Processing}
+
+A critical aspect of our finetuning implementation is the careful formatting of training examples to maximize learning efficiency. We implemented specialized formatting functions for both entity extraction and SPARQL generation tasks.
+
+\subsubsection{Entity and Property Extraction Data Formatting}
+
+For entity and property extraction, we format training examples to include the system instructions, question input, and expected JSON output:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction Data Formatting, label=code:entity-extraction-formatting]
+def format_instruction(row):
+    # Format entities and properties as JSON arrays
+    entities_json = json.dumps(row['entities'])
+    properties_json = json.dumps(row['properties'])
+    
+    user_prompt = f"""Question: {row['question']}
+
+Extract all entities and properties from this question that would be needed to generate a SPARQL query for Wikidata."""
+
+    asst_prompt = f"""```json
+{{
+  "entities": {entities_json},
+  "properties": {properties_json}
+}}
+```"""
+
+    if has_chat_template:
+        prompt = tokenizer.apply_chat_template(
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+                {"role": "assistant", "content": asst_prompt}
+            ],
+            tokenize=False,
+            add_generation_prompt=False,
+            continue_final_message=False
+        )
+    else:
+        prompt = system_prompt + '\n' + user_prompt + '\n' + asst_prompt
+    
+    return prompt
+\end{lstlisting}
+
+\subsubsection{SPARQL Generation Data Formatting}
+
+For SPARQL generation, we format training examples to include the system instructions, question input with entity and property candidates, and the expected output with reasoning steps and SPARQL query:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Data Formatting, label=code:sparql-generation-formatting]
+def format_instruction(row):
+    entities_matches_formatted = format_entity_matches(row['entities_matches'])
+    properties_matches_formatted = format_property_matches(row['properties_matches'])
+
+    user_prompt = f"""Question: {row['question']}
+
+Entities:
+{entities_matches_formatted}
+
+Properties:
+{properties_matches_formatted}
+
+SPARQL:"""
+    
+    # Format thoughts to be more readable in the assistant's response
+    thoughts_formatted = "Let me analyze this step by step:\n\n"
+    for i, thought in enumerate(row['thoughts'], 1):
+        thoughts_formatted += f"{thought}\n"
+    
+    asst_prompt = f"""{thoughts_formatted}
+
+```sparql
+{row['sparql']}
+```"""
+
+    if has_chat_template:
+        prompt = tokenizer.apply_chat_template(
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+                {"role": "assistant", "content": asst_prompt}
+            ],
+            tokenize=False,
+            add_generation_prompt=False,
+            continue_final_message=False
+        )
+    else:
+        prompt = system_prompt + '\n' + user_prompt + '\n' + asst_prompt
+    
+    return prompt
+\end{lstlisting}
+
+Our implementation carefully handles model-specific chat templates, ensuring that examples are properly formatted for each model's expected input format. For models without native chat templates, we apply appropriate formatting to maintain consistency.
+
+\subsection{Cross-Domain Adaptation Strategy}
+
+Our implementation includes a cross-domain adaptation strategy that enables efficient knowledge transfer between different knowledge graph domains. Rather than training separate models for each domain from scratch, we implemented a sequential adaptation approach:
+
+\begin{figure}
+    \centering
+    % This should be a diagram showing the cross-domain adaptation process
+    % with sequential adaptation from Wikidata to domain-specific KGs
+    \caption{Cross-Domain Adaptation Process}
+    \label{fig:cross-domain-adaptation}
+\end{figure}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Cross-Domain Adaptation Implementation, label=code:cross-domain-adaptation]
+def cross_domain_adaptation(base_model_name, wikidata_adapter_path, domain_dataset, output_dir):
+    """
+    Perform cross-domain adaptation from Wikidata to a specific domain
+    
+    Args:
+        base_model_name: Original model name
+        wikidata_adapter_path: Path to Wikidata-adapted model
+        domain_dataset: Dataset for domain-specific adaptation
+        output_dir: Output path for domain-adapted model
+    """
+    # Load Wikidata-adapted model
+    base_model, tokenizer = load_model(base_model_name)
+    
+    # Load Wikidata adapter weights
+    adapter_config = PeftConfig.from_pretrained(wikidata_adapter_path)
+    model = PeftModel.from_pretrained(base_model, wikidata_adapter_path)
+    
+    # Split domain dataset
+    train_data, val_data = train_test_split(domain_dataset, test_size=0.2, random_state=42)
+    
+    # Continue training with domain data (reduced epochs)
+    trainer = SFTTrainer(
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=train_data,
+        eval_dataset=val_data,
+        dataset_text_field="text",
+        max_seq_length=max_seq_length,
+        args=TrainingArguments(
+            # Reduced training parameters for domain adaptation
+            num_train_epochs=3,            # Fewer epochs for adaptation
+            learning_rate=5e-6,            # Lower learning rate
+            warmup_ratio=0.05,             # Shorter warmup period
+            weight_decay=0.05,             # Moderate regularization
+            
+            # Keep other parameters similar to original training
+            per_device_train_batch_size=1,
+            gradient_accumulation_steps=8,
+            # ... other parameters
+            
+            output_dir=output_dir,
+        )
+    )
+    
+    trainer.train()
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+\end{lstlisting}
+
+This approach significantly reduces computational requirements while enabling effective knowledge transfer across domains. For domain-specific knowledge graphs (Curriculum KG, Legal KG, and GESIS KG), we first fine-tune models on Wikidata data, then perform additional adaptation using domain-specific datasets.
+
+\subsection{Training Process and Hyperparameter Selection}
+
+Our training process involves careful hyperparameter selection and monitoring to ensure optimal model performance. We implemented comprehensive logging and validation to track model progress throughout training.
+
+\begin{figure}
+    \centering
+    % This should be a diagram showing the training process
+    % with learning curves and validation monitoring
+    \caption{Training Process with Learning Curves and Validation Monitoring}
+    \label{fig:training-process}
+\end{figure}
+
+\subsubsection{Hyperparameter Selection Strategy}
+
+We employed a methodical approach to hyperparameter selection, balancing performance and computational efficiency:
+
+\begin{itemize}
+    \item \textbf{Entity Extraction Model}: Moderate rank (r=16), no dropout, no bias training, standard LoRA, linear learning rate schedule, 5 epochs
+    \item \textbf{SPARQL Generation Model}: Higher rank (r=64), moderate dropout (0.1), bias training, rank-stabilized LoRA, polynomial learning rate schedule, 10 epochs
+\end{itemize}
+
+These hyperparameter configurations were determined through empirical testing on validation sets, with a focus on minimizing validation loss while preventing overfitting.
+
+\subsubsection{Training Monitoring and Checkpointing}
+
+Our implementation includes comprehensive training monitoring and checkpointing to ensure optimal model selection:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Training Monitoring Implementation, label=code:training-monitoring]
+# Checkpoint management in TrainingArguments
+save_total_limit=5,            # Keep last 5 checkpoints
+load_best_model_at_end=True,   # Load best model after training
+metric_for_best_model="eval_loss",  # Use validation loss for selection
+greater_is_better=False,       # Lower loss is better
+\end{lstlisting}
+
+This approach ensures that only the best-performing model on validation data is retained for deployment, mitigating the risk of overfitting.
+
+\subsection{Model Evaluation Methodology}
+
+Our finetuning implementation includes a comprehensive evaluation methodology to assess model performance across different tasks and knowledge domains. We employ both component-level evaluation and end-to-end assessment to provide a holistic view of model capabilities.
+
+\subsubsection{Component-Level Evaluation}
+
+For entity and property extraction models, we evaluate:
+
+\begin{itemize}
+    \item \textbf{Entity Recognition Accuracy}: Percentage of entities correctly identified
+    \item \textbf{Property Recognition Accuracy}: Percentage of properties correctly identified
+    \item \textbf{Format Adherence}: Ability to produce properly formatted JSON output
+\end{itemize}
+
+For SPARQL generation models, we evaluate:
+
+\begin{itemize}
+    \item \textbf{Syntax Validity}: Percentage of generated queries with valid SPARQL syntax
+    \item \textbf{Entity Selection Accuracy}: Correct selection of entities from candidates
+    \item \textbf{Property Selection Accuracy}: Correct selection of properties from candidates
+    \item \textbf{Reasoning Quality}: Accuracy and coherence of step-by-step reasoning chains
+\end{itemize}
+
+\subsubsection{End-to-End Evaluation}
+
+Beyond component-level metrics, we implement comprehensive end-to-end evaluation to assess the real-world performance of models in the question-answering pipeline:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=End-to-End Evaluation Implementation, label=code:end-to-end-evaluation]
+def evaluate_batch_results(results_df, ground_truth_queries, questions, complexities):
+    """
+    Evaluate the batch results from the FROG pipeline with complexity-based grouping
+    """
+    evaluation_results = []
+    
+    for idx, row in results_df.iterrows():
+        question = row['question']
+        generated_query = row.get('generated_sparql', '')
+        sparql_results = row.get('sparql_results', [])
+        verbalization_results = row.get("verbalization_results", [])
+        verbalization_score = row.get('verbalization_scores', 0.0)
+        used_verbalization = row.get('used_verbalization', False)
+        ground_truth_query = ground_truth_queries[idx]
+        complexity = complexities[idx]
+        
+        # Execute ground truth query
+        try:
+            ground_truth_df = pd.DataFrame(ground_truth_results)
+        except Exception as e:
+            ground_truth_df = pd.DataFrame()
+            
+        # Determine which results to use
+        if used_verbalization and verbalization_results:
+            # Use verbalization results
+            pred_df = pd.DataFrame(verbalization_results)
+        elif sparql_results:
+            # Use SPARQL results
+            pred_df = pd.DataFrame(sparql_results)
+        else:
+            pred_df = pd.DataFrame()
+            
+        # Calculate metrics
+        if not pred_df.empty and not ground_truth_df.empty:
+            metrics = compare_two_dataframes(ground_truth_df, pred_df)
+            # Record evaluation results
+            result_entry = {
+                "question_id": idx,
+                "question_text": question,
+                "complexity": complexity,
+                "ground_truth_query": ground_truth_query,
+                "generated_query": generated_query,
+                "entities": row.get('entities', []),
+                "properties": row.get('properties', []),
+                "entity_uris": row.get('entity_uris', []),
+                "verbalization_score": verbalization_score,
+                "used_verbalization": used_verbalization,
+                "sparql_generation_attempts": row.get('sparql_generation_attempts', 0),
+                "approach_used": "verbalization" if used_verbalization else "sparql_generation",
+                "metrics": metrics
+            }
+            evaluation_results.append(result_entry)
+        
+    return evaluation_results
+\end{lstlisting}
+
+Our evaluation approach includes stratified assessment by complexity level (for domain-specific knowledge graphs) and comprehensive comparison between base and fine-tuned models. This structured evaluation methodology enables detailed understanding of model performance across different scenarios and knowledge domains.
+
+\subsection{Implementation Challenges and Solutions}
+
+Throughout the implementation process, we encountered and addressed several technical challenges:
+
+\begin{enumerate}
+    \item \textbf{Memory Limitations}: We addressed GPU memory constraints through aggressive optimization techniques including 4-bit quantization, gradient checkpointing, and memory-efficient optimizers.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=Memory Optimization Techniques, label=code:memory-optimization]
+    # Memory-optimized model loading
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_name,
+        max_seq_length=2048,
+        load_in_4bit=True,  # 4-bit quantization (8x memory reduction)
+        dtype=None          # Auto-detect optimal precision
+    )
+    
+    # Memory-efficient LoRA configuration
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=64,  # Rank parameter
+        use_gradient_checkpointing="unsloth",  # Trade computation for memory
+        # Only these modules get LoRA adapters (saves memory)
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", 
+                        "gate_proj", "up_proj", "down_proj"]
+    )
+    \end{lstlisting}
+    
+    \item \textbf{Model Compatibility}: Each model family required specific adaptations to ensure compatibility with our training approach. We implemented model-specific chat template handling and tokenization to ensure consistent behavior.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=Model-Specific Compatibility Handling, label=code:model-compatibility]
+    # Model-specific chat template handling
+    def apply_model_specific_settings(model, tokenizer):
+        # Set model-specific chat templates
+        if 'qwen' in model.config.name_or_path:
+            tokenizer.chat_template = "<|im_start|>system\n{{ messages[0]['content'] }}<|im_end|>\n{% for message in messages[1:] %}<|im_start|>{{ message['role'] }}\n{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        elif 'mistral' in model.config.name_or_path:
+            # Mistral uses its own template by default
+            pass
+        elif 'llama' in model.config.name_or_path:
+            # Llama-specific handling if needed
+            pass
+            
+        # Verify proper configuration
+        has_chat_template = hasattr(tokenizer, "chat_template") and tokenizer.chat_template is not None
+        return has_chat_template
+    \end{lstlisting}
+    
+    \item \textbf{Training Stability}: Higher-rank LoRA configurations occasionally experienced training instabilities, particularly for SPARQL generation. We implemented rank-stabilized LoRA (RSLoRA) to address this issue.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=Training Stability Improvements, label=code:training-stability]
+    # Standard LoRA for entity extraction (more stable task)
+    entity_model = FastLanguageModel.get_peft_model(
+        base_model,
+        r=16,                  # Lower rank for stability
+        lora_alpha=16,
+        lora_dropout=0,
+        use_rslora=False,      # Standard LoRA is sufficient
+        bias="none"            # Fewer parameters to update
+    )
+    
+    # Enhanced stability for SPARQL generation (complex task)
+    sparql_model = FastLanguageModel.get_peft_model(
+        base_model,
+        r=64,                  # Higher rank needed for complexity
+        lora_alpha=64,
+        lora_dropout=0.1,      # Dropout for generalization
+        use_rslora=True,       # Rank-Stabilized LoRA for stability
+        bias="all"             # Include bias for syntax learning
+    )
+    \end{lstlisting}
+    
+    \item \textbf{Cross-Domain Adaptation}: Adapting models across different knowledge graph domains required careful balancing of general and domain-specific knowledge. Our sequential adaptation approach effectively mitigated catastrophic forgetting while enabling efficient domain adaptation.
+    
+    \begin{lstlisting}[breaklines=true,language=python, caption=Cross-Domain Adaptation Approach, label=code:cross-domain-adaptation]
+    # Phase 1: Train on Wikidata (general knowledge)
+    wikidata_model, tokenizer = finetune_sparql(
+        model_name, 
+        wikidata_train_dataset, 
+        wikidata_val_dataset,
+        "ft_model_wikidata",
+        num_epochs=10           # Full training on Wikidata
+    )
+    
+    # Phase 2: Domain adaptation with reduced learning rate
+    def adapt_to_domain(base_model_name, wikidata_checkpoint, domain_dataset):
+        # Load the Wikidata-trained model
+        model, tokenizer = load_model(base_model_name)
+        model = PeftModel.from_pretrained(model, wikidata_checkpoint)
+        
+        # Continue training with domain data (reduced parameters)
+        trainer = SFTTrainer(
+            model=model,
+            # Training args with lower learning rate and fewer epochs
+            args=TrainingArguments(
+                learning_rate=5e-6,     # Reduced learning rate
+                num_train_epochs=3,     # Shorter training
+                warmup_ratio=0.05       # Shorter warmup
+            )
+        )
+        trainer.train()
+    \end{lstlisting}
+    
+    \item \textbf{Package Dependency Instability}: A significant challenge was managing package dependencies with rapidly evolving libraries. For example, we discovered that langchain-huggingface $\geq$ 0.2.0 introduced breaking changes that were incompatible with our Unsloth implementation:
+
+    \begin{lstlisting}[breaklines=true,language=python, caption=Package Dependency Issue Example, label=code:dependency-issue]
+    # This fails with newer versions of langchain-huggingface
+    from langchain_huggingface import ChatHuggingFace
+    
+    # Error: AttributeError: module 'langchain_huggingface' has no attribute 'ChatHuggingFace'
+    # in versions >= 0.2.0 where the API was restructured
+    \end{lstlisting}
+
+    To address this, we had to explicitly pin langchain-huggingface to version 0.1.2 in our installation requirements. Without such version pinning, the same code would fail when dependencies received updates, highlighting the fragility of deep learning pipelines that rely on multiple rapidly evolving libraries.
+    
+    \item \textbf{Component Initialization Order}: We discovered critical incompatibilities between Unsloth and Weaviate when both were initialized in the same Python process. Specifically, Unsloth's CUDA optimizations conflicted with Weaviate's GPU memory management. This required careful implementation sequencing where Weaviate client initialization had to be performed after all Unsloth fine-tuning processes were completed:
+
+    \begin{lstlisting}[breaklines=true,language=python, caption=Component Initialization Order, label=code:initialization-order]
+    # INCORRECT implementation (causes memory conflicts)
+    # weaviate_client = initialize_weaviate()
+    # model, tokenizer = finetune_with_unsloth()
+    
+    # CORRECT implementation
+    model, tokenizer = finetune_with_unsloth()
+    clear_memory()  # Explicitly clear GPU memory
+    torch.cuda.empty_cache()
+    gc.collect()
+    
+    # Only initialize Weaviate after Unsloth is done
+    weaviate_client = initialize_weaviate()
+    \end{lstlisting}
+
+    This ordering constraint required careful restructuring of our pipeline to separate fine-tuning and inference phases completely.
+    
+    \item \textbf{Tokenizer Inconsistencies}: We encountered issues where tokenizers initialized differently across model runs, particularly with the Qwen2.5 models. This required explicit chat template verification and setting even when the documentation suggested it should be automatically loaded:
+
+    \begin{lstlisting}[breaklines=true,language=python, caption=Tokenizer Template Verification, label=code:tokenizer-verification]
+    # Always verify and explicitly set template regardless of hasattr check
+    if 'qwen' in model.config.name_or_path:
+        tokenizer.chat_template = "<|im_start|>system\n{{ messages[0]['content'] }}<|im_end|>\n{% for message in messages[1:] %}<|im_start|>{{ message['role'] }}\n{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        print("Model's tokenizer has been set.")
+    
+    # Verify template was properly set
+    has_chat_template = hasattr(tokenizer, "chat_template") and tokenizer.chat_template is not None
+    if not has_chat_template:
+        raise ValueError(f"Chat template not properly set for {model_name}")
+    \end{lstlisting}
+    
+    \item \textbf{Resource Deallocation}: Proper resource deallocation became critical for the stability of our pipeline. We found that standard Python garbage collection was insufficient, and explicit model deletion and CUDA cache clearing were necessary between processing stages:
+
+    \begin{lstlisting}[breaklines=true,language=python, caption=Resource Deallocation Implementation, label=code:resource-deallocation]
+    def clean_model_resources():
+        """Aggressive resource cleanup between model loads"""
+        # Delete model explicitly
+        if 'model' in globals():
+            del globals()['model']
+        
+        # Delete tokenizer explicitly 
+        if 'tokenizer' in globals():
+            del globals()['tokenizer']
+        
+        # Clear CUDA cache with synchronization
+        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        
+        # Force garbage collection multiple times
+        for _ in range(3):
+            gc.collect()
+    \end{lstlisting}
+\end{enumerate}
+
+These implementation challenges highlight the complexity of building production-ready systems that integrate multiple deep learning and vector database components. Our solutions ensured reproducible behavior across different environments while maintaining the performance benefits of our optimized approach.
 
 \section{Multi-Agent System Implementation}
 \subsection{LangGraph Architecture}
