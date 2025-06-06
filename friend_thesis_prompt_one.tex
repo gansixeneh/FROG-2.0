@@ -1,0 +1,261 @@
+\newcommand{\promptOne}{%
+    \begin{tcolorbox}[title=Entities Extraction Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+\textbf{\#\# INSTRUCTIONS} \\
+- Extract the entities from the given question!\\
+- These entities usage is to find the most appropriate entity ID from wikidata to be used in SPARQL queries.\\
+- If there is no entity in the question, return empty list.\\
+- ONLY return the entities. DO NOT return anything else.\\
+- DO NOT include adjectives like 'Highest', 'Lowest', 'Biggest', etc in the entity.\\
+- DO NOT provide any extra information, for instance explanation inside a brackets like '(population)', '(area)', '(place)', '(artist)', etc\\
+- DO NOT include any explanations or apologies in your responses.\\
+- Remove all stop words, including conjunctions like 'and' and prepositions like 'in' and 'on' from the extracted entity.\\
+- Make the entity singular, not plural. For instance, if the entity is foods, then transform it into food.\\
+
+\textbf{\#\# OUTPUT FORMAT INSTRUCTIONS} \\
+\{format\_instructions\}\\
+
+\textbf{\#\# EXAMPLES} \\
+- \textbf{Question}: how much is 1 tablespoon of water?\\
+\textbf{Entity}: ```json\{\{"entities": ["Tablespoon"]\}\}```\\
+
+- \textbf{Question}: how are glacier caves formed?\\
+\textbf{Entity}: ```json\{\{"entities": ["Glacier cave"]\}\}```\\
+
+- \textbf{Question}: how much are the harry potter movies worth?\\
+\textbf{Entity}: ```json\{\{"entities": ["Harry Potter"]\}\}```\\
+
+...\\
+
+\textbf{\#\# QUESTION} \\
+- \textbf{Question}: \{question\}\\
+\textbf{Entity}: 
+    \end{tcolorbox}
+}
+
+
+\newcommand{\promptTwo}{%
+    \begin{tcolorbox}[title=Entity Selection Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+\textbf{\#\# INSTRUCTIONS} \\
+- For each entity given, find the most appropriate entity ID from the list of wikidata entities given to be used in SPARQL queries to answer the given question!\\
+- You MUST return the ID and label of all the entity in the list of entities given in "Entities". For example: if the entities give is "A" and "B", then you have to return the ID and label of "A" and "B".\\
+- ONLY return ONE set of entity ID for each entity, DO NOT hallucinate and pick more than one entity ID sets. For example: there are [C, D, E] for "A" and there are [F, G, H] for "B", ONLY return ONE for each entity, such as C for "A" and F for "B".\\
+- ONLY return the entity IDs, labels, and descriptions from the list of wikidata entities given. DO NOT return anything else and DO NOT hallucinate.\\
+- DO NOT include any explanations or apologies in your responses.\\
+
+\textbf{\#\# OUTPUT FORMAT INSTRUCTIONS} \\
+\{format\_instructions\}\\
+
+\textbf{\#\# EXAMPLES} \\
+- \textbf{Question}: Horses\\
+\textbf{Entities}: ["Horse"]\\
+\textbf{Wikidata Entities}: ```json\{\{"Horse": [\{\{"id": "Q726", \\
+"label": "horse", \\
+"description": "domesticated four-footed mammal from the equine family"\}\}, \\
+\{\{"id": "Q60168",\\ 
+"label": "heroin", \\
+"description": "chemical compound; opioid most commonly used as a recreational drug for its euphoric effects"\}\}, \\
+\{\{"id": "Q136", \\
+"label": "knight", \\
+"description": \\
+"piece in the board game of chess"\}\}, \\
+\{\{"id": "Q10758650", \\
+"label": "Equus caballus", \\
+"description": "species of mammal"\}\}, \\
+\{\{"id": "Q840330", \\
+"label": "pommel horse", \\
+"description": "men's artistic gymnastics apparatus"\}\}]\}\}``` \\
+\textbf{Entity IDs}: ```json\{\{\\
+        "ids": [\\
+            \{\{"id": "Q726", "label": "horse", "description": "domesticated four-footed mammal from the equine family"\}\}\\
+        ]\\
+    \}\}```\\
+
+...\\
+
+\textbf{\#\# QUESTION} \\
+- \textbf{Question}: \{question\}\\
+\textbf{Entities}: \{entities\}\\
+\textbf{Wikidata Entities}: ```json\{retrieved\_wikidata\_matched\_entities\}```\\
+\textbf{Entity IDs}:  
+    \end{tcolorbox}
+}
+
+\newcommand{\promptThree}{%
+    \begin{tcolorbox}[title=SPARQL Query Generation Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+\textbf{\#\# INSTRUCTIONS} \\
+- Generate SPARQL queries to answer the given question!\\
+- To generate the SPARQL, you can utilize the information from the given Entity IDs. You do not have to use it, but if it can help you to determine the ID of the entity, you can use it.\\
+- You will also be provided with the 100 most used properties with its ID. You are only able to generate SPARQL query from these properties. If it requires property that is not provided, then generate empty query like ```sparql```.\\
+- You can also determine the IDs of the entities that aren't provided with your knowledge.\\
+- Generate the SPARQL with chain of thoughts.\\
+- DO NOT include any apologies in your responses.\\
+- ONLY generate the Thoughts and SPARQL query once! DO NOT try to generate the Question!\\
+- When using a property such as P17 (country), you DO NOT need to verify explicitly whether it is Q6256 entity (country).\\
+- DO NOT use LIMIT, ORDER BY, FILTER in the SPARQL query when not explicitly asked in the question!\\
+- DO NOT use aggregation function like COUNT, AVG, etc in the SPARQL query when not asked in the question!\\
+- Always use 'en' language for labels as default unless explicitly asked to use another language.\\
+- Be sure to generate a SPARQL query that is valid and return all the asked information in the question.\\
+- Make the query as simple as possible!\\
+- DO NOT hallucinate the thoughts and query!\\
+
+\textbf{\#\# CONTEXT} \\
+- entity IDs: ```\{entity\_ids\}```\\
+- 100 most used properties with its ID:\\
+```json [\\
+  \{\{\\
+    "label": "cites work",\\
+    "id": "P2860",\\
+    "description": "citation from one creative or scholarly work to another",\\
+    "aliases": "bibliographic citation, citation"\\
+  \}\},\\
+  \{\{\\
+    "label": "series ordinal",\\
+    "id": "P1545",\\
+    "description": "position of an item in its parent series (most frequently a 1-based index), generally to be used as a qualifier (different from "rank" defined as a class, and from "ranking" defined as a property for evaluating a quality).",\\
+    "aliases": "\#, index, number, rank, n\textbackslash u00b0, n\textbackslash u00ba, \textbackslash u2116, num., ordinal, ordinal number, position in series, section number, series number, sort order, sorting order, unit number"\\
+  \}\},\\
+  ...\\
+]\\
+```\\
+
+\textbf{\#\# EXAMPLES} \\
+- \textbf{Question}: Cats\\
+\textbf{Thoughts}:\\
+1. The question asks for information about cats, so I need to identify the relevant entities and properties in Wikidata.\\
+2. First, I need to find items that are classified as cats. In Wikidata, "cat" corresponds to the entity with the identifier Q146.\\
+3. To retrieve items that are instances of cats, I will use the property P31, which stands for "instance of."\\
+4. I should also retrieve the labels of these items in a language the user understands. To do this, I'll utilize the SERVICE wikibase:label to get the label in the user's preferred language. If that language is unavailable, I'll default to a multilingual or English label.\\
+\textbf{SPARQL Query}: ```sparql\\
+SELECT ?item ?itemLabel\\
+WHERE \{\{ \\
+?item wdt:P31 wd:Q146.\\
+SERVICE wikibase:label \{\{ bd:serviceParam wikibase:language "[AUTO\_LANGUAGE],mul,en". \}\} \# Helps get the label in your language, if not, then default for all languages, then en language\\
+\}\}\\
+```
+
+...\\
+
+\textbf{\#\# QUESTION} \\
+- \textbf{Question}: \{question\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptFour}{%
+    \begin{tcolorbox}[title=Answer Generation Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+\textbf{\#\# INSTRUCTIONS} \\
+- You are a master of Wikidata, you know everything about Wikidata because you are given the answer in the context.\\
+- Generate the answer from the given question by utilizing the given context from Wikidata.\\
+- Try your best to use the given context as the answer!\\
+- DO NOT hallucinate and only provide answers from the given context.\\
+- DO NOT make up an answer\\
+- If you don't know the answer, just say that you don't know\\
+- Answer the question in a natural way like you are the one who know the context, DO NOT mention like "according to the context", etc.\\
+- Answer it using complete sentence!\\
+- If the question is about retrieving information that is limited to a certain amount, make sure to return all the results from the context that match the limited amount.\\
+
+\textbf{\#\# CONTEXT} \\
+```json\{\{\\
+    "wikidata\_response": \{wikidata\_context\}\\
+\}\}```\\
+
+\textbf{\#\# QUESTION} \\
+\{question\}\\
+
+\textbf{\#\# ANSWER}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptFivePartOne}{%
+    \begin{tcolorbox}[title=New Entities Extraction Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+- You are an entity extractor.\\
+- Extract the entities from the given question! DO NOT hallucinate and only provide entities that are present in the question.\\
+- These entities usage is to find the most appropriate resource URI from dbpedia to be used in SPARQL queries.\\
+- If there is no entity in the question, return empty list.\\
+- Sort the entities based on the importance of the entity in the question.\\
+- ONLY return the entities. DO NOT return anything else.\\
+- DO NOT include adjectives like 'Highest', 'Lowest', 'Biggest', etc in the entity.\\
+- DO NOT provide any extra information, for instance explanation inside a brackets like '(population)', '(area)', '(place)', '(artist)', etc\\
+- DO NOT include any explanations or apologies in your responses.\\
+- Remove all stop words, including conjunctions like 'and' and prepositions like 'in' and 'on' from the extracted entity.\\
+- Make the entity singular, not plural. For instance, if the entity is foods, then transform it into food.\\
+- Even if there is only one entity, alwayas return as a list.\\
+
+Based on the query given, extract the entities from it and return the extracted entities in the format below.\\
+\{format\_instructions\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptFivePartTwo}{%
+    \begin{tcolorbox}[title=New Entities Selection Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+For the entity given, find the most appropriate entity ID from the list of retrieved entities given to be used in Wikidata queries to answer the given question! ONLY return the entity ID from the list of retrieved entities given. DO NOT return anything else and DO NOT hallucinate. DO NOT include any explanations or apologies in your responses.\\
+Based on the entity given, get the most appropriate entity ID from it and return the ID in the format below.\\
+\{format\_instructions\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptSix}{%
+    \begin{tcolorbox}[title=Question Classification Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+Your task is to classify user queries as either global or local.\\
+- A **global** query asks for general or broad information or scope, which usually involves the usage of aggregate functions in the query like COUNT. For example, "How many films did Tom Cruise starred in?"\\
+- A **local** query asks for specific information from a particular entity. For example, "What is the capital of France?"\\
+Based on the query given, decide if it is global or local and return the classification in the format below.\\
+\{format\_instructions\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptSeven}{%
+    \begin{tcolorbox}[title=Related Properties Generation Prompt (DBpedia), colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+Generate 3 DBPedia property that is appropriate to answer the given question by user. DO NOT include any explanations or apologies in your responses. No pre-amble.\\
+            
+Answer it in the format below. \\
+\{format\_instructions\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptEight}{%
+    \begin{tcolorbox}[title=New SPARQL Generation Prompt (DBpedia), colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+\# INSTRUCTIONS\\
+You are an assistant trained to generate DBPedia SPARQL queries. Use the provided context to generate a valid SPARQL query. Based on the given entities and properties context, please generate a valid SPARQL query to answer the question! Use the URI from resources given if you need to query more specific entity. On the other hand, USE classes from ontology if it's more general. Return only the uri or literal only. Always generate following the format instruction.\\
+
+\# CONTEXT\\
+- Entity: \{resources\}\\
+- Ontology candidates: \\
+\{ontology\}\\
+
+\# FORMAT INSTRUCTIONS\\
+\{format\_instructions\}
+    \end{tcolorbox}
+}
+
+\newcommand{\promptNine}{%
+    \begin{tcolorbox}[title=Answer Generation Prompt (DBpedia), colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. Do not say "according to the context" or something like that, just answer directly with full sentence to the question using the context. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. Answer in Indonesian language.\\
+Question: \{input\}\\ 
+Context: \{dbpedia\_context\}\\ 
+Answer:
+    \end{tcolorbox}
+}
+
+\newcommand{\promptVerbalization}{%
+    \begin{tcolorbox}[title=SPARQL Verbalization to Natural Language Question, colback=red!5!white, colframe=red!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily, verbatim, breakable, before upper=\vspace{2mm}]
+\small
+Having a SPARQL query:\\
+select ?x \{ <http://example.org/machine\_learning <http://example.org/has\_prerequisite\_course> ?x . \}\\
+Where:\\
+http://example.org/machine\_learning has human-readable name 'Machine Learning'\\
+http://example.org/has\_prerequisite\_course has human-readable name 'has prerequisite course'\\
+
+Transform the SPARQL query to a natural language question.\\
+Output just the transformed question\\
+    \end{tcolorbox}
+}
