@@ -4079,7 +4079,7 @@ The integration between the different components of the FROG system relies on a 
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{system_integration_4.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/febe_1.jpg}
     \caption{System Integration Architecture Overview}
     \label{fig:system-integration}
 \end{figure}
@@ -4234,7 +4234,7 @@ This implementation ensures that system resources are used efficiently while mai
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{backend_architecture_4.jpg}
+    \includegraphics[width=0.7\linewidth]{assets/pics/febe_2.jpg}
     \caption{Backend Architecture and Communication Flow}
     \label{fig:backend-architecture}
 \end{figure}
@@ -4379,7 +4379,7 @@ export interface AgentSettings {
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{frontend_architecture_4.jpg}
+    \includegraphics[width=0.8\linewidth]{assets/pics/febe_3.jpg}
     \caption{Frontend Component Architecture and Data Flow}
     \label{fig:frontend-architecture}
 \end{figure}
@@ -4675,7 +4675,7 @@ This message processing logic handles different types of messages:
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{realtime_communication_4.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/febe_4.jpg}
     \caption{Real-time Communication Flow Between Frontend and Backend}
     \label{fig:realtime-communication}
 \end{figure}
@@ -4745,159 +4745,10 @@ Through this comprehensive implementation of backend architecture, frontend inte
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{data_flow_diagram_4.jpg}
+    \includegraphics[width=0.9\linewidth]{assets/pics/febe_5.png}
     \caption{End-to-End Data Flow in the FROG System}
     \label{fig:data-flow-diagram}
 \end{figure}
-
-% Mermaid code for figures:
-
-% Figure 1: System Integration Architecture Overview
-% ```mermaid
-% graph TB
-%     User[User] -->|Interacts with| Frontend
-%     subgraph "Frontend"
-%         React[React Application] -->|State Management| Context[Context API]
-%         Context -->|Updates| Components[UI Components]
-%         Components -->|Events| Context
-%     end
-%     Frontend <-->|WebSockets & REST API| Backend
-%     subgraph "Backend"
-%         Django[Django Application] -->|Processes Requests| Channels[Django Channels]
-%         Channels -->|Manages| WebSockets[WebSocket Connections]
-%         Django -->|REST API| APIViews[API Endpoints]
-%         Channels -->|Connects to| Agent[Multi-Agent System]
-%         APIViews -->|Connects to| Agent
-%     end
-%     Backend <-->|SPARQL Queries| KnowledgeGraph[Knowledge Graph Endpoints]
-%     Backend -->|Logs| Database[(Database)]
-% ```
-
-% Figure 2: Backend Architecture and Communication Flow
-% ```mermaid
-% graph TD
-%     WSClient[WebSocket Client] -->|Connect| Consumer[ChatConsumer]
-%     HTTPClient[HTTP Client] -->|REST Request| ViewSet[ChatViewSet]
-%     
-%     subgraph "Django Backend"
-%         Consumer -->|Authenticate| Auth[Authentication]
-%         ViewSet -->|Authenticate| Auth
-%         
-%         Consumer -->|Get/Create| Chat[Chat Model]
-%         ViewSet -->|CRUD Operations| Chat
-%         
-%         Consumer -->|Get Agent| Singleton[Agent Singleton]
-%         ViewSet -->|Get Agent| Singleton
-%         
-%         Consumer -->|Process| Agent[FROG Agent]
-%         ViewSet -->|Process| Agent
-%         
-%         Agent -->|Query KG| SPARQL[SPARQL Wrapper]
-%         Agent -->|Store Results| Database[(Database)]
-%         Agent -->|Generate Visualizations| Files[Visualization Files]
-%     end
-%     
-%     Consumer -->|Real-time Updates| WSClient
-%     ViewSet -->|HTTP Response| HTTPClient
-% ```
-
-% Figure 3: Frontend Component Architecture and Data Flow
-% ```mermaid
-% graph TD
-%     subgraph "React Application"
-%         App[App Component] -->|Provides Context| Provider[ChatProvider]
-%         
-%         Provider -->|State & Functions| Header[Header Component]
-%         Provider -->|State & Functions| SideNav[SideNav Component]
-%         Provider -->|State & Functions| ChatArea[ChatArea Component]
-%         Provider -->|State & Functions| MessageInput[MessageInput Component]
-%         
-%         ChatArea -->|Renders| Messages[ChatMessage Components]
-%         ChatArea -->|Renders| SystemMessages[SystemMessageGroup Components]
-%         Messages -->|Renders| Visualizations[VisualizationFiles Component]
-%         
-%         Header -->|Opens| Settings[Settings Modal]
-%         Header -->|Opens| JenaLogs[JenaLogs Modal]
-%         
-%         Provider -->|API Calls| ApiUtils[API Utilities]
-%         Provider -->|WebSocket| PusherService[Pusher Service]
-%     end
-%     
-%     ApiUtils -->|HTTP Requests| Backend[Backend API]
-%     PusherService -->|WebSocket Connection| Backend
-% ```
-
-% Figure 4: Real-time Communication Flow Between Frontend and Backend
-% ```mermaid
-% sequenceDiagram
-%     participant User
-%     participant React as React Frontend
-%     participant Pusher as Pusher Service
-%     participant Django as Django Backend
-%     participant Agent as FROG Agent
-%     participant KG as Knowledge Graph
-%     
-%     User->>React: Enter question
-%     React->>Django: Send message (WebSocket/HTTP)
-%     Django->>React: Acknowledge & "Thinking" status
-%     Django->>Agent: Process question
-%     
-%     loop Agent Processing
-%         Agent->>Django: Debug update (Translation Node)
-%         Django->>Pusher: Broadcast debug message
-%         Pusher->>React: Display debug message
-%         
-%         Agent->>Django: Debug update (Entity Extraction)
-%         Django->>Pusher: Broadcast debug message
-%         Pusher->>React: Display debug message
-%         
-%         Agent->>KG: Query Knowledge Graph
-%         KG->>Agent: Return results
-%         
-%         Agent->>Django: Debug update (SPARQL Generation)
-%         Django->>Pusher: Broadcast debug message
-%         Pusher->>React: Display debug message
-%     end
-%     
-%     Agent->>Django: Return final answer & visualization
-%     Django->>Pusher: Broadcast answer message
-%     Pusher->>React: Display answer & visualizations
-%     React->>User: Show complete response
-% ```
-
-% Figure 5: End-to-End Data Flow in the FROG System
-% ```mermaid
-% graph LR
-%     User[User] -->|Asks Question| Frontend[React Frontend]
-%     Frontend -->|Sends Message| Backend[Django Backend]
-%     
-%     subgraph "Multi-Agent System"
-%         Backend -->|Initiates Query| Translation[Translation Node]
-%         Translation -->|Processed Question| Extraction[Entity Extraction Node]
-%         Extraction -->|Entities & Properties| Strategy[Strategy Selection Node]
-%         
-%         Strategy -->|Simple Query| Verbalization[Verbalization Node]
-%         Strategy -->|Complex Query| PropertyGen[Property Generation Node]
-%         
-%         PropertyGen -->|Enhanced Properties| SPARQL[SPARQL Generation Node]
-%         
-%         Verbalization -->|Direct Results| Answer[Answer Generation Node]
-%         SPARQL -->|Query Results| Answer
-%         
-%         SPARQL -.->|Fallback| Google[Google Search Node]
-%         Google -->|Search Results| Answer
-%     end
-%     
-%     Answer -->|Final Answer| Backend
-%     
-%     Backend -->|Visualization Data| Jena[Apache Jena]
-%     Backend -->|Real-time Updates| Frontend
-%     Frontend -->|Displays Answer| User
-%     
-%     Extraction <-->|Entity & Property Search| KG[Knowledge Graph API]
-%     Verbalization <-->|Property Lookup| KG
-%     SPARQL <-->|SPARQL Query| KG
-% ```
 
 \section{Visualization and Logging System}
 The visualization and logging system represents a critical component of our FROGGraphRAG framework, enabling comprehensive analysis of the multi-agent execution process through semantic logging and real-time visualization. This section details the technical implementation of our visualization architecture, focusing on two key aspects: RDF-based logging for semantic analysis and real-time process visualization.
@@ -5363,117 +5214,85 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 \subsubsection{Example Mermaid Diagram}
 Below is an example Mermaid diagram generated by our visualization system:
 
-\begin{lstlisting}[language=text, caption=Example Mermaid diagram code, label=code:mermaid-example]
-graph LR;
-    title["FROGGraphRAG Process Flow (Approach: Sparql Generation)"]
-    style title fill:#f9f9f9,stroke:#333,stroke-width:2px,font-size:16px,font-weight:bold,color:#444
-    subgraph TranslationNode_subgraph ["Translation Node`"]
-        style TranslationNode_subgraph fill:#d6efc7,stroke:#333,stroke-width:3px,font-weight:bold,color:#444
-        TranslationNode_event_0["start at 14:25:32.456"]
-        style TranslationNode_event_0 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        TranslationNode_event_1["language detection at 14:25:32.489"]
-        style TranslationNode_event_1 fill:white,stroke:#444,stroke-width:2px,color:#444
-        TranslationNode_event_1_details["`detected_language: en
-translation_enabled: true`"]
-        style TranslationNode_event_1_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        TranslationNode_event_1 -->|"details"| TranslationNode_event_1_details
-        linkStyle 0 stroke:#000,stroke-width:1px,fill:none
-        TranslationNode_event_0 --> TranslationNode_event_1
-        linkStyle 1 stroke:#000,stroke-width:2px,fill:none
-        TranslationNode_event_2["no translation needed at 14:25:32.490"]
-        style TranslationNode_event_2 fill:white,stroke:#444,stroke-width:2px,color:#444
-        TranslationNode_event_2_details["`question: who is the CEO of Tencent?`"]
-        style TranslationNode_event_2_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        TranslationNode_event_2 -->|"details"| TranslationNode_event_2_details
-        linkStyle 2 stroke:#000,stroke-width:1px,fill:none
-        TranslationNode_event_1 --> TranslationNode_event_2
-        linkStyle 3 stroke:#000,stroke-width:2px,fill:none
-        TranslationNode_event_3["end at 14:25:32.490 (Duration: 0.034s)"]
-        style TranslationNode_event_3 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        TranslationNode_event_2 --> TranslationNode_event_3
-        linkStyle 4 stroke:#000,stroke-width:2px,fill:none
-    end
-    subgraph EntityExtractionNode_subgraph ["Entity Extraction Node`"]
-        style EntityExtractionNode_subgraph fill:#bcd6e7,stroke:#333,stroke-width:3px,font-weight:bold,color:#444
-        EntityExtractionNode_event_0["start at 14:25:32.491"]
-        style EntityExtractionNode_event_0 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        EntityExtractionNode_event_1["prompt prepared at 14:25:32.532"]
-        style EntityExtractionNode_event_1 fill:white,stroke:#444,stroke-width:2px,color:#444
-        EntityExtractionNode_event_1_details["`prompt_type: system-user
-system_prompt: You are an expert entity and property extractor for knowledge graph...`"]
-        style EntityExtractionNode_event_1_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        EntityExtractionNode_event_1 -->|"details"| EntityExtractionNode_event_1_details
-        linkStyle 5 stroke:#000,stroke-width:1px,fill:none
-        EntityExtractionNode_event_0 --> EntityExtractionNode_event_1
-        linkStyle 6 stroke:#000,stroke-width:2px,fill:none
-        EntityExtractionNode_event_2["extraction start at 14:25:32.532"]
-        style EntityExtractionNode_event_2 fill:white,stroke:#444,stroke-width:2px,color:#444
-        EntityExtractionNode_event_1 --> EntityExtractionNode_event_2
-        linkStyle 7 stroke:#000,stroke-width:2px,fill:none
-        EntityExtractionNode_event_3["llm completion at 14:25:32.951"]
-        style EntityExtractionNode_event_3 fill:white,stroke:#444,stroke-width:2px,color:#444
-        EntityExtractionNode_event_2 --> EntityExtractionNode_event_3
-        linkStyle 8 stroke:#000,stroke-width:2px,fill:none
-        EntityExtractionNode_event_4["entities and properties extracted at 14:25:32.953"]
-        style EntityExtractionNode_event_4 fill:white,stroke:#444,stroke-width:2px,color:#444
-        EntityExtractionNode_event_4_details["`entities:
-• Tencent
-properties:
-• CEO
-• chief executive officer`"]
-        style EntityExtractionNode_event_4_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        EntityExtractionNode_event_4 -->|"details"| EntityExtractionNode_event_4_details
-        linkStyle 9 stroke:#000,stroke-width:1px,fill:none
-        EntityExtractionNode_event_3 --> EntityExtractionNode_event_4
-        linkStyle 10 stroke:#000,stroke-width:2px,fill:none
-        EntityExtractionNode_event_5["end at 14:25:32.953 (Duration: 0.462s)"]
-        style EntityExtractionNode_event_5 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        EntityExtractionNode_event_4 --> EntityExtractionNode_event_5
-        linkStyle 11 stroke:#000,stroke-width:2px,fill:none
-    end
-    subgraph StrategySelectionNode_subgraph ["Strategy Selection Node`"]
-        style StrategySelectionNode_subgraph fill:#f6d5a7,stroke:#333,stroke-width:3px,font-weight:bold,color:#444
-        StrategySelectionNode_event_0["start at 14:25:32.954"]
-        style StrategySelectionNode_event_0 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        StrategySelectionNode_event_1["decision factors at 14:25:32.954"]
-        style StrategySelectionNode_event_1 fill:white,stroke:#444,stroke-width:2px,color:#444
-        StrategySelectionNode_event_1_details["`contains_multiple_entities: false
-use_verbalization_setting: true
-final_decision: verbalization`"]
-        style StrategySelectionNode_event_1_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        StrategySelectionNode_event_1 -->|"details"| StrategySelectionNode_event_1_details
-        linkStyle 12 stroke:#000,stroke-width:1px,fill:none
-        StrategySelectionNode_event_0 --> StrategySelectionNode_event_1
-        linkStyle 13 stroke:#000,stroke-width:2px,fill:none
-        StrategySelectionNode_event_2["routing decision at 14:25:32.954"]
-        style StrategySelectionNode_event_2 fill:white,stroke:#444,stroke-width:2px,color:#444
-        StrategySelectionNode_event_2_details["`next_node: verbalization`"]
-        style StrategySelectionNode_event_2_details fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444
-        StrategySelectionNode_event_2 -->|"details"| StrategySelectionNode_event_2_details
-        linkStyle 14 stroke:#000,stroke-width:1px,fill:none
-        StrategySelectionNode_event_1 --> StrategySelectionNode_event_2
-        linkStyle 15 stroke:#000,stroke-width:2px,fill:none
-        StrategySelectionNode_event_3["end at 14:25:32.954 (Duration: 0.000s)"]
-        style StrategySelectionNode_event_3 fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444
-        StrategySelectionNode_event_2 --> StrategySelectionNode_event_3
-        linkStyle 16 stroke:#000,stroke-width:2px,fill:none
-    end
-    TranslationNode_event_3 ==>|"output"| EntityExtractionNode_event_0
-    linkStyle 17 stroke:#FFFF00,stroke-width:4px,fill:none
-    EntityExtractionNode_event_5 ==>|"output"| StrategySelectionNode_event_0
-    linkStyle 18 stroke:#FFFF00,stroke-width:4px,fill:none
-    executionInfo["Total Duration: 1.435 seconds | Approach: Sparql Generation"]
-    style executionInfo fill:#e8f7e8,stroke:#191,stroke-width:2px,font-weight:bold,color:#444
-    title --> executionInfo
-    linkStyle 19 stroke:#000,stroke-width:2px,fill:none
-\end{lstlisting}
-
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{mermaid_diagram_example.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/mermaid_diagram_example.png}
     \caption{Example Mermaid visualization of the agent execution process}
     \label{fig:mermaid-example}
 \end{figure}
+
+It's important to note that Mermaid diagrams have inherent limitations due to their programmatic rendering nature. The diagrams often render horizontally too wide, especially when visualizing complex workflows with multiple components and detailed event sequences. This horizontal expansion makes it necessary for users to zoom in or scroll horizontally to read the content properly. Despite this limitation, Mermaid diagrams remain valuable for their ability to programmatically generate visualizations from execution logs, providing a standardized view of the agent's processing pipeline that would be difficult to create manually.
+
+\subsubsection{JSON Log Export}
+In addition to generating Mermaid diagrams and RDF representations, the visualization system also exports the complete execution logs in JSON format for easier analysis and debugging:
+
+\begin{lstlisting}[language=python, caption=JSON log export implementation, label=code:json-export]
+def save_logs_to_json(self):
+    """Save logs to a JSON file with datetime and question in filename"""
+    if not self.logs:
+        return None
+    
+    # Prepare data for saving
+    log_data = {
+        "question": self.question,
+        "approach_used": self.approach_used,
+        "start_time": self.start_time.isoformat(),
+        "end_time": datetime.now().isoformat(),
+        "total_duration": (datetime.now() - self.start_time).total_seconds(),
+        "logs": self.logs
+    }
+    
+    # Create a temp file and save the JSON data
+    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+    with open(temp_file.name, 'w', encoding='utf-8') as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False, cls=CustomEncoder)
+    
+    if self.verbose > 0:
+        print(f"Logs saved to: {temp_file.name}")
+    
+    return temp_file.name
+\end{lstlisting}
+
+The JSON export contains the complete, structured record of all execution events, including:
+\begin{itemize}
+    \item The original question and approach used
+    \item Start time, end time, and total duration
+    \item Complete chronological log of all events from all components
+    \item Detailed event information including component, event type, timestamp, and full details
+    \item Duration information for timed events
+\end{itemize}
+
+Unlike the Mermaid diagram (which provides a visual representation) and the TTL format (which enables semantic querying), the JSON format provides a complete, machine-readable record of the execution process that can be easily parsed and analyzed using standard tools. This is particularly useful for offline analysis, debugging, and performance monitoring.
+
+\begin{lstlisting}[language=json, caption=Example JSON log excerpt, label=code:json-example]
+{
+  "question": "Who is the CEO of Tencent?",
+  "approach_used": "Verbalization",
+  "start_time": "2025-06-06T14:25:32.456123",
+  "end_time": "2025-06-06T14:25:33.891234",
+  "total_duration": 1.435111,
+  "logs": [
+    {
+      "component": "Translation Node",
+      "event_type": "start",
+      "details": {"question": "who is the CEO of Tencent?"},
+      "timestamp": "2025-06-06T14:25:32.456123",
+      "start_time": "2025-06-06T14:25:32.456123",
+      "end_time": null
+    },
+    {
+      "component": "Translation Node",
+      "event_type": "language detection",
+      "details": {"detected_language": "en", "translation_enabled": true},
+      "timestamp": "2025-06-06T14:25:32.489456",
+      "start_time": null,
+      "end_time": null
+    }
+  ]
+}
+\end{lstlisting}
+
+The JSON export is generated alongside the Mermaid diagram and TTL file when the visualization system's \texttt{save\_visualization\_files} method is called at the end of the query process.
 
 \subsubsection{Debug Callback System}
 To enable real-time feedback during the agent's execution, we implemented a debug callback system that sends event notifications to connected clients. This system is integrated with the Django Channels WebSocket framework:
@@ -5483,16 +5302,16 @@ async def debug_callback(self, output):
     """Callback function for agent debugging output with real-time streaming"""
     # Fun emojis for each node type
     node_emojis = {
-        "Translation Node": "🌍",
-        "Entity Extraction Node": "🕵️",
-        "Strategy Selection Node": "🔀",
-        "Verbalization Node": "🗣️", 
-        "Property Generation Node": "🧩",
+        "Translation Node": "��",
+        "Entity Extraction Node": "��️",
+        "Strategy Selection Node": "��",
+        "Verbalization Node": "��️", 
+        "Property Generation Node": "��",
         "SPARQL Generation Node": "⚙️",
-        "Answer Generation Node": "🎁",
-        "Google Search Node": "🔍",
+        "Answer Generation Node": "��",
+        "Google Search Node": "��",
         # Default emoji for any unrecognized nodes
-        "default": "🐸"
+        "default": "��"
     }
     
     # Extract the node name from the output if possible
@@ -5540,6 +5359,16 @@ The debug callback system provides real-time feedback about the agent's executio
 
 \subsection{Apache Jena Integration for Semantic Analysis}
 The RDF-based logging system is integrated with Apache Jena Fuseki, a semantic web server that enables sophisticated SPARQL querying of execution logs. This integration allows for advanced analysis of execution patterns, component performance, and knowledge graph usage.
+
+\subsubsection{SPARQL Query Results and Dashboard}
+The Apache Jena Fuseki server provides a web-based interface for executing SPARQL queries and visualizing the results. The results can be exported in various formats (JSON, CSV, XML, etc.) for further analysis or visualization.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/jena_dashboard.png}
+    \caption{Apache Jena Fuseki dashboard for SPARQL query execution and visualization}
+    \label{fig:jena-dashboard}
+\end{figure}
 
 \subsubsection{SPARQL Query Examples}
 Our Apache Jena integration enables a wide range of analytical queries on the execution logs. Below are some example queries that demonstrate the power of the semantic logging approach:
@@ -5656,7 +5485,7 @@ LIMIT 20
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{jena_query_results.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/jena_query_results.png}
     \caption{Apache Jena Fuseki SPARQL query results showing execution statistics}
     \label{fig:jena-results}
 \end{figure}
@@ -5675,25 +5504,8 @@ The integration with Apache Jena Fuseki enables a wide range of analytical capab
 
 These analytical capabilities provide valuable insights into the agent's behavior and performance, enabling continuous improvement and optimization of the system.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{mermaid_flow_diagram.jpg}
-    \caption{Process flow for the Visualization and Logging System}
-    \label{fig:mermaid-flow}
-\end{figure}
-
-\subsubsection{SPARQL Query Results and Dashboard}
-The Apache Jena Fuseki server provides a web-based interface for executing SPARQL queries and visualizing the results. The results can be exported in various formats (JSON, CSV, XML, etc.) for further analysis or visualization.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{jena_dashboard.jpg}
-    \caption{Apache Jena Fuseki dashboard for SPARQL query execution and visualization}
-    \label{fig:jena-dashboard}
-\end{figure}
-
 \subsection{Integration with Multi-Agent System}
-The visualization and logging system is tightly integrated with the multi-agent system described in Section 7.1. Each agent node calls the visualizer's \texttt{log\_event} method at key points during execution, providing detailed information about the node's operations.
+The visualization and logging system is tightly integrated with the multi-agent system described in Section \ref{sec:system-integration}. Each agent node calls the visualizer's \texttt{log\_event} method at key points during execution, providing detailed information about the node's operations.
 
 This integration enables comprehensive monitoring and analysis of the agent's execution process, providing valuable insights into its behavior and performance. The system captures information about:
 
@@ -5711,7 +5523,7 @@ The tight integration between the visualization system and the multi-agent archi
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{visualization_system_architecture.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/visualization_system_architecture.jpg}
     \caption{Architecture of the Visualization and Logging System and its integration with the Multi-Agent System}
     \label{fig:vis-architecture}
 \end{figure}
