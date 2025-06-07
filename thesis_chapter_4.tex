@@ -42,20 +42,16 @@ We implemented the schema extraction interface through the \texttt{KGSchemaExtra
 \begin{lstlisting}[breaklines=true,language=python, caption=Knowledge Graph Schema Extractor Interface, label=code:schema-extractor-interface]
 class KGSchemaExtractor:
     def __init__(self, options=None):
-        # Initialize configuration with domain-specific defaults
+        # Initialize with domain-specific defaults
         self.options = {
             "sparql_endpoint": None,
             "sample_size": 1000,
-            "debug": False,
             "prefixes": {
                 'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-                'owl': 'http://www.w3.org/2002/07/owl#',
-                'xsd': 'http://www.w3.org/2001/XMLSchema#',
                 # Domain-specific prefixes added by adapters
             }
         }
-        
         if options:
             self.options.update(options)
             
@@ -65,26 +61,17 @@ class KGSchemaExtractor:
             "types": [],
             "numericProperties": [],
             "dateProperties": [],
-            "textProperties": [],
-            "booleanProperties": []
+            "textProperties": []
         }
         
-        self.entity_examples = []
-        self.graph = None
-    
     def extract_from_endpoint(self, endpoint):
-        """Extract schema from a SPARQL endpoint (used for Wikidata, GESIS)"""
-        # Implementation for remote SPARQL endpoints
+        """Extract schema from a SPARQL endpoint"""
+        # Implementation for remote endpoints
         pass
         
     def extract_from_file(self, file_path, format='turtle'):
-        """Extract schema from a local RDF file (used for Curriculum, Legal)"""
-        # Implementation for local RDF files
-        pass
-        
-    def extract_from_string(self, content, format):
-        """Extract schema from RDF content provided as a string"""
-        # Implementation for string-based RDF content
+        """Extract schema from a local RDF file"""
+        # Implementation for local files
         pass
 \end{lstlisting}
 
@@ -202,12 +189,7 @@ To systematically identify and address performance issues in our query templates
 
 \begin{lstlisting}[language=python, caption=Query validation and performance monitoring implementation]
 def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
-    """
-    Validates and executes SPARQL queries from a JSON file against the Fuseki server.
-    """
-    # Start timing the entire process
-    process_start_time = time.time()
-    
+    """Validates and executes SPARQL queries against the Fuseki server."""
     # Initialize the SPARQL executor
     sparql_exec = SparqlExecutor()
 
@@ -216,34 +198,21 @@ def validate_and_execute_sparql_queries(input_json_path, output_json_path=None):
         data = json.load(f)
 
     # Process each query
-    print(f"Executing {len(data)} SPARQL queries...")
-    total_execution_time = 0
-    
     for i, item in enumerate(data):
-        # Extract query information
         query_id = item.get("id", f"query_{i+1}")
         sparql = item.get("sparql", "")
-
-        # Start timing the query execution
-        start_time = time.time()
         
         try:
             # Execute the SPARQL query
             query_results = sparql_exec.execute_query(sparql, return_format="dict")
             
-            # Calculate execution time
-            execution_time = time.time() - start_time
-            
             # Flag slow queries for manual optimization
             if execution_time > 2.0:
-                print(f"  ⚠️  SLOW QUERY - Execution time: {execution_time:.3f}s ⚠️")
-            else:
-                print(f"  ✅ Execution time: {execution_time:.3f}s")
-                
+                # Mark for optimization
+                pass
         except Exception as e:
             # Handle errors in SPARQL execution
-            execution_time = time.time() - start_time
-            print(f"  ❌ Error: {e}")
+            pass
 \end{lstlisting}
 
 This script allows us to run all generated queries against the target knowledge graph and identify those that exceed our performance threshold (typically 2 seconds). When slow queries are identified, we manually analyze them to determine the cause of the performance issue and apply appropriate optimizations:
@@ -324,26 +293,12 @@ The vector search implementation uses Weaviate collections to store and retrieve
 class KnowledgeGraphVectorSearch:
     """Provides vector search capabilities for knowledge graph entities and properties"""
     
-    def __init__(
-        self,
-        embedding_model_name: str = "jinaai/jina-embeddings-v3",
-        weaviate_host: str = "localhost",
-        weaviate_port: int = 8080
-    ):
-        # Initialize embedding model and stopwords
+    def __init__(self, embedding_model_name="jinaai/jina-embeddings-v3"):
+        # Initialize embedding model
         self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
         self.stopwords = set(stopwords.words("english"))
-        
-        # Connect to Weaviate
-        try:
-            self.client = weaviate.connect_to_local(
-                host=weaviate_host,
-                port=weaviate_port,
-                grpc_port=50052,
-            )
-        except Exception as e:
-            logger.error(f"Error connecting to Weaviate: {e}")
-            raise e
+        # Connect to vector database
+        self.client = self._connect_to_vector_db()
     
     def initialize_collections(self, domain_name, entities_df, properties_df):
         """Initialize entity and property collections for a domain"""
@@ -355,64 +310,21 @@ class KnowledgeGraphVectorSearch:
         self.entities_collection = self._setup_collection(entities_collection_name, entities_df)
         self.properties_collection = self._setup_collection(properties_collection_name, properties_df)
     
-    def _setup_collection(self, collection_name, df):
-        """Setup or get Weaviate collection"""
-        if not self.client.collections.exists(collection_name):
-            collection = self.client.collections.create(
-                name=collection_name,
-                vectorizer_config=weaviate.classes.config.Configure.Vectorizer.none(),
-            )
-            self._initialize_collection(collection, df)
-        else:
-            collection = self.client.collections.get(collection_name)
-        
-        return collection
-    
-    def _initialize_collection(self, collection, df):
-        """Initialize collection with data and embeddings"""
-        # Generate embeddings for labels
-        labels = df["label"].fillna("").tolist()
-        embeddings = self.model_embed.encode(labels, show_progress_bar=True)
-
-        # Use batch import for efficiency
-        with collection.batch.dynamic() as batch:
-            for i, row in df.iterrows():
-                batch.add_object(
-                    properties=row.to_dict(),
-                    vector=embeddings[i].tolist(),
-                )
-    
     def search_entities(self, query, k=5):
         """Search entities using hybrid search"""
-        return self._search(self.entities_collection, query, k)
-    
-    def search_properties(self, query, k=5):
-        """Search properties using hybrid search"""
-        return self._search(self.properties_collection, query, k)
-    
-    def _search(self, collection, query, k=5):
-        """Execute hybrid search against a collection"""
-        try:
-            # Generate query embedding
-            query_vector = self.model_embed.encode([query])[0]
-            
-            # Execute hybrid search
-            response = collection.query.hybrid(
-                query=query,
-                query_properties=["label"],
-                vector=query_vector,
-                return_metadata=weaviate.classes.query.MetadataQuery(score=True),
-                limit=k,
-            )
-            
-            # Convert to dataframe
-            df = pd.DataFrame(
-                [{**o.properties, "score": o.metadata.score} for o in response.objects]
-            )
-            return df
-        except Exception as e:
-            logger.error(f"Error in search: {e}")
-            return pd.DataFrame()
+        # Generate query embedding
+        query_vector = self.model_embed.encode([query])[0]
+        
+        # Execute hybrid search
+        response = self.entities_collection.query.hybrid(
+            query=query,
+            query_properties=["label"],
+            vector=query_vector,
+            limit=k,
+        )
+        
+        # Return results as dataframe
+        return pd.DataFrame([{**o.properties, "score": o.metadata.score} for o in response.objects])
 \end{lstlisting}
 
 \subsubsection{Entity and Property Matching}
@@ -2751,14 +2663,9 @@ def build_graph(self):
     # Create nodes with LLM factory
     translation_node = TranslationNode()
     entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
-    verbalization_node = VerbalizationNode(
-        llm_factory=self.llm_factory, property_retrieval=self.property_retrieval
-    )
-    sparql_generation_node = SparqlGenerationNode(
-        llm_factory=self.llm_factory, property_retrieval=self.property_retrieval
-    )
+    verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
+    sparql_generation_node = SparqlGenerationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
     answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
-
     strategy_selection_node = StrategySelectionNode()
     property_generation_node = PropertyGenerationNode(self.property_retrieval)
     google_search_node = GoogleSearchNode()
@@ -2780,51 +2687,14 @@ def build_graph(self):
     workflow.set_entry_point("translation")
     workflow.add_edge("translation", "entity_extraction")
     workflow.add_edge("entity_extraction", "strategy_selection")
-
-    # Use attribute access instead of dictionary subscription
+    
+    # Add conditional edges for adaptive routing
     workflow.add_conditional_edges(
         "strategy_selection",
         lambda x: x.next,
-        {
-            "verbalization": "verbalization",
-            "sparql_generation": "property_generation",
-        }
+        {"verbalization": "verbalization", "sparql_generation": "property_generation"}
     )
-    workflow.add_edge("property_generation", "sparql_generation")
-
-    # Use attribute access instead of dictionary subscription
-    workflow.add_conditional_edges(
-        "verbalization",
-        lambda x: x.next,
-        {
-            "answer_generation": "answer_generation",
-            "sparql_generation": "property_generation",
-        }
-    )
-
-    # SPARQL can either succeed and go to answer generation, 
-    # or fail and go to Google search (if enabled)
-    workflow.add_conditional_edges(
-        "sparql_generation",
-        lambda x: (
-            "answer_generation"
-            if x.approach_used == "sparql"
-            else (
-                "google_search"
-                if getattr(x, "use_google_search", True)
-                else "answer_generation"
-            )
-        ),
-        {
-            "answer_generation": "answer_generation",
-            "google_search": "google_search",
-        }
-    )
-
-    # Google search always goes to answer generation
-    workflow.add_edge("google_search", "answer_generation")
-    workflow.add_edge("answer_generation", END)
-
+    
     # Compile the graph
     self.graph = workflow.compile()
 \end{lstlisting}
@@ -2997,143 +2867,48 @@ The Entity Extraction Node analyzes the (translated) natural language question t
 class EntityExtractionNode:
     """Node for extracting entities and properties from questions"""
     def __init__(self, llm_factory=None):
-        """Initialize EntityExtractionNode with LLM factory"""
         self.llm_factory = llm_factory
         self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
-        
-        if not self.llm_factory:
-            raise ValueError("llm_factory must be provided")
-        
-        # Initialize the LLM provider
-        try:
-            self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
-            logger.info("Initialized EntityExtractionNode with LLM factory")
-        except Exception as e:
-            logger.error(f"Failed to get model from factory: {e}")
-            raise ValueError(f"Failed to initialize LLM provider: {e}")
+        self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
         
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing and log start
-        start_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Entity Extraction Node", 
-                "start",
-                {"question": state.translated_question},
-                start_time=start_time
-            )
-        
-        # Determine the knowledge source name for prompts
+        # Get knowledge source name for prompts
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         kg_metadata = get_knowledge_graph_metadata()
         source_name = kg_metadata.get_name(knowledge_source)
         
         # Define system prompt
-        system_prompt = f"""You are an expert entity and property extractor for knowledge graph querying. Your task is to analyze a natural language question and identify the relevant entities and properties needed to create a SPARQL query for {source_name}.
-
-Guidelines:
-1. For each question, extract ALL entities mentioned in the question
-2. For each question, extract ALL relevant properties needed to answer the question
-3. Format your response as a structured JSON object with 'entities' and 'properties' keys
-4. Each key should contain an array of strings with the entity or property names
-5. Focus ONLY on extracting, not on generating SPARQL queries
-
-Your output should look like:
-```json
-{{
-  "entities": ["entity1", "entity2", ...],
-  "properties": ["property1", "property2", ...]
-}}
-```
-"""
+        system_prompt = f"""You are an expert entity and property extractor for {source_name}.
+Extract all entities and properties from the question that would be needed for a SPARQL query.
+Format as JSON with 'entities' and 'properties' arrays."""
 
         # Create user prompt
-        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties from this question that would be needed to generate a SPARQL query for {source_name}."
+        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties."
         
-        # Log prompt preparation
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Entity Extraction Node",
-                "prompt prepared",
-                {"prompt_type": "system-user", "system_prompt": system_prompt[:100] + "..."}
-            )
+        # Generate extraction using configured model
+        if self._llm_provider.is_chat_template_supported():
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+            prompt = self._llm_provider.apply_chat_template(messages)
+        else:
+            prompt = f"{system_prompt}\n\n{user_prompt}"
+            
+        completion = self._llm_provider.generate_response(prompt)
         
-        # Extract entities and properties
-        try:
-            extraction_start_time = datetime.now()
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Entity Extraction Node",
-                    "extraction start",
-                    {"question": state.translated_question},
-                    start_time=extraction_start_time
-                )
-                
-            # Generate extraction using configured model
-            if self._llm_provider.is_chat_template_supported():
-                # Use chat template
-                messages = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ]
-                prompt = self._llm_provider.apply_chat_template(messages)
-            else:
-                # Fallback to simple concatenation
-                prompt = f"{system_prompt}\n\n{user_prompt}"
-            
-            completion = self._llm_provider.generate_response(prompt)
-            
-            # Extract JSON content from completion
-            match = re.search(self.json_pattern, completion)
-            if match:
-                json_str = match.group(1).strip()
-                try:
-                    extracted_data = json.loads(json_str)
-                except json.JSONDecodeError:
-                    extracted_data = {"entities": [], "properties": []}
-            else:
-                # Try direct parsing if no JSON code block found
-                try:
-                    extracted_data = json.loads(completion)
-                except json.JSONDecodeError:
-                    extracted_data = {"entities": [], "properties": []}
-            
-            # Update state with extracted entities and properties
-            state.extracted_entities = extracted_data.get("entities", [])
-            state.related_properties = extracted_data.get("properties", [])
-            
-            # Log extracted entities and properties
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Entity Extraction Node",
-                    "entities and properties extracted",
-                    {
-                        "entities": state.extracted_entities,
-                        "properties": state.related_properties
-                    }
-                )
-                
-        except Exception as e:
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Entity Extraction Node",
-                    "extraction error",
-                    {"error": str(e)}
-                )
-                
-            state.extracted_entities = []
-            state.related_properties = []
+        # Extract JSON content from completion
+        match = re.search(self.json_pattern, completion)
+        if match:
+            json_str = match.group(1).strip()
+            extracted_data = json.loads(json_str)
+        else:
+            # Try direct parsing if no JSON code block found
+            extracted_data = json.loads(completion)
         
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Entity Extraction Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
+        # Update state with extracted entities and properties
+        state.extracted_entities = extracted_data.get("entities", [])
+        state.related_properties = extracted_data.get("properties", [])
             
         return state
 \end{lstlisting}
@@ -3161,16 +2936,6 @@ class StrategySelectionNode:
         pass
         
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing and log start
-        start_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Strategy Selection Node", 
-                "start",
-                {"question": state.translated_question, "entities": state.extracted_entities},
-                start_time=start_time
-            )
-        
         # Determine if we should use SPARQL or verbalization
         contains_multiple = contains_multiple_entities(state.translated_question)
         
@@ -3178,48 +2943,11 @@ class StrategySelectionNode:
         use_verbalization = getattr(state, 'use_verbalization', True)
         state.use_sparql = (not use_verbalization) or contains_multiple
         
-        # Log decision factors
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Strategy Selection Node",
-                "decision factors",
-                {
-                    "contains_multiple_entities": contains_multiple,
-                    "use_verbalization_setting": use_verbalization,
-                    "final_decision": "sparql" if state.use_sparql else "verbalization"
-                }
-            )
-        
         # Route to appropriate next step
         if not state.use_sparql and state.extracted_entities:
             state.next = "verbalization"
-            # Log routing decision
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Strategy Selection Node",
-                    "routing decision",
-                    {"next_node": "verbalization"}
-                )
         else:
             state.next = "sparql_generation"
-            # Log routing decision
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Strategy Selection Node",
-                    "routing decision",
-                    {"next_node": "sparql_generation"}
-                )
-        
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Strategy Selection Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
         
         return state
 \end{lstlisting}
@@ -3237,177 +2965,39 @@ The Property Generation Node enhances the list of candidate properties using vec
 
 \begin{lstlisting}[breaklines=true,language=python, caption=Property Generation Node Implementation, label=code:property-generation-node]
 class PropertyGenerationNode:
-    """Node for enhancing and retrieving additional Wikidata properties"""
+    """Node for enhancing and retrieving additional properties"""
     def __init__(self, property_retrieval):
         self.property_retrieval = property_retrieval
         
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing
-        start_time = datetime.now()
-        
         # Get knowledge source and use appropriate property retrieval
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         
-        # Use property retrieval factory to get the appropriate property retrieval
+        # Use property retrieval factory to get the appropriate retriever
         from ..utils.property_retrieval_factory import get_property_retrieval_factory
         property_factory = get_property_retrieval_factory()
-        current_property_retrieval = property_factory.get_property_retriever(
-            knowledge_source, 
-            df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
-        )
-        
-        # Log start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Property Generation Node", 
-                "start",
-                {
-                    "question": state.translated_question, 
-                    "initial_properties": state.related_properties, 
-                    "knowledge_source": knowledge_source
-                },
-                start_time=start_time
-            )
+        current_property_retrieval = property_factory.get_property_retriever(knowledge_source)
         
         # If properties were already extracted, use those as a starting point
         initial_properties = state.related_properties if state.related_properties else []
         
-        # Get n-gram properties to supplement the extracted properties
         try:
-            # First, get n-gram based properties
-            ngram_start_time = datetime.now()
+            # Process n-grams and get vector-based property matches
+            ngram_properties = self._get_ngram_properties(state.translated_question, current_property_retrieval)
             
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Property Generation Node",
-                    "n-gram processing start",
-                    None,
-                    start_time=ngram_start_time
-                )
-                
-            # Tokenize the question for n-grams
-            tokenizer = RegexpTokenizer(r"\\w+")
-            tokens = tokenizer.tokenize(state.translated_question)
-            tokens = [tok.lower() for tok in tokens if tok.lower() not in self.property_retrieval.stopwords]
+            # Get combined properties with vector search
+            combined_properties = self._combine_properties(initial_properties, ngram_properties)
             
-            # Generate n-grams
-            max_n = min(len(tokens), 3)
-            ngrams_list = []
-            for n in range(1, max_n + 1):
-                n_grams = ngrams(tokens, n)
-                ngrams_list.extend([" ".join(ng) for ng in n_grams])
-            
-            # Get top 5 n-gram properties
-            top_ngram_properties = []
-            for ngram in ngrams_list:
-                df_res = current_property_retrieval._search(ngram, k=5)
-                if not df_res.empty:
-                    df_res = df_res[df_res["score"] >= 0.6]
-                    if not df_res.empty:
-                        # Handle both Wikidata and curriculum property formats
-                        if hasattr(current_property_retrieval, 'property_id_to_label'):
-                            # Wikidata format
-                            df_res["idWithLabel"] = df_res["propertyId"] + " - " + df_res["label"]
-                        else:
-                            # Curriculum format - use appropriate property ID field
-                            prop_id_field = "propertyId" if "propertyId" in df_res.columns else "label"
-                            df_res["idWithLabel"] = df_res[prop_id_field] + " - " + df_res["label"]
-                        top_ngram_properties.extend(df_res["idWithLabel"].tolist())
-                        if len(top_ngram_properties) >= 5:
-                            break
-            
-            top_ngram_properties = list(set(top_ngram_properties))[:5]
-            
-            # End n-gram timing
-            ngram_end_time = datetime.now()
-            
-            # Log n-gram properties
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Property Generation Node",
-                    "n-gram properties",
-                    {"top_5_ngram_properties": top_ngram_properties},
-                    start_time=ngram_start_time,
-                    end_time=ngram_end_time
-                )
-            
-            # Get combined properties
-            combined_start_time = datetime.now()
-            
-            # Log combined start
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Property Generation Node",
-                    "combined property retrieval start",
-                    {
-                        "initial_properties": initial_properties, 
-                        "ngram_properties": top_ngram_properties[:5]
-                    },
-                    start_time=combined_start_time
-                )
-            
-            # Get all related properties, combining extracted and n-gram properties
-            combined_properties = []
-            
-            # Process initial properties from entity extraction
-            for prop in initial_properties:
-                # Add raw property name
-                combined_properties.append(prop)
-                
-                # Add camelCase version if it contains spaces
-                if " " in prop:
-                    words = prop.lower().split()
-                    camel_prop = words[0]
-                    for word in words[1:]:
-                        camel_prop += word.capitalize()
-                    combined_properties.append(camel_prop)
-            
-            # Get related properties from vector DB
-            threshold = 0.6
-            related_candidates = current_property_retrieval.get_related_candidates(
+            # Get semantic matches using vector search
+            state.related_properties = current_property_retrieval.get_related_candidates(
                 state.translated_question, 
-                property_candidates=combined_properties, 
-                threshold=threshold
-            )
-            
-            # Update the properties in state
-            state.related_properties = related_candidates["properties"]
-            
-            # End combined timing
-            combined_end_time = datetime.now()
-            
-            # Log combined properties
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Property Generation Node",
-                    "final properties",
-                    {"final_properties": state.related_properties[:10]},
-                    start_time=combined_start_time,
-                    end_time=combined_end_time
-                )
+                property_candidates=combined_properties
+            )["properties"]
                 
-        except Exception as e:
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Property Generation Node",
-                    "property generation error",
-                    {"error": str(e)}
-                )
-                
+        except Exception:
             # Make sure we have at least the initial properties
             if not state.related_properties:
                 state.related_properties = initial_properties if initial_properties else state.extracted_entities
-        
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Property Generation Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
             
         return state
 \end{lstlisting}
@@ -3425,11 +3015,10 @@ This approach ensures that even if the entity extraction model misses some prope
 \subsubsection{Verbalization Node}
 The Verbalization Node implements direct property retrieval for simple questions, bypassing the need for SPARQL generation. This node is particularly complex as it handles direct graph traversal and result formatting:
 
-\begin{lstlisting}[breaklines=true,language=python, caption=Verbalization Node Implementation (Partial), label=code:verbalization-node]
+\begin{lstlisting}[breaklines=true,language=python, caption=Verbalization Node Implementation, label=code:verbalization-node]
 class VerbalizationNode:
     """Node for retrieving entity information through verbalization"""
     def __init__(self, llm_factory=None, property_retrieval=None):
-        """Initialize VerbalizationNode with LLM factory and property retrieval"""
         self.llm_factory = llm_factory
         self.property_retrieval = property_retrieval
         self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
@@ -3442,20 +3031,10 @@ class VerbalizationNode:
         from ..utils.property_retrieval_factory import get_property_retrieval_factory
         self.property_factory = get_property_retrieval_factory()
         
-        if not self.llm_factory:
-            raise ValueError("llm_factory must be provided")
-        
         # Initialize the LLM provider
-        try:
-            self._llm_provider = self.llm_factory.get_model_for_verbalization()
-        except Exception as e:
-            logger.error(f"Failed to get model from factory: {e}")
-            raise ValueError(f"Failed to initialize LLM provider: {e}")
+        self._llm_provider = self.llm_factory.get_model_for_verbalization()
         
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing
-        start_time = datetime.now()
-        
         # Update verbalization object based on knowledge source
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         if hasattr(self, 'verbalization'):
@@ -3473,55 +3052,13 @@ class VerbalizationNode:
             df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
         )
         
-        # Log start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Verbalization Node", 
-                "start",
-                {
-                    "question": state.translated_question, 
-                    "entity": state.extracted_entities[0] if state.extracted_entities else None, 
-                    "knowledge_source": knowledge_source
-                },
-                start_time=start_time
-            )
-        
         if not state.extracted_entities:
-            # End timing early since we can't do anything without entities
-            end_time = datetime.now()
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Verbalization Node", 
-                    "end", 
-                    {"error": "No entities extracted"},
-                    start_time=start_time,
-                    end_time=end_time
-                )
             state.next = "sparql_generation"
             return state
         
         entity = state.extracted_entities[0]
         retrieved_resources, err = self.get_entities(entity, k=5, source=knowledge_source)
         
-        # Log retrieved resources
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Verbalization Node",
-                "retrieved resources",
-                {"entity": entity, "resources": retrieved_resources}
-            )           
-            
-        # Start entity URI selection timing
-        uri_start_time = datetime.now()
-        
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Verbalization Node",
-                "entity URI selection start",
-                {"entity": entity, "num_candidates": len(retrieved_resources)},
-                start_time=uri_start_time
-            )
-            
         entity_uri = self.get_most_appropriate_entity_uri(
             entity, 
             state.translated_question, 
@@ -3536,91 +3073,26 @@ class VerbalizationNode:
                 entity_label = resource.get('label')
                 break
         
-        # End entity URI selection timing
-        uri_end_time = datetime.now()
-        
-        # Log entity URI selection
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Verbalization Node",
-                "entity URI selection end",
-                {
-                    "selected_entity_uri": f"{entity_uri} - {entity_label}", 
-                    "knowledge_source": knowledge_source
-                },
-                start_time=uri_start_time,
-                end_time=uri_end_time
-            )
-        
         if entity_uri:
             try:
-                # Start verbalization timing
-                verb_start_time = datetime.now()                
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    state.visualizer.log_event(
-                        "Verbalization Node",
-                        "verbalization start",
-                        {"entity_uri": f"{entity_uri} - {entity_label}"},
-                        start_time=verb_start_time
-                    )
-                
-                # Create a debug callback function to send progress to the visualizer
-                debug_callback = None
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    debug_callback = lambda msg: state.visualizer.log_event(
-                        "Verbalization Node",
-                        "encoding progress",
-                        {"progress": msg}
-                    )
-                
                 # Get candidates - do this ONCE only
                 candidates, po, sp = self.verbalization.get_list_of_candidates(
                     entity_uri=entity_uri, 
                     entity_label=entity_label,
-                    property_retrieval=current_property_retrieval,
-                    visualizer=state.visualizer if hasattr(state, 'visualizer') else None
+                    property_retrieval=current_property_retrieval
                 )
                 
                 # Only continue if we have candidates
                 if not candidates:
-                    if hasattr(state, 'visualizer') and state.visualizer:
-                        state.visualizer.log_event(
-                            "Verbalization Node", 
-                            "verbalization failed",
-                            {"error": "No candidate properties found"}
-                        )
                     state.next = "sparql_generation"
-                    end_time = datetime.now()
-                    if hasattr(state, 'visualizer') and state.visualizer:
-                        state.visualizer.log_event(
-                            "Verbalization Node", 
-                            "end",
-                            None,
-                            start_time=start_time,
-                            end_time=end_time
-                        )
                     return state
                 
-                # ----- COMPUTE EMBEDDINGS ONCE -----
-                
-                # Prepare for computing similarities
-                cands = list(candidates.values())
-                if debug_callback:
-                    debug_callback(f"Computing embeddings for similarity ranking...")
-                
                 # Encode question once
-                question_embed = self.verbalization.encode_with_progress(
-                    [state.translated_question], 
-                    debug_callback=debug_callback,
-                    **self.verbalization.query_model_encode_kwargs
-                )[0]
+                question_embed = self.verbalization.encode_text([state.translated_question])[0]
                 
                 # Encode all candidates once
-                passages_embed = self.verbalization.encode_with_progress(
-                    cands, 
-                    debug_callback=debug_callback,
-                    **self.verbalization.passage_model_encode_kwargs
-                )
+                cands = list(candidates.values())
+                passages_embed = self.verbalization.encode_text(cands)
                 
                 # Compute similarities once
                 similarities = self.verbalization.model.similarity(
@@ -3646,15 +3118,13 @@ class VerbalizationNode:
                 if (getattr(state, 'include_references', True) and 
                     similarity >= 0.6 and result and
                     knowledge_source == 'wikidata'):
-                    # Only get references for Wikidata, not curriculum
-                    logger.info(f"Fetching references for property {best_property} with similarity {similarity}")
                     raw_references = self.verbalization.get_references_for_property(
                         entity_uri, 
                         best_property, 
                         knowledge_source
                     )
                     
-                    # Format the references with proper date formatting
+                    # Format references
                     for ref in raw_references:
                         formatted_ref = {}
                         if ref.get('refUrl'):
@@ -3663,22 +3133,19 @@ class VerbalizationNode:
                             formatted_ref['refDate'] = ref['refDate']
                             formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
                         
-                        if formatted_ref:  # Only add if we have some reference data
+                        if formatted_ref:
                             references.append(formatted_ref)
                 
                 # Store results in state
                 state.verbalization_result = result
                 state.verbalization_similarity = similarity
-                
-                # Store references in state
-                if references:
-                    state.verbalization_references = references
+                state.verbalization_references = references if references else []
                     
                 # Determine if verbalization is successful
                 if similarity >= 0.6 and result:
                     state.query_result = result
                     
-                    # Process the results for the answer, including references
+                    # Process the results for the answer
                     context_str = f'The answer to "{state.question}" is: '
                     for c in result[:50]:
                         for k, v in c.items():
@@ -3688,44 +3155,21 @@ class VerbalizationNode:
                     # Add reference information to context if available
                     if references:
                         context_str += "\n\n**Reference sources:**"
-                        unique_refs = set()
-                        formatted_dates = set()
-                        
+                        # Format references for display
                         for ref in references:
                             if ref.get('refUrl'):
-                                unique_refs.add(ref['refUrl'])
+                                context_str += f"\n- Source: {ref['refUrl']}"
                             if ref.get('formattedRefDate'):
-                                formatted_dates.add(ref['formattedRefDate'])
-                        
-                        for ref_url in unique_refs:
-                            context_str += f"\n- Source: {ref_url}"
-                        
-                        for date in formatted_dates:
-                            context_str += f"\n- Retrieved on: {date}"
+                                context_str += f"\n- Retrieved on: {ref['formattedRefDate']}"
                     
                     state.context_str = context_str
                     state.next = "answer_generation"
-                    
-                    # Mark that verbalization was used successfully
                     state.approach_used = "verbalization"
                     
                     return state
                 
-                # Log verbalization not sufficient
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    state.visualizer.log_event(
-                        "Verbalization Node",
-                        "verbalization insufficient",
-                        {"similarity": similarity, "threshold": 0.6, "next": "sparql_generation"}
-                    )
-                
-            except Exception as e:
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    state.visualizer.log_event(
-                        "Verbalization Node",
-                        "verbalization error",
-                        {"error": str(e)}
-                    )
+            except Exception:
+                pass
         
         # Fallback to SPARQL
         state.next = "sparql_generation"
@@ -3747,48 +3191,22 @@ This node enables efficient handling of simple questions without requiring SPARQ
 \subsubsection{SPARQL Generation Node}
 The SPARQL Generation Node is responsible for generating executable SPARQL queries based on extracted entities and properties:
 
-\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation (Partial), label=code:sparql-generation-node]
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation, label=code:sparql-generation-node]
 class SparqlGenerationNode:
     """Node for generating and executing SPARQL queries"""
     def __init__(self, llm_factory=None, property_retrieval=None):
-        """Initialize with LLM factory and property retrieval"""
         self.llm_factory = llm_factory
         self.property_retrieval = property_retrieval
         self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
         
-        if not self.llm_factory:
-            raise ValueError("llm_factory must be provided")
-        
-        # Use source-aware SPARQL wrapper if available
-        try:
-            from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
-            self.api = SourceAwareSPARQLWrapper("wikidata")
-        except ImportError:
-            # Fallback to standard SPARQLWrapper
-            self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
-            self.api.setReturnFormat(JSON)
-            self.api.addCustomHttpHeader("User-Agent", "FROG Wikidata Agent/1.0")
+        # Use source-aware SPARQL wrapper
+        from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
+        self.api = SourceAwareSPARQLWrapper("wikidata")
         
         # Initialize the LLM provider
-        try:
-            self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
-        except Exception as e:
-            logger.error(f"Failed to get model from factory: {e}")
-            raise ValueError(f"Failed to initialize LLM provider: {e}")
+        self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
     
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing
-        start_time = datetime.now()
-        
-        # Log start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "SPARQL Generation Node", 
-                "start",
-                {"question": state.translated_question, "entities": state.extracted_entities},
-                start_time=start_time
-            )
-        
         # Determine the knowledge source
         knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
         
@@ -3802,7 +3220,7 @@ class SparqlGenerationNode:
             [f"{i+1}. {instruction}" for i, instruction in enumerate(instructions)]
         )
         
-        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query for {source_name} using the provided entity and property resolutions.
+        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query using the provided entity and property resolutions.
 
 Guidelines:
 1. First identify which entities from the list match the question's intent
@@ -3827,14 +3245,6 @@ Guidelines:
                     entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
                 else:
                     entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}\n"
-            
-            # Log entity resources
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event( 
-                    "SPARQL Generation Node",
-                    f"entity resources for '{entity}'",
-                    {"resources": entity_resources}
-                )
 
         # Format properties context
         properties_matches_formatted = ""
@@ -3856,37 +3266,15 @@ Properties:
 {properties_matches_formatted}
 
 SPARQL:"""
-
-        # Log query generation start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "SPARQL Generation Node",
-                "query generation phase",
-                {"max_attempts": state.try_threshold, "cot_enabled": state.use_cot}
-            )
         
         query_attempts = []
         curr_question = state.translated_question
         attempts_left = state.try_threshold
         
         while attempts_left > 0:
-            # Record attempt start time
-            attempt_start_time = datetime.now()
             attempt_num = state.try_threshold - attempts_left + 1
-            
-            # Log attempt start
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "SPARQL Generation Node",
-                    f"query attempt {attempt_num}",
-                    {"question": curr_question},
-                    start_time=attempt_start_time
-                )
                 
             try:
-                # Create combined prompt for generation
-                combined_prompt = f"{system_prompt}\n\n{user_prompt_template}"
-                
                 # Generate SPARQL query using configured model
                 if self._llm_provider.is_chat_template_supported():
                     # Use chat template
@@ -3897,7 +3285,7 @@ SPARQL:"""
                     prompt = self._llm_provider.apply_chat_template(messages)
                 else:
                     # Fallback to simple concatenation
-                    prompt = combined_prompt
+                    prompt = f"{system_prompt}\n\n{user_prompt_template}"
                 
                 completion = self._llm_provider.generate_response(prompt)
                 
@@ -3937,25 +3325,12 @@ SPARQL:"""
                     continue
                 
                 # Execute the query
-                exec_start_time = datetime.now()
-                
-                # Log execution start
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    state.visualizer.log_event(
-                        "SPARQL Generation Node",
-                        f"executing query from attempt {attempt_num}",
-                        {"query": sparql_query},
-                        start_time=exec_start_time
-                    )
-                    
                 result, err = self.execute_sparql(sparql_query, state)
                 
                 # Check if we got results
                 if result and not (len(result) == 1 and list(result[0].values())[0] == "0"):
                     state.sparql_query = sparql_query
                     state.query_result = result
-                    
-                    # Mark that SPARQL was successfully used
                     state.approach_used = "sparql"
                     
                     # Extract references if the query included reference fields
@@ -3976,34 +3351,12 @@ SPARQL:"""
                                 context_str += f"{k}={v}, "
                         context_str = context_str[:-2] + "."
                         
-                        # Add reference information to context if available
+                        # Add reference information if available
                         if references:
                             context_str += "\n\n**Reference sources:**"
-                            # ... (reference formatting code)
+                            # Format references for display
                         
                         state.context_str = context_str
-                    
-                    # End attempt timing and log success
-                    attempt_end_time = datetime.now()
-                    if hasattr(state, 'visualizer') and state.visualizer:
-                        state.visualizer.log_event(
-                            "SPARQL Generation Node",
-                            f"query attempt {attempt_num} end",
-                            {"status": "success"},
-                            start_time=attempt_start_time,
-                            end_time=attempt_end_time
-                        )
-                    
-                    # End timing for the whole node and log completion
-                    end_time = datetime.now()
-                    if hasattr(state, 'visualizer') and state.visualizer:
-                        state.visualizer.log_event(
-                            "SPARQL Generation Node", 
-                            "end", 
-                            {"status": "success"},
-                            start_time=start_time,
-                            end_time=end_time
-                        )
                         
                     return state
                 
@@ -4014,17 +3367,7 @@ SPARQL:"""
                 curr_question = f"""The SPARQL query you generated to answer '{state.translated_question}' produced empty results. 
 Please generate a better query. Try using different properties or restructuring the query."""
                 
-            except Exception as e:
-                # Log error and continue with next attempt
-                if hasattr(state, 'visualizer') and state.visualizer:
-                    state.visualizer.log_event(
-                        "SPARQL Generation Node",
-                        f"query attempt {attempt_num} error",
-                        {"error": str(e)},
-                        start_time=attempt_start_time,
-                        end_time=datetime.now()
-                    )
-                    
+            except Exception:
                 attempts_left -= 1
         
         # Failed after all attempts
@@ -4032,41 +3375,10 @@ Please generate a better query. Try using different properties or restructuring 
         
         if use_google_search:
             state.context_str = "I couldn't generate a working query to answer this question."
-            # Mark that SPARQL failed
             state.approach_used = "sparql_failed"
         else:
-            # Google Search is disabled, provide a more informative message
             state.context_str = f"I couldn't generate a working SPARQL query to answer this question using {source_name}. Google Search fallback is disabled in settings."
             state.approach_used = "sparql_failed_no_fallback"
-        
-        # Log failure after all attempts and end timing
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "SPARQL Generation Node",
-                "all attempts failed",
-                {
-                    "total_attempts": state.try_threshold,
-                    "google_search_enabled": use_google_search
-                }
-            )
-            
-            # Log all query attempts
-            state.visualizer.log_event(
-                "SPARQL Generation Node",
-                "all query attempts",
-                {"attempts": query_attempts}
-            )
-        
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "SPARQL Generation Node", 
-                "end", 
-                {"status": "failed"},
-                start_time=start_time,
-                end_time=end_time
-            )
             
         return state
 \end{lstlisting}
@@ -4102,196 +3414,28 @@ class GoogleSearchNode:
     def __init__(self):
         pass
         
-    def _resolve_redirect_url(self, proxy_url):
-        """
-        Follow a redirect URL to get the final destination URL
-        """
-        try:
-            # Send a HEAD request to follow redirects without downloading content
-            response = requests.head(
-                proxy_url,
-                allow_redirects=True,
-                timeout=5,
-                headers={
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                },
-            )
-            return response.url
-        except Exception as e:
-            # If HEAD request fails, try with GET
-            try:
-                response = requests.get(
-                    proxy_url,
-                    allow_redirects=True,
-                    timeout=5,
-                    headers={
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                    },
-                    stream=True,  # To avoid downloading the full content
-                )
-                # Close the connection without reading the content
-                response.close()
-                return response.url
-            except Exception:
-                # If both methods fail, return the original URL
-                return proxy_url
-        
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing
-        start_time = datetime.now()
-        
-        # Log start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-            kg_metadata = get_knowledge_graph_metadata()
-            source_name = kg_metadata.get_name(knowledge_source)
-            state.visualizer.log_event(
-                "Google Search Node", 
-                "start",
-                {"question": state.translated_question, "reason": f"{source_name} methods failed"},
-                start_time=start_time
-            )
-            
         try:
-            # Initialize Google Genai client with the same API key as Gemini
+            # Execute Google Search using Gemini API
             api_key = os.environ.get("GEMINI_API_KEY")
             if not api_key:
                 raise ValueError("Gemini API key not found in environment variables")
 
             client = genai.Client(api_key=api_key)
-
-            # Execute the search query using Gemini's built-in search capability
-            search_start_time = datetime.now()
             
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Google Search Node",
-                    "executing search",
-                    {"query": state.translated_question},
-                    start_time=search_start_time
-                )
-                
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=state.translated_question,
-                config=types.GenerateContentConfig(
-                    tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
-                ),
-            )
-
-            # Process and format the results
-            search_results = []
-
-            if hasattr(response, "candidates") and len(response.candidates) > 0:
-                candidate = response.candidates[0]
-
-                # Extract text content
-                text_content = (
-                    candidate.content.parts[0].text
-                    if candidate.content and candidate.content.parts
-                    else ""
-                )
-
-                # Extract search citations if available
-                citations = []
-                urls_to_resolve = []
-
-                # First, collect all the proxy URLs
-                if (
-                    hasattr(candidate, "grounding_metadata")
-                    and candidate.grounding_metadata
-                ):
-                    grounding_chunks = getattr(
-                        candidate.grounding_metadata, "grounding_chunks", []
-                    )
-                    for chunk in grounding_chunks:
-                        if hasattr(chunk, "web") and chunk.web:
-                            web_info = chunk.web
-                            url = getattr(web_info, "uri", "")
-                            title = getattr(web_info, "title", "")
-                            domain = getattr(web_info, "domain", "")
-
-                            # Check if this is a proxy URL
-                            if url and "vertexaisearch.cloud.google.com" in url:
-                                urls_to_resolve.append(
-                                    {
-                                        "proxy_url": url,
-                                        "title": title or domain,
-                                        "domain": domain,
-                                    }
-                                )
-
-                # Resolve the proxy URLs to their final destinations
-                for url_info in urls_to_resolve:
-                    try:
-                        final_url = self._resolve_redirect_url(url_info["proxy_url"])
-                        citations.append({
-                            "title": url_info["title"], 
-                            "url": final_url
-                        })
-                    except Exception as e:
-                        # If we can't resolve the URL, use the original
-                        citations.append(
-                            {
-                                "title": url_info["title"],
-                                "url": url_info["proxy_url"],
-                                "error": str(e),
-                            }
-                        )
-
-                search_results = {"content": text_content, "citations": citations}
-                
-            search_end_time = datetime.now()
-            
-            # Log search results
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Google Search Node",
-                    "search results",
-                    {
-                        "has_content": bool(search_results.get("content")),
-                        "citation_count": len(search_results.get("citations", [])) if search_results else 0
-                    },
-                    start_time=search_start_time,
-                    end_time=search_end_time
-                )
+            # Execute search and process results
+            search_results = self._execute_search(client, state.translated_question)
                 
             # Update state with results
             state.google_search_result = search_results
             state.approach_used = "google_search"
             
             # Prepare context for answer generation
-            if search_results and search_results.get("content"):
-                context_str = f'Based on web search results: {search_results["content"]}'
-                if search_results.get("citations"):
-                    context_str += "\n\nSources:\n"
-                    for citation in search_results["citations"]:
-                        context_str += f"- {citation.get('title', 'Unknown')}: {citation.get('url', '')}\n"
-                state.context_str = context_str
-            else:
-                state.context_str = "I couldn't find information to answer this question from web search."
+            state.context_str = self._format_search_context(search_results)
                 
         except Exception as e:
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Google Search Node",
-                    "search error",
-                    {"error": str(e)}
-                )
-                
             state.context_str = "I couldn't find information to answer this question."
             state.approach_used = "google_search_failed"
-            
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Google Search Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
             
         return state
 \end{lstlisting}
@@ -4313,49 +3457,13 @@ The Answer Generation Node synthesizes the final natural language answer based o
 class AnswerGenerationNode:
     """Node for generating the final natural language answer"""
     def __init__(self, llm_factory=None):
-        """
-        Initialize AnswerGenerationNode
-        
-        Args:
-            llm_factory: LLM factory instance for multi-provider support
-        """
         self.llm_factory = llm_factory
         self.translator = googletrans.Translator()
         
-        if not self.llm_factory:
-            raise ValueError("llm_factory must be provided")
-        
         # Initialize the LLM provider
-        try:
-            self._llm_provider = self.llm_factory.get_model_for_answer_generation()
-        except Exception as e:
-            logger.error(f"Failed to get model from factory: {e}")
-            raise ValueError(f"Failed to initialize LLM provider: {e}")
+        self._llm_provider = self.llm_factory.get_model_for_answer_generation()
         
     def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing
-        start_time = datetime.now()
-        
-        # Log start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node", 
-                "start",
-                {"question": state.question},
-                start_time=start_time
-            )
-            
-        # Log input data
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node",
-                "input data",
-                {
-                    "context": state.context_str,
-                    "query_result": state.query_result[:10] if state.query_result and len(state.query_result) > 10 else state.query_result
-                }
-            )
-            
         # Create prompt for answer generation
         lang_detected = state.original_lang if state.original_lang else "en"
         
@@ -4368,29 +3476,6 @@ Context: {state.context_str}
 
 Answer:"""
         
-        # Log prompt
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node",
-                "prompt prepared",
-                {
-                    "language": googletrans.LANGUAGES.get(lang_detected, lang_detected),
-                    "prompt_template": "Answer directly and concisely in three sentences or less..."
-                }
-            )
-        
-        # Generate the answer
-        gen_start_time = datetime.now()
-        
-        # Log generation start
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node",
-                "answer generation start",
-                None,
-                start_time=gen_start_time
-            )
-            
         # Generate response using configured model
         if self._llm_provider.is_chat_template_supported():
             # Use chat template if supported
@@ -4404,32 +3489,6 @@ Answer:"""
             formatted_prompt = prompt
         
         state.final_answer = self._llm_provider.generate_response(formatted_prompt)
-        
-        # End generation timing
-        gen_end_time = datetime.now()
-        
-        # Log generated answer
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node",
-                "generated answer",
-                {"answer": state.final_answer},
-                start_time=gen_start_time,
-                end_time=gen_end_time
-            )
-            
-        # End timing
-        end_time = datetime.now()
-        
-        # Log completion
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Answer Generation Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
             
         return state
 \end{lstlisting}
@@ -4635,31 +3694,628 @@ The LLM factory is designed to support multiple provider types, with each provid
 
 Each specialized agent node retrieves its appropriate model from the factory using the designated getter methods. This allows for specialized models to be used for each task, optimizing the performance of the overall system.
 
-\section{Multi-Agent System Implementation Summary}
-Our multi-agent system implementation represents a sophisticated approach to knowledge graph question answering using the LangGraph framework. By decomposing the question-answering process into specialized agent nodes with conditional routing, we have created a system that can adapt to different question types and complexity levels.
-
-The key technical innovations in our implementation include:
-
-\begin{enumerate}
-    \item \textbf{Modular Agent Design}: Each agent node is implemented as a separate class with a standardized interface, enabling easy component replacement and extension.
-    
-    \item \textbf{Comprehensive State Management}: The shared state object maintains all processing context across the workflow, facilitating informed decision-making at each step.
-    
-    \item \textbf{Adaptive Processing Paths}: The conditional routing system enables dynamic workflow selection based on question complexity and processing results.
-    
-    \item \textbf{Multi-Provider LLM Integration}: The LLM factory architecture supports multiple providers and models, allowing specialized models for different tasks.
-    
-    \item \textbf{Robust Fallback Mechanisms}: The system implements multiple fallback layers, from verbalization to SPARQL generation to Google Search, ensuring graceful degradation when primary approaches fail.
-    
-    \item \textbf{Comprehensive Visualization}: The event logging system captures detailed information about each processing step, enabling transparency and debugging.
-\end{enumerate}
-
 Together, these components create a sophisticated question-answering system that can handle diverse question types across multiple knowledge graph domains, adapting its processing approach based on question complexity and domain-specific requirements.
 
 \section{Knowledge Graph Integration and Query Processing}
+The knowledge graph integration and query processing system forms the core of our enhanced GraphRAG framework. We implemented a unified architecture that supports multiple knowledge graph sources, processes queries across different domains, and provides robust fallback mechanisms. This section details the technical implementation of these components, focusing on the multi-source knowledge graph architecture, query processing pipeline, and web search integration.
+
 \subsection{Multi-Source Knowledge Graph Architecture}
+Our implementation utilizes a source-aware architecture that enables seamless integration with multiple knowledge graphs. This flexibility allows the system to handle diverse knowledge domains through a unified interface while accommodating domain-specific requirements.
+
+\subsubsection{Knowledge Graph Metadata System}
+The foundation of our multi-source architecture is a comprehensive metadata system that defines the configuration for each knowledge graph. We implemented this using a structured JSON configuration file:
+
+\begin{lstlisting}[breaklines=true,language=json, caption=Knowledge Graph Metadata Configuration, label=code:kg-metadata]
+// backend/config/knowledge_graph_metadata.json (excerpt)
+{
+  "wikidata": {
+    "name": "Wikidata",
+    "description": "Wikidata knowledge graph",
+    "endpoint": "https://query.wikidata.org/sparql",
+    "prefixes": {
+      "wd": "http://www.wikidata.org/entity/",
+      "wdt": "http://www.wikidata.org/prop/direct/",
+      "p": "http://www.wikidata.org/prop/",
+      // Additional prefixes...
+    },
+    "sparql_instructions": [
+      "Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs",
+      "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed",
+      "Return entity IDs directly without using label services"
+    ],
+    "verbalization_templates": {
+      "po_template": "SELECT distinct ?p ?o ?oLabel\nWHERE {{\n  BIND(wd:{entity} AS ?s) .\n  \n  ?s ?p ?o .\n  FILTER(?p != wd:P18)\n  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n    FILTER (LANG(?oLabel) = \"en\")\n  }}\n}} LIMIT 1000",
+      "sp_template": "SELECT ?s ?sLabel ?p\nWHERE {{\n  BIND(wd:{entity} AS ?o) .\n  \n  ?s ?p ?o .\n  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n    FILTER (LANG(?sLabel) = \"en\")\n  }}\n}} LIMIT 1000"
+    },
+    "user_agent": "FROG Wikidata Agent/1.0",
+    "entity_uri_format": "wd:{entity_id}",
+    "property_uri_format": "wdt:{property_id}",
+    "supports_references": true
+  },
+  // Additional knowledge graph configurations...
+}
+\end{lstlisting}
+
+For each knowledge graph, the metadata includes:
+\begin{itemize}
+    \item \textbf{SPARQL Endpoint}: URL for the knowledge graph's query service
+    \item \textbf{Namespace Prefixes}: Domain-specific URI prefixes for entities and properties
+    \item \textbf{SPARQL Instructions}: Domain-specific guidelines for query formatting
+    \item \textbf{Verbalization Templates}: Pre-defined SPARQL templates for property retrieval
+    \item \textbf{URI Formats}: Templates for entity and property URI construction
+    \item \textbf{Reference Support}: Indicator of whether the graph supports reference queries
+\end{itemize}
+
+\subsubsection{Source-Aware SPARQL Wrapper}
+To handle the specific requirements of different knowledge graphs, we implemented a source-aware SPARQL wrapper that adapts query execution based on the knowledge source:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Source-Aware SPARQL Wrapper Implementation, label=code:source-aware-sparql]
+class SourceAwareSPARQLWrapper:
+    """SPARQL wrapper that adapts to different knowledge graph sources"""
+    def __init__(self, source="wikidata"):
+        self.source = source
+        self.kg_metadata = get_knowledge_graph_metadata()
+        
+        # Get endpoint URL for the current source
+        self.endpoint_url = self.kg_metadata.get_endpoint_url(source)
+        
+        # Initialize the SPARQLWrapper with the appropriate endpoint
+        self.wrapper = SPARQLWrapper(self.endpoint_url)
+        self.wrapper.setReturnFormat(JSON)
+        
+        # Set appropriate user agent
+        user_agent = self.kg_metadata.get_user_agent(source)
+        if user_agent:
+            self.wrapper.addCustomHttpHeader("User-Agent", user_agent)
+    
+    def execute_query(self, query, return_format="list"):
+        """Execute a SPARQL query against the appropriate endpoint"""
+        try:
+            # Apply environment variable substitution for local endpoints
+            processed_query = self._process_query(query)
+            
+            # Set and execute the query
+            self.wrapper.setQuery(processed_query)
+            results = self.wrapper.query().convert()
+            
+            # Return formatted results based on requested format
+            if return_format == "list":
+                return self._parse_results_as_list(results), None
+            else:
+                return self._parse_results_as_dict(results), None
+                
+        except Exception as e:
+            return None, str(e)
+\end{lstlisting}
+
+The source-aware wrapper provides several key technical advantages:
+
+\begin{enumerate}
+    \item \textbf{Dynamic Endpoint Selection}: Automatically selects the appropriate SPARQL endpoint based on the knowledge source.
+    \item \textbf{Environment Variable Substitution}: Handles local endpoints with environment variable configuration.
+    \item \textbf{Result Format Normalization}: Standardizes result formats across different knowledge graph implementations.
+    \item \textbf{Error Handling}: Provides consistent error handling regardless of the underlying knowledge graph.
+\end{enumerate}
+
+\subsubsection{Factory Pattern for Knowledge Graph Services}
+
+To enable seamless switching between knowledge graph sources, we implemented a factory pattern for knowledge graph services. This architecture allows components to request appropriate services without needing to know the specific implementation details:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Property Retrieval Factory Implementation, label=code:property-retrieval-factory]
+class PropertyRetrievalFactory:
+    """
+    Factory for creating property retrievers for different knowledge graph sources
+    """
+    def __init__(self):
+        self._retrievers = {}
+        
+    def get_property_retriever(self, source, df_properties=None):
+        """
+        Get or create a property retriever for the specified source
+        
+        Args:
+            source (str): Knowledge graph source identifier
+            df_properties (pd.DataFrame): Optional properties dataframe for Wikidata
+            
+        Returns:
+            object: Property retriever for the specified source
+        """
+        if source in self._retrievers:
+            return self._retrievers[source]
+            
+        # Create a new retriever based on the source
+        if source == "wikidata":
+            if df_properties is None:
+                raise ValueError("df_properties must be provided for Wikidata")
+            retriever = WikidataPropertyRetrieval(df_properties)
+        elif source == "curriculum":
+            retriever = CurriculumPropertyRetrieval()
+        elif source == "legal":
+            retriever = LegalPropertyRetrieval()
+        elif source == "gesis":
+            retriever = GesisPropertyRetrieval()
+        else:
+            raise ValueError(f"Unsupported source: {source}")
+            
+        # Cache and return the retriever
+        self._retrievers[source] = retriever
+        return retriever
+
+# Singleton instance
+_property_retrieval_factory = None
+
+def get_property_retrieval_factory():
+    """Get the singleton property retrieval factory instance"""
+    global _property_retrieval_factory
+    if _property_retrieval_factory is None:
+        _property_retrieval_factory = PropertyRetrievalFactory()
+    return _property_retrieval_factory
+\end{lstlisting}
+
+This factory pattern is applied to multiple services in our architecture, including:
+\begin{itemize}
+    \item \textbf{Property Retrieval}: For finding relevant properties in knowledge graphs
+    \item \textbf{Entity Retrieval}: For finding entities matching natural language terms
+    \item \textbf{SPARQL Execution}: For executing queries against different endpoints
+\end{itemize}
+
+Add a diagram here showing the multi-source knowledge graph architecture
+Mermaid code:
+classDiagram
+    class KnowledgeGraphMetadata {
+        +get_endpoint_url(source)
+        +get_prefixes(source)
+        +get_sparql_instructions(source)
+        +get_verbalization_templates(source)
+    }
+    
+    class SourceAwareSPARQLWrapper {
+        -source: str
+        -wrapper: SPARQLWrapper
+        +execute_query(query, format)
+    }
+    
+    class PropertyRetrievalFactory {
+        -retrievers: Dict
+        +get_property_retriever(source)
+    }
+    
+    class WikidataPropertyRetrieval
+    class CurriculumPropertyRetrieval
+    class LegalPropertyRetrieval
+    class GesisPropertyRetrieval
+    
+    PropertyRetrievalFactory --> WikidataPropertyRetrieval
+    PropertyRetrievalFactory --> CurriculumPropertyRetrieval
+    PropertyRetrievalFactory --> LegalPropertyRetrieval
+    PropertyRetrievalFactory --> GesisPropertyRetrieval
+    
+    SourceAwareSPARQLWrapper --> KnowledgeGraphMetadata
+    PropertyRetrievalFactory --> KnowledgeGraphMetadata
+
 \subsection{Query Processing Pipeline}
+The query processing pipeline transforms natural language questions into structured SPARQL queries and executes them against the appropriate knowledge graph. Our implementation supports multiple processing approaches based on query complexity.
+
+\subsubsection{Query Processing Components}
+Our pipeline consists of several specialized components that work together to process queries:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{query_processing_components.jpg}
+    \caption{Query Processing Components and Interaction Flow}
+    \label{fig:query-processing-components}
+\end{figure}
+
+The key components of our query processing pipeline include:
+
+\begin{enumerate}
+    \item \textbf{Entity Extraction}: Identifies entities mentioned in the question
+    \item \textbf{Strategy Selection}: Determines whether to use verbalization or SPARQL generation
+    \item \textbf{Verbalization}: Direct property lookup for simple questions
+    \item \textbf{SPARQL Generation}: Advanced query generation for complex questions
+    \item \textbf{Query Execution}: Executes queries against the knowledge graph
+    \item \textbf{Result Processing}: Formats query results for answer generation
+\end{enumerate}
+
+\subsubsection{SPARQL Query Execution and Optimization}
+A critical aspect of our implementation is the execution and optimization of SPARQL queries. We implemented a robust query execution system with retry logic and error handling:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Query Execution Implementation, label=code:sparql-execution]
+def execute_sparql(self, query, state=None):
+    """
+    Execute a SPARQL query with retries and error handling
+    
+    Args:
+        query (str): SPARQL query to execute
+        state (FROGGraphRAGState): Current processing state
+        
+    Returns:
+        tuple: (results, error)
+    """
+    # Configure SPARQL endpoint based on knowledge source
+    knowledge_source = getattr(state, 'knowledge_source', 'wikidata') if state else 'wikidata'
+    
+    # Get source-aware SPARQL wrapper for the appropriate knowledge source
+    source_aware_api = SourceAwareSPARQLWrapper(knowledge_source)
+    
+    # Add PREFIX declarations if needed
+    if not query.upper().startswith("PREFIX"):
+        kg_metadata = get_knowledge_graph_metadata()
+        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
+        if prefixes_declaration:
+            query = prefixes_declaration + "\n\n" + query
+    
+    # Execute the query with retries
+    max_retries = 3
+    retry_count = 0
+    
+    while retry_count < max_retries:
+        try:
+            # Execute query using source-aware wrapper
+            results, err = source_aware_api.execute_query(query)
+            
+            if err:
+                retry_count += 1
+                time.sleep(1)  # Wait before retrying
+                continue
+                
+            return results, None
+            
+        except Exception:
+            retry_count += 1
+            time.sleep(1)  # Wait before retrying
+    
+    # All retries failed
+    return None, "Query execution failed after multiple attempts"
+\end{lstlisting}
+
+For optimal performance, particularly with large knowledge graphs like GESIS, we implemented query optimization techniques as discussed in Section \ref{query-optimization}. These optimizations include:
+
+\begin{itemize}
+    \item \textbf{Triple Pattern Ordering}: Arranging triple patterns to minimize intermediate results
+    \item \textbf{Query Structure Optimization}: Using nested subqueries for efficient operations
+    \item \textbf{Explicit Type Constraints}: Adding type filters to reduce result sets
+    \item \textbf{Result Limit Control}: Adding LIMIT clauses to prevent excessive result sizes
+\end{itemize}
+
+\subsubsection{Reference Integration}
+For knowledge graphs that support references (currently only Wikidata), we implemented reference retrieval and integration into query results:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Reference Integration Implementation, label=code:reference-integration]
+def _enhance_query_with_references(self, query, state):
+    """
+    Enhance a SPARQL query to include reference information
+    
+    Args:
+        query (str): Original SPARQL query
+        state (FROGGraphRAGState): Current processing state
+        
+    Returns:
+        str: Enhanced query with reference retrieval
+    """
+    # Only enhance if references are requested and supported by the knowledge source
+    if not getattr(state, 'include_references', True):
+        return query
+        
+    knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+    kg_metadata = get_knowledge_graph_metadata()
+    
+    if not kg_metadata.supports_references(knowledge_source):
+        return query
+    
+    # Check if this is a simple SELECT query that we can enhance
+    if not query.upper().startswith("SELECT ") or "GROUP BY" in query.upper():
+        return query
+    
+    try:
+        # Parse the query to find variables
+        # This is a simplified approach - a full SPARQL parser would be more robust
+        select_match = re.search(r'SELECT\s+(.+?)\s+WHERE', query, re.IGNORECASE | re.DOTALL)
+        if not select_match:
+            return query
+            
+        # Add reference variables to the SELECT clause
+        select_vars = select_match.group(1)
+        if "?refUrl" not in select_vars and "?refDate" not in select_vars:
+            enhanced_select = select_vars + " ?refUrl ?refDate"
+            enhanced_query = query.replace(select_vars, enhanced_select)
+        else:
+            enhanced_query = query
+        
+        # Add reference patterns to the WHERE clause
+        where_match = re.search(r'WHERE\s*{(.+)}', enhanced_query, re.IGNORECASE | re.DOTALL)
+        if not where_match:
+            return query
+            
+        where_clause = where_match.group(1)
+        reference_patterns = """
+  OPTIONAL {
+    ?statement prov:wasDerivedFrom ?ref .
+    OPTIONAL { ?ref pr:P854 ?refUrl . }
+    OPTIONAL { ?ref pr:P813 ?refDate . }
+  }
+"""
+        # Add reference patterns before the closing brace
+        enhanced_where = where_clause + reference_patterns
+        enhanced_query = enhanced_query.replace(where_clause, enhanced_where)
+        
+        return enhanced_query
+        
+    except Exception as e:
+        # If any error occurs during enhancement, return the original query
+        logger.warning(f"Error enhancing query with references: {e}")
+        return query
+\end{lstlisting}
+
+This reference integration system allows us to retrieve and display source information for knowledge graph facts, enhancing the system's trustworthiness and transparency.
+
+% Add a diagram here showing the query processing pipeline
+% Mermaid code:
+% sequenceDiagram
+%     participant User
+%     participant EntityExtraction
+%     participant StrategySelection
+%     participant Verbalization
+%     participant PropertyGeneration
+%     participant SPARQLGeneration
+%     participant QueryExecution
+%     participant AnswerGeneration
+%     
+%     User->>EntityExtraction: Natural language question
+%     EntityExtraction->>StrategySelection: Extracted entities
+%     
+%     alt Simple Question
+%         StrategySelection->>Verbalization: Use verbalization
+%         Verbalization->>QueryExecution: Property lookup
+%         
+%         alt Verbalization Success
+%             QueryExecution->>AnswerGeneration: Direct results
+%         else Verbalization Failure
+%             Verbalization->>PropertyGeneration: Fallback
+%         end
+%     else Complex Question
+%         StrategySelection->>PropertyGeneration: Use SPARQL
+%     end
+%     
+%     PropertyGeneration->>SPARQLGeneration: Enhanced properties
+%     SPARQLGeneration->>QueryExecution: Generated SPARQL query
+%     QueryExecution->>AnswerGeneration: Query results
+%     AnswerGeneration->>User: Natural language answer
+
 \subsection{Web Search Fallback Integration}
+To handle cases where knowledge graphs lack the necessary information, we implemented a web search fallback system using Google Search integration. This provides a robust fallback mechanism when knowledge graph methods fail.
+
+\subsubsection{Google Search Implementation}
+The web search integration uses Google's Gemini API to perform searches and extract relevant information:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Google Search Integration Implementation, label=code:google-search-integration]
+def execute_google_search(self, query):
+    """
+    Execute a Google Search query using Gemini's built-in search capability
+    
+    Args:
+        query (str): Search query
+        
+    Returns:
+        dict: Search results with content and citations
+    """
+    try:
+        # Initialize Google Genai client with the API key
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("Gemini API key not found in environment variables")
+
+        client = genai.Client(api_key=api_key)
+
+        # Execute the search query using Gemini's built-in search
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=query,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
+            ),
+        )
+
+        # Process and format the results
+        search_results = {
+            "content": "",
+            "citations": []
+        }
+
+        if hasattr(response, "candidates") and len(response.candidates) > 0:
+            candidate = response.candidates[0]
+
+            # Extract text content
+            if candidate.content and candidate.content.parts:
+                search_results["content"] = candidate.content.parts[0].text
+
+            # Extract search citations
+            if hasattr(candidate, "grounding_metadata") and candidate.grounding_metadata:
+                grounding_chunks = getattr(
+                    candidate.grounding_metadata, "grounding_chunks", []
+                )
+                
+                # Collect citation information
+                for chunk in grounding_chunks:
+                    if hasattr(chunk, "web") and chunk.web:
+                        web_info = chunk.web
+                        url = getattr(web_info, "uri", "")
+                        title = getattr(web_info, "title", "")
+                        domain = getattr(web_info, "domain", "")
+
+                        # Resolve proxy URLs to their final destinations
+                        if url and "vertexaisearch.cloud.google.com" in url:
+                            final_url = self._resolve_redirect_url(url)
+                            search_results["citations"].append({
+                                "title": title or domain,
+                                "url": final_url
+                            })
+                        elif url:
+                            search_results["citations"].append({
+                                "title": title or domain,
+                                "url": url
+                            })
+        
+        return search_results
+        
+    except Exception as e:
+        logger.error(f"Error executing Google Search: {e}")
+        return {"content": "", "citations": []}
+\end{lstlisting}
+
+\subsubsection{Fallback Strategy Implementation}
+The web search fallback is integrated into the main processing pipeline through conditional routing in the LangGraph framework. The implementation ensures that web search is only used when knowledge graph methods fail and the feature is enabled in user settings:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Web Search Fallback Strategy, label=code:fallback-strategy]
+# From LangGraph workflow definition
+workflow.add_conditional_edges(
+    "sparql_generation",
+    lambda x: (
+        "answer_generation"
+        if x.approach_used == "sparql"
+        else (
+            "google_search"
+            if getattr(x, 'use_google_search', True)
+            else "answer_generation"
+        )
+    ),
+    {
+        "answer_generation": "answer_generation",
+        "google_search": "google_search",
+    }
+)
+\end{lstlisting}
+
+This conditional edge ensures that the workflow only routes to Google Search when:
+\begin{enumerate}
+    \item SPARQL generation has failed to produce valid results
+    \item The \texttt{use\_google\_search} setting is enabled
+\end{enumerate}
+
+When these conditions are met, the system routes to the Google Search node, which performs the search and formats the results for answer generation. This fallback mechanism ensures that users receive useful information even when the knowledge graph does not contain the requested information.
+
+% Add a diagram here showing the web search fallback integration
+% Mermaid code:
+% flowchart TD
+%     A[User Query] --> B[Entity Extraction]
+%     B --> C[Strategy Selection]
+%     C -->|Complex Query| D[SPARQL Generation]
+%     C -->|Simple Query| E[Verbalization]
+%     E -->|Success| F[Answer Generation]
+%     E -->|Failure| D
+%     D -->|Success| F
+%     D -->|Failure| G{Google Search Enabled?}
+%     G -->|Yes| H[Google Search]
+%     G -->|No| I[Inform User: KG Only]
+%     H --> F
+%     I --> F
+%     F --> J[Return Answer]
+
+\subsubsection{Citation and Source Attribution}
+To maintain transparency and attribution, our web search implementation includes comprehensive citation handling:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Citation and Source Attribution Implementation, label=code:citation-attribution]
+def _format_search_context(self, search_results):
+    """
+    Format search results into a context string with citations
+    
+    Args:
+        search_results (dict): Search results with content and citations
+        
+    Returns:
+        str: Formatted context string
+    """
+    if not search_results or not search_results.get("content"):
+        return "I couldn't find information to answer this question from web search."
+        
+    # Format the main content
+    context_str = f'Based on web search results: {search_results["content"]}'
+    
+    # Add citation information
+    if search_results.get("citations"):
+        context_str += "\n\nSources:\n"
+        for citation in search_results["citations"]:
+            title = citation.get('title', 'Unknown Source')
+            url = citation.get('url', '')
+            context_str += f"- {title}: {url}\n"
+    
+    return context_str
+\end{lstlisting}
+
+This attribution system ensures that information retrieved from web sources is properly cited, maintaining transparency and allowing users to verify information from original sources.
+
+\subsection{Runtime Settings and Configuration}
+Our implementation includes a comprehensive runtime settings system that allows users to control the behavior of the knowledge graph integration and query processing components:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Runtime Settings Implementation, label=code:runtime-settings]
+def query(self, question, settings=None):
+    """
+    Process a question using the FROG GraphRAG system
+    
+    Args:
+        question (str): User question
+        settings (dict): Runtime settings
+        
+    Returns:
+        tuple: (answer, visualization_files)
+    """
+    # Default settings
+    default_settings = {
+        "use_verbalization": True,
+        "use_google_search": True,
+        "use_translation": True,
+        "knowledge_source": "wikidata",
+        "include_references": True,
+        "boxology_verbose": 0,
+        "try_threshold": 5
+    }
+    
+    # Override with user settings
+    if settings:
+        default_settings.update(settings)
+        
+    # Create initial state
+    state = FROGGraphRAGState(
+        question=question,
+        **default_settings
+    )
+    
+    # Initialize visualization if enabled
+    if default_settings["boxology_verbose"] > 0:
+        self.visualizer = BoxologyVisualizer()
+        state.visualizer = self.visualizer
+        
+    # Set debug callback if provided
+    if self.debug_callback:
+        state.debug_callback = self.debug_callback
+        
+    # Execute the workflow
+    final_state = self.graph.invoke(state)
+    
+    # Generate visualization files if enabled
+    if default_settings["boxology_verbose"] > 0 and self.visualizer:
+        visualization_files = self.visualizer.save_visualization_files()
+        self.visualization_files = visualization_files
+    else:
+        visualization_files = {}
+        
+    return final_state.final_answer, visualization_files
+\end{lstlisting}
+
+The runtime settings system provides several key capabilities:
+
+\begin{enumerate}
+    \item \textbf{Knowledge Source Selection}: Controls which knowledge graph to query
+    \item \textbf{Processing Strategy Control}: Enables/disables verbalization and Google Search
+    \item \textbf{Translation Support}: Enables/disables automatic translation
+    \item \textbf{Reference Inclusion}: Controls whether references are included in results
+    \item \textbf{Visualization Detail}: Controls the level of process visualization
+    \item \textbf{Retry Threshold}: Controls how many SPARQL generation attempts are made
+\end{enumerate}
+
+These settings can be controlled through the frontend interface, allowing users to customize the system's behavior based on their specific requirements. The settings are stored in a shared state object that flows through the entire processing pipeline, ensuring consistent behavior across all components.
+
+In summary, our knowledge graph integration and query processing implementation provides a flexible, extensible architecture for accessing multiple knowledge sources through a unified interface. The system adapts to different knowledge domains, handles query complexity through intelligent routing, and provides robust fallback mechanisms when knowledge graph methods fail. This comprehensive approach enables effective question answering across diverse knowledge domains while maintaining transparency and attribution.
 
 \section{System Integration and Communication}
 \subsection{Backend Architecture}
