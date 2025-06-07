@@ -2652,7 +2652,7 @@ Throughout the implementation process, we encountered and addressed several tech
 These implementation challenges highlight the complexity of building production-ready systems that integrate multiple deep learning and vector database components. Our solutions ensured reproducible behavior across different environments while maintaining the performance benefits of our optimized approach.
 
 \section{Multi-Agent System Implementation}
-The multi-agent system represents the core architectural component of our enhanced GraphRAG framework. We implemented a sophisticated orchestration of specialized agents using LangGraph, a directed graph-based framework designed for composing language agents. This section details the technical implementation of our multi-agent architecture, including the state graph construction, specialized agent nodes, and integration with our multi-provider LLM factory.
+The multi-agent system represents the core architectural component of our enhanced GraphRAG framework. We implemented a sophisticated orchestration of specialized agents using LangGraph, a directed graph-based framework designed for composing language agents. This section details the technical implementation of our multi-agent architecture, including the state graph construction, multi-source knowledge graph infrastructure, specialized agent nodes, and integration with our multi-provider LLM factory.
 
 \subsection{LangGraph Architecture}
 The foundation of our multi-agent system is built on LangGraph, which provides a structured approach to defining agent workflows through directed state graphs. Our implementation orchestrates data flow between specialized agents, each responsible for a distinct aspect of the question-answering process.
@@ -2772,6 +2772,172 @@ The state object captures all processing context, including:
 \end{itemize}
 
 This comprehensive state design ensures that each agent has access to all previous processing context, enabling more informed decision-making at each step of the workflow.
+
+\subsection{Multi-Source Knowledge Graph Architecture}
+Our implementation utilizes a source-aware architecture that enables seamless integration with multiple knowledge graphs. This flexibility allows the system to handle diverse knowledge domains through a unified interface while accommodating domain-specific requirements.
+
+\subsubsection{Knowledge Graph Metadata System}
+The foundation of our multi-source architecture is a comprehensive metadata system that defines the configuration for each knowledge graph. We implemented this using a structured JSON configuration file:
+
+\begin{lstlisting}[breaklines=true,language=json, caption=Knowledge Graph Metadata Configuration, label=code:kg-metadata]
+// backend/config/knowledge_graph_metadata.json (excerpt)
+{
+  "wikidata": {
+    "name": "Wikidata",
+    "description": "Wikidata knowledge graph",
+    "endpoint": "https://query.wikidata.org/sparql",
+    "prefixes": {
+      "wd": "http://www.wikidata.org/entity/",
+      "wdt": "http://www.wikidata.org/prop/direct/",
+      "p": "http://www.wikidata.org/prop/",
+      // Additional prefixes...
+    },
+    "sparql_instructions": [
+      "Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs",
+      "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed",
+      "Return entity IDs directly without using label services"
+    ],
+    "verbalization_templates": {
+      "po_template": "SELECT distinct ?p ?o ?oLabel\nWHERE {{\n  BIND(wd:{entity} AS ?s) .\n  \n  ?s ?p ?o .\n  FILTER(?p != wd:P18)\n  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n    FILTER (LANG(?oLabel) = \"en\")\n  }}\n}} LIMIT 1000",
+      "sp_template": "SELECT ?s ?sLabel ?p\nWHERE {{\n  BIND(wd:{entity} AS ?o) .\n  \n  ?s ?p ?o .\n  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n    FILTER (LANG(?sLabel) = \"en\")\n  }}\n}} LIMIT 1000"
+    },
+    "user_agent": "FROG Wikidata Agent/1.0",
+    "entity_uri_format": "wd:{entity_id}",
+    "property_uri_format": "wdt:{property_id}",
+    "supports_references": true
+  },
+  // Additional knowledge graph configurations...
+}
+\end{lstlisting}
+
+For each knowledge graph, the metadata includes:
+\begin{itemize}
+    \item \textbf{SPARQL Endpoint}: URL for the knowledge graph's query service
+    \item \textbf{Namespace Prefixes}: Domain-specific URI prefixes for entities and properties
+    \item \textbf{SPARQL Instructions}: Domain-specific guidelines for query formatting
+    \item \textbf{Verbalization Templates}: Pre-defined SPARQL templates for property retrieval
+    \item \textbf{URI Formats}: Templates for entity and property URI construction
+    \item \textbf{Reference Support}: Indicator of whether the graph supports reference queries
+\end{itemize}
+
+\subsubsection{Source-Aware SPARQL Wrapper}
+To handle the specific requirements of different knowledge graphs, we implemented a source-aware SPARQL wrapper that adapts query execution based on the knowledge source:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Source-Aware SPARQL Wrapper Implementation, label=code:source-aware-sparql]
+class SourceAwareSPARQLWrapper:
+    """SPARQL wrapper that adapts to different knowledge graph sources"""
+    def __init__(self, source="wikidata"):
+        self.source = source
+        self.kg_metadata = get_knowledge_graph_metadata()
+        
+        # Get endpoint URL for the current source
+        self.endpoint_url = self.kg_metadata.get_endpoint_url(source)
+        
+        # Initialize the SPARQLWrapper with the appropriate endpoint
+        self.wrapper = SPARQLWrapper(self.endpoint_url)
+        self.wrapper.setReturnFormat(JSON)
+        
+        # Set appropriate user agent
+        user_agent = self.kg_metadata.get_user_agent(source)
+        if user_agent:
+            self.wrapper.addCustomHttpHeader("User-Agent", user_agent)
+    
+    def execute_query(self, query, return_format="list"):
+        """Execute a SPARQL query against the appropriate endpoint"""
+        try:
+            # Apply environment variable substitution for local endpoints
+            processed_query = self._process_query(query)
+            
+            # Set and execute the query
+            self.wrapper.setQuery(processed_query)
+            results = self.wrapper.query().convert()
+            
+            # Return formatted results based on requested format
+            if return_format == "list":
+                return self._parse_results_as_list(results), None
+            else:
+                return self._parse_results_as_dict(results), None
+                
+        except Exception as e:
+            return None, str(e)
+\end{lstlisting}
+
+The source-aware wrapper provides several key technical advantages:
+
+\begin{enumerate}
+    \item \textbf{Dynamic Endpoint Selection}: Automatically selects the appropriate SPARQL endpoint based on the knowledge source.
+    \item \textbf{Environment Variable Substitution}: Handles local endpoints with environment variable configuration.
+    \item \textbf{Result Format Normalization}: Standardizes result formats across different knowledge graph implementations.
+    \item \textbf{Error Handling}: Provides consistent error handling regardless of the underlying knowledge graph.
+\end{enumerate}
+
+\subsubsection{Factory Pattern for Knowledge Graph Services}
+
+To enable seamless switching between knowledge graph sources, we implemented a factory pattern for knowledge graph services. This architecture allows components to request appropriate services without needing to know the specific implementation details:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Property Retrieval Factory Implementation, label=code:property-retrieval-factory]
+class PropertyRetrievalFactory:
+    """
+    Factory for creating property retrievers for different knowledge graph sources
+    """
+    def __init__(self):
+        self._retrievers = {}
+        
+    def get_property_retriever(self, source, df_properties=None):
+        """
+        Get or create a property retriever for the specified source
+        
+        Args:
+            source (str): Knowledge graph source identifier
+            df_properties (pd.DataFrame): Optional properties dataframe for Wikidata
+            
+        Returns:
+            object: Property retriever for the specified source
+        """
+        if source in self._retrievers:
+            return self._retrievers[source]
+            
+        # Create a new retriever based on the source
+        if source == "wikidata":
+            if df_properties is None:
+                raise ValueError("df_properties must be provided for Wikidata")
+            retriever = WikidataPropertyRetrieval(df_properties)
+        elif source == "curriculum":
+            retriever = CurriculumPropertyRetrieval()
+        elif source == "legal":
+            retriever = LegalPropertyRetrieval()
+        elif source == "gesis":
+            retriever = GesisPropertyRetrieval()
+        else:
+            raise ValueError(f"Unsupported source: {source}")
+            
+        # Cache and return the retriever
+        self._retrievers[source] = retriever
+        return retriever
+
+# Singleton instance
+_property_retrieval_factory = None
+
+def get_property_retrieval_factory():
+    """Get the singleton property retrieval factory instance"""
+    global _property_retrieval_factory
+    if _property_retrieval_factory is None:
+        _property_retrieval_factory = PropertyRetrievalFactory()
+    return _property_retrieval_factory
+\end{lstlisting}
+
+This factory pattern is applied to multiple services in our architecture, including:
+\begin{itemize}
+    \item \textbf{Property Retrieval}: For finding relevant entities and properties in knowledge graphs
+    \item \textbf{Entity Retrieval}: For finding entities matching natural language terms
+    \item \textbf{SPARQL Execution}: For executing queries against different endpoints
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/kg_extractor_uml.jpg}
+    \caption{Multi-Source Knowledge Graph Architecture}
+\end{figure}
 
 \subsection{Specialized Agent Nodes}
 Our multi-agent system consists of eight specialized agent nodes, each implemented as a separate Python class with a standardized interface. All nodes follow a common pattern where they:
@@ -3189,7 +3355,7 @@ The Verbalization Node implements a sophisticated approach that:
 This node enables efficient handling of simple questions without requiring SPARQL generation, significantly improving system responsiveness for common query types.
 
 \subsubsection{SPARQL Generation Node}
-The SPARQL Generation Node is responsible for generating executable SPARQL queries based on extracted entities and properties:
+The SPARQL Generation Node is responsible for generating executable SPARQL queries based on extracted entities and properties, and executing them against the appropriate knowledge graph:
 
 \begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation, label=code:sparql-generation-node]
 class SparqlGenerationNode:
@@ -3381,6 +3547,94 @@ Please generate a better query. Try using different properties or restructuring 
             state.approach_used = "sparql_failed_no_fallback"
             
         return state
+        
+    def execute_sparql(self, query, state=None):
+        """
+        Execute a SPARQL query with retries and error handling
+        """
+        # Configure SPARQL endpoint based on knowledge source
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata') if state else 'wikidata'
+        
+        # Get source-aware SPARQL wrapper for the appropriate knowledge source
+        source_aware_api = SourceAwareSPARQLWrapper(knowledge_source)
+        
+        # Execute the query with retries
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                # Execute query using source-aware wrapper
+                results, err = source_aware_api.execute_query(query)
+                
+                if err:
+                    retry_count += 1
+                    time.sleep(1)  # Wait before retrying
+                    continue
+                    
+                return results, None
+                
+            except Exception:
+                retry_count += 1
+                time.sleep(1)  # Wait before retrying
+        
+        # All retries failed
+        return None, "Query execution failed after multiple attempts"
+        
+    def _enhance_query_with_references(self, query, state):
+        """
+        Enhance a SPARQL query to include reference information
+        """
+        # Only enhance if references are requested and supported by the knowledge source
+        if not getattr(state, 'include_references', True):
+            return query
+            
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        kg_metadata = get_knowledge_graph_metadata()
+        
+        if not kg_metadata.supports_references(knowledge_source):
+            return query
+        
+        # Check if this is a simple SELECT query that we can enhance
+        if not query.upper().startswith("SELECT ") or "GROUP BY" in query.upper():
+            return query
+        
+        try:
+            # Parse the query to find variables
+            select_match = re.search(r'SELECT\s+(.+?)\s+WHERE', query, re.IGNORECASE | re.DOTALL)
+            if not select_match:
+                return query
+                
+            # Add reference variables to the SELECT clause
+            select_vars = select_match.group(1)
+            if "?refUrl" not in select_vars and "?refDate" not in select_vars:
+                enhanced_select = select_vars + " ?refUrl ?refDate"
+                enhanced_query = query.replace(select_vars, enhanced_select)
+            else:
+                enhanced_query = query
+            
+            # Add reference patterns to the WHERE clause
+            where_match = re.search(r'WHERE\s*{(.+)}', enhanced_query, re.IGNORECASE | re.DOTALL)
+            if not where_match:
+                return query
+                
+            where_clause = where_match.group(1)
+            reference_patterns = """
+  OPTIONAL {
+    ?statement prov:wasDerivedFrom ?ref .
+    OPTIONAL { ?ref pr:P854 ?refUrl . }
+    OPTIONAL { ?ref pr:P813 ?refDate . }
+  }
+"""
+            # Add reference patterns before the closing brace
+            enhanced_where = where_clause + reference_patterns
+            enhanced_query = enhanced_query.replace(where_clause, enhanced_where)
+            
+            return enhanced_query
+            
+        except Exception as e:
+            # If any error occurs during enhancement, return the original query
+            return query
 \end{lstlisting}
 
 The SPARQL Generation Node implements a sophisticated retry mechanism that attempts to generate and execute valid SPARQL queries up to a configurable threshold. The node:
@@ -3396,7 +3650,14 @@ The SPARQL Generation Node implements a sophisticated retry mechanism that attem
     \item Provides detailed logging for visualization and debugging
 \end{enumerate}
 
-This node represents the most complex component of the multi-agent system, handling the generation and execution of SPARQL queries while providing robust fallback mechanisms for handling query failures.
+For optimal performance, particularly with large knowledge graphs like GESIS, we implement query optimization techniques including:
+
+\begin{itemize}
+    \item \textbf{Triple Pattern Ordering}: Arranging triple patterns to minimize intermediate results
+    \item \textbf{Query Structure Optimization}: Using nested subqueries for efficient operations
+    \item \textbf{Explicit Type Constraints}: Adding type filters to reduce result sets
+    \item \textbf{Result Limit Control}: Adding LIMIT clauses to prevent excessive result sizes
+\end{itemize}
 
 \begin{figure}
     \centering
@@ -3438,6 +3699,52 @@ class GoogleSearchNode:
             state.approach_used = "google_search_failed"
             
         return state
+        
+    def _execute_search(self, client, query):
+        """Execute a Google Search query using Gemini's built-in search capability"""
+        try:
+            # Execute the search query using Gemini's built-in search
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=query,
+                config=types.GenerateContentConfig(
+                    tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
+                ),
+            )
+
+            # Process and format the results
+            search_results = {
+                "content": "",
+                "citations": []
+            }
+
+            if hasattr(response, "candidates") and len(response.candidates) > 0:
+                candidate = response.candidates[0]
+                # Extract content and citations
+                # [detailed processing code omitted for brevity]
+            
+            return search_results
+            
+        except Exception as e:
+            return {"content": "", "citations": []}
+            
+    def _format_search_context(self, search_results):
+        """Format search results into a context string with citations"""
+        if not search_results or not search_results.get("content"):
+            return "I couldn't find information to answer this question from web search."
+            
+        # Format the main content
+        context_str = f'Based on web search results: {search_results["content"]}'
+        
+        # Add citation information
+        if search_results.get("citations"):
+            context_str += "\n\nSources:\n"
+            for citation in search_results["citations"]:
+                title = citation.get('title', 'Unknown Source')
+                url = citation.get('url', '')
+                context_str += f"- {title}: {url}\n"
+        
+        return context_str
 \end{lstlisting}
 
 The Google Search Node implements a fallback mechanism that leverages Google's search capabilities through the Gemini API. This approach:
@@ -3694,556 +4001,6 @@ The LLM factory is designed to support multiple provider types, with each provid
 
 Each specialized agent node retrieves its appropriate model from the factory using the designated getter methods. This allows for specialized models to be used for each task, optimizing the performance of the overall system.
 
-Together, these components create a sophisticated question-answering system that can handle diverse question types across multiple knowledge graph domains, adapting its processing approach based on question complexity and domain-specific requirements.
-
-\section{Knowledge Graph Integration and Query Processing}
-The knowledge graph integration and query processing system forms the core of our enhanced GraphRAG framework. We implemented a unified architecture that supports multiple knowledge graph sources, processes queries across different domains, and provides robust fallback mechanisms. This section details the technical implementation of these components, focusing on the multi-source knowledge graph architecture, query processing pipeline, and web search integration.
-
-\subsection{Multi-Source Knowledge Graph Architecture}
-Our implementation utilizes a source-aware architecture that enables seamless integration with multiple knowledge graphs. This flexibility allows the system to handle diverse knowledge domains through a unified interface while accommodating domain-specific requirements.
-
-\subsubsection{Knowledge Graph Metadata System}
-The foundation of our multi-source architecture is a comprehensive metadata system that defines the configuration for each knowledge graph. We implemented this using a structured JSON configuration file:
-
-\begin{lstlisting}[breaklines=true,language=json, caption=Knowledge Graph Metadata Configuration, label=code:kg-metadata]
-// backend/config/knowledge_graph_metadata.json (excerpt)
-{
-  "wikidata": {
-    "name": "Wikidata",
-    "description": "Wikidata knowledge graph",
-    "endpoint": "https://query.wikidata.org/sparql",
-    "prefixes": {
-      "wd": "http://www.wikidata.org/entity/",
-      "wdt": "http://www.wikidata.org/prop/direct/",
-      "p": "http://www.wikidata.org/prop/",
-      // Additional prefixes...
-    },
-    "sparql_instructions": [
-      "Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs",
-      "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed",
-      "Return entity IDs directly without using label services"
-    ],
-    "verbalization_templates": {
-      "po_template": "SELECT distinct ?p ?o ?oLabel\nWHERE {{\n  BIND(wd:{entity} AS ?s) .\n  \n  ?s ?p ?o .\n  FILTER(?p != wd:P18)\n  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n    FILTER (LANG(?oLabel) = \"en\")\n  }}\n}} LIMIT 1000",
-      "sp_template": "SELECT ?s ?sLabel ?p\nWHERE {{\n  BIND(wd:{entity} AS ?o) .\n  \n  ?s ?p ?o .\n  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n    FILTER (LANG(?sLabel) = \"en\")\n  }}\n}} LIMIT 1000"
-    },
-    "user_agent": "FROG Wikidata Agent/1.0",
-    "entity_uri_format": "wd:{entity_id}",
-    "property_uri_format": "wdt:{property_id}",
-    "supports_references": true
-  },
-  // Additional knowledge graph configurations...
-}
-\end{lstlisting}
-
-For each knowledge graph, the metadata includes:
-\begin{itemize}
-    \item \textbf{SPARQL Endpoint}: URL for the knowledge graph's query service
-    \item \textbf{Namespace Prefixes}: Domain-specific URI prefixes for entities and properties
-    \item \textbf{SPARQL Instructions}: Domain-specific guidelines for query formatting
-    \item \textbf{Verbalization Templates}: Pre-defined SPARQL templates for property retrieval
-    \item \textbf{URI Formats}: Templates for entity and property URI construction
-    \item \textbf{Reference Support}: Indicator of whether the graph supports reference queries
-\end{itemize}
-
-\subsubsection{Source-Aware SPARQL Wrapper}
-To handle the specific requirements of different knowledge graphs, we implemented a source-aware SPARQL wrapper that adapts query execution based on the knowledge source:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Source-Aware SPARQL Wrapper Implementation, label=code:source-aware-sparql]
-class SourceAwareSPARQLWrapper:
-    """SPARQL wrapper that adapts to different knowledge graph sources"""
-    def __init__(self, source="wikidata"):
-        self.source = source
-        self.kg_metadata = get_knowledge_graph_metadata()
-        
-        # Get endpoint URL for the current source
-        self.endpoint_url = self.kg_metadata.get_endpoint_url(source)
-        
-        # Initialize the SPARQLWrapper with the appropriate endpoint
-        self.wrapper = SPARQLWrapper(self.endpoint_url)
-        self.wrapper.setReturnFormat(JSON)
-        
-        # Set appropriate user agent
-        user_agent = self.kg_metadata.get_user_agent(source)
-        if user_agent:
-            self.wrapper.addCustomHttpHeader("User-Agent", user_agent)
-    
-    def execute_query(self, query, return_format="list"):
-        """Execute a SPARQL query against the appropriate endpoint"""
-        try:
-            # Apply environment variable substitution for local endpoints
-            processed_query = self._process_query(query)
-            
-            # Set and execute the query
-            self.wrapper.setQuery(processed_query)
-            results = self.wrapper.query().convert()
-            
-            # Return formatted results based on requested format
-            if return_format == "list":
-                return self._parse_results_as_list(results), None
-            else:
-                return self._parse_results_as_dict(results), None
-                
-        except Exception as e:
-            return None, str(e)
-\end{lstlisting}
-
-The source-aware wrapper provides several key technical advantages:
-
-\begin{enumerate}
-    \item \textbf{Dynamic Endpoint Selection}: Automatically selects the appropriate SPARQL endpoint based on the knowledge source.
-    \item \textbf{Environment Variable Substitution}: Handles local endpoints with environment variable configuration.
-    \item \textbf{Result Format Normalization}: Standardizes result formats across different knowledge graph implementations.
-    \item \textbf{Error Handling}: Provides consistent error handling regardless of the underlying knowledge graph.
-\end{enumerate}
-
-\subsubsection{Factory Pattern for Knowledge Graph Services}
-
-To enable seamless switching between knowledge graph sources, we implemented a factory pattern for knowledge graph services. This architecture allows components to request appropriate services without needing to know the specific implementation details:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Property Retrieval Factory Implementation, label=code:property-retrieval-factory]
-class PropertyRetrievalFactory:
-    """
-    Factory for creating property retrievers for different knowledge graph sources
-    """
-    def __init__(self):
-        self._retrievers = {}
-        
-    def get_property_retriever(self, source, df_properties=None):
-        """
-        Get or create a property retriever for the specified source
-        
-        Args:
-            source (str): Knowledge graph source identifier
-            df_properties (pd.DataFrame): Optional properties dataframe for Wikidata
-            
-        Returns:
-            object: Property retriever for the specified source
-        """
-        if source in self._retrievers:
-            return self._retrievers[source]
-            
-        # Create a new retriever based on the source
-        if source == "wikidata":
-            if df_properties is None:
-                raise ValueError("df_properties must be provided for Wikidata")
-            retriever = WikidataPropertyRetrieval(df_properties)
-        elif source == "curriculum":
-            retriever = CurriculumPropertyRetrieval()
-        elif source == "legal":
-            retriever = LegalPropertyRetrieval()
-        elif source == "gesis":
-            retriever = GesisPropertyRetrieval()
-        else:
-            raise ValueError(f"Unsupported source: {source}")
-            
-        # Cache and return the retriever
-        self._retrievers[source] = retriever
-        return retriever
-
-# Singleton instance
-_property_retrieval_factory = None
-
-def get_property_retrieval_factory():
-    """Get the singleton property retrieval factory instance"""
-    global _property_retrieval_factory
-    if _property_retrieval_factory is None:
-        _property_retrieval_factory = PropertyRetrievalFactory()
-    return _property_retrieval_factory
-\end{lstlisting}
-
-This factory pattern is applied to multiple services in our architecture, including:
-\begin{itemize}
-    \item \textbf{Property Retrieval}: For finding relevant properties in knowledge graphs
-    \item \textbf{Entity Retrieval}: For finding entities matching natural language terms
-    \item \textbf{SPARQL Execution}: For executing queries against different endpoints
-\end{itemize}
-
-Add a diagram here showing the multi-source knowledge graph architecture
-Mermaid code:
-classDiagram
-    class KnowledgeGraphMetadata {
-        +get_endpoint_url(source)
-        +get_prefixes(source)
-        +get_sparql_instructions(source)
-        +get_verbalization_templates(source)
-    }
-    
-    class SourceAwareSPARQLWrapper {
-        -source: str
-        -wrapper: SPARQLWrapper
-        +execute_query(query, format)
-    }
-    
-    class PropertyRetrievalFactory {
-        -retrievers: Dict
-        +get_property_retriever(source)
-    }
-    
-    class WikidataPropertyRetrieval
-    class CurriculumPropertyRetrieval
-    class LegalPropertyRetrieval
-    class GesisPropertyRetrieval
-    
-    PropertyRetrievalFactory --> WikidataPropertyRetrieval
-    PropertyRetrievalFactory --> CurriculumPropertyRetrieval
-    PropertyRetrievalFactory --> LegalPropertyRetrieval
-    PropertyRetrievalFactory --> GesisPropertyRetrieval
-    
-    SourceAwareSPARQLWrapper --> KnowledgeGraphMetadata
-    PropertyRetrievalFactory --> KnowledgeGraphMetadata
-
-\subsection{Query Processing Pipeline}
-The query processing pipeline transforms natural language questions into structured SPARQL queries and executes them against the appropriate knowledge graph. Our implementation supports multiple processing approaches based on query complexity.
-
-\subsubsection{Query Processing Components}
-Our pipeline consists of several specialized components that work together to process queries:
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{query_processing_components.jpg}
-    \caption{Query Processing Components and Interaction Flow}
-    \label{fig:query-processing-components}
-\end{figure}
-
-The key components of our query processing pipeline include:
-
-\begin{enumerate}
-    \item \textbf{Entity Extraction}: Identifies entities mentioned in the question
-    \item \textbf{Strategy Selection}: Determines whether to use verbalization or SPARQL generation
-    \item \textbf{Verbalization}: Direct property lookup for simple questions
-    \item \textbf{SPARQL Generation}: Advanced query generation for complex questions
-    \item \textbf{Query Execution}: Executes queries against the knowledge graph
-    \item \textbf{Result Processing}: Formats query results for answer generation
-\end{enumerate}
-
-\subsubsection{SPARQL Query Execution and Optimization}
-A critical aspect of our implementation is the execution and optimization of SPARQL queries. We implemented a robust query execution system with retry logic and error handling:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Query Execution Implementation, label=code:sparql-execution]
-def execute_sparql(self, query, state=None):
-    """
-    Execute a SPARQL query with retries and error handling
-    
-    Args:
-        query (str): SPARQL query to execute
-        state (FROGGraphRAGState): Current processing state
-        
-    Returns:
-        tuple: (results, error)
-    """
-    # Configure SPARQL endpoint based on knowledge source
-    knowledge_source = getattr(state, 'knowledge_source', 'wikidata') if state else 'wikidata'
-    
-    # Get source-aware SPARQL wrapper for the appropriate knowledge source
-    source_aware_api = SourceAwareSPARQLWrapper(knowledge_source)
-    
-    # Add PREFIX declarations if needed
-    if not query.upper().startswith("PREFIX"):
-        kg_metadata = get_knowledge_graph_metadata()
-        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
-        if prefixes_declaration:
-            query = prefixes_declaration + "\n\n" + query
-    
-    # Execute the query with retries
-    max_retries = 3
-    retry_count = 0
-    
-    while retry_count < max_retries:
-        try:
-            # Execute query using source-aware wrapper
-            results, err = source_aware_api.execute_query(query)
-            
-            if err:
-                retry_count += 1
-                time.sleep(1)  # Wait before retrying
-                continue
-                
-            return results, None
-            
-        except Exception:
-            retry_count += 1
-            time.sleep(1)  # Wait before retrying
-    
-    # All retries failed
-    return None, "Query execution failed after multiple attempts"
-\end{lstlisting}
-
-For optimal performance, particularly with large knowledge graphs like GESIS, we implemented query optimization techniques as discussed in Section \ref{query-optimization}. These optimizations include:
-
-\begin{itemize}
-    \item \textbf{Triple Pattern Ordering}: Arranging triple patterns to minimize intermediate results
-    \item \textbf{Query Structure Optimization}: Using nested subqueries for efficient operations
-    \item \textbf{Explicit Type Constraints}: Adding type filters to reduce result sets
-    \item \textbf{Result Limit Control}: Adding LIMIT clauses to prevent excessive result sizes
-\end{itemize}
-
-\subsubsection{Reference Integration}
-For knowledge graphs that support references (currently only Wikidata), we implemented reference retrieval and integration into query results:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Reference Integration Implementation, label=code:reference-integration]
-def _enhance_query_with_references(self, query, state):
-    """
-    Enhance a SPARQL query to include reference information
-    
-    Args:
-        query (str): Original SPARQL query
-        state (FROGGraphRAGState): Current processing state
-        
-    Returns:
-        str: Enhanced query with reference retrieval
-    """
-    # Only enhance if references are requested and supported by the knowledge source
-    if not getattr(state, 'include_references', True):
-        return query
-        
-    knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-    kg_metadata = get_knowledge_graph_metadata()
-    
-    if not kg_metadata.supports_references(knowledge_source):
-        return query
-    
-    # Check if this is a simple SELECT query that we can enhance
-    if not query.upper().startswith("SELECT ") or "GROUP BY" in query.upper():
-        return query
-    
-    try:
-        # Parse the query to find variables
-        # This is a simplified approach - a full SPARQL parser would be more robust
-        select_match = re.search(r'SELECT\s+(.+?)\s+WHERE', query, re.IGNORECASE | re.DOTALL)
-        if not select_match:
-            return query
-            
-        # Add reference variables to the SELECT clause
-        select_vars = select_match.group(1)
-        if "?refUrl" not in select_vars and "?refDate" not in select_vars:
-            enhanced_select = select_vars + " ?refUrl ?refDate"
-            enhanced_query = query.replace(select_vars, enhanced_select)
-        else:
-            enhanced_query = query
-        
-        # Add reference patterns to the WHERE clause
-        where_match = re.search(r'WHERE\s*{(.+)}', enhanced_query, re.IGNORECASE | re.DOTALL)
-        if not where_match:
-            return query
-            
-        where_clause = where_match.group(1)
-        reference_patterns = """
-  OPTIONAL {
-    ?statement prov:wasDerivedFrom ?ref .
-    OPTIONAL { ?ref pr:P854 ?refUrl . }
-    OPTIONAL { ?ref pr:P813 ?refDate . }
-  }
-"""
-        # Add reference patterns before the closing brace
-        enhanced_where = where_clause + reference_patterns
-        enhanced_query = enhanced_query.replace(where_clause, enhanced_where)
-        
-        return enhanced_query
-        
-    except Exception as e:
-        # If any error occurs during enhancement, return the original query
-        logger.warning(f"Error enhancing query with references: {e}")
-        return query
-\end{lstlisting}
-
-This reference integration system allows us to retrieve and display source information for knowledge graph facts, enhancing the system's trustworthiness and transparency.
-
-% Add a diagram here showing the query processing pipeline
-% Mermaid code:
-% sequenceDiagram
-%     participant User
-%     participant EntityExtraction
-%     participant StrategySelection
-%     participant Verbalization
-%     participant PropertyGeneration
-%     participant SPARQLGeneration
-%     participant QueryExecution
-%     participant AnswerGeneration
-%     
-%     User->>EntityExtraction: Natural language question
-%     EntityExtraction->>StrategySelection: Extracted entities
-%     
-%     alt Simple Question
-%         StrategySelection->>Verbalization: Use verbalization
-%         Verbalization->>QueryExecution: Property lookup
-%         
-%         alt Verbalization Success
-%             QueryExecution->>AnswerGeneration: Direct results
-%         else Verbalization Failure
-%             Verbalization->>PropertyGeneration: Fallback
-%         end
-%     else Complex Question
-%         StrategySelection->>PropertyGeneration: Use SPARQL
-%     end
-%     
-%     PropertyGeneration->>SPARQLGeneration: Enhanced properties
-%     SPARQLGeneration->>QueryExecution: Generated SPARQL query
-%     QueryExecution->>AnswerGeneration: Query results
-%     AnswerGeneration->>User: Natural language answer
-
-\subsection{Web Search Fallback Integration}
-To handle cases where knowledge graphs lack the necessary information, we implemented a web search fallback system using Google Search integration. This provides a robust fallback mechanism when knowledge graph methods fail.
-
-\subsubsection{Google Search Implementation}
-The web search integration uses Google's Gemini API to perform searches and extract relevant information:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Google Search Integration Implementation, label=code:google-search-integration]
-def execute_google_search(self, query):
-    """
-    Execute a Google Search query using Gemini's built-in search capability
-    
-    Args:
-        query (str): Search query
-        
-    Returns:
-        dict: Search results with content and citations
-    """
-    try:
-        # Initialize Google Genai client with the API key
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            raise ValueError("Gemini API key not found in environment variables")
-
-        client = genai.Client(api_key=api_key)
-
-        # Execute the search query using Gemini's built-in search
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=query,
-            config=types.GenerateContentConfig(
-                tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
-            ),
-        )
-
-        # Process and format the results
-        search_results = {
-            "content": "",
-            "citations": []
-        }
-
-        if hasattr(response, "candidates") and len(response.candidates) > 0:
-            candidate = response.candidates[0]
-
-            # Extract text content
-            if candidate.content and candidate.content.parts:
-                search_results["content"] = candidate.content.parts[0].text
-
-            # Extract search citations
-            if hasattr(candidate, "grounding_metadata") and candidate.grounding_metadata:
-                grounding_chunks = getattr(
-                    candidate.grounding_metadata, "grounding_chunks", []
-                )
-                
-                # Collect citation information
-                for chunk in grounding_chunks:
-                    if hasattr(chunk, "web") and chunk.web:
-                        web_info = chunk.web
-                        url = getattr(web_info, "uri", "")
-                        title = getattr(web_info, "title", "")
-                        domain = getattr(web_info, "domain", "")
-
-                        # Resolve proxy URLs to their final destinations
-                        if url and "vertexaisearch.cloud.google.com" in url:
-                            final_url = self._resolve_redirect_url(url)
-                            search_results["citations"].append({
-                                "title": title or domain,
-                                "url": final_url
-                            })
-                        elif url:
-                            search_results["citations"].append({
-                                "title": title or domain,
-                                "url": url
-                            })
-        
-        return search_results
-        
-    except Exception as e:
-        logger.error(f"Error executing Google Search: {e}")
-        return {"content": "", "citations": []}
-\end{lstlisting}
-
-\subsubsection{Fallback Strategy Implementation}
-The web search fallback is integrated into the main processing pipeline through conditional routing in the LangGraph framework. The implementation ensures that web search is only used when knowledge graph methods fail and the feature is enabled in user settings:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Web Search Fallback Strategy, label=code:fallback-strategy]
-# From LangGraph workflow definition
-workflow.add_conditional_edges(
-    "sparql_generation",
-    lambda x: (
-        "answer_generation"
-        if x.approach_used == "sparql"
-        else (
-            "google_search"
-            if getattr(x, 'use_google_search', True)
-            else "answer_generation"
-        )
-    ),
-    {
-        "answer_generation": "answer_generation",
-        "google_search": "google_search",
-    }
-)
-\end{lstlisting}
-
-This conditional edge ensures that the workflow only routes to Google Search when:
-\begin{enumerate}
-    \item SPARQL generation has failed to produce valid results
-    \item The \texttt{use\_google\_search} setting is enabled
-\end{enumerate}
-
-When these conditions are met, the system routes to the Google Search node, which performs the search and formats the results for answer generation. This fallback mechanism ensures that users receive useful information even when the knowledge graph does not contain the requested information.
-
-% Add a diagram here showing the web search fallback integration
-% Mermaid code:
-% flowchart TD
-%     A[User Query] --> B[Entity Extraction]
-%     B --> C[Strategy Selection]
-%     C -->|Complex Query| D[SPARQL Generation]
-%     C -->|Simple Query| E[Verbalization]
-%     E -->|Success| F[Answer Generation]
-%     E -->|Failure| D
-%     D -->|Success| F
-%     D -->|Failure| G{Google Search Enabled?}
-%     G -->|Yes| H[Google Search]
-%     G -->|No| I[Inform User: KG Only]
-%     H --> F
-%     I --> F
-%     F --> J[Return Answer]
-
-\subsubsection{Citation and Source Attribution}
-To maintain transparency and attribution, our web search implementation includes comprehensive citation handling:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Citation and Source Attribution Implementation, label=code:citation-attribution]
-def _format_search_context(self, search_results):
-    """
-    Format search results into a context string with citations
-    
-    Args:
-        search_results (dict): Search results with content and citations
-        
-    Returns:
-        str: Formatted context string
-    """
-    if not search_results or not search_results.get("content"):
-        return "I couldn't find information to answer this question from web search."
-        
-    # Format the main content
-    context_str = f'Based on web search results: {search_results["content"]}'
-    
-    # Add citation information
-    if search_results.get("citations"):
-        context_str += "\n\nSources:\n"
-        for citation in search_results["citations"]:
-            title = citation.get('title', 'Unknown Source')
-            url = citation.get('url', '')
-            context_str += f"- {title}: {url}\n"
-    
-    return context_str
-\end{lstlisting}
-
-This attribution system ensures that information retrieved from web sources is properly cited, maintaining transparency and allowing users to verify information from original sources.
-
 \subsection{Runtime Settings and Configuration}
 Our implementation includes a comprehensive runtime settings system that allows users to control the behavior of the knowledge graph integration and query processing components:
 
@@ -4314,8 +4071,6 @@ The runtime settings system provides several key capabilities:
 \end{enumerate}
 
 These settings can be controlled through the frontend interface, allowing users to customize the system's behavior based on their specific requirements. The settings are stored in a shared state object that flows through the entire processing pipeline, ensuring consistent behavior across all components.
-
-In summary, our knowledge graph integration and query processing implementation provides a flexible, extensible architecture for accessing multiple knowledge sources through a unified interface. The system adapts to different knowledge domains, handles query complexity through intelligent routing, and provides robust fallback mechanisms when knowledge graph methods fail. This comprehensive approach enables effective question answering across diverse knowledge domains while maintaining transparency and attribution.
 
 \section{System Integration and Communication}
 \subsection{Backend Architecture}
