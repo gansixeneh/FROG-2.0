@@ -1,0 +1,385 @@
+\chapter{\babLima}
+\label{bab:5}
+
+In this chapter, we will discuss our experiment results and provide a thorough analysis.
+
+\section{Experiment Results}
+We conduct several experiments both on Pipeline v1 (Subsection \ref{pipeline1}) and Pipeline v2 (Subsection \ref{pipeline2}) using different configurations. We did not evaluate the result of the RAG directly. Instead, we evaluated the intermediate result, i.e., the retrieved result of the KG querying using Jaccard Similarity, as explained in Subsection \ref{jaccard}. Additionally, we evaluated the system holistically rather than focusing on individual components. The information provided in this subsection will be organized based on the used dataset.
+
+\subsection{Dataset Pipeline v1}
+\label{dataset-pipelinev1-result}
+Using the dataset for the first pipeline, we conduct experiments on both pipelines with two LLMs: Mistral 7B and Mistral NeMo. For the Mistral 7B itself, we run the experiment on two settings: using HuggingFace's Serverless Inference API\footnote{\url{https://huggingface.co/docs/api-inference/index}} and running the LLM locally. The experiment result can be seen in Table \ref{table-dataset1result}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.7\textwidth} | m{0.3\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} \\
+    \hline
+    \RaggedRight{Pipeline v1 w/ Mistral 7B (API)} & $0.473$ \\
+    \RaggedRight{Pipeline v1 w/ Mistral 7B (Local)} & $0.554$ \\
+    \RaggedRight{Pipeline v1 w/ Mistral NeMo 12B (Local)} & $0.581$ \\
+    \RaggedRight{\textbf{Pipeline v2 w/ Mistral NeMo 12B (Local)}} & $\textbf{0.677}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Experiment Results on the First Pipeline's Dataset}
+\label{table-dataset1result}
+\end{table}
+
+The API version of Mistral 7B yields a different result than the locally-hosted model, despite both models using the same configuration. Since the implementation details of HuggingFace's Serverless Inference API are undisclosed, our guess is that the API service might employ additional configurations that differ from the local setup. These could include runtime optimizations or difference in hardware environments, which may affect the final results. 
+Additionally, we found that the API service is sometimes ``unstable''; while it occasionally produces accurate tokens, at other times, it generates nonsensical outputs. We observed that posing the same question to the exact same system produced different results over time. For instance, when the system was being tested in August 2024, the system with Mistral 7B API usage produced a good result of $0.716$. However, for the December 2024 evaluation, the performance of Mistral 7B API deteriorates to just $0.473$, whereas the local setup achieves a result of $0.554$. This performance discrepancy might be influenced by undisclosed configurations or runtime factors specific to the API service. The observed instability could also contribute to the lower performance, but further experiments are needed to confirm a causal link.
+
+On the other hand, Mistral NeMo demonstrates a better performance compared to the original Mistral 7B, achieving a result of $0.581$. We can infer that this improvement is likely attributable to factors such as its larger number of parameters (12B) compared to Mistral 7B (7B), which may enhance its capacity to learn complex relationships and generate more accurate predictions.
+
+Lastly, testing the data with the same configuration on the second pipeline provides a justification that the second pipeline outperforms the first one, with a result of $0.677$. One of the main contributors to this improvement is the inclusion of additional stages, such as verbalization-based retrieval (Subsubsubsection \ref{local-question}), in the second pipeline. This stage helps cover the limitation of LLMs in generating SPARQL queries, especially for simple questions, leading to a more robust pipeline overall. For instance, the LLM fails to generate the appropriate SPARQL query for the question ``location name of the Mona Lisa''. The LLM is supposed to generate the SPARQL query as in Code \ref{code:query-true-ml}, but it produces the SPARQL query as in Code \ref{code:query-false-ml}. The latter query is entirely irrelevant because the property \texttt{wdt:P1810} refers to ``subject named as'', which is unrelated to the intended property \texttt{wdt:P131}, meaning ``located in the administrative territorial entity.'' Meanwhile, by using verbalization, the property \texttt{wdt:P131} can be obtained correctly.
+
+\lstinputlisting[language=SPARQL, caption=Ground Truth of ``location name of the Mona Lisa'', label=code:query-true-ml]{assets/codes/sample-monalisa-true.sparql}
+
+\lstinputlisting[language=SPARQL, caption=Prediction of ``location name of the Mona Lisa'', label=code:query-false-ml]{assets/codes/sample-monalisa-false.sparql}
+
+
+\subsection{Dataset Pipeline v2}
+
+As demonstrated in Subsection \ref{dataset-pipelinev1-result}, the second pipeline which utilizes Mistral NeMo outperforms the initial pipeline. Therefore, this pipeline is established as the baseline model for the next experiments. We conducted evaluations using four large language models (LLMs): Mistral NeMo, LLaMA 3.1 8B, Qwen2.5 Coder 7B, and Qwen2.5 7B. These experiments were performed on datasets tailored to specific knowledge base: the downsampled QALD-9-Plus dataset on Wikidata and DBPedia, and the Fasilkom UI's Computer Science Major curriculum KG for local KG experiments. All the LLMs employed in this experiment are hosted locally.
+
+\subsubsection{Wikidata}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.7\textwidth} | m{0.3\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} \\
+    \hline
+    \RaggedRight{Mistral NeMo 12B} & $0.423$ \\
+    \RaggedRight{LLaMA 3.1 8B} & $0.427$ \\
+    \RaggedRight{Qwen2.5 Coder 7B} & $0.428$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B}} & $\textbf{0.458}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Experiment Results on the Downsampled Wikidata QALD-9-Plus Dataset}
+\label{table-dataset2result-wikidata}
+\end{table}
+
+The results for the Wikidata experiments are presented in Table \ref{table-dataset2result-wikidata}. While Mistral NeMo, LLaMA 3.1 8B, and Qwen2.5 Coder 7B achieved comparable outcomes, Qwen2.5 7B demonstrated superior performance with a result of $0.458$. This highlights Qwen2.5 7B’s ability to better align with the downsampled QALD-9-Plus dataset on Wikidata, outperforming the other models by a noticeable margin.
+
+A closer analysis of the successes and failures highlights the strengths and limitations of the pipeline. For example, in the correct case of ``In which films directed by Garry Marshall was Julia Roberts starring?'', the ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P31 wd:Q11424 . ?uri wdt:P57 wd:Q315087 . ?uri wdt:P161 wd:Q40523 . \}}. This query includes entities like \texttt{wd:Q11424} (film), \texttt{wd:Q315087} (Garry Marshall), and \texttt{wd:Q40523} (Julia Roberts). The pipeline successfully retrieved all relevant entities and properties, leading the LLM to generate the accurate SPARQL query \texttt{SELECT DISTINCT ?film WHERE \{?film wdt:P57 wd:Q315087 ; wdt:P161 wd:Q40523. \}}. This success is attributed to effective entity extraction, property retrieval, and semantic understanding by Qwen2.5 7B.
+
+Another notable instance of success pertains to questions involving aggregation functions, such as ``How many programming languages are there?'' The ground truth SPARQL query is \texttt{SELECT (COUNT(DISTINCT ?sub) AS ?count) WHERE \{ ?sub wdt:P31 wd:Q9143 . \}}, which queries for the count of unique entities classified as instances of programming languages (\texttt{wd:Q9143}). The pipeline excelled by accurately retrieving the relevant entity (\texttt{wd:Q9143}, programming language). Since the property \texttt{wdt:P31} (instance of) is commonly used in Wikidata to indicate instance relationships, the system effectively leveraged its inherent knowledge to generate the correct SPARQL query with aggregation: \texttt{SELECT (COUNT(DISTINCT ?uri) AS ?count) WHERE \{ ?uri wdt:P31 wd:Q9143. \}}. This example demonstrates the pipeline's capability to process aggregate questions effectively, thanks to accurate entity-property pairing and semantic comprehension.
+
+A further example showcasing the pipeline’s capabilities is the question, ``In which programming language is GIMP written?'' The ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ wd:Q8038 wdt:P277 ?uri . \}}, where \texttt{wd:Q8038} refers to GIMP, and \texttt{wdt:P277} denotes the ``programming language'' property. The pipeline succeeded due to its ability to verbalize the query in a meaningful way, generating the output: \texttt{GIMP's programmed in is C}. This verbalization achieved a similarity score of 0.61, exceeding the required threshold of 0.6, and allowed the system to correctly identify the relevant entity, \texttt{http://www.wikidata.org/entity/Q15777}, which represents the C programming language.
+
+However, the model also faced notable failures, revealing areas where the pipeline's limitations impact performance. For example, in ``Give me all Australian metalcore bands,'' the ground truth query is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P31 wd:Q215380 ; wdt:P495 wd:Q408 ; wdt:P136 wd:Q183862 . \}}. This query requires entities like \texttt{wd:Q215380} (musical group), \texttt{wd:Q183862} (metalcore), and \texttt{wd:Q408} (Australia). Here, entity extraction only returned entities mentioned explicitly in the question---\texttt{['Australian', 'Metalcore Bands']}---which were then passed to the Wikidata API. Due to its keyword-based search mechanism, the API returned irrelevant entities like ``Australian continent'' and ``Metalcore-b{\"a}ndide loen,'' none of which matched the intended query. Additionally, the retrieved properties from the vector database failed to include \texttt{P495} (country of origin) because the question lacked explicit mentions of ``country'' or ``origin,'' highlighting the difficulty of capturing such semantic relationships. These limitations led to the generation of an incomplete or incorrect SPARQL query.
+
+Another failure occurred with ``Show a list of soccer clubs that play in the Bundesliga.'' The ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P31 wd:Q476028 ; wdt:P118 wd:Q82595 . \}}. While the pipeline successfully retrieved all relevant entities (\texttt{wd:Q476028}, association football club; \texttt{wd:Q82595}, Bundesliga) and properties, the LLM mistakenly used \texttt{wdt:P6399} (Romanian Soccer Player ID) in the query, which is irrelevant to the question. The incorrectly generated SPARQL query was: \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P6399 ?id . ?uri wdt:P118 wd:Q82595. \}}. This error suggests that, while the vector database provided accurate properties, the LLM incorrectly prioritized a less relevant property, leading to an incorrect SPARQL query.
+
+These examples highlight that the pipeline's success relies heavily on accurate entity and property retrieval, as well as the LLM's ability to prioritize the most relevant information. A deeper analysis of these aspects will be provided in Subsection \ref{ablation-vectordb}.
+
+\subsubsection{DBpedia}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.7\textwidth} | m{0.3\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} \\
+    \hline
+    \RaggedRight{Mistral NeMo 12B} & $0.450$ \\
+    \RaggedRight{LLaMA 3.1 8B} & $0.444$ \\
+    \RaggedRight{Qwen2.5 Coder 7B} & $0.442$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B}} & $\textbf{0.517}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Experiment Results on the Downsampled DBpedia QALD-9-Plus Dataset}
+\label{table-dataset2result-dbpedia}
+\end{table}
+
+The results for DBpedia are shown in Table \ref{table-dataset2result-dbpedia}. Similar to the Wikidata experiment, Qwen2.5 7B outperformed all other models with a result of $0.517$. The higher performance of all models on DBpedia compared to Wikidata can likely be attributed to the inherent structure of DBpedia's queries. Unlike Wikidata which relies heavily on ID-based URI naming (e.g., \texttt{wd:Q408} for ``Australia'' and \texttt{wdt:P36} for the property ``capital''), DBpedia adopts a more human-readable, natural language-friendly URI naming (e.g., \texttt{dbr:Australia} for the entity and \texttt{dbo:capital} for the property). This more intuitive structure may contribute to the improved performance of the LLMs.
+
+For instance, a correct example is the query, ``Show a list of soccer clubs that play in the Bundesliga.'', which was previously misanswered in the Wikidata experiment. The ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:SoccerClub ; dbo:league dbr:Bundesliga \}}. In this case, the pipeline successfully retrieved all the necessary entities (\texttt{dbr:Bundesliga}), properties (\texttt{dbo:league}), and classes \texttt{dbo:SoccerClub}) from both the API and the vector database. The LLM effectively utilized this information to generate the correct SPARQL query, highlighting the seamless integration of precise entity-property retrieval and the LLM’s capability to construct semantically accurate outputs in the DBpedia context.
+
+Another success case pertains to the question ``How many programming languages are there?'' with aggregation in DBpedia. The ground truth SPARQL query is \texttt{SELECT (COUNT(DISTINCT ?uri) AS ?c) WHERE \{ ?uri a dbo:ProgrammingLanguage \}}.
+The pipeline successfully retrieved the entity \texttt{dbo:ProgrammingLanguage} from the vector database and generated the correct SPARQL query: \texttt{SELECT (COUNT(DISTINCT ?uri) AS ?count) WHERE \{ ?uri a dbo:ProgrammingLanguage \}}.
+This example showcases the pipeline's ability to manage aggregate questions effectively by leveraging accurate entity-property retrieval and semantic comprehension to produce precise SPARQL queries.
+
+Another success involved the question ``In which programming language is GIMP written?'', where the ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ dbr:GIMP dbo:programmingLanguage ?uri \}}. Here, the pipeline employed verbalization to generate the output: \texttt{GIMP's programming language is C (programming language)}. This verbalization achieved a similarity score of 0.74, surpassing the threshold of 0.6, and enabled the system to correctly identify the relevant entity, \texttt{http://dbpedia.org/resource/C\_(programming\_language)}.
+
+However, certain challenges persisted, mirroring limitations observed in the Wikidata experiments. For example, when answering the query ``Give me all Australian metalcore bands,'' the ground truth SPARQL query is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:Band ; dbo:genre dbr:Metalcore \{ ?uri dbo:hometown dbr:Australia \} UNION \{ ?uri dbo:hometown ?h . ?h dbo:country dbr:Australia \} \}}. While the pipeline successfully retrieved the entities \texttt{dbr:Australia} and \texttt{dbr:Metalcore}, it failed to retrieve the properties \texttt{dbo:hometown} and \texttt{dbo:country} because their semantic relationship to the question is not evident. This failure led to an incomplete SPARQL query, underscoring the challenge of capturing nuanced property associations in DBpedia.
+
+Another failure occurred with the query ``List all boardgames by GMT.'' The ground truth SPARQL query is \texttt{SELECT ?uri WHERE \{ ?uri dbo:publisher dbr:GMT\_Games \}}. In this case, the entity extraction process identified ``GMT,'' which was then passed to the API. However, the API returned irrelevant entities such as ``Greenwich Mean Time,'' ``UTC+07:00,'' and ``GMA Network,'' instead of the correct entity, \texttt{dbr:GMT\_Games}. This misalignment led the LLM to incorrectly interpret ``GMT'' as referring to ``Greenwich Mean Time.'' Although the pipeline successfully retrieved the relevant property (\texttt{dbo:publisher}), the inability to extract the correct entity ultimately caused the LLM to generate an inaccurate SPARQL query.
+
+These examples reinforce that DBpedia's natural-language-friendly structure can mitigate some challenges observed in Wikidata. However, the pipeline's success still hinges on precise entity and property retrieval from the API and vector database.
+
+\subsubsection{Local KGs}
+\label{results-localkg}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.7\textwidth} | m{0.3\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} \\
+    \hline
+    \RaggedRight{\textbf{Mistral NeMo 12B}} & $\textbf{0.805}$ \\
+    \RaggedRight{LLaMA 3.1 8B} & $0.778$ \\
+    \RaggedRight{Qwen2.5 Coder 7B} & $0.778$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B}} & $\textbf{0.805}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Experiment Results on the Local Curriculum KG Dataset}
+\label{table-dataset2result-localkg}
+\end{table}
+
+The results for the local knowledge graph (KG) experiments are shown in Table \ref{table-dataset2result-localkg}. Mistral NeMo and Qwen2.5 7B both achieved the highest performance with a score of $0.805$. The remaining models, LLaMA 3.1 8B and Qwen2.5 Coder 7B, closely followed with scores of $0.778$, differing by only one correctly answered question. 
+
+Notably, Qwen2.5 Coder 7B failed to answer the query, ``What courses have Research Methodology and Scientific Writing as a prerequisite and a report document as an evaluation method, and are mandatory for faculty?''. Similarly, LLaMA 3.1 8B failed on the query, ``How many prerequisite courses does `Algorithm Design and Analysis' have?''. In contrast, Mistral NeMo and Qwen2.5 7B successfully handled both queries. 
+
+Closer analysis reveals that one recurring issue across all models was linked to the verbalization component. For example, in response to the question ``How many evaluation methods of 'Internet of Things'?'', the verbalized output was \texttt{Internet of Things's has evaluation method is Task}. This result had a similarity score of 0.636, which exceeded the threshold of 0.6, leading the pipeline to incorrectly return \texttt{http://example.org/group\_project} and \texttt{http://example.org/task} instead of aggregating them into the ground truth answer of \texttt{2}. This highlights a limitation in the verbalization process, where overly simplistic or mismatched interpretations lead to errors.
+
+Given these findings, it is still premature to declare a definitive best-performing model for the local KG dataset. To address this, all models will undergo further evaluation as part of the verbalization ablation study (see Subsubsection \ref{ablation-verbalization}), enabling a deeper assessment of their capabilities and limitations.
+
+
+\subsubsection{Multilingual Support}
+\label{multilingual-support}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.7\textwidth} | m{0.3\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} \\
+    \hline
+    \RaggedRight{Qwen2.5 7B} & $0.362$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Experiment Results on the Downsampled Wikidata QALD-9-Plus Dataset Indonesian Version}
+\label{table-dataset2result-wikidat-indonesia}
+\end{table}
+
+The multilingual support experiment focused exclusively on Qwen2.5 7B, the best-performing model in prior evaluations. This assessment utilized the downsampled Wikidata QALD-9-Plus dataset, which was translated into Indonesian to evaluate the model's capability to process queries in a non-English language as mentioned in Subsubsection \ref{pipeline-v2-dataset-wikidata-dbpedia}. As shown in Table \ref{table-dataset2result-wikidat-indonesia}, Qwen2.5 7B achieved a Jaccard similarity score of $0.362$. While this performance was noticeably lower compared to the English version of the dataset ($0.458$), this result demonstrates that the model can process multilingual data, although with reduced accuracy.
+
+In this experiment, Indonesian queries such as ``Berapa banyak politisi yang lulus dari Universitas Columbia?'' were first translated into English using the \texttt{googletrans} library, resulting in ``How many politicians have graduated from Columbia University?'' The system then processed this English query, retrieved relevant information from Wikidata, and generated the final answer directly in Indonesian, for example, ``Ada 82 politisi yang telah lulus dari Universitas Columbia.'' This workflow showcases the system's ability to handle multilingual queries by combining translation and knowledge graph retrieval.
+
+The performance gap between the English and Indonesian datasets can be attributed to several factors. A significant issue lies in the translation process itself. Queries translated from Indonesian back to English using the \texttt{googletrans} library were often paraphrased, introducing subtle but impactful discrepancies. For instance, the original English query is ``Show me all the breweries in Australia.'' and the Indonesian version is ``Tunjukkan semua pabrik bir di Australia.'' in the dataset. When translated back into English using the library, it became ``Show all beer factories in Australia.'' This paraphrasing caused the system to fail in retrieving the correct entity (\texttt{wd:Q131734}, ``brewery''), as the critical keyword ``brewery'' was missing in the back-translated query. These misalignments reduced the system's ability to produce accurate results. Despite these challenges, the results indicate that the system possesses a foundational capability to handle multilingual queries, particularly in Indonesian.
+
+\subsection{General Analysis}
+In this subsection, we will provide a general analysis of the experiment results from the perspectives of the LLMs and the knowledge bases.
+
+\subsubsection{LLMs}
+\label{ga-llm}
+
+Based on the experiment results, Qwen2.5 7B emerges as the top-performing model across both Wikidata and DBpedia, achieving scores of $0.458$ and $0.517$, respectively. However, on the local KG dataset, this model performed on par with Mistral NeMo, and reached the highest score of $0.805$. This consistent performance across datasets highlight Qwen2.5 7B's versatility in both understanding natural language instructions and generating diverse types of outputs, including free text, structured data, and code.
+
+This phenomenon is likely due to Qwen2.5 7B being pre-trained on up to 18 trillion tokens, compared to LLaMA 3.1 8B which was pre-trained on only 15 trillion tokens. The larger token count provides Qwen2.5 7B with broader exposure to diverse linguistic patterns, factual knowledge, and context, which enhances its capability in generating accurate responses. Additionally, \cite{qwen25} reported that the 72B variant of instruction fine-tuned Qwen2.5 significantly outperforms the instruction fine-tuned LLaMA 3.1, which is in the similar 70B size range, on various benchmarking datasets. This indicates that Qwen2.5's larger training data, combined with its optimization for instruction-following tasks, contributes to its superior performance over LLaMA 3.1 across multiple benchmarks.
+
+On the other hand, while we initially thought that the Coder version of Qwen2.5 would outperform the general-purpose one, the evaluation results indicate the opposite. Qwen2.5 Coder 7B, which was trained on a large-scale, predominantly (70\%) coding-related pre-training dataset comprising 5.2 trillion tokens, consistently produces lower performance than the general-purpose Qwen2.5 7B. This could be attributed to the more specialized nature of the Coder version's training, which, while enhancing its expertise in code generation, might limit its broader understanding of general natural language tasks. In fact, the training of this Coder version comprised only 20\% of general text data. However, we believe that tasks like generating SPARQL queries require a strong understanding of both the question and the given context, i.e., the associated properties and entities. This task demands not just coding proficiency but also a deeper grasp of natural language context, something the general-purpose model is better equipped to handle due to its exposure to a more diverse range of data.
+
+In terms of Mistral NeMo, we are unable to draw definitive conclusions due to the lack of detailed information regarding its training data. However, it is plausible that the model's strong performance can be attributed to its significantly larger parameter count of 12B, compared to the other models, which only have 7B and 8B parameters. Larger models typically benefit from more capacity to capture complex patterns and relationships, which could contribute to their better performance. Without further information about its specific training dataset, it remains speculative, but the larger model size is a likely contributing factor to its success.
+
+\subsubsection{Knowledge Bases}
+In general, we found that there are two factors that affect the performance of the system from the perspective of the knowledge bases.
+\begin{enumerate}
+    \item \textbf{URI Representation}: This refers to how resources are represented in the knowledge base using URIs. If the URIs are represented using natural language, like those in DBpedia and the local curriculum KG, we discovered that the model is likely to perform better. Since LLMs are trained to understand natural language, the more human-readable the URIs are, the easier the model to interpret and link entities to their corresponding properties. On the other hand, more cryptic URIs can hinder understanding and reduce performance.  
+    \item \textbf{Size and Homogeneity}: The size and homogeneity of the KG can significantly impact model performance. Larger and more diverse KGs, like Wikidata and DBpedia, contain a greater number of entities, relationships, and concepts, which allows for a wider range of questions to be posed. While this expanded scope can enhance the system's versatility, it introduces significant challenges. As the variety of questions grows, the complexity of the corresponding SPARQL queries potentially increases, making them more difficult to generate. In contrast, smaller KGs, although offering less coverage than larger ones, present a more manageable scope. With a more limited range of possible questions, there is less need to generate complex and sophisticated SPARQL queries. As a result, this can lead to improved performance.
+\end{enumerate}
+
+\section{Ablation Study}
+\label{ablation}
+As outlined in Subsection \ref{pipeline2}, the second pipeline by default incorporates several key components: verbalization, chain of thoughts, few-shot examples, and entity and property retrieval from a vector database. In this section, we conduct an ablation study by systematically removing one component at a time to evaluate the significance of each component in the pipeline's performance. 
+
+The experiments focus on the best-performing model for each knowledge base, which is Qwen2.5 7B. However, for the local KG dataset, as discussed in Subsubsubsection \ref{results-localkg}, all models are included in the verbalization evaluation to provide a comprehensive comparison.
+
+\subsection{Verbalization}
+\label{ablation-verbalization}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Knowledge Base} & \textbf{Jaccard Similarity} \\
+    \hline
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{Wikidata} & $\textbf{0.458}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Verbalization} & Wikidata & $0.334$ \\
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{DBpedia} & $\textbf{0.517}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Verbalization} & DBpedia & $0.516$ \\
+    \hline
+    \RaggedRight{Mistral NeMo 12B} & Curriculum KG & $0.805$ \\
+    \RaggedRight{LLaMA 3.1 8B} & Curriculum KG & $0.778$ \\
+    \RaggedRight{Qwen2.5 Coder 7B} & Curriculum KG & $0.778$ \\
+    \RaggedRight{Qwen2.5 7B} & Curriculum KG & $0.805$ \\
+    \RaggedRight{\textbf{Mistral NeMo 12B w/o Verbalization}} & \textbf{Curriculum KG} & $\textbf{0.949}$ \\
+    \RaggedRight{LLaMA 3.1 8 w/o Verbalization} & Curriculum KG & $0.895$ \\
+    \RaggedRight{Qwen2.5 Coder 7B w/o Verbalization} & Curriculum KG & $0.922$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B w/o Verbalization}} & \textbf{Curriculum KG} & $\textbf{0.949}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ablation Study Results on Verbalization}
+\label{table-dataset2ablationresult-verbalization}
+\end{table}
+
+The results of the verbalization ablation study, shown in Table \ref{table-dataset2ablationresult-verbalization}, reveal the critical role this component plays in generating accurate responses for SPARQL query tasks across various datasets. On Wikidata and DBpedia, the removal of verbalization led to notable declines in performance, with accuracy decreasing from $0.458$ to $0.334$ on Wikidata and from $0.517$ to $0.516$ on DBpedia. While the performance drop on DBpedia is marginal, these results underscore that for more complex and diverse KGs like Wikidata and DBpedia, verbalization plays a critical role in interpreting simpler local natural language questions. Sometimes, LLMs can get confused and fail to generate the appropriate single-hop SPARQL query, like the Mona Lisa example mentioned in Subsubsection \ref{dataset-pipelinev1-result}. Verbalization serves as a crucial step in bridging the user's input with the model's knowledge of the graph structure by converting the extracted triples into human-readable sentences. This transformation enables the semantic alignment necessary for accurate query resolution.
+
+In contrast, the results of the verbalization ablation study for the local curriculum KG dataset highlight the significant performance improvements achieved by removing the verbalization component. As mentioned in Subsubsubsection \ref{results-localkg}, all models demonstrated growth in accuracy when verbalization was omitted. Mistral NeMo and Qwen2.5 7B achieved the highest scores at $0.949$, while Qwen2.5 Coder 7B and LLaMA 3.1 8B followed closely with scores of $0.922$ and $0.895$, respectively.
+
+The improvements underscore that the verbalization component acted as a bottleneck in the second pipeline for the curriculum KG dataset. While the verbalization step successfully retrieved relevant entities or properties, it lacked the ability to perform aggregate operations such as \texttt{COUNT}. This limitation resulted in errors for aggregation-based queries, as discussed in Subsubsubsection \ref{results-localkg}. Additionally, verbalization introduced occasional inaccuracies when it failed to retrieve suitable template sentences, further complicating its effectiveness for domain-specific tasks.
+
+The results also demonstrate that for datasets like the curriculum KG, which rely on small ontology structures and aggregate operations, the SPARQL generation component aligns better with the dataset's characteristics. Since the questions in such datasets are generally straightforward and simple, it becomes easier to generate SPARQL queries directly. By bypassing verbalization, the models were able to directly utilize SPARQL queries, eliminating ambiguity and improving accuracy.
+
+These findings suggest that for similar domain-specific KGs, careful evaluation of the verbalization component is essential. Verbalization may need to be omitted if it cannot effectively handle aggregation and retrieve appropriate templates; otherwise, it introduces unnecessary complexity. This process should only be employed if the question is single-hop and does not contain any aggregations.
+
+
+
+\subsection{Chain of Thoughts (CoT)}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Knowledge Base} & \textbf{Jaccard Similarity} \\
+    \hline
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{Wikidata} & $\textbf{0.458}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Chain of Thoughts} & Wikidata & $0.436$ \\
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{DBpedia} & $\textbf{0.517}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Chain of Thoughts} & DBpedia & $0.455$ \\
+    \hline
+    \RaggedRight{Qwen2.5 7B} & Curriculum KG & $0.805$ \\
+    \RaggedRight{Qwen2.5 7B w/o Verbalization} & Curriculum KG & $0.949$ \\
+    \RaggedRight{Qwen2.5 7B w/o Chain of Thoughts} & Curriculum KG & $0.808$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B w/o Verbalization \& Chain of Thoughts}} & \textbf{Curriculum KG} & $\textbf{0.976}$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ablation Study Results on Verbalization}
+\label{table-dataset2ablationresult-cot}
+\end{table}
+
+The ablation study presented in Table \ref{table-dataset2ablationresult-cot} illustrates the varying impact of removing the CoT component across different datasets. For Wikidata and DBpedia, removing CoT caused a performance drop, from $0.458$ to $0.436$ and from $0.517$ to $0.455$, respectively. This demonstrates that CoT plays a supportive role in improving the model’s ability to generate SPARQL queries for these datasets. The performance decline, although noticeable, is not drastic, suggesting that CoT is helpful but not strictly necessary. It can be viewed as an enhancement that bolsters query reasoning in more complex or open-ended scenarios, particularly for datasets requiring intermediate reasoning steps to construct accurate queries.
+
+In contrast, the local curriculum KG dataset showed a different trend. Here, removing CoT had little to no negative impact, with performance slightly improving from $0.805$ to $0.808$ in the default configuration and from $0.949$ to $0.976$ when verbalization was also omitted. These results suggest that CoT may not be necessary for datasets with simpler or more direct queries, such as the curriculum KG. In such cases, the absence of CoT allows the model to focus directly on generating SPARQL queries without intermediate reasoning steps that might introduce ambiguity or unnecessary complexity. The simplicity of the questions in the curriculum KG, coupled with its smaller ontology, likely reduces the utility of CoT, making it redundant.
+
+The study highlights an important insight: the utility of CoT depends on the dataset's characteristics. For datasets like Wikidata and DBpedia, which often involve more complex queries requiring intermediate reasoning, CoT can serve as a valuable tool to structure the model's thought process, leading to more accurate query generation. However, for smaller and simpler datasets like the curriculum KG, where queries are straightforward and do not require elaborate reasoning, CoT may hinder performance by adding unnecessary overhead.
+
+These findings suggest that the inclusion of CoT should be carefully evaluated based on the dataset's complexity. For datasets with complex question structures, CoT can enhance query accuracy by guiding the model through a step-by-step reasoning process. On the other hand, for simpler datasets, omitting CoT can streamline the pipeline, reduce potential confusion, and improve efficiency.
+
+
+\subsection{Few Shots}
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Knowledge Base} & \textbf{Jaccard Similarity} \\
+    \hline
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{Wikidata} & $\textbf{0.458}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Few Shots} & Wikidata & $0.342$ \\
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{DBpedia} & $\textbf{0.517}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Few Shots} & DBpedia & $0.410$ \\
+    \hline
+    \RaggedRight{Qwen2.5 7B} & Curriculum KG & $0.805$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B w/o Verbalization}} & \textbf{Curriculum KG} & $\textbf{0.949}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Few Shots} & Curriculum KG & $0.724$ \\
+    \RaggedRight{Qwen2.5 7B w/o Verbalization \& Few Shots} & Curriculum KG & $0.651$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ablation Study Results on Few Shots}
+\label{table-dataset2ablationresult-fewshots}
+\end{table}
+The results of the ablation study, shown in Table \ref{table-dataset2ablationresult-fewshots}, underscore the critical role of the few-shots component in generating accurate SPARQL queries across datasets. Across Wikidata, DBpedia, and local curriculum KG, the removal of few shots led to consistent performance drops. For Wikidata, performance declined from $0.458$ to $0.342$, and for DBpedia, it dropped from $0.517$ to $0.410$. Similarly, the Curriculum KG dataset exhibited a substantial decline, with performance decreasing from $0.805$ to $0.724$ when few shots were removed and from $0.949$ to $0.651$ when both verbalization and few shots were omitted. These consistent reductions highlight the utility of few shots as a crucial component for improving model performance across diverse datasets.
+
+Few shots play a pivotal role in providing tailored examples that guide the LLM in generating SPARQL queries with the appropriate structure and format for each dataset. They help the model adapt to the specific requirements of the dataset, such as returning only URIs in QALD-9-Plus datasets or handling entity relationships and labels in domain-specific datasets like the curriculum KG. By offering examples that clarify these nuances, few shots enhance the model’s ability to align its outputs with the expectations of the dataset, ensuring greater accuracy and relevance.
+
+The pronounced impact on the curriculum KG, a custom domain-specific dataset, further emphasizes the importance of few shots for datasets that the LLM lacks prior exposure to. Unlike open datasets with relatively standardized query formats, the local curriculum KG introduces unique structures and conventions that few shots help to elucidate. For instance, few-shot examples can demonstrate how to generate SPARQL queries that account for localized relationships or custom entity-label mappings, which are not inherent in the LLM’s pre-trained knowledge.
+
+Across all datasets, the inclusion of few shots bridges the gap between the general capabilities of the LLM and the specific needs of the task. While the performance improvements for open datasets like Wikidata and DBpedia may appear less dramatic compared to the local curriculum KG, the utility of few shots remains evident, serving as a mechanism to fine-tune the model’s query generation process. For custom datasets, they are indispensable, ensuring the model generates meaningful results tailored to the dataset's unique ontology and query requirements.
+
+
+\subsection{Entity and Property (Ontology) Retrieval from Vector Database}
+\label{ablation-vectordb}
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Configuration}} & \textbf{Knowledge Base} & \textbf{Jaccard Similarity} \\
+    \hline
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{Wikidata} & $\textbf{0.458}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Vector Database Retrieval} & Wikidata & $0.377$ \\
+    \hline
+    \RaggedRight{\textbf{Qwen2.5 7B}} & \textbf{DBpedia} & $\textbf{0.517}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Vector Database Retrieval} & DBpedia & $0.381$ \\
+    \hline
+    \RaggedRight{Qwen2.5 7B} & Curriculum KG & $0.805$ \\
+    \RaggedRight{\textbf{Qwen2.5 7B w/o Verbalization}} & \textbf{Curriculum KG} & $\textbf{0.949}$ \\
+    \RaggedRight{Qwen2.5 7B w/o Vector Database Retrieval} & Curriculum KG & $0.183$ \\
+    \RaggedRight{Qwen2.5 7B w/o Verbalization \& Vector Database Retrieval} & Curriculum KG & $0.000$ \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ablation Study Results on Few Shots}
+\label{table-dataset2ablationresult-vectordb}
+\end{table}
+The ablation study results in Table \ref{table-dataset2ablationresult-vectordb} emphasize the crucial role of the entity and property retrieval component from the vector database in enabling accurate SPARQL query generation across datasets. When this component is removed, the performance of the model drops significantly for all datasets. Specifically, the results decline from $0.458$ to $0.377$ on Wikidata, from $0.517$ to $0.381$ on DBpedia, and from $0.805$ to a strikingly low $0.183$ on the local curriculum KG dataset. Furthermore, in the curriculum KG, when both the verbalization and vector database retrieval components are omitted, the performance plummets to $0.000$, demonstrating the model's complete inability to generate meaningful SPARQL queries in such scenarios.
+
+The vector database retrieval component is crucial because it identifies the most relevant entities and properties needed to construct SPARQL queries based on the input question and context. Without this step, the model struggles to locate the correct entities and relationships, leading to inaccurate or incomplete queries. This issue is especially pronounced in the curriculum KG dataset, where the vector database serves as the primary source of knowledge about the dataset's unique structure and content. Since the LLM lacks prior training on the curriculum KG, omitting this component renders the model entirely ineffective, as evidenced by the $0.000$ score.
+
+While the performance drops on Wikidata and DBpedia are significant, they are not as dramatic as in the curriculum KG. This disparity arises because open datasets like Wikidata and DBpedia are more likely to have been partially incorporated into the LLM's training data. Consequently, the model can leverage its preexisting knowledge of these datasets to some extent, even in the absence of vector database retrieval. However, the drop from $0.458$ to $0.377$ on Wikidata and from $0.517$ to $0.381$ on DBpedia still underscores the importance of this component in refining and contextualizing the queries for improved accuracy.
+
+Interestingly, on the curriculum KG dataset, the model achieves a score of $0.183$ when the vector database retrieval is removed but the verbalization component remains active. This suggests that the verbalization component can partially compensate for the absence of vector retrieval by utilizing natural language to infer some entity relationships. However, this approach is far less effective, as verbalization alone cannot handle complex queries involving precise entity and property relationships.
+
+The complete failure of the model ($0.000$ score) when both vector database retrieval and verbalization are omitted from the curriculum KG highlights the critical interdependence of these components. Without vector retrieval, the model lacks foundational knowledge of the dataset, and without verbalization, it cannot even attempt to compensate through natural language reasoning. This outcome illustrates the importance of vector database retrieval as a key for working with domain-specific datasets that require tailored knowledge and entity alignment.
+
+\subsection{Conclusion}
+Based on the aforementioned explanation, it can be concluded that the entity and property retrieval from the vector database has the most significant impact on the system's accuracy. Across all datasets, removing this component resulted in performance declines, particularly for the local curriculum KG dataset, where the accuracy plummeted to zero without this step. This highlights the importance of identifying relevant entities and properties to construct accurate queries, especially for local, domain-specific KGs where the LLM lacks prior exposure. Even for open KGs like DBpedia and Wikidata---data the LLM might have encountered during training---performance degradation remains unavoidable without context retrieval, highlighting its indispensable role. 
+
+\section{Dataset Issues}
+Upon concluding the experiments and obtaining all the results, we noticed that there were some issues in the dataset, particularly the QALD-9-Plus Dataset.
+\begin{enumerate}
+    \item \textbf{Inaccurate Ground Truth (1)}: We observed that for the question ``How many languages are spoken in Colombia?'', the ground truth provided an inaccurate DBpedia SPARQL query. Specifically, the ground truth query is \texttt{SELECT (COUNT(DISTINCT ?uri) AS ?c) WHERE \{ ?uri rdf:type dbo:Language . dbr:Colombia dbo:language ?uri \}}. However, there was no direct connection between \texttt{dbr:Colombia} and \texttt{dbo:language}. As a result, the execution of the query returned 0, which did not make sense for such a question. On the other hand, our system successfully generated the correct query, \texttt{SELECT COUNT(DISTINCT ?lang) WHERE \{ ?lang dbo:spokenIn dbr:Colombia \}}, which returned 97, the correct answer. Yet, since the supposed true answer did not match the ground truth, it was classified as incorrect.
+    \item \textbf{Inaccurate Ground Truth (2)}: We observed that for the question ``How many films did Hal Roach produce?'' the ground truth query is \texttt{SELECT (COUNT(?uri) as ?c) WHERE \{ ?uri wdt:P162 wd:Q72792 . \}}, which lacked specificity. While the question explicitly asks about films, the ground truth query did not restrict the query to instances of films. In contrast, our system generated the query \texttt{SELECT (COUNT(DISTINCT ?uri) AS ?count) WHERE \{ ?uri wdt:P31 wd:Q11424 ; wdt:P162 wd:Q72792. \}}, which correctly filtered for entities that are instances of films (\texttt{wd:Q11424}). However, due to the lack of specificity in the ground truth query, our accurate result was incorrectly classified as a mismatch.
+    \item \textbf{Ambiguous Question (1)}: We observed that for the question ``how big is the total area of North Rhine-Westphalia?'', it was ambiguous what unit the answer was expected to be in. The ground truth query was completely correct by presenting the result in squared metres using the query \texttt{SELECT ?tarea WHERE \{ dbr:North\_Rhine-Westphalia dbo:areaTotal ?tarea \}}. However, this became ambiguous since there were more than one properties related to total area connected to \texttt{dbr:NorthRhine-Westphalia}. Unfortunately, our verbalization system retrieved the other property, \texttt{dbo:PopulatedPlace\slash areaTotal} which presented the result in squared kilometres. As a result, our result was classified as incorrect, despite the difference was only in unit.
+    \item \textbf{Ambiguous Question (2)}: We also observed that the question ``Give me all soccer clubs in Spain.'' was ambiguous. Our system generated the query \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:SoccerClub ; dbo:country dbr:Spain \}}, which was semantically correct. However, the ground truth is \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:SoccerClub \{ ?uri dbo:ground dbr:Spain \} UNION \{ ?uri <http:\slash \slash dbpedia.org\slash property\slash ground> ?ground FILTER regex(?ground, "Spain") \} \}}, which seemed to be overly specific. As a result, our result was classified as incorrect.
+\end{enumerate}
