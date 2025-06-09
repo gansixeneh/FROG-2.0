@@ -1,0 +1,948 @@
+%-----------------------------------------------------------------------------%
+\chapter{\babDua}
+\label{bab:2}
+%-----------------------------------------------------------------------------%
+In this chapter, we provide a comprehensive overview of the theoretical foundations and prior research that form the basis for our enhanced GraphRAG system. We begin by exploring knowledge graphs and the Semantic Web, followed by an examination of large language models and their architectural components. We then discuss retrieval-augmented generation (RAG) approaches, particularly focusing on the distinction between traditional text-based RAG and knowledge graph-based approaches. We also explore multi-agent systems for complex reasoning tasks, review the FrOG framework that serves as our baseline, and examine methods for dataset generation to support model fine-tuning.
+
+\section{Knowledge Graphs and the Semantic Web}
+\label{sec:kg}
+Knowledge graphs have emerged as a powerful paradigm for representing and organizing structured information in a machine-readable format. According to \citet{hogan2021knowledge}, knowledge graphs are large networks of entities, their semantic types, properties, and relationships between entities. They combine characteristics of several data management paradigms: databases (for querying structured data), knowledge bases (for deduction and inference capabilities), and graph-theoretical data structures (for specialized queries over nodes and relationships).
+
+Knowledge graphs serve as the foundation for many modern AI systems, providing structured knowledge that enables reasoning and question-answering capabilities. While the term ``knowledge graph" was popularized by Google in 2012 with the introduction of their Knowledge Graph \citep{kg2012}, the underlying concepts have evolved from the broader field of the Semantic Web.
+
+\subsection{Definition and Concepts}
+Knowledge graphs represent information as a collection of triples in the form of \textit{(subject, predicate, object)}, where subjects and objects represent entities or concepts, and predicates represent relationships between them. This triple-based representation allows knowledge to be structured as a graph, with entities as nodes and relationships as edges.
+
+The formal definition of a knowledge graph, as presented by \citet{hogan2021knowledge}, is:
+
+\begin{quote}
+A knowledge graph is a graph of data intended to accumulate and convey knowledge of the real world, whose nodes represent entities of interest and whose edges represent potentially different relations between these entities. The graph is characterized, first, by being able to be improved through diverse contributions over time, ideally from multiple editors. Second, it should explicitly represent the provenance and context of statements, which might include qualifiers and modifiers such as who added a statement, temporal validity, or under what context a statement is true.
+\end{quote}
+
+This definition highlights several key characteristics of knowledge graphs:
+\begin{itemize}
+    \item They represent real-world entities and relationships
+    \item They evolve over time through multiple contributions
+    \item They can include provenance and contextual information
+    \item They support complex queries and inference capabilities
+\end{itemize}
+
+Knowledge graphs differ from traditional databases in their flexibility and expressivity. While relational databases organize information in tables with fixed schemas, knowledge graphs use a more flexible graph structure that can easily accommodate heterogeneous data and evolving schemas. This flexibility makes knowledge graphs particularly suitable for representing complex, interconnected information across diverse domains.
+
+The distinction between knowledge graphs and the broader concept of graph databases lies primarily in their focus on semantics and inference capabilities. Knowledge graphs incorporate semantic technologies that enable logical reasoning and inference, going beyond simple graph traversal operations to support more sophisticated question-answering and knowledge discovery tasks.
+
+\subsection{Semantic Web Architecture}
+The concept of knowledge graphs originates from the Semantic Web vision, introduced by \citet{semweb2001} as an extension of the traditional Web that makes information machine-understandable rather than just human-readable. The Semantic Web provides a framework for representing and connecting data across different sources in a way that enables automated processing and reasoning.
+
+The architecture of the Semantic Web is often depicted as the ``Semantic Web Layer Cake," which illustrates the hierarchical structure of technologies that collectively enable the vision of a machine-readable web of data. This architecture, shown in \pic~\ref{fig:semweb-layer-cake}, consists of multiple layers, each building upon the capabilities of the layers below.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/new-swlayercake.png}
+    \caption{Semantic Web Layer Cake \citep{obitko-semantic-web}}
+    \label{fig:semweb-layer-cake}
+\end{figure}
+
+The components of the Semantic Web, as visualized in \pic~\ref{fig:semweb-layer-cake}, form a comprehensive framework for knowledge representation and reasoning. At the foundation are identifiers (URIs) and character encoding (Unicode), which provide the basic building blocks for representing information. Above these are syntax technologies like XML and RDF, which provide standardized formats for data exchange. Higher levels include schema languages (RDFS, OWL) for defining ontologies, query languages (SPARQL) for retrieving information, and components for logical reasoning, proof, and trust.
+
+This layered architecture enables the creation of sophisticated knowledge graphs that can be queried, reasoned over, and integrated across different domains and applications. Knowledge graphs implement the principles of the Semantic Web by providing structured, machine-readable representations of information that support automated processing and inference.
+
+\subsection{Identifier: Uniform Resource Identifier (URI)}
+A fundamental component of the Semantic Web is the Uniform Resource Identifier (URI), which provides a standardized way to uniquely identify resources across the web. URIs are essential for distinguishing between entities that might share the same name but represent different concepts. For example, the term ``Taj Mahal" could refer to the famous mausoleum in India or the American Blues musician. In a knowledge graph, these would be assigned different URIs to avoid ambiguity.
+
+The concept of URI is a generalization of the Uniform Resource Locator (URL), which is commonly used to identify web pages. While URLs typically point to documents or pages, URIs in the Semantic Web context identify data items or entities themselves. As \citet{swont2011} notes, the Semantic Web works at the level of data rather than at the level of presentation, using URIs to refer to entities and relationships rather than to web pages.
+
+URIs enable the precise identification of resources across different knowledge sources, facilitating data integration and linkage between disparate knowledge graphs. This ability to uniquely identify and reference entities is a cornerstone of knowledge graph technology, enabling the creation of rich, interconnected networks of information.
+
+\subsection{Character Set: Unicode}
+Unicode provides a standardized encoding scheme that supports all international character sets, ensuring that knowledge graphs can represent information in any human language. As of June 14\textsuperscript{th}, 2024, Unicode version 15.1.0 supports 149,813 characters \citep{unicode}, encompassing not only all major writing systems but also various symbols, dingbats, and emojis.
+
+The universal character support provided by Unicode is essential for creating truly global knowledge graphs that can represent information across linguistic and cultural boundaries. This universality is particularly important for large-scale knowledge graphs like Wikidata, which contain information in hundreds of languages.
+
+\subsection{Syntax}
+Several standardized syntaxes exist for representing knowledge graph data in the form of Resource Description Framework (RDF) triples. These include RDF/XML, Turtle, N-Triples, RDF-a, and JSON-LD \citep{ldm2014}. While RDF/XML was initially recommended by the World Wide Web Consortium (W3C) due to its compatibility with existing web infrastructure \citep{swont2011}, JSON-LD has gained popularity for its integration with web applications, and Turtle is valued for its human readability.
+
+\subsubsection{RDF/XML}
+RDF/XML represents RDF data using XML syntax, which structures information in a hierarchical tag format. While this format benefits from widespread support and compatibility with XML processing tools, it presents challenges in representing graph data within a tree-structured format. The mismatch between the tree-like nature of XML and the graph-based structure of RDF can result in verbose and less intuitive representations \citep{rdfser2019}.
+
+\subsubsection{JSON-LD}
+JSON-LD (JavaScript Object Notation for Linked Data) leverages the widely-used JSON format to represent RDF data. Its popularity stems from its compatibility with web applications and its relatively intuitive structure. According to surveys by \cite{W3TechsJSONLD}, as of July 13\textsuperscript{th}, 2024, JSON-LD is used by approximately 48.6\% of all websites, including those operated by major technology companies like Google, Microsoft, and Apple. While JSON-LD offers better readability than RDF/XML, it can be more resource-intensive to parse, particularly when converting between JSON objects and RDF triples \citep{rdfser2019}.
+
+\subsubsection{Turtle}
+\label{turtle}
+Turtle (Terse RDF Triple Language) provides a concise and human-readable syntax for RDF data. As a subset of Notation3 (N3), Turtle offers a simpler and more streamlined representation while maintaining expressive power. Its intuitive format, which lists resources in subject/predicate/object order followed by a period, makes it particularly accessible for human readers and writers \citep{swont2011}.
+
+Turtle syntax typically begins with prefix declarations (indicated by \texttt{@prefix}), which bind namespace prefixes to global URIs. These prefixes are then used in QNames (qualified names) to provide compact representations of full URIs. For example, the prefix declaration \texttt{@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns\#> .} allows the use of \texttt{rdf:type} as a shorthand for \texttt{http://www.w3.org/1999/02/22-rdf-syntax-ns\#type}.
+
+Turtle also supports concise representation for multiple triples sharing the same subject by using semicolons to separate predicate-object pairs, with only the final triple terminated by a period. This feature significantly reduces redundancy and improves readability for complex entity descriptions.
+
+\subsection{Data Interchange: Resource Description Framework (RDF)}
+The Resource Description Framework (RDF) serves as the fundamental data model for knowledge graphs and the Semantic Web. RDF provides a standardized framework for representing information about resources in a way that enables machine processing and integration across different data sources \citep{libsw2014}.
+
+The core building block of RDF is the triple, which consists of a subject, a predicate, and an object. The subject represents a resource, typically identified by a URI. The predicate, also identified by a URI, specifies the relationship or property being described. The object can be either another resource (identified by a URI) or a literal value (such as a string, number, or date).
+
+This triple-based structure naturally lends itself to graph representation, with subjects and objects as nodes and predicates as directed edges \citep{ldm2014}. This graph-based representation facilitates the integration of data from multiple sources, as separate graphs can be easily merged by combining their triples \citep{swont2011}.
+
+An example of a simple RDF graph representing information about Julian Hillyer is shown in \pic~\ref{fig:sample-rdf}, with the corresponding triples listed in \tab~\ref{tab:sample-rdf}. The resources in these triples are represented using QNames, with namespace prefixes defined in \tab~\ref{tab:sample-rdf-qname}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/example-rdf-graph.png}
+    \caption{RDF Graph Example \citep{heardlibrary_serialization}}
+    \label{fig:sample-rdf}
+\end{figure}
+
+% need to shrink this
+\begin{table}
+    \centering
+    \begin{adjustbox}{width=\textwidth}
+        \begin{tabular}{|c|c|c|}
+            \hline
+             \textbf{Subject} & \textbf{Predicate} & \textbf{Object} \\
+            \hline
+             orcid:0000-0002-3178-0201 & dcterms:created & 2014-12-22T22:25:56.900Z \\
+             orcid:0000-0002-3178-0201 & mads:hasAffiliation & http://www.grid.ac/institutes/grid.152326.1 \\
+             orcid:0000-0002-3178-0201 & rdf:type & foaf:Person \\
+             orcid:0000-0002-3178-0201 & rdfs:label & ``Julian Hillyer" \\
+            \hline
+        \end{tabular}
+    \end{adjustbox}
+    \caption{RDF Triples about Julian Hillyer \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+         \textbf{Namespace Prefix} & \textbf{URI} \\
+        \hline
+         \texttt{rdf} & http://www.w3.org/1999/02/22-rdf-syntax-ns\# \\
+         \texttt{rdfs} & http://www.w3.org/2000/01/rdf-schema\# \\
+         \texttt{xsd} & http://www.w3.org/2001/XMLSchema\# \\
+         \texttt{foaf} & http://xmlns.com/foaf/0.1/ \\
+         \texttt{dcterms} & http://purl.org/dc/terms/ \\
+         \texttt{orcid} & http://orcid.org/ \\
+         \texttt{mads} & http://www.loc.gov/mads/rdf/v1\# \\
+        \hline
+    \end{tabular}
+    \caption{Namespace Prefixes and Corresponding URIs \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf-qname}
+\end{table}
+
+RDF data can be serialized in various formats, including RDF/XML, JSON-LD, and Turtle, each with its own advantages and trade-offs. These serialization formats allow RDF data to be stored, exchanged, and processed across different systems and applications.
+
+\section{Large Language Models (LLM)}
+\label{sec:llm}
+Large Language Models (LLMs) are deep neural networks trained on vast amounts of text data that have revolutionized natural language processing capabilities. These models can understand, generate, and respond with human-like text by capturing deep contextual information and subtle linguistic patterns. Unlike traditional rule-based or statistical natural language processing methods, LLMs demonstrate remarkable abilities across a wide range of tasks, from translation and summarization to complex reasoning and creative writing \citep{raschka2024build}.
+
+The emergence of LLMs represents a paradigm shift in artificial intelligence capabilities. Previous generations of language models excelled at specific, narrow tasks but struggled with complex language understanding and generation. Modern LLMs, in contrast, can write emails from keywords, summarize lengthy documents, generate code, answer questions with contextual understanding, and even engage in sophisticated reasoning-tasks that were beyond the reach of earlier approaches \citep{raschka2024build}.
+
+At the core of these capabilities is the Transformer architecture, introduced by \cite{vaswani2023attentionneed}, which enables models to process input sequences in parallel while maintaining awareness of relationships between words through attention mechanisms. This architecture has become the foundation for virtually all state-of-the-art language models developed since 2017.
+
+\subsection{General Architecture of Transformer}
+\label{chap2:transformer}
+Prior to the Transformer, sequence modeling relied primarily on recurrent neural network (RNN) architectures such as Long Short-Term Memory (LSTM) \citep{hochreiter1997lstm} and Gated Recurrent Units (GRU). While effective, these architectures processed data sequentially, limiting parallelization and making them inefficient for long sequences. They also struggled with capturing dependencies between distant positions due to the vanishing gradient problem \citep{hochreiter2001gradient}.
+
+The Transformer architecture, illustrated in \pic~\ref{fig:transformer-architecture}, addressed these limitations through an innovative design that eliminated recurrence and convolutions entirely, relying instead on attention mechanisms to model dependencies regardless of their distance in the input sequence. This design enables significantly more efficient training through parallelization while improving the modeling of long-range dependencies \citep{vaswani2023attentionneed}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{assets/pdfs/transformer_architecture.pdf}
+    \caption{The Transformer's Architecture \citep{vaswani2023attentionneed}}
+    \label{fig:transformer-architecture}
+\end{figure}
+
+The Transformer consists of two primary components: an encoder (left side of \pic~\ref{fig:transformer-architecture}) and a decoder (right side). Both components are composed of stacked layers of self-attention and feed-forward neural networks. The encoder processes the input sequence and converts it into a continuous representation, while the decoder generates the output sequence based on this representation and previously generated tokens.
+
+\subsubsection{Encoder}
+\label{chap2:encoder}
+The encoder transforms input sequences into continuous representations that capture contextual information. In the original Transformer design, the encoder consists of a stack of $N = 6$ identical layers, each containing two sub-layers: a multi-head self-attention mechanism and a position-wise fully connected feed-forward network.
+
+Each sub-layer employs a residual connection \citep{he2015deepresiduallearningimage} and layer normalization \citep{ba2016layernormalization}, expressed as $LayerNorm(x + Sublayer(x))$, where $Sublayer(x)$ represents the function of the sub-layer itself. To facilitate these residual connections, all sub-layers and the embedding layer produce outputs with a consistent dimension of $d_{model} = 512$ \citep{vaswani2023attentionneed}.
+
+Since the Transformer architecture contains no recurrence or convolution, it requires an alternative mechanism to incorporate information about the relative positions of tokens in the sequence. This is achieved through positional encodings, which are added to the input embeddings at the bottoms of the encoder and decoder stacks. These positional encodings provide the model with information about which part of the sequence each token comes from.
+
+\subsubsection{Decoder}
+\label{chap2:decoder}
+The decoder generates the output sequence based on the encoder's representation and previously generated tokens. Like the encoder, it consists of a stack of $N = 6$ identical layers in the original implementation. However, each decoder layer contains an additional sub-layer that performs multi-head attention over the output of the encoder, in addition to the self-attention and feed-forward networks found in encoder layers.
+
+To preserve the auto-regressive property of the generation process, the decoder employs masked self-attention, which prevents each position from attending to subsequent positions. This ensures that predictions for a given position depend only on known outputs at previous positions, maintaining the left-to-right generation process \citep{vaswani2023attentionneed}.
+
+\subsubsection{Attention}
+\label{chap2:attention}
+The attention mechanism is the core innovation of the Transformer architecture, allowing the model to focus on different parts of the input when generating each part of the output. Conceptually, an attention function maps a query and a set of key-value pairs to an output, where the output is computed as a weighted sum of the values. The weight assigned to each value is determined by the compatibility of the query with the corresponding key \citep{vaswani2023attentionneed}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/attention_variety.png}
+    \caption{Scaled Dot-Product Attention and Multi-Head Attention \citep{vaswani2023attentionneed}}
+    \label{fig:attention-variety}
+\end{figure}
+
+The specific form of attention used in the Transformer is called scaled dot-product attention, depicted on the left side of \pic~\ref{fig:attention-variety}. Given queries and keys of dimension $d_k$ and values of dimension $d_v$, the attention function computes the dot products of the query with all keys, divides each by $\sqrt{d_k}$ for stability, applies a softmax function to obtain weights, and then uses these weights to compute a weighted sum of the values.
+
+Mathematically, this is expressed as:
+
+\noindent
+\begin{equation}\label{equ:attention}
+	\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = 
+	\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{T}}{\sqrt{d_k}}\right)\mathbf{V} \in \mathbb{R}^{n \times d_v}
+\end{equation}
+
+Where $\mathbf{Q} \in \mathbb{R}^{n \times d_k}$ represents a matrix of $n$ queries, $\mathbf{K} \in \mathbb{R}^{m \times d_k}$ represents $m$ keys, and $\mathbf{V} \in \mathbb{R}^{m \times d_v}$ represents the corresponding values.
+
+The Transformer employs multi-head attention, shown on the right side of \pic~\ref{fig:attention-variety}, rather than a single attention function. This approach allows the model to jointly attend to information from different representation subspaces at different positions. Multi-head attention projects queries, keys, and values $h$ times with different learned linear projections, applies the attention function in parallel for each projection, and then concatenates and linearly transforms the results to produce the final values.
+
+This multi-head approach enhances the model's ability to capture diverse relationships within the data, as different attention heads can specialize in different types of patterns and dependencies.
+
+\subsection{Parameter-Efficient Fine-tuning}
+\label{sec:peft}
+While pre-trained language models offer powerful capabilities, adapting them to specific domains or tasks traditionally required full fine-tuning---updating all model parameters using task-specific data. This approach becomes increasingly impractical as models grow to billions of parameters, requiring substantial computational resources and large datasets to avoid catastrophic forgetting \citep{liu2024catastrophicforgettingintegratinggeneral}.
+
+Parameter-Efficient Fine-Tuning (PEFT) methods address these challenges by updating only a small subset of parameters or introducing a limited number of new parameters, substantially reducing computational and storage requirements while maintaining performance comparable to full fine-tuning. These approaches are particularly relevant for adapting large language models to specialized domains like knowledge graph querying.
+
+\subsubsection{Low-Rank Adaptation (LoRA)}
+\label{sec:lora}
+Low-Rank Adaptation (LoRA), introduced by \cite{hu2021loralowrankadaptationlarge}, is a particularly effective PEFT method that has gained widespread adoption. LoRA is based on the observation that the weight updates during adaptation often have a low intrinsic rank, suggesting that the changes required to adapt a pre-trained model to a new task or domain lie in a lower-dimensional subspace.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{assets/pics/lora.png}
+    \caption{Conceptual illustration of LoRA: Instead of updating the entire weight matrix $W$, LoRA introduces low-rank matrices $A$ and $B$ that capture the task-specific adaptation.}
+    \label{fig:lora-concept}
+\end{figure}
+
+As illustrated in \pic~\ref{fig:lora-concept}, LoRA freezes the pre-trained model weights and injects trainable rank decomposition matrices into each layer of the Transformer architecture. For a pre-trained weight matrix $W \in \mathbb{R}^{d \times k}$, LoRA parameterizes its update with a low-rank decomposition $W + \Delta W = W + BA$, where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, and the rank $r \ll \min(d,k)$.
+
+During inference, the LoRA update can be merged with the original weights by computing $W + BA$, resulting in no additional inference latency compared to the original model. This approach offers several key advantages:
+
+\begin{itemize}
+    \item \textbf{Parameter efficiency:} LoRA typically reduces the number of trainable parameters by 10,000× or more compared to full fine-tuning.
+    \item \textbf{Memory efficiency:} The reduced parameter count translates to significant memory savings during training.
+    \item \textbf{Computationally efficient:} Training is much faster and requires less computational resources.
+    \item \textbf{Composability:} Multiple LoRA adaptations can be combined or switched without interference.
+    \item \textbf{Performance:} Despite the parameter reduction, LoRA often achieves performance comparable to full fine-tuning.
+\end{itemize}
+
+The rank $r$ is a hyperparameter that controls the capacity and expressiveness of the adaptation. Higher ranks provide more modeling capacity but require more parameters and computation. The scaling factor $\alpha$ is another important hyperparameter that controls the magnitude of the LoRA update.
+
+\subsection{Example Models}
+The introduction of the Transformer architecture led to the development of numerous influential language models. We discuss several key models that have shaped the field and are relevant to our work on knowledge graph question answering.
+
+\subsubsection{BERT (Bidirectional Encoder Representations for Transformers)}
+\label{chap2:bert}
+
+BERT (\textbf{B}idirectional \textbf{E}ncoder \textbf{R}epresentations for \textbf{T}ransformers), introduced by \cite{devlin2019bertpretrainingdeepbidirectional}, revolutionized natural language understanding by enabling deep bidirectional representations. Unlike previous models that processed text in a left-to-right or right-to-left manner, BERT conditions on both left and right contexts simultaneously, creating richer representations of language.
+
+BERT employs only the encoder portion of the Transformer architecture and is pre-trained using two unsupervised tasks: Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). In MLM, random tokens in the input are masked, and the model must predict these masked tokens based on the surrounding context. NSP trains the model to understand relationships between sentences by predicting whether two sentences appear consecutively in the original text.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pics/bert_architecture.jpg}
+    \caption{Pre-Training and Fine-Tuning in BERT \citep{devlin2019bertpretrainingdeepbidirectional}}
+    \label{fig:bert-architecture}
+\end{figure}
+
+As shown in \pic~\ref{fig:bert-architecture}, after pre-training, BERT can be fine-tuned for specific downstream tasks by adding a task-specific output layer. This approach achieved state-of-the-art results across a wide range of natural language understanding tasks, including question answering, natural language inference, and named entity recognition.
+
+BERT's bidirectional nature and contextual understanding make it particularly valuable for tasks like entity and property extraction from natural language questions, where understanding the semantic relationships between terms is crucial.
+
+\subsubsection{T5 (Text-To-Text Transfer Transformer)}
+\label{chap2:t5}
+
+T5 (\textbf{T}ext-\textbf{T}o-\textbf{T}ext \textbf{T}ransfer \textbf{T}ransformer), introduced by \cite{raffel2023exploringlimitstransferlearning}, takes a unified approach to natural language processing by framing all tasks as text-to-text problems. This means that both inputs and outputs are handled as text sequences, enabling a single model architecture and training methodology to address diverse tasks.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/t5_example.jpg}
+    \caption{Usages of T5 \citep{raffel2023exploringlimitstransferlearning}}
+    \label{fig:t5_diagram}
+\end{figure}
+
+As illustrated in \pic~\ref{fig:t5_diagram}, T5 handles various tasks by prepending a task-specific prefix to the input text. For example, a translation task might begin with ``translate English to German: ", while a summarization task might begin with ``summarize: ". This approach enables the model to distinguish between different tasks while using the same underlying architecture and parameters.
+
+Unlike BERT, which uses only the encoder component of the Transformer, T5 employs the full encoder-decoder architecture. This makes it particularly well-suited for generation tasks, including the generation of structured outputs like SPARQL queries. The encoder processes the input text, while the decoder generates the output text, allowing for flexible transformations between different text formats.
+
+T5's unified text-to-text approach makes it an interesting candidate for Natural Language to SPARQL (NL2SPARQL) translation tasks, where natural language questions need to be transformed into structured SPARQL queries. The ability to handle both understanding and generation within a single model architecture aligns well with the requirements of these tasks.
+
+\subsubsection{GPT (Generative Pre-trained Transformer)}
+\label{chap2:gpt}
+
+The GPT (\textbf{G}enerative \textbf{P}re-trained \textbf{T}ransformer) family of models, developed by OpenAI, has become one of the most influential series of language models, particularly for text generation tasks. Unlike BERT, which uses bidirectional attention during pre-training, GPT models employ unidirectional (autoregressive) attention, generating text by predicting one token at a time based on all previous tokens.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pdfs/bert_vs_gpt.pdf}
+    \caption{BERT vs. GPT \citep{raschka2024build}}
+    \label{fig:bert-vs-gpt}
+\end{figure}
+
+As shown in \pic~\ref{fig:bert-vs-gpt}, while BERT uses the encoder portion of the Transformer, GPT models use the decoder portion, with modifications to enable efficient autoregressive generation. This architectural difference reflects their primary use cases: BERT for understanding tasks and GPT for generation tasks.
+
+The GPT series has evolved through several iterations, each significantly larger and more capable than its predecessor:
+
+\begin{itemize}
+    \item \textbf{GPT-2} \citep{radford2019language}, with 1.5 billion parameters, demonstrated impressive zero-shot learning capabilities across various language tasks.
+    \item \textbf{GPT-3} \citep{brown2020gpt3}, with 175 billion parameters, showed remarkable few-shot learning abilities, where it could perform new tasks given just a few examples.
+    \item \textbf{GPT-4} \citep{openai2024gpt4technicalreport}, released in March 2023, introduced multimodal capabilities, accepting both text and image inputs, and demonstrated even stronger reasoning and task performance.
+\end{itemize}
+
+GPT models excel at text generation tasks, making them suitable for generating SPARQL queries from natural language questions. Their autoregressive nature allows them to produce well-formed structured outputs, though they may require specific prompting strategies or fine-tuning to consistently generate syntactically valid SPARQL.
+
+\subsubsection{Mistral 7B}
+\label{chap2:mistral-7b}
+Mistral 7B \citep{jiang2023mistral7b} is a decoder-only generative language model developed by Mistral AI. Despite having only 7 billion parameters---significantly fewer than models like GPT-3---Mistral 7B demonstrates remarkable performance that rivals or exceeds much larger models on various benchmarks.
+
+The model incorporates several architectural innovations that contribute to its efficiency and effectiveness:
+
+\begin{itemize}
+    \item \textbf{Grouped-Query Attention (GQA)} \citep{ainslie-etal-2023-gqa}: Reduces memory requirements and accelerates inference by sharing key and value projections across multiple query heads.
+    \item \textbf{Sliding Window Attention (SWA)} \citep{beltagy2020longformerlongdocumenttransformer,child2019generatinglongsequencessparse}: Enables efficient processing of long sequences by restricting attention to a local window around each token, with the window sliding across the sequence.
+    \item \textbf{Long Context Support}: Handles sequences up to 8,192 tokens, enabling the processing of lengthy questions and context.
+\end{itemize}
+
+Mistral 7B is available in both base and instruction-tuned versions, with the instruction-tuned variant specifically optimized for following natural language instructions. The instruction-tuned version performs particularly well on tasks requiring reasoning and structured output generation, making it suitable for Natural Language to SPARQL translation tasks.
+
+The model's efficiency and strong performance at a relatively small parameter count make it an excellent candidate for parameter-efficient fine-tuning approaches like LoRA, allowing for effective adaptation to specialized domains without excessive computational requirements.
+
+\subsubsection{LLaMA 3.1}
+LLaMA 3.1 \citep{llama3dubey} represents a significant advancement in open-source language models, available in three sizes: 8B, 70B, and 405B parameters. These models support context windows of up to 128K tokens, enabling the processing of extensive context and the generation of detailed responses.
+
+The LLaMA 3.1 models are pre-trained on a diverse multilingual corpus of 15 trillion tokens, using a decoder-only dense Transformer architecture with next-token prediction training. They incorporate several technical innovations:
+
+\begin{itemize}
+    \item \textbf{Grouped Query Attention}: Similar to Mistral 7B, with 8 key-value heads for efficient attention computation.
+    \item \textbf{Attention Masking}: Prevents self-attention between different documents within the same sequence, improving document boundary understanding.
+    \item \textbf{Expanded Vocabulary}: 128K tokens, facilitating better representation of diverse languages and specialized terminology.
+    \item \textbf{Enhanced Positional Encoding}: Rotary Positional Encoding (RoPE) \citep{su2024} with increased base hyperparameter to 500,000 for improved handling of long sequences.
+\end{itemize}
+
+The training process for LLaMA 3.1 involved multiple stages, including initial pre-training, long-context pre-training, annealing, and post-training with supervised fine-tuning (SFT) and Direct Preference Optimization (DPO) \citep{rafailov2024}. This comprehensive training approach contributes to the models' strong performance across a wide range of tasks.
+
+LLaMA 3.1 models, particularly the 8B variant, provide an excellent balance of performance and efficiency for knowledge graph question answering tasks. Their strong reasoning capabilities and open-source nature make them suitable candidates for parameter-efficient fine-tuning approaches focused on SPARQL generation.
+
+\subsubsection{Qwen2.5}
+Qwen2.5 is a series of dense, decoder-only language models developed by Alibaba Cloud. These models are pre-trained on a vast and up-to-date dataset of up to 18 trillion tokens and support context windows of up to 128K tokens with output generation of up to 8K tokens.
+
+Compared to its predecessor, Qwen2, the Qwen2.5 series offers enhanced capabilities in coding and mathematics tasks, along with a broader knowledge base \citep{qwen25}. The series includes specialized domain expert models, notably Qwen2.5-Coder for programming tasks, which is particularly relevant for structured query generation tasks like SPARQL.
+
+The Qwen2.5 series is available in various parameter sizes ranging from 0.5B to 72B, with each size offering different trade-offs between performance and computational efficiency. All models have instruction-tuned versions (denoted by the \texttt{-Instruct} suffix) that are specifically optimized for following natural language instructions.
+
+\subsubsection{Qwen2.5-Coder}
+\label{qwen25coder}
+Qwen2.5-Coder \citep{hui2024qwen25codertechnicalreport} is a specialized variant of the Qwen2.5 model family focused on coding tasks. These models are trained on 5.5 trillion tokens of code-related data and fine-tuned on instruction datasets curated specifically for programming tasks.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/qwen-training.png}
+    \caption{Qwen2.5-Coder Training Pipeline \citep{hui2024qwen25codertechnicalreport}}
+    \label{fig:qwen}
+\end{figure}
+
+As illustrated in \pic~\ref{fig:qwen}, the training pipeline for Qwen2.5-Coder consists of three stages:
+\begin{enumerate}
+    \item \textbf{Initial pre-training}: The model learns from individual code files through next token prediction and fill-in-the-middle approaches \citep{bavarian2022efficienttraininglanguagemodels}, with a maximum context length of 8,192 tokens.
+    \item \textbf{Long-context training}: This stage enhances the model's ability to handle contexts up to 131,072 tokens.
+    \item \textbf{Instruction fine-tuning}: The model undergoes supervised fine-tuning with instruction datasets and direct preference optimization (DPO) \citep{rafailov2024} for alignment with human preferences.
+\end{enumerate}
+
+The focus on code generation makes Qwen2.5-Coder particularly well-suited for tasks that require structured output generation, including SPARQL query generation. The model's training on syntax-heavy data enables it to produce well-formed, syntactically valid outputs, which is crucial for generating executable SPARQL queries.
+
+Like the main Qwen2.5 series, Qwen2.5-Coder is available in multiple parameter sizes ranging from 0.5B to 32B, with instruction-tuned versions for each size. This range provides flexibility in selecting the appropriate model size based on available computational resources and performance requirements.
+
+\subsubsection{Jina Embeddings v3}
+Jina Embeddings v3 \citep{sturua2024jinaembeddingsv3multilingualembeddingstask} is a text embedding model designed for versatile representation learning across multiple languages and tasks. Unlike the generative models discussed previously, Jina Embeddings v3 is a discriminative model that produces dense vector representations of text, which are particularly valuable for semantic search and similarity comparison.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets//pics/jina.png}
+    \caption{Jina Embeddings v3 Model Architecture \citep{sturua2024jinaembeddingsv3multilingualembeddingstask}}
+    \label{fig:jina-arch}
+\end{figure}
+
+As shown in \pic~\ref{fig:jina-arch}, the model implements XLM-RoBERTa with 570 million parameters and incorporates several enhancements:
+\begin{itemize}
+    \item \textbf{FlashAttention2} \citep{dao2023flashattention2fasterattentionbetter} for improved computational efficiency
+    \item \textbf{Rotary Positional Encoding (RoPE)} \citep{su2024} for better handling of long sequences
+    \item \textbf{Matryoshka Representation Learning (MRL)} \citep{kusupati2024} for flexible embedding dimensions
+    \item \textbf{Task-specific adapters} using LoRA \citep{hu2021loralowrankadaptationlarge} for specialized embedding tasks
+\end{itemize}
+
+The model supports multiple task types, including retrieval (passage and query), separation, classification, and text-matching, with specific adapters for each task. It can process documents up to 8,192 tokens in length and produces embeddings with flexible dimensions, defaulting to 1,024 but configurable to as low as 32 without significant performance degradation.
+
+For knowledge graph question answering systems, Jina Embeddings v3 serves a critical role in property retrieval and entity matching processes. By converting natural language descriptions and knowledge graph elements into comparable vector representations, it enables semantic search capabilities that bridge the gap between natural language questions and structured knowledge graph entities and properties.
+
+\section{Retrieval-Augmented Generation (RAG)}
+\label{sec:rag}
+Pre-trained large language models have demonstrated impressive capabilities in storing vast amounts of knowledge within their parameters. However, this approach to knowledge storage---referred to as a parameterized implicit knowledge base (\citealp{raffel2023exploringlimitstransferlearning}; \citealp{roberts2020knowledgepackparameterslanguage}, as cited in \citealp{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp})---comes with significant limitations, despite its effectiveness for many NLP tasks \citep{9412102}.
+
+\subsection{Limitations of Traditional LLMs}
+\label{sec:llm-limitations}
+Despite their remarkable capabilities, large language models face several critical limitations when used as standalone knowledge systems:
+
+\begin{enumerate}
+    \item \textbf{Knowledge Expansion Challenges}: Expanding or revising the knowledge in pre-trained LLMs is difficult and computationally expensive. While fine-tuning on domain-specific data might seem like a solution, this approach often leads to catastrophic forgetting \citep{kaushik2021understandingcatastrophicforgettingremembering}, where newly acquired knowledge overshadows previously learned information, causing significant performance degradation on original tasks \citep{liu2024catastrophicforgettingintegratinggeneral}.
+    
+    \item \textbf{The Black-Box Problem}: Most state-of-the-art deep learning models, including LLMs, suffer from limited transparency and interpretability \citep{blackboxai}. The internal processes by which these models reach conclusions remain opaque, making it difficult to understand how and why specific answers are generated. This lack of transparency raises concerns about reliability, particularly in critical domains like healthcare, security, and safety.
+    
+    \item \textbf{Hallucinations}: LLMs frequently generate plausible-sounding but factually incorrect information, a phenomenon known as hallucination \citep{llmhallucination}. This issue is particularly pronounced when models encounter questions about topics outside their training data or requiring up-to-date information \citep{llmhallu1}. While some degree of hallucination may be inevitable due to the evolving nature of knowledge, it presents a significant challenge for applications requiring high factual accuracy.
+\end{enumerate}
+
+\subsection{RAG Architecture and Approach}
+Retrieval-Augmented Generation (RAG) addresses these limitations by combining the strengths of parametric (LLM) and non-parametric (retrieval-based) memory systems. Instead of relying solely on knowledge encoded in model parameters, RAG incorporates an external knowledge base that can be easily updated, inspected, and verified \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pdfs/rag_lewis.pdf}
+    \caption{RAG Approach Overview \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}}
+    \label{fig:rag-lewis}
+\end{figure}
+
+As illustrated in Figure \ref{fig:rag-lewis}, the RAG architecture consists of two primary components:
+
+\begin{enumerate}
+    \item \textbf{Retriever}: Corresponds to non-parametric memory, responsible for identifying and retrieving relevant information from external knowledge sources based on the input query.
+    
+    \item \textbf{Generator}: Corresponds to parametric memory, using a pre-trained language model to generate coherent responses based on both the input query and the retrieved information.
+\end{enumerate}
+
+The workflow of RAG, as proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, follows these steps:
+
+\begin{enumerate}
+    \item The input query $x$ is encoded into a dense vector representation $\textbf{q}(x)$ using a query encoder $\textbf{q}$ (typically based on BERT\textsubscript{BASE}).
+    
+    \item Maximum Inner Product Search (MIPS) is employed to retrieve the top-$K$ most relevant documents $\{z_i \colon z_i \in Z; 1 \leq i \leq K\}$ from a collection $Z$, using the document representations $\textbf{d}(z)$ created by a document encoder $\textbf{d}$.
+    
+    \item The retrieved documents are treated as latent variables, and the sequence-to-sequence model's predictions are marginalized over different retrieved documents to generate the final output $y$.
+\end{enumerate}
+
+This hybrid approach offers several key advantages:
+\begin{itemize}
+    \item \textbf{Knowledge Updates}: External knowledge bases can be updated independently of the language model, ensuring access to current information without retraining.
+    
+    \item \textbf{Transparency}: Retrieved information can be inspected and verified, making the system more interpretable and trustworthy.
+    
+    \item \textbf{Reduced Hallucinations}: By grounding generation in retrieved factual information, RAG significantly reduces the likelihood of hallucinations.
+    
+    \item \textbf{Domain Adaptation}: The system can be adapted to new domains by updating the external knowledge base without modifying the language model.
+\end{itemize}
+
+\subsection{Traditional RAG for QA over Text}
+\label{sec:traditional-rag}
+It is important to distinguish between different applications of RAG technology. Traditional RAG systems, as described in most literature \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp, gao2024retrievalaugmentedgenerationlargelanguage}, are primarily designed for question answering over unstructured text documents. This approach, which we refer to as ``QA over Text," has become the dominant paradigm in retrieval-augmented systems.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pics/rag_lama.png}
+    \caption{Traditional RAG for QA over Text: Documents are chunked, embedded, and retrieved based on similarity to the query}
+    \label{fig:traditional-rag}
+\end{figure}
+
+As shown in Figure \ref{fig:traditional-rag}, the traditional RAG process for ``QA over Text" typically involves:
+
+\begin{enumerate}
+    \item \textbf{Document Processing}: Documents from various sources (web pages, PDFs, books, etc.) are chunked into manageable segments, typically paragraphs or smaller units.
+    
+    \item \textbf{Chunk Embedding}: These text chunks are converted into dense vector representations using embedding models like BERT or Sentence Transformers.
+    
+    \item \textbf{Vector Storage}: The embeddings are stored in a vector database that supports efficient similarity search.
+    
+    \item \textbf{Query Processing}: When a user submits a question, it is converted into the same embedding space.
+    
+    \item \textbf{Similarity Retrieval}: The most similar document chunks are retrieved based on vector similarity (often using cosine similarity).
+    
+    \item \textbf{Context Augmentation}: These relevant chunks are provided as context to the language model along with the original query.
+    
+    \item \textbf{Response Generation}: The language model generates a response based on both the query and the retrieved context.
+\end{enumerate}
+
+This approach has proven highly effective for many applications, particularly those involving large collections of unstructured text. However, it has limitations when dealing with structured information that involves complex relationships, as found in knowledge graphs. Traditional RAG treats documents as independent chunks, potentially losing the relational context that is explicitly captured in graph structures.
+
+\subsection{Components of Traditional RAG}
+\label{sec:rag-components}
+RAG has two components corresponding to the types of memory used: \textit{retriever} and \textit{generator}. These components work together as shown in \pic~\ref{fig:rag-lewis}. A pre-trained retriever, composed of a \textit{query encoder} and a \textit{document index}, is combined with a pre-trained sequence-to-sequence (seq2seq) model as the generator. The flow of RAG as proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} is straightforward: given a query $x$, it is first encoded into dense representation $\textbf{q}(x)$ using the \textit{query encoder} $\textbf{q}$, which is based on the BERT\textsubscript{BASE}. Maximum Inner Product Search (MIPS) is then employed to retrieve a set of top-$K$ documents $\{z_i \colon z_i \in Z; 1 \leq i \leq K\}$ from a collection of documents (corpus) $Z$ utilizing the dense representation of $z$, i.e. $\textbf{d}(z)$ which is also produced by a BERT\textsubscript{BASE} \textit{document encoder} $\textbf{d}$. For the final prediction $y$, $z$ is treated as a latent variable, and the seq2seq model’s predictions are marginalized over the different retrieved documents \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. Each component will be explained subsequently.
+
+\subsubsection{Retriever}
+\label{chap2:rag-retriever}
+The retriever component in RAG corresponds to non-parametric memory, responsible for identifying and retrieving relevant information based on the input query. The specific implementation of the retriever depends on the type of retrieval source, which for traditional RAG is typically text documents.
+
+For text retrieval in traditional RAG systems, retrievers generally fall into three categories:
+
+\begin{enumerate}
+    \item \textbf{Sparse retriever (keyword search)}: These retrievers rely on exact keyword matching between query terms and document terms. Advanced implementations like BM25 \citep{robertsonbm25} incorporate factors such as term frequency (TF), inverse document frequency (IDF), and specific weighting schemes. Both queries and documents are encoded in the same sparse vector space, with cosine similarity used to measure relevance.
+    
+    \item \textbf{Dense retriever (dense vector search)}: These retrievers use lower-dimensional dense vector representations created by neural encoders like BERT \citep{devlin2019bertpretrainingdeepbidirectional} or MPNet \citep{mpnetsong}. The Dense Passage Retriever (DPR) \citep{karpukhin2020densepassageretrievalopendomain} exemplifies this approach, using two BERT models (one for queries, one for documents) fine-tuned to maximize inner product scores for relevant query-document pairs.
+    
+    \item \textbf{Hybrid retriever (hybrid search)}: These retrievers combine keyword search and dense vector search to leverage the strengths of both approaches. For example, Weaviate's\footnote{\url{https://weaviate.io/}} relative score fusion algorithm scales the similarity scores from sparse and dense retrievers to the range $[0, 1]$ and calculates the final relevance score as a weighted sum of these scores.
+\end{enumerate}
+
+The choice of retriever significantly impacts the system's ability to identify relevant information, with dense and hybrid retrievers generally outperforming sparse retrievers for semantic understanding at the cost of higher computational requirements.
+
+\subsubsection{Generator}
+The generator component in RAG is responsible for producing coherent, relevant responses based on the retrieved information and the original query. Typically implemented using encoder-decoder language models, the generator transforms the combined input (query + retrieved documents) into a natural language response.
+
+In the architecture proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, BART-large \citep{lewis2019bartdenoisingsequencetosequencepretraining}, a pre-trained sequence-to-sequence transformer with 400 million parameters, serves as the generator. The generator concatenates the query input $x$ with each retrieved document $z_i$ and produces probability distributions over possible outputs.
+
+The generator's approach to answering may vary depending on task-specific criteria. Some implementations restrict the generator to only use information from the retrieved documents, while others allow it to draw upon its inherent parametric knowledge when appropriate. For conversational applications, the generator may also incorporate dialogue history to maintain context across multiple interactions \citep{gao2024retrievalaugmentedgenerationlargelanguage}.
+
+\subsection{RAG vs. Fine-tuning}
+When enhancing LLMs for domain-specific applications, practitioners often compare Retrieval-Augmented Generation (RAG) with fine-tuning (FT) approaches. Each method offers distinct advantages and limitations.
+
+RAG excels in dynamic environments by providing real-time knowledge updates through its external retrieval system, without requiring model retraining. It effectively leverages specialized external sources and maintains separation between the knowledge base and reasoning capabilities. However, RAG typically introduces higher latency due to the retrieval step and raises ethical considerations regarding the sources of retrieved information.
+
+Fine-tuning, conversely, enables deep customization of a model's behavior and stylistic output by directly updating model parameters. This approach can improve performance on domain-specific tasks without runtime retrieval overhead. However, fine-tuning requires substantial computational resources, necessitates complete retraining for knowledge updates, and risks catastrophic forgetting of previously learned information.
+
+Research by \cite{ovadia2024finetuningretrievalcomparingknowledge} demonstrates that while unsupervised fine-tuning offers some improvements, RAG consistently outperforms it in handling both previously-encountered knowledge and entirely new information. Their analysis revealed that LLMs struggle to internalize new factual information through unsupervised fine-tuning alone, highlighting RAG's advantages for knowledge-intensive applications.
+
+The optimal approach often depends on specific requirements regarding data dynamics, customization needs, and available computational resources. In many advanced systems, RAG and fine-tuning are employed as complementary methods, with fine-tuning enhancing a model's general capabilities and RAG providing access to specific, up-to-date information.
+
+\section{Graph Retrieval-Augmented Generation}
+\label{sec:graphrag}
+While traditional RAG systems focus on retrieving information from unstructured text, a significant advancement in the field has been the development of Graph Retrieval-Augmented Generation (GraphRAG), which leverages structured knowledge graphs instead of document collections. This approach, which enables ``QA over KG" rather than ``QA over Text," represents a fundamental shift in how retrieval-augmented systems access and reason with information.
+
+\subsection{From Text to Graph-based RAG}
+\label{sec:text-to-graph}
+Traditional RAG and GraphRAG differ fundamentally in their knowledge representation and retrieval mechanisms. While traditional RAG works with unstructured or semi-structured text documents, GraphRAG operates on highly structured knowledge graphs with explicit relationships between entities.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/graphrag_vs_rag.png}
+    \caption{Comparison between Traditional RAG (QA over Text) and GraphRAG (QA over KG)}
+    \label{fig:text-vs-graph-rag}
+\end{figure}
+
+As illustrated in Figure \ref{fig:text-vs-graph-rag}, these approaches differ in several key aspects:
+
+\begin{enumerate}
+    \item \textbf{Knowledge Representation}: Traditional RAG represents knowledge as text chunks or passages, where relationships between information are implicit and must be inferred. GraphRAG uses knowledge graphs where entities are nodes, relationships are edges, and these connections are explicitly defined in a structured format.
+    
+    \item \textbf{Retrieval Mechanism}: Traditional RAG typically retrieves information based on overall semantic similarity between the query and text chunks. GraphRAG can perform more precise retrieval by navigating the explicit relationships in the graph, enabling targeted access to specific information patterns.
+    
+    \item \textbf{Reasoning Capabilities}: Traditional RAG relies heavily on the language model to infer relationships from retrieved text. GraphRAG can leverage the explicit structure of the knowledge graph to perform more systematic reasoning about relationships between entities.
+    
+    \item \textbf{Query Formulation}: Traditional RAG typically uses natural language queries directly for retrieval. GraphRAG often translates natural language into structured query languages like SPARQL to retrieve information from knowledge graphs.
+\end{enumerate}
+
+This distinction between ``QA over Text" and ``QA over KG" is crucial for understanding the unique capabilities and challenges of GraphRAG systems. While traditional RAG excels at retrieving and synthesizing information from large collections of unstructured text, GraphRAG provides more precise access to structured information and supports more complex relational reasoning.
+
+\subsection{GraphRAG Architecture}
+GraphRAG is a specialized form of retrieval-augmented generation that leverages knowledge graphs as the primary source of information. According to \cite{peng2024graphretrievalaugmentedgenerationsurvey}, GraphRAG systems retrieve graph elements (entities, relationships, and subgraphs) relevant to the input query from a graph database, and use these structured elements to enhance language model generation.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pdfs/naive-graphrag.pdf}
+    \caption{Comparison of Query-based GraphRAG vs. Na\"ive Text-based RAG}
+    \label{fig:query-naive}
+\end{figure}
+
+As shown in Figure \ref{fig:query-naive}, GraphRAG offers several advantages over traditional text-based RAG:
+
+\begin{enumerate}
+    \item \textbf{Relationship Capture}: GraphRAG can capture explicit connections between entities, enabling more comprehensive retrieval of relational information than text-based approaches.
+    
+    \item \textbf{Efficient Knowledge Representation}: Knowledge graphs represent information in a more compact and structured format compared to lengthy text passages, reducing redundancy and improving retrieval precision.
+    
+    \item \textbf{Broader Context Awareness}: The graph structure provides a broader context of information, enabling GraphRAG to answer complex questions that require understanding relationships across multiple entities.
+\end{enumerate}
+
+The primary distinction between traditional RAG and GraphRAG lies in their knowledge bases and retrieval mechanisms. While traditional RAG typically uses text documents with dense passage retrieval, GraphRAG employs various specialized retrievers to access information from knowledge graphs.
+
+\subsection{Graph Retrieval Approaches}
+According to \cite{peng2024graphretrievalaugmentedgenerationsurvey}, graph retrievers can be classified into three main categories:
+
+\begin{enumerate}
+    \item \textbf{Non-parametric retriever}: These retrievers use heuristic rules and graph search algorithms without incorporating deep learning models. Examples include multihop path retrieval over topic entities to identify answer entities \citep{yasunaga-etal-2021-qa,grapeqa}.
+    
+    \item \textbf{LM-based retriever}: These retrievers leverage language models for their natural language understanding capabilities. For instance, \cite{Zhang_2022} trained RoBERTa \citep{liu2019robertarobustlyoptimizedbert} to expand paths from topic entities and retrieve relevant paths through sequential decision processes. Similarly, KG-GPT \citep{kim-etal-2023-kg} uses an LLM to identify the top-$K$ relevant relations for specific entities.
+    
+    \item \textbf{Graph neural network (GNN)-based retriever}: These retrievers use GNNs to comprehend graph structures effectively. GNN-RAG \citep{mavromatis2024gnnraggraphneuralretrieval}, for example, leverages encoded graph representations to retrieve relevant entities based on input queries.
+\end{enumerate}
+
+\subsection{Query-based GraphRAG}
+A particularly effective approach to GraphRAG is query-based retrieval, where natural language questions are translated into formal query languages like SPARQL for RDF data or Cypher for Neo4j. This approach directly leverages the structured nature of knowledge graphs to perform precise information retrieval.
+
+Query generation is the critical component in this approach and can be implemented through various methods:
+
+\begin{enumerate}
+    \item \textbf{Manual and semi-automatic approaches}: These rely on human-crafted templates or rule-based systems to translate questions into formal queries.
+    
+    \item \textbf{Schema-based approaches}: These leverage the knowledge graph schema to guide query generation based on entity and relationship types.
+    
+    \item \textbf{Deep learning approaches}: Recent advances have focused on using large language models to generate formal queries. For example, SGPT \citep{ronysgpt} uses a stack of Transformer encoders to encode both linguistic features and subgraph information, which are then fed into GPT-2 \citep{radford2019language} to generate appropriate queries. Other approaches by \cite{emonet2024llmbasedsparqlquerygeneration} and \cite{Kovriguina2023SPARQLGENOP} use in-context learning with few-shot prompting without requiring specific training.
+\end{enumerate}
+
+As illustrated in Figure \ref{fig:query-naive}, query-based GraphRAG offers significant advantages for specific types of questions. For example, when asking ``How many children does Lionel Messi have?", a SPARQL query can directly retrieve this information from a knowledge graph, even when the relevant information is distributed across multiple entities. In contrast, text-based RAG might struggle if the complete information is not contained within a single retrieved passage, potentially leading to incomplete or incorrect answers.
+
+\subsection{Verbalization in GraphRAG}
+While SPARQL query generation forms the core of many GraphRAG systems, an alternative approach for simpler questions is verbalization. This technique involves converting knowledge graph triples into natural language statements that can be directly matched against user questions using semantic similarity measures \citep{ongris2024frog}.
+
+Verbalization is particularly effective for single-hop questions that seek information directly connected to a specific entity. For example, a question like ``When was Einstein born?" can be answered by verbalizing the triple \texttt{(Einstein, birthDate, "1879-03-14")} into the natural language statement ``Einstein was born on March 14, 1879," and then measuring the semantic similarity between this statement and the original question.
+
+This approach offers several advantages for simple questions:
+\begin{itemize}
+    \item \textbf{Efficiency}: It bypasses the need for complex SPARQL query generation and execution.
+    \item \textbf{Robustness}: It relies on semantic matching rather than exact query syntax, making it more tolerant of variations in question formulation.
+    \item \textbf{Interpretability}: The verbalized triples provide a clear explanation of how the answer was derived from the knowledge graph.
+\end{itemize}
+
+However, verbalization is generally limited to simple questions involving direct relationships. For more complex queries involving multiple hops, aggregations, or constraints, SPARQL query generation remains the more powerful approach.
+
+\subsection{Challenges in GraphRAG Systems}
+Despite their advantages, GraphRAG systems face several unique challenges:
+
+\begin{enumerate}
+    \item \textbf{Query Generation Complexity}: Translating natural language questions into formal query languages like SPARQL is significantly more complex than text retrieval. The generation must account for schema constraints, syntax requirements, and the specific structure of the knowledge graph.
+    
+    \item \textbf{Schema Understanding}: Effective GraphRAG requires understanding the schema of the underlying knowledge graph, including entity types, relationship patterns, and property structures. This information must be effectively incorporated into the query generation process.
+    
+    \item \textbf{Entity Linking}: Identifying and disambiguating entities mentioned in natural language questions is crucial for generating accurate queries. This process requires matching potentially ambiguous natural language terms to precise knowledge graph identifiers.
+    
+    \item \textbf{Property Matching}: Similarly, properties or relationships mentioned in questions must be mapped to the specific predicates used in the knowledge graph, which may use different terminology or granularity.
+    
+    \item \textbf{Computational Overhead}: Some GraphRAG approaches, particularly those involving large language models for query generation, can introduce significant computational overhead compared to simpler retrieval methods.
+\end{enumerate}
+
+Addressing these challenges requires sophisticated approaches that combine natural language understanding, knowledge graph reasoning, and efficient query execution strategies. The FrOG framework, discussed in Section 2.6, represents one such approach that tackles these challenges through a multi-component architecture specifically designed for GraphRAG.
+
+\subsection{Comparison with Traditional Approaches}
+When comparing GraphRAG with traditional approaches to knowledge graph question answering, several trade-offs become apparent:
+
+\begin{table}
+    \centering
+    \begin{tabular}{|p{3cm}|p{5cm}|p{5cm}|}
+        \hline
+         \textbf{Aspect} & \textbf{Traditional KG-QA} & \textbf{GraphRAG} \\
+        \hline
+         \textbf{Flexibility} & Limited to predefined templates or rules & High adaptability through LLM-based query generation \\
+        \hline
+         \textbf{Computational Cost} & Lower computational requirements & Higher computational cost due to LLM inference \\
+        \hline
+         \textbf{Interpretability} & High transparency through rule-based approaches & Varies based on implementation; can include reasoning traces \\
+        \hline
+         \textbf{Query Complexity} & Often limited to simpler query patterns & Can handle complex, multi-hop queries \\
+        \hline
+         \textbf{Domain Adaptation} & Requires extensive manual adaptation & More easily adaptable to new domains \\
+        \hline
+    \end{tabular}
+    \caption{Comparison of Traditional KG-QA and GraphRAG Approaches}
+    \label{tab:kg-qa-comparison}
+\end{table}
+
+As shown in Table \ref{tab:kg-qa-comparison}, GraphRAG offers significant advantages in flexibility, query complexity handling, and domain adaptation, at the cost of higher computational requirements. The integration of large language models enables GraphRAG systems to handle more diverse and complex questions than traditional rule-based or template-based approaches, while the structured knowledge graph foundation provides more reliable and precise information retrieval than text-based RAG systems.
+
+This combination of structured knowledge representation with advanced language model capabilities positions GraphRAG as a particularly promising approach for complex question answering tasks that require both relational reasoning and natural language understanding.
+
+\section{Multi-Agent Systems for Natural Language Processing}
+\label{sec:multi-agent}
+While single-agent architectures have dominated many natural language processing applications, complex reasoning tasks often benefit from a multi-agent approach where specialized components collaborate to solve problems that exceed the capabilities of individual agents. Multi-agent systems for NLP represent a significant advancement in addressing complex tasks like knowledge graph question answering, providing enhanced reasoning capabilities, specialization, and robustness.
+
+\subsection{Agent-based Architectures}
+\label{sec:agent-architectures}
+An agent in the context of artificial intelligence is a computational entity that perceives its environment, makes decisions, and takes actions to achieve specific goals \citep{russell2010artificial}. Agent-based architectures organize these entities into structured systems that can collectively accomplish tasks beyond the capabilities of individual components.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pics/agent-components.png}
+    \caption{Conceptual Multi-Agent Architecture Showing Specialized Agents and Coordination}
+    \label{fig:agent-architecture}
+\end{figure}
+
+As illustrated in Figure \ref{fig:agent-architecture}, multi-agent architectures typically include several key components \citep{nvidia2024llmagents}:
+
+\begin{enumerate}
+    \item \textbf{Agent Core}: The central coordination module that manages core logic and decision-making processes. It defines overall goals, available tools, and how to use different planning modules.
+    
+    \item \textbf{Specialized Agents}: Individual agents designed for specific sub-tasks, such as information retrieval, reasoning, planning, or generation, each with their own expertise and capabilities.
+    
+    \item \textbf{Memory Module}: Systems for retaining information across interactions, including both short-term contextual memory and long-term knowledge bases.
+    
+    \item \textbf{Planning Module}: Components that enable agents to decompose complex tasks into manageable subtasks and develop sequences of actions.
+    
+    \item \textbf{Tools and External Interfaces}: Mechanisms for agents to interact with external systems, databases, application programming interfaces (APIs), or other resources to gather information or execute actions.
+\end{enumerate}
+
+Modern agent architectures often leverage large language models (LLMs) as their cognitive core, enabling more sophisticated reasoning and natural language interaction than previous generations of agent systems \citep{langchain2025langgraph}. These LLM-powered agents can process natural language instructions, reason about complex problems, and generate appropriate responses based on their goals and available tools.
+
+\subsection{Agent Specialization and Composition}
+\label{sec:agent-specialization}
+A key advantage of multi-agent systems is the ability to develop specialized agents that excel at particular tasks and then compose these specialists into a coherent system. This specialization allows for more effective handling of complex problems by breaking them down into manageable sub-problems addressed by expert components \citep{aws2025multiagent}.
+
+Common types of specialized agents in NLP systems include:
+
+\begin{itemize}
+    \item \textbf{Information Retrieval Agents}: Specialize in finding and extracting relevant information from various sources, such as knowledge graphs, databases, or the web.
+    
+    \item \textbf{Reasoning Agents}: Focus on logical inference, causal reasoning, or other forms of structured thinking to draw conclusions from available information.
+    
+    \item \textbf{Planning Agents}: Develop sequences of actions or sub-queries to achieve complex goals, often using search algorithms or heuristic approaches.
+    
+    \item \textbf{Generation Agents}: Create natural language outputs, including answers, explanations, summaries, or other textual content.
+    
+    \item \textbf{Critique Agents}: Evaluate outputs or plans produced by other agents, identifying errors or suggesting improvements.
+    
+    \item \textbf{Translation Agents}: Convert between different representations, such as natural language to formal query languages or between different natural languages.
+\end{itemize}
+
+These specialized agents can be composed in various architectural patterns \citep{langchain2025langgraph}:
+
+\begin{enumerate}
+    \item \textbf{Network Architecture}: Each agent can communicate with every other agent, with any agent deciding which other agent to call next. This provides maximum flexibility but can lead to complex interaction patterns.
+    
+    \item \textbf{Supervisor Architecture}: All agents communicate through a central supervisor agent that orchestrates the workflow, determining which agent should be activated next. This provides centralized control and simplifies coordination.
+    
+    \item \textbf{Hierarchical Architecture}: A multi-level structure where higher-level supervisor agents coordinate teams of lower-level agents, enabling more complex workflows while maintaining manageable spans of control.
+    
+    \item \textbf{Custom Multi-Agent Workflows}: Architectures where agents communicate with only specific subsets of other agents, with deterministic routing for certain interactions and dynamic routing for others.
+\end{enumerate}
+
+Graph-based architectures, in particular, have gained prominence with the development of frameworks like LangGraph \citep{langchain2025langgraph}, which enable the construction of directed graphs of agent interactions with conditional routing based on agent outputs and system state.
+
+\subsection{Agent Coordination and Orchestration}
+\label{sec:agent-coordination}
+Effective coordination between agents is crucial for multi-agent systems to function coherently. This coordination involves several dimensions \citep{akira2025coordination}:
+
+\begin{enumerate}
+    \item \textbf{State Management}: Systems for maintaining and updating shared knowledge that is accessible to multiple agents, enabling them to work from a common understanding of the problem and environment.
+    
+    \item \textbf{Message Passing}: Protocols for agents to exchange information, including content format, metadata, and message attribution to maintain clear conversation threads.
+    
+    \item \textbf{Conditional Routing}: Decision mechanisms that determine which agents should be activated in specific situations based on the current state, outputs from previous agents, or explicit routing commands.
+    
+    \item \textbf{Handoffs}: Techniques for transferring control from one agent to another, including mechanisms for passing relevant context and ensuring smooth transitions.
+    
+    \item \textbf{Error Handling}: Approaches for detecting and recovering from agent failures or unexpected outputs, including fallback strategies and exception handling.
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/pics/akira.jpeg}
+    \caption{Agent Coordination Through Shared State and Conditional Routing}
+    \label{fig:agent-coordination}
+\end{figure}
+
+As shown in Figure \ref{fig:agent-coordination}, modern coordination frameworks implement these mechanisms using graph-based representations where nodes represent agent processing steps and edges represent potential transitions between agents \citep{langchain2025langgraph}. This approach enables:
+
+\begin{itemize}
+    \item \textbf{Shared State Objects}: Central repositories of information that all agents can access and update, typically implemented as structured schema with specific channels for different types of information.
+    
+    \item \textbf{Conditional Edges}: Transitions between agents that depend on the output of previous processing steps, allowing dynamic adaptation to different scenarios.
+    
+    \item \textbf{Explicit Handoff Tools}: Specialized mechanisms for agents to transfer control to other agents, often implemented as tool calls within the agent's decision-making process.
+    
+    \item \textbf{Feedback Loops}: Cycles where agent outputs are evaluated and potentially reprocessed to improve quality, enabling iterative refinement of solutions.
+\end{itemize}
+
+This coordination infrastructure enables sophisticated workflows where multiple agents collaborate on complex problems, each contributing their specialized expertise while maintaining overall coherence and goal orientation.
+
+\subsection{Applications to Complex Reasoning Tasks}
+\label{sec:agent-applications}
+Multi-agent systems have demonstrated particular effectiveness for complex reasoning tasks that require diverse capabilities and multiple processing steps \citep{nvidia2024llmagents, aws2025multiagent}. These applications include:
+
+\begin{enumerate}
+    \item \textbf{Multi-hop Question Answering}: Systems that answer questions requiring information from multiple sources or sequential reasoning steps, with different agents handling different hops in the reasoning chain.
+    
+    \item \textbf{Planning and Problem Solving}: Architectures where agents collaborate to develop and execute multi-step plans to achieve complex goals, with specialized agents for different aspects of the planning process.
+    
+    \item \textbf{Knowledge Integration}: Systems that combine information from diverse sources, using specialized agents to handle different data types, formats, or domains and integrate them into coherent responses.
+    
+    \item \textbf{Explainable AI}: Architectures where some agents generate responses while others produce explanations or justifications for those responses, enhancing transparency and trustworthiness.
+    
+    \item \textbf{Interactive Systems}: Applications where multiple agents manage different aspects of ongoing dialogues with users, including information retrieval, response generation, and clarification requests.
+\end{enumerate}
+
+For knowledge graph question answering specifically, multi-agent approaches offer several advantages:
+
+\begin{itemize}
+    \item \textbf{Specialized Entity and Property Extraction}: Dedicated agents can focus on identifying relevant entities and properties in natural language questions, improving precision and recall.
+    
+    \item \textbf{Strategy Selection}: Specialized agents can determine the most appropriate approach for different question types, such as direct verbalization for simple questions versus formal query generation for complex queries.
+    
+    \item \textbf{Query Generation and Verification}: Different agents can handle query generation, execution, and result verification, with feedback loops to refine queries that produce unexpected results.
+    
+    \item \textbf{Fallback Mechanisms}: Orchestration systems can implement graceful degradation through sequential fallback to alternative approaches when primary methods fail.
+    
+    \item \textbf{Transparent Reasoning}: The division of responsibility among specialized agents makes the overall reasoning process more transparent and interpretable.
+\end{itemize}
+
+Recent research has demonstrated that multi-agent systems can outperform single-agent approaches on complex reasoning tasks, particularly when those tasks involve multiple types of knowledge or diverse processing requirements \citep{langchain2025langgraph}.
+
+\subsection{Challenges in Multi-Agent Systems}
+\label{sec:agent-challenges}
+Despite their advantages, multi-agent systems face several challenges that must be addressed for effective implementation \citep{aws2025multiagent}:
+
+\begin{enumerate}
+    \item \textbf{Coordination Overhead}: The communication and coordination between agents introduces computational and latency overhead that can impact system performance, particularly for real-time applications.
+    
+    \item \textbf{Error Propagation}: Errors from one agent can cascade through the system, potentially amplified by subsequent processing steps and leading to compounding failures.
+    
+    \item \textbf{System Complexity}: Multi-agent architectures are inherently more complex than single-agent systems, making them more difficult to design, implement, debug, and maintain.
+    
+    \item \textbf{Resource Management}: Efficiently allocating computational resources across multiple agents, particularly when some agents are resource-intensive, presents significant challenges for system optimization.
+    
+    \item \textbf{Evaluation Difficulty}: Assessing the contribution of individual agents to overall system performance is often challenging, complicating the optimization process and making it difficult to identify bottlenecks.
+    
+    \item \textbf{Context Management}: Maintaining appropriate context across multiple agent interactions while avoiding context overload presents complex trade-offs between comprehensive information sharing and efficiency.
+\end{enumerate}
+
+Addressing these challenges requires careful architectural design, effective coordination mechanisms, robust error handling, and comprehensive evaluation methodologies \citep{langchain2025langgraph}. Recent advances in orchestration frameworks, state management systems, and agent evaluation techniques have made multi-agent approaches increasingly practical for complex NLP applications like knowledge graph question answering.
+
+% New references to add to your .bib file
+
+
+\section{The FrOG Framework}
+\label{sec:frog}
+The Framework of Open GraphRAG (FrOG) \citep{ongris2024frog} represents a significant advancement in the application of GraphRAG principles to knowledge graph question answering. Developed as an open-source framework, FrOG establishes a foundation for leveraging large language models to interact with knowledge graphs through natural language queries. This section examines the architecture, components, and limitations of the original FrOG framework, which serves as the baseline for the enhancements presented in this thesis.
+
+\subsection{FrOG Architecture Overview}
+\label{sec:frog-architecture}
+The FrOG framework implements a specialized GraphRAG approach focused on translating natural language questions into SPARQL queries for knowledge graph retrieval. The system architecture evolved through two main iterations, each addressing different aspects of the knowledge graph question answering challenge.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{assets/pdfs/pipeline-ori.pdf}
+    \caption{The Initial FrOG Pipeline (v1) \citep{ongris2024frog}}
+    \label{fig:pipeline_v1}
+\end{figure}
+
+The initial pipeline, shown in Figure \ref{fig:pipeline_v1}, established a prototype focused specifically on Wikidata interaction. This pipeline implemented three key processing steps:
+
+\begin{enumerate}
+    \item \textbf{Entity Extraction and Linking}: The system identifies relevant entities in the natural language question and links them to corresponding Wikidata entities.
+    
+    \item \textbf{SPARQL Query Generation}: Using the identified entities and a predefined list of the top-100 frequently used Wikidata properties, the system generates a SPARQL query that formalizes the information need expressed in the natural language question.
+    
+    \item \textbf{Answer Generation}: After executing the SPARQL query against Wikidata, the system formats the results into a natural language response that directly addresses the original question.
+\end{enumerate}
+
+While effective for simple questions about well-known entities, this initial pipeline was limited by its narrow focus on Wikidata and its reliance on a restricted set of predefined properties.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{assets/pdfs/pipeline2-cropped.pdf}
+    \caption{The Upgraded FrOG Pipeline (v2) \citep{ongris2024frog}}
+    \label{fig:pipeline_v2}
+\end{figure}
+
+The upgraded pipeline, depicted in Figure \ref{fig:pipeline_v2}, addressed these limitations through several enhancements:
+
+\begin{enumerate}
+    \item \textbf{Vector Database Integration}: The system incorporated auxiliary vector databases to enable the use of a larger number of properties beyond the predefined list.
+    
+    \item \textbf{Text Retrieval Enhancement}: A direct verbalization approach was introduced for simple questions, using dense text embeddings encoded from verbalized triples to provide immediate answers without requiring SPARQL generation.
+    
+    \item \textbf{Multi-Knowledge Graph Support}: The architecture was expanded to support multiple knowledge graphs, including Wikidata, DBpedia, and local knowledge graphs, providing greater flexibility and domain coverage.
+\end{enumerate}
+
+This enhanced pipeline implemented a more sophisticated retrieval stage, where the system first attempts to answer questions using verbalized triples of identified entities. If this approach is insufficient, the system proceeds with SPARQL query generation, using entities retrieved from the knowledge graph's API or vector database and properties identified through vector-based semantic search.
+
+\subsection{Key Components of FrOG}
+\label{sec:frog-components}
+The FrOG framework consists of several core components that work together to enable natural language interaction with knowledge graphs:
+
+\begin{enumerate}
+    \item \textbf{Entity Extraction and Linking}: This component identifies entities mentioned in natural language questions and links them to corresponding knowledge graph entities. For Wikidata, this process leverages the Wikidata API for entity resolution, while for other knowledge graphs, it employs vector-based semantic search.
+    
+    \item \textbf{Property Retrieval System}: A vector database stores embeddings of knowledge graph properties, enabling semantic search to identify properties relevant to the natural language question. This approach bridges the vocabulary gap between natural language expressions and formal knowledge graph predicates.
+    
+    \item \textbf{Verbalization Engine}: For simple questions, the system attempts direct verbalization by converting knowledge graph triples into natural language statements and measuring semantic similarity with the original question. This provides an efficient path for answering straightforward queries without requiring SPARQL generation.
+    
+    \item \textbf{SPARQL Generation}: For complex questions or when verbalization is insufficient, the system generates formal SPARQL queries using large language models. This process incorporates the identified entities and properties as context for the language model.
+    
+    \item \textbf{Query Execution}: The generated SPARQL queries are executed against the appropriate knowledge graph endpoint, with results parsed and processed for presentation to the user.
+    
+    \item \textbf{Answer Synthesis}: The final component transforms query results into coherent natural language responses that directly address the original question, using the language model's generation capabilities to produce human-readable answers.
+\end{enumerate}
+
+These components work together in a pipeline architecture, with information flowing sequentially from entity extraction through to answer synthesis. The system incorporates limited decision-making capabilities, primarily in determining whether to use verbalization or SPARQL generation based on verbalization scores.
+
+\subsection{Evaluation Methodology}
+\label{sec:frog-evaluation}
+The original FrOG framework employed a comprehensive evaluation methodology to assess its performance across different knowledge graphs and question types. This evaluation focused on several key metrics:
+
+\begin{enumerate}
+    \item \textbf{Jaccard Similarity}: Measuring the overlap between the results returned by generated SPARQL queries and ground truth queries, calculated as the size of the intersection divided by the size of the union of the result sets.
+    
+    \item \textbf{Verbalization Usage}: The proportion of questions successfully answered through the verbalization approach without requiring SPARQL generation.
+    
+    \item \textbf{Cross-Knowledge Graph Performance}: Comparative evaluation across different knowledge sources, including Wikidata, DBpedia, and domain-specific knowledge graphs.
+\end{enumerate}
+
+The evaluation utilized both established benchmarks like QALD-9-Plus \citep{perevalov2022qald9plus} for Wikidata and DBpedia, as well as custom datasets for domain-specific knowledge graphs. This comprehensive approach provided insights into the framework's strengths and limitations across diverse question types and knowledge domains.
+
+\subsection{Limitations and Opportunities for Enhancement}
+\label{sec:frog-limitations}
+While the FrOG framework established a solid foundation for knowledge graph question answering, it exhibited several limitations that presented opportunities for enhancement:
+
+\begin{enumerate}
+    \item \textbf{Limited Entity and Property Extraction}: The original system's entity and property extraction methods were constrained in their ability to handle diverse and complex question types, particularly for multi-hop reasoning scenarios.
+    
+    \item \textbf{Single-Agent Architecture}: The pipeline architecture, while straightforward, lacked the sophisticated reasoning capabilities that a multi-agent approach could provide for adaptive strategy selection and intelligent query routing.
+    
+    \item \textbf{Few-Shot Prompting Approach}: The system relied on few-shot prompting for language models rather than specialized model training, limiting its ability to learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation.
+    
+    \item \textbf{Restricted Dataset Scope}: The datasets used for evaluation were limited in scope and variety, constraining the system's ability to handle diverse query types and adapt to different knowledge domains.
+    
+    \item \textbf{Sequential Processing}: The rigid pipeline architecture provided limited opportunities for feedback loops, error recovery, or alternative processing paths when primary approaches failed.
+    
+    \item \textbf{Transparency Limitations}: The system offered limited visibility into its reasoning process, making it difficult for users to understand and verify how answers were derived.
+\end{enumerate}
+
+These limitations highlighted the need for a more sophisticated approach that could better address the challenges of knowledge graph question answering. The enhancements presented in this thesis directly address these limitations through three main improvements: comprehensive dataset generation, specialized model fine-tuning, and a sophisticated multi-agent architecture.
+
+\section{Summary and Research Gap}
+\label{sec:summary}
+This chapter has provided a comprehensive review of the theoretical foundations and prior research that underpin our enhanced GraphRAG system. We have explored knowledge graphs and the Semantic Web, large language models and their architectural foundations, retrieval-augmented generation approaches, graph-based retrieval systems, multi-agent architectures, the FrOG framework, and dataset generation methodologies for SPARQL learning.
+
+\subsection{Synthesis of Key Concepts}
+The technologies and approaches discussed in this chapter collectively form the foundation for advanced knowledge graph question answering systems:
+
+\begin{enumerate}
+    \item \textbf{Knowledge Graphs} provide structured representations of information with explicit relationships between entities, enabling precise query formulation and complex reasoning about interconnected data.
+    
+    \item \textbf{Large Language Models} offer powerful natural language understanding and generation capabilities, but face limitations in knowledge currency, factual accuracy, and reasoning transparency when used independently.
+    
+    \item \textbf{Retrieval-Augmented Generation} addresses these limitations by combining LLMs with external knowledge sources, typically focusing on unstructured text retrieval in traditional implementations.
+    
+    \item \textbf{GraphRAG} extends the RAG paradigm to leverage structured knowledge graphs instead of text documents, enabling more precise information retrieval and complex relational reasoning.
+    
+    \item \textbf{Multi-Agent Systems} enhance reasoning capabilities through specialized components that collaborate on complex tasks, providing flexibility, robustness, and transparency.
+    
+    \item \textbf{The FrOG Framework} establishes a foundation for GraphRAG by implementing key components for entity extraction, property retrieval, verbalization, and SPARQL generation, while revealing opportunities for enhancement.
+    
+    \item \textbf{Dataset Generation Approaches} for SPARQL learning range from manual creation to sophisticated hybrid methods that combine template-based, graph exploration, and LLM-enhanced techniques.
+\end{enumerate}
+
+These technologies and approaches interact in complex ways, with knowledge graphs providing the structured foundation, large language models offering natural language capabilities, retrieval mechanisms connecting questions to knowledge, and multi-agent architectures orchestrating the overall reasoning process.
+
+\subsection{Research Gap and Opportunities}
+Despite significant advances in each of these areas, several important research gaps remain in the field of knowledge graph question answering:
+
+\begin{enumerate}
+    \item \textbf{Limited Integration of Fine-tuning and Retrieval}: While both fine-tuning and retrieval-augmented approaches have demonstrated success independently, their integration for knowledge graph question answering remains under-explored. In particular, the use of parameter-efficient fine-tuning methods like LoRA for specialized components of GraphRAG systems represents a promising but underdeveloped direction.
+    
+    \item \textbf{Insufficient Dataset Generation Methodologies}: Existing approaches to NL2SPARQL dataset generation often lack the scale, diversity, and quality needed for effective model training. The combination of template-based, graph exploration, and LLM-enhanced approaches offers potential solutions but requires further development and validation.
+    
+    \item \textbf{Single-Agent Limitations}: Many current GraphRAG systems employ single-agent or simple pipeline architectures that lack the sophisticated reasoning capabilities, adaptive processing, and robust fallback mechanisms provided by multi-agent approaches.
+    
+    \item \textbf{Transparency Challenges}: Knowledge graph question answering systems often operate as black boxes, providing limited visibility into their reasoning processes and making it difficult for users to verify or understand how answers are derived.
+    
+    \item \textbf{Cross-Domain Adaptability}: Adapting GraphRAG systems to different knowledge graph domains typically requires significant manual effort and domain-specific engineering, limiting their practical applicability across diverse domains.
+\end{enumerate}
+
+These gaps highlight the need for more integrated approaches that combine the strengths of various technologies while addressing their individual limitations. In particular, the combination of specialized model fine-tuning, comprehensive dataset generation, and sophisticated multi-agent architectures offers promising directions for enhancing GraphRAG systems.
+
+\subsection{Transition to Enhanced GraphRAG}
+Building on the theoretical foundations and prior research discussed in this chapter, our enhanced GraphRAG system addresses these research gaps through three main improvements:
+
+\begin{enumerate}
+    \item \textbf{Comprehensive Dataset Generation}: We develop sophisticated methods for creating high-quality NL2SPARQL datasets, combining template-based, random-walk, and LLM-enhanced approaches to ensure diversity, validity, and linguistic naturalness.
+    
+    \item \textbf{Specialized Model Fine-tuning}: We employ parameter-efficient fine-tuning techniques to create dedicated models for entity/property extraction and SPARQL generation, significantly improving performance over few-shot prompting approaches.
+    
+    \item \textbf{Sophisticated Multi-Agent Architecture}: We implement a graph-based multi-agent system that enables intelligent routing, adaptive processing, robust fallback mechanisms, and comprehensive transparency.
+\end{enumerate}
+
+These enhancements directly address the limitations of the original FrOG framework while leveraging its foundational components. By integrating advanced techniques from multiple research areas, our approach represents a significant advancement in knowledge graph question answering capabilities.
+
+In the next chapter, we detail the methodological approach of our enhanced GraphRAG system, including the design and implementation of our dataset generation methods, fine-tuning strategies, and multi-agent architecture.
