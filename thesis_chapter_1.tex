@@ -1,0 +1,148 @@
+%-----------------------------------------------------------------------------%
+\chapter{\babSatu}
+\label{bab:1}
+%-----------------------------------------------------------------------------%
+In this chapter, we will explain the background motivation and problems we aim to resolve through this enhanced research, building upon previous GraphRAG frameworks.
+
+%-----------------------------------------------------------------------------%
+\section{Overview}
+\label{sec:latarBelakang}
+%-----------------------------------------------------------------------------%
+Recent advancements in the field of large language models (LLMs) have transformed the paradigm of Information Retrieval (IR) applications \citep{irparadigm}. This phenomenon can be seen nowadays, where numerous LLM-powered services like OpenAI's ChatGPT, Google's Gemini, and Microsoft's Copilot are employed for IR tasks, such as question-answering (QA) and text summarization. Specifically, for search engines, existing works focus on leveraging LLMs to improve query rewriting, retrieval, reranking, and content reading \citep{zhu2024largelanguagemodelsinformation}.
+
+LLMs can contribute significantly to the field of IR due to their impressive ability to understand natural language semantically and generate natural language text fluently. These skills are acquired during the pre-training phase, where massive amounts of textual data are fed into models to optimize their parameters. The knowledge learned during this phase is embedded within the models' parameters, making such models known as \textit{parametric models}. These foundation models can be further fine-tuned with instruction datasets or specific examples to perform many different downstream tasks \citep{ziegler2020finetuninglanguagemodelshuman}. Additionally, they can also learn from human feedback and in-context learning, i.e., the model uses natural language instructions stated in the prompt as a guidance to complete similar tasks by simply predicting which token will come up next \citep{brown2020gpt3}.
+
+Despite their performance, there are still several limitations of LLMs: the difficulties in expanding or updating the knowledge, the lack of transparency or interpretability (or the \textit{black-box} problem of AI), and the ``hallucination'' phenomena \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, where the generated response is plausible but nonfactual. These limitations---especially the last one---have led to significant concerns about the trustworthiness of LLMs. Consequently, people tend to be reluctant when it comes to leveraging LLMs for decision-making in critical fields like law, healthcare, finance, and other sectors, where accountability and accuracy are the most important aspects.
+
+To get rid of these problems while still maintaining the excellent performance of LLMs, \textit{retrieval-augmented generation} (RAG) was introduced \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. This approach does not rely solely on parametric models but also incorporates external \textit{non-parametric models} which perform retrieval on a knowledge base. By using this component, the knowledge can be easily expanded or updated as it is not embedded in the parameters. Moreover, this component also allows direct inspection of the retrieved data, partially addressing the black-box problem. However, while this approach does not guarantee that hallucinations will disappear completely, it reduces them by not depending solely on the knowledge embedded within the LLMs.
+
+The original na\"{i}ve RAG approach as proposed by \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} uses Dense Passage Retriever (DPR) as the non-parametric component \citep{karpukhin2020densepassageretrievalopendomain}. This method encodes both query and documents into dense embeddings, such as using BERT\textsubscript{BASE} \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}. The maximum inner product search (MIPS) algorithm is then employed to find the top-$K$ most relevant documents given the query. However, despite DPR outperforming traditional scoring algorithms like BM25, it still suffers from the black-box problem due to the nature of dense embeddings which are generally less interpretable. Furthermore, the process of splitting large documents into smaller ones for encoding (i.e., chunking) can potentially lead to the loss of contextual information and disrupt the coherence of the original content if related information is split across different chunks \citep{sarmah2024hybridragintegratingknowledgegraphs}.
+
+Therefore, to address those issues, one approach is to use a different knowledge base to store the knowledge to be retrieved, instead of a corpus of text chunks. One of the most versatile knowledge bases is the knowledge graph (KG), which stores information in the form of a graph structure. Leveraging KG as the knowledge base offers several advantages: the entities in the KG which are contextualized through their connections to other entities within the KG that can provide meaningful semantic relationships, the graph structure that supports graph theory algorithms (e.g., community detection) to extract meaningful information, and the ability to provide reasoning over retrieval results through graph walks (i.e., tracing the paths connecting one entity to another) \citep{informatics9010006}.
+
+\textbf{Distinguishing Our Approach from Typical GraphRAG Systems:} It is important to note that typical GraphRAG approaches, as described in recent literature, primarily focus on \textit{QA over text documents} where knowledge graphs are constructed or extracted from textual corpora during the retrieval process. In these conventional approaches, the system begins with unstructured text documents, dynamically constructs knowledge graphs from these documents, and then performs question-answering over the resulting graph structures. This process involves transforming textual content into graph representations as an intermediate step in the retrieval-augmented generation pipeline.
+
+In contrast, our research focuses on \textit{QA over existing Knowledge Graphs}, where we directly utilize pre-constructed, structured knowledge bases such as Wikidata, DBpedia, Curriculum KG, Legal KG, and GESIS KG as our primary data sources. Rather than extracting or constructing knowledge graphs from text documents, we adapt GraphRAG methodologies to work directly with these established knowledge repositories. This fundamental distinction positions our work as an adaptation of GraphRAG specifically designed for structured knowledge graph querying, rather than the typical text-to-graph-to-answer paradigm found in conventional GraphRAG systems.
+
+While previous work \citep{ongris2024frog} established the foundational FrOG (Framework of Open GraphRAG) system that successfully demonstrated the feasibility of using knowledge graphs with open-source components for question-answering tasks over structured knowledge bases, several limitations were identified that hindered optimal performance and scalability. First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios when working directly with knowledge graphs. The system relied on simple few-shot prompting approaches without specialized training for Natural Language to SPARQL (NL2SPARQL) generation tasks, which is crucial for effective querying of structured knowledge bases.
+
+Second, the architecture lacked the sophisticated reasoning capabilities needed for adaptive strategy selection and intelligent query routing when dealing with heterogeneous knowledge graph structures. The original system used fixed processing paths without considering query complexity or providing robust fallback mechanisms when primary approaches failed to retrieve relevant information from the knowledge graphs.
+
+Third, the absence of specialized model training meant the system could not learn domain-specific patterns for entity extraction and SPARQL generation, limiting its ability to adapt to different knowledge domains effectively. The original approach relied solely on few-shot prompting, which showed inconsistent performance across different query types and knowledge graph domains, particularly when dealing with complex relational structures inherent in knowledge graphs.
+
+Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively. The original system lacked comprehensive evaluation across multiple knowledge graph domains and did not provide sufficient transparency into the decision-making process for knowledge graph querying.
+
+Building upon the foundational work of FrOG, we propose an \textbf{MEGA-FrOG: Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG}. Our enhanced system addresses the identified limitations through three main improvements: (1) comprehensive dataset generation using both template-based and random-walk approaches to create diverse, high-quality training data across multiple knowledge domains, specifically designed for knowledge graph querying tasks, (2) specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques on generated NL2SPARQL datasets to improve entity extraction and SPARQL generation accuracy for direct knowledge graph access, and (3) sophisticated multi-agent architecture using LangGraph that enables intelligent query routing, adaptive strategy selection, and robust fallback mechanisms while providing comprehensive transparency through process visualization and semantic logging.
+
+This enhanced approach offers significant improvements in reasoning capabilities, domain adaptability, and system transparency, making the GraphRAG framework more robust and suitable for complex knowledge graph querying tasks across diverse domains including general knowledge (Wikidata), academic curricula, legal documents, and scholarly research. By focusing specifically on QA over existing knowledge graphs rather than text-to-graph conversion, our system can leverage the rich structural and semantic information already present in these knowledge repositories more effectively.
+
+%-----------------------------------------------------------------------------%
+\section{Research Questions}
+\label{sec:masalah}
+Building upon the foundational GraphRAG framework established in previous work and recognizing the distinct challenge of QA over existing knowledge graphs versus traditional text-based GraphRAG, the main goal of this enhanced research is to significantly improve the performance, adaptability, and transparency of KG-based RAG systems through specialized model training, comprehensive dataset generation, and sophisticated multi-agent architecture. To guide our investigation, we formulate our research questions below.
+
+\begin{enumerate}
+    \item How can we develop comprehensive dataset generation methodologies using template-based and random-walk approaches to create diverse, high-quality NL2SPARQL training data across multiple existing knowledge graph domains?
+    
+    \item How can specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques improve the accuracy of entity extraction and SPARQL generation for direct knowledge graph querying compared to few-shot prompting approaches in the original GraphRAG framework?
+    
+    \item How can a multi-agent architecture with intelligent routing and adaptive strategy selection enhance the reasoning capabilities and robustness of GraphRAG systems when performing QA over structured knowledge graphs compared to single-agent approaches?
+    
+    \item How does the enhanced GraphRAG system perform across different existing knowledge graph domains and query complexity levels compared to the original baseline system in knowledge graph querying tasks?
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\section{Research Objectives}
+\label{sec:tujuan}
+%-----------------------------------------------------------------------------%
+Based on the aforementioned research questions and the specific focus on QA over existing knowledge graphs, the research objectives we aim to achieve are as follows.
+
+\begin{enumerate}
+    \item To develop comprehensive dataset generation methodologies using both template-based and random-walk approaches that create diverse, high-quality NL2SPARQL training datasets across multiple existing knowledge graph domains, enabling effective model training and evaluation for direct knowledge graph querying.
+    
+    \item To implement specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques on entity extraction and SPARQL generation tasks for knowledge graph querying, demonstrating improved performance over few-shot prompting approaches used in the original GraphRAG framework.
+    
+    \item To design and implement a sophisticated multi-agent architecture using LangGraph that enables intelligent query routing, adaptive strategy selection, and robust fallback mechanisms specifically optimized for knowledge graph querying while providing comprehensive transparency through process visualization and semantic logging.
+    
+    \item To conduct comprehensive evaluation across multiple existing knowledge graph domains (Wikidata, Curriculum KG, Legal KG, and GESIS KG) and query complexity levels, quantifying the performance improvements achieved by each component of the enhanced system in knowledge graph-based question answering tasks.
+    
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\section{Research Scopes}
+\label{sec:batasanPenelitian}
+%-----------------------------------------------------------------------------%
+To ensure a focused and comprehensive evaluation of our enhanced GraphRAG system for QA over existing knowledge graphs, we establish the following research scopes:
+
+\begin{enumerate}
+    \item \textbf{Question Types and Complexity}: The enhanced system is designed to handle factoid questions with single and concise answers, as well as listing questions and complex multi-hop reasoning queries over structured knowledge graphs. The system supports questions across three complexity levels: basic (single-hop property retrieval from knowledge graphs), intermediate (two-hop relationships with simple aggregations across knowledge graph entities), and advanced (complex multi-hop reasoning with constraints and sophisticated aggregations over knowledge graph structures). Unlike the original system, our enhanced approach can handle more complex reasoning patterns through specialized model training and multi-agent coordination specifically designed for knowledge graph traversal and querying.
+    
+    \item \textbf{Model Evaluation Scope}: We evaluate multiple state-of-the-art open-source models including Mistral NeMo 12B, LLaMA 3.1 8B, Qwen2.5 7B, and Qwen2.5 Coder 7B. These models are evaluated both in their base instruction-tuned form and after fine-tuning with our specialized NL2SPARQL datasets for knowledge graph querying. We focus on models within the 7B-12B parameter range due to computational feasibility while ensuring comprehensive coverage of different model architectures and capabilities for knowledge graph-based question answering.
+    
+    \item \textbf{Knowledge Graph Coverage}: Our enhanced system supports four distinct existing knowledge bases representing different domains and scales: (1) Wikidata as a large-scale public knowledge graph, (2) Curriculum Knowledge Graph for academic domain-specific queries, (3) Legal Knowledge Graph containing Indonesian legal documents, and (4) GESIS Knowledge Graph for scholarly research metadata. This scope allows comprehensive evaluation across different knowledge domains, scales, and complexity levels while working directly with pre-existing structured knowledge repositories.
+    
+    \item \textbf{Dataset Generation Scope}: For domain-specific knowledge graphs (Curriculum KG, Legal KG, and GESIS KG), we generate complete NL2SPARQL datasets from scratch using both template-based and random-walk methodologies specifically designed for knowledge graph querying. For Wikidata, we enhance the existing QALD-9-Plus dataset with thoughts generation and entity/property matching to create suitable training data for our fine-tuning approach. This dual approach ensures comprehensive coverage while leveraging high-quality existing resources where available for knowledge graph-based question answering.
+    
+    \item \textbf{Technical Implementation Boundaries}: The enhanced system utilizes LoRA (Low-Rank Adaptation) with 4-bit quantization for efficient fine-tuning on standard research infrastructure. We implement rank configurations of 16 for entity extraction and 64 for SPARQL generation, with training limited to 5 and 10 epochs respectively to prevent overfitting. The multi-agent architecture is implemented using LangGraph with support for asynchronous processing and state management across specialized agents for knowledge graph querying and reasoning.
+    
+    \item \textbf{Evaluation Methodology}: We conduct comprehensive end-to-end evaluation using Jaccard similarity, precision, recall, and F1-score metrics, comparing both base and fine-tuned model performance across different knowledge graph domains and query complexity levels. Evaluation includes both component-level analysis (entity extraction, SPARQL generation) and complete pipeline assessment to quantify the improvements achieved by our enhanced approach in knowledge graph-based question answering tasks.
+    
+    \item \textbf{Computational Infrastructure}: All experiments are conducted using cloud-based infrastructure (Kaggle\footnote{\url{http://kaggle.com/}}) to ensure reproducibility and scalability. The enhanced system is designed to operate efficiently on standard research hardware while supporting real-time processing and comprehensive logging for transparency and debugging in knowledge graph querying scenarios.
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\section{Research Stages}
+\label{sec:langkahPenelitian}
+The enhanced research is carried out in several stages that build upon the foundational GraphRAG work while specifically addressing the challenges of QA over existing knowledge graphs, as outlined below.
+
+\begin{enumerate}
+    \item \textbf{Problem Analysis and Enhancement Planning} \\
+    This stage focuses on analyzing the limitations of the existing GraphRAG framework for knowledge graph querying and formulating comprehensive enhancement strategies. We identify specific areas for improvement including dataset generation for NL2SPARQL tasks, model training for knowledge graph understanding, and system architecture design optimized for structured knowledge repositories.
+
+    \item \textbf{Literature Review and Technical Foundation} \\
+    In this stage, we gather necessary background knowledge for the enhanced research, including advanced topics in multi-agent systems, Low-Rank Adaptation (LoRA) fine-tuning techniques, LangGraph architecture, dataset generation methodologies for knowledge graph querying, knowledge graph query languages (SPARQL), and comprehensive evaluation frameworks for GraphRAG systems operating over structured knowledge bases.
+
+    \item \textbf{Dataset Generation Methodology Development} \\
+    This critical stage involves developing and implementing comprehensive dataset generation approaches using both template-based and random-walk methodologies specifically designed for knowledge graph domains. We create diverse, high-quality NL2SPARQL datasets across multiple existing knowledge graph domains to enable effective model training and evaluation for direct knowledge graph querying.
+
+    \item \textbf{Model Fine-tuning Implementation} \\
+    Here, we implement specialized model fine-tuning using LoRA techniques for both entity extraction and SPARQL generation tasks specifically optimized for knowledge graph querying. This includes cross-domain adaptation strategies for different knowledge graph structures and computational efficiency optimizations to enable training on standard research infrastructure.
+
+    \item \textbf{Multi-Agent Architecture Design and Implementation} \\
+    This stage involves designing and implementing the sophisticated multi-agent architecture using LangGraph, including intelligent routing mechanisms for knowledge graph traversal, adaptive strategy selection for different query types, robust fallback systems for complex knowledge graph structures, and comprehensive transparency features through process visualization and semantic logging.
+
+    \item \textbf{Comprehensive Evaluation and Analysis} \\
+    We conduct extensive experiments to evaluate the enhanced system across multiple existing knowledge graph domains and query complexity levels. This includes both component-level analysis and end-to-end system evaluation, comparing base and fine-tuned model performance to quantify improvements achieved by our enhanced approach in knowledge graph-based question answering scenarios.
+
+    \item \textbf{Results Analysis and Component Contribution Assessment} \\
+    This stage involves detailed analysis of experimental results to determine the relative contributions of dataset generation, model fine-tuning, and multi-agent orchestration components to overall system performance improvements in knowledge graph querying tasks.
+
+    \item \textbf{Conclusion and Future Research Directions} \\
+    The final stage summarizes the research outcomes, quantifies the improvements achieved by the enhanced GraphRAG system for QA over existing knowledge graphs, and explores potential directions for future work in multi-agent GraphRAG systems and specialized model training for knowledge graph applications.
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\section{Outline}
+\label{sec:sistematikaPenulisan}
+%-----------------------------------------------------------------------------%
+This report is organized as follows:
+
+\begin{itemize}
+	\item Chapter 1 \babSatu \\
+	    This chapter introduces the enhanced research by providing the background and motivation, building upon previous GraphRAG work while clearly distinguishing our approach of QA over existing knowledge graphs from typical text-based GraphRAG systems. It presents the problem definition including research questions, research objectives, and research scopes for the enhanced system, along with the comprehensive research stages.
+	    
+	\item Chapter 2 \babDua \\
+	    This chapter elaborates on the theoretical foundations and prior research related to the enhanced study. It discusses advanced topics including knowledge graphs, large language models, retrieval-augmented generation, GraphRAG (with emphasis on knowledge graph-based approaches), multi-agent systems, Low-Rank Adaptation (LoRA) fine-tuning, and comprehensive evaluation methodologies for knowledge graph querying systems.
+	    
+	\item Chapter 3 \babTiga \\
+	    This chapter outlines the comprehensive research methodologies employed in the enhanced study, including dataset generation approaches (template-based and random-walk) for knowledge graph querying, model fine-tuning methodologies using LoRA techniques for NL2SPARQL tasks, multi-agent architecture design using LangGraph for knowledge graph reasoning, knowledge base descriptions, and evaluation frameworks across multiple knowledge graph domains and complexity levels.
+	    
+	\item Chapter 4 \babEmpat \\
+		This chapter details the practical implementation of the enhanced research, including comprehensive dataset generation systems for knowledge graph querying, specialized model fine-tuning implementation for NL2SPARQL generation, multi-agent architecture development optimized for knowledge graph traversal, and the integration of transparency and visualization features.
+		
+	\item Chapter 5 \babLima \\
+	    This chapter presents the comprehensive outcomes of the enhanced research, including detailed results of dataset generation quality for knowledge graph querying, model fine-tuning effectiveness for NL2SPARQL tasks, multi-agent system performance in knowledge graph reasoning, and component-wise contribution analysis. It includes extensive evaluation across multiple existing knowledge graph domains and query complexity levels, comparing base and fine-tuned model performance.
+	    
+	\item Chapter 6 \kesimpulan \\
+	    This chapter summarizes the enhanced research findings and their implications, quantifying the improvements achieved through dataset generation, model fine-tuning, and multi-agent architecture specifically for QA over existing knowledge graphs. It provides comprehensive recommendations for future research directions in GraphRAG systems for knowledge graph querying, multi-agent architectures for structured knowledge reasoning, and specialized model training for knowledge graph applications.
+\end{itemize}
