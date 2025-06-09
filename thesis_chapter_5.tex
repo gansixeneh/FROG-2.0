@@ -44,24 +44,24 @@ To provide deeper insights into the qualitative differences between the previous
 One notable success case is the query "Who is the mayor of Berlin?", where our fine-tuned model generates the exact correct SPARQL query:
 
 \begin{lstlisting}[language=SPARQL, caption=Ground Truth Query for "Who is the mayor of Berlin?", label=code:berlin-mayor-true]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
-  wd:Q64 wdt:P6?uri.
+  wd:Q64 wdt:P6 ?uri.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Fine-tuned Model Output for "Who is the mayor of Berlin?", label=code:berlin-mayor-finetuned]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
-  wd:Q64 wdt:P6?uri.
+  wd:Q64 wdt:P6 ?uri.
 }
 \end{lstlisting}
 
 In contrast, the previous thesis implementation produced an incorrect query:
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for "Who is the mayor of Berlin?", label=code:berlin-mayor-previous]
-SELECT DISTINCT?person?personLabel WHERE { 
-  wd:Q64 wdt:P1308?person. 
+SELECT DISTINCT ?person ?personLabel WHERE { 
+  wd:Q64 wdt:P1308 ?person. 
   SERVICE wikibase:label { 
     bd:serviceParam wikibase:language "en". 
   } 
@@ -73,15 +73,15 @@ This example demonstrates how our fine-tuned model correctly identifies that \te
 Another success case is the query "Which countries in the European Union adopted the Euro?", where our fine-tuned model achieves a Jaccard similarity of $0.857$ with the ground truth:
 
 \begin{lstlisting}[language=SPARQL, caption=Ground Truth Query for EU Countries with Euro, label=code:eu-euro-true]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
-  wd:Q458 wdt:P150?uri.
+  wd:Q458 wdt:P150 ?uri.
   ?uri wdt:P38 wd:Q4916.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Fine-tuned Model Output for EU Countries with Euro, label=code:eu-euro-finetuned]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
   ?uri wdt:P361 wd:Q458;
       wdt:P38 wd:Q4916.
@@ -89,7 +89,7 @@ WHERE {
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for EU Countries with Euro, label=code:eu-euro-previous]
-SELECT DISTINCT?country WHERE {
+SELECT DISTINCT ?country WHERE {
   ?country wdt:P17 wd:Q458; 
            wdt:P38 wd:Q4916.
 }
@@ -101,35 +101,35 @@ Here, our fine-tuned model correctly identifies \texttt{wdt:P361} (part of) as a
 Despite the overall improvements, some complex queries remain challenging for both systems. For example, the query "Which American presidents were in office during the Vietnam War?" continues to pose difficulties:
 
 \begin{lstlisting}[language=SPARQL, caption=Ground Truth Query for Vietnam War Presidents, label=code:vietnam-true]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
   ?uri wdt:P39 wd:Q11696.
-  ?uri wdt:P569?birth.
-  ?uri wdt:P570?death.
-  wd:Q8740 wdt:P580?warStart.
-  wd:Q8740 wdt:P582?warEnd.
+  ?uri wdt:P569 ?birth.
+  ?uri wdt:P570 ?death.
+  wd:Q8740 wdt:P580 ?warStart.
+  wd:Q8740 wdt:P582 ?warEnd.
   FILTER(?birth < ?warStart && (?death > ?warStart || !bound(?death)))
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Fine-tuned Model Output for Vietnam War Presidents, label=code:vietnam-finetuned]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
-  wd:Q8740 wdt:P607?war.
-  ?pres wdt:P1734?uri; 
+  wd:Q8740 wdt:P607 ?war.
+  ?pres wdt:P1734 ?uri; 
         wdt:P17 wd:Q30; 
-        wdt:P13306?start; 
-        wdt:P13307?end.
+        wdt:P13306 ?start; 
+        wdt:P13307 ?end.
   FILTER(?start <= ?war || ?start = ?war)
   FILTER(?end >= ?war || ?end = ?war)
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for Vietnam War Presidents, label=code:vietnam-previous]
-SELECT DISTINCT?president WHERE {
+SELECT DISTINCT ?president WHERE {
   ?president wdt:P31 wd:Q11696; 
              wdt:P17 wd:Q36; 
-             wdt:P1313?term.
+             wdt:P1313 ?term.
   ?term wdt:P607 wd:Q8740.
 }
 \end{lstlisting}
@@ -139,7 +139,7 @@ This query requires temporal reasoning and understanding of complex relationship
 Similarly, the query "Which European countries have a constitutional monarchy?" remains challenging:
 
 \begin{lstlisting}[language=SPARQL, caption=Fine-tuned Model Output for Constitutional Monarchies, label=code:monarchy-finetuned]
-SELECT DISTINCT?uri
+SELECT DISTINCT ?uri
 WHERE {
   ?uri wdt:P122 wd:Q41614;
       wdt:P17 wd:Q6256.
@@ -147,7 +147,7 @@ WHERE {
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for Constitutional Monarchies, label=code:monarchy-previous]
-SELECT DISTINCT?country WHERE {
+SELECT DISTINCT ?country WHERE {
   ?country wdt:P31 wd:Q31; 
            wdt:P122 wd:Q41614; 
            wdt:P17 wd:Q572.
@@ -219,20 +219,20 @@ To better understand these results, we analyze specific query examples:
 One example of successful query generation is for the question "What is the alternative name for a course that uses Demo as an evaluation method and has Programming Basics 1 as a prerequisite?":
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Alternative Course Name, label=code:curriculum-alt-finetuned]
-SELECT?alt_name
+SELECT ?alt_name
 WHERE {
   ?course ns1:has_evaluation_method ns1:demo.
   ?course ns1:has_prerequisite_course ns1:programming_basics_1.
-  ?course ns1:also_known_as?alt_name.
+  ?course ns1:also_known_as ?alt_name.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for Alternative Course Name, label=code:curriculum-alt-previous]
-SELECT?course?alternativeName
+SELECT ?course ?alternativeName
 WHERE {
   ?course ns1:has_evaluation_method ns1:demo.
   ?course ns1:has_prerequisite_course ns1:programming_basics_1.
-  ?course ns1:also_known_as?alternativeName.
+  ?course ns1:also_known_as ?alternativeName.
 }
 \end{lstlisting}
 
@@ -241,20 +241,20 @@ Both implementations correctly identify the essential structure of the query, bu
 Another example is the query "What is the course category for the prerequisite of Introduction to AI and Data Science that uses programming assignments as evaluation?":
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Course Category, label=code:curriculum-category-finetuned]
-SELECT?category
+SELECT ?category
 WHERE {
-  ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course?target.
+  ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?target.
   ?target ns1:has_evaluation_method ns1:programming_assignment.
-  ?target ns1:has_course_category?category.
+  ?target ns1:has_course_category ?category.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for Course Category, label=code:curriculum-category-previous]
-SELECT?prereqCourse?courseCategory
+SELECT ?prereqCourse ?courseCategory
 WHERE {
-  ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course?prereqCourse.
+  ns1:introduction_to_artificial_intelligence_and_data_science ns1:has_prerequisite_course ?prereqCourse.
   ?prereqCourse ns1:has_evaluation_method ns1:programming_assignment.
-  ?prereqCourse ns1:has_course_category?courseCategory.
+  ?prereqCourse ns1:has_course_category ?courseCategory.
 }
 \end{lstlisting}
 
@@ -264,21 +264,21 @@ Again, both implementations correctly capture the essential query structure, but
 Despite the overall improvements, some complex queries remain challenging for both systems. For example, the query "What research lab develops the largest number of courses?" requires aggregation and ordering operations that prove difficult:
 
 \begin{lstlisting}[language=SPARQL, caption=Ground Truth Query for Research Lab with Most Courses, label=code:curriculum-lab-true]
-SELECT?group
+SELECT ?group
 WHERE {
-  { SELECT?group (COUNT(?course) AS?COUNT) WHERE {
+  { SELECT ?group (COUNT(?course) AS ?COUNT) WHERE {
       ?course a ns1:course.
-      ?course ns1:has_research_group?group.
+      ?course ns1:has_research_group ?group.
     } 
-    GROUP BY?group 
+    GROUP BY ?group 
   }
   FILTER NOT EXISTS { 
-    SELECT?otherGroup (COUNT(?otherCourse) AS?otherCount) 
+    SELECT ?otherGroup (COUNT(?otherCourse) AS ?otherCount) 
     WHERE {
       ?otherCourse a ns1:course.
-      ?otherCourse ns1:has_research_group?otherGroup.
+      ?otherCourse ns1:has_research_group ?otherGroup.
     } 
-    GROUP BY?otherGroup 
+    GROUP BY ?otherGroup 
     HAVING (?otherCount > ?COUNT) 
   }
 }
@@ -286,36 +286,36 @@ LIMIT 1
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Base Model Output for Research Lab with Most Courses, label=code:curriculum-lab-base]
-SELECT?lab (COUNT(?course) AS?numCourses)
+SELECT ?lab (COUNT(?course) AS ?numCourses)
 WHERE {
-  ?course ns1:has_research_group?lab.
+  ?course ns1:has_research_group ?lab.
 }
-GROUP BY?lab
+GROUP BY ?lab
 ORDER BY DESC(?numCourses)
 LIMIT 1
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Research Lab with Most Courses, label=code:curriculum-lab-template]
-SELECT?group
+SELECT ?group
 WHERE {
   ?group a ns1:research_group.
-  ?course ns1:has_research_group?group.
-  GROUP BY?group
+  ?course ns1:has_research_group ?group.
+  GROUP BY ?group
   ORDER BY DESC(COUNT(?course))
   LIMIT 1
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Research Lab with Most Courses, label=code:curriculum-lab-random]
-SELECT?target
+SELECT ?target
 WHERE {
-  ?target ns1:has_research_group?research_group.
-  ?research_group ns1:has_research_group?target.
-  ?course ns1:has_research_group?research_group.
-  ?course ns1:has_course_category?category.
-  ?category ns1:has_course_category?target.
+  ?target ns1:has_research_group ?research_group.
+  ?research_group ns1:has_research_group ?target.
+  ?course ns1:has_research_group ?research_group.
+  ?course ns1:has_course_category ?category.
+  ?category ns1:has_course_category ?target.
 }
-GROUP BY?target
+GROUP BY ?target
 ORDER BY DESC(COUNT(?target))
 LIMIT 1
 \end{lstlisting}
@@ -324,9 +324,11 @@ None of the implementations correctly captures the complex subquery structure ne
 
 The significant performance improvements on the Curriculum Knowledge Graph can be attributed to several factors:
 
-1. The knowledge graph's more manageable scale and clearly defined schema make it more amenable to learning through fine-tuning.
-2. The domain-specific nature of the queries allows models to learn consistent patterns more effectively.
-3. The human-readable URI scheme in the Curriculum KG (\texttt{ns1:course\_name} rather than numeric identifiers) may facilitate better understanding and generation of correct queries.
+\begin{enumerate}
+    \item The knowledge graph's more manageable scale and clearly defined schema make it more amenable to learning through fine-tuning.
+    \item The domain-specific nature of the queries allows models to learn consistent patterns more effectively.
+    \item The human-readable URI scheme in the Curriculum KG (\texttt{ns1:course\_name} rather than numeric identifiers) may facilitate better understanding and generation of correct queries.
+\end{enumerate}
 
 Overall, these results demonstrate that our fine-tuning approach is particularly effective for domain-specific knowledge graphs with well-defined structures.
 
@@ -391,15 +393,15 @@ To better understand these results, we analyze specific query examples:
 One example of successful query generation is for the question "Pasal-pasal mana yang merujuk ke UU tahun 2017 no 18 pasal 68?" (Which articles reference Law year 2017 number 18 article 68?):
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Article References, label=code:legal-ref-finetuned]
-SELECT?referringArticle
+SELECT ?referringArticle
 WHERE {
   ?textSegment lex2kg-o:merujuk <https://example.org/lex2kg/uu/2017/18/pasal/0068>.
-  ?referringArticle lex2kg-o:versi?textSegment.
+  ?referringArticle lex2kg-o:versi ?textSegment.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Previous Thesis Output for Article References, label=code:legal-ref-previous]
-SELECT?referencingArticle
+SELECT ?referencingArticle
 WHERE {
   ?referencingArticle lex2kg-o:text "UU tahun 2017 no 18 pasal 68".
   UNION
@@ -412,13 +414,13 @@ The fine-tuned model correctly uses the \texttt{lex2kg-o:merujuk} property to id
 Another example is for the question "Apa yang merujuk ke UU tahun 1950 no 1 pasal 72?" (What references Law year 1950 number 1 article 72?):
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Article References, label=code:legal-ref2-finetuned]
-SELECT?pasal WHERE {
+SELECT ?pasal WHERE {
   ?pasal lex2kg-o:merujuk <https://example.org/lex2kg/uu/1950/1/pasal/0072>.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Base Model Output for Article References, label=code:legal-ref2-base]
-SELECT?uu
+SELECT ?uu
 WHERE {
   ?uu lex2kg-o:daftarPasal <https://example.org/lex2kg/uu/1950/1/pasal/0072>.
 }
@@ -430,13 +432,13 @@ The fine-tuned model correctly identifies that the \texttt{lex2kg-o:merujuk} pro
 Complex queries with multiple constraints and temporal reasoning remain challenging. For example, the query "Pasal mana dalam UU tahun 1953 no 25 bab 2 yang memiliki versi 18 Desember 1953 pada pasal 7?" (Which article in Law year 1953 number 25 chapter 2 has a version from December 18, 1953 in article 7?):
 
 \begin{lstlisting}[language=SPARQL, caption=Base Model Output for Complex Article Query, label=code:legal-complex-base]
-SELECT?pasal
+SELECT ?pasal
 WHERE {
   ?uu a lex2kg:UU;
      lex2kg-o:nomor "1953";
      lex2kg-o:versi "19531218";
      lex2kg-o:bab [ lex2kg-o:nomor "2" ];
-     lex2kg-o:pasal?pasal.
+     lex2kg-o:pasal ?pasal.
   ?pasal a lex2kg:Pasal;
        lex2kg-o:nomor "18";
        lex2kg-o:versi "19531218".
@@ -444,7 +446,7 @@ WHERE {
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Complex Article Query, label=code:legal-complex-template]
-SELECT?pasal
+SELECT ?pasal
 WHERE {
   ?pasal rdf:type lex2kg-o:Pasal;
       lex2kg-o:terkandungDalamUu <https://example.org/lex2kg/uu/1953/25>;
@@ -455,7 +457,7 @@ LIMIT 1
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Complex Article Query, label=code:legal-complex-random]
-SELECT?pasal WHERE {
+SELECT ?pasal WHERE {
   ?pasal rdf:type lex2kg-o:Pasal.
   ?pasal lex2kg-o:terkandungDalamUu <https://example.org/lex2kg/uu/1953/25>.
   ?pasal lex2kg-o:versi <https://example.org/lex2kg/uu/1953/25/pasal/0012/versi/19531218>.
@@ -467,9 +469,11 @@ None of the implementations correctly captures all the constraints in this compl
 
 The significant performance improvements on the Legal Knowledge Graph can be attributed to several factors:
 
-1. The fine-tuning process enables models to learn the specific schema and relationships of the legal domain, which features complex document hierarchies and citation networks.
-2. The template-based training approach provides structured examples that help models understand common query patterns in the legal domain.
-3. The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, may be particularly effective for the legal domain which has specialized terminology and relationships.
+\begin{enumerate}
+    \item The fine-tuning process enables models to learn the specific schema and relationships of the legal domain, which features complex document hierarchies and citation networks.
+    \item The template-based training approach provides structured examples that help models understand common query patterns in the legal domain.
+    \item The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, may be particularly effective for the legal domain which has specialized terminology and relationships.
+\end{enumerate}
 
 \subsection{GESIS Knowledge Graph}
 \label{gesis-results}
@@ -532,14 +536,14 @@ To better understand these results, we analyze specific query examples:
 One example of successful query generation is for the question "How many publications were published in 2000?":
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Publications Count, label=code:gesis-pub-finetuned]
-SELECT (COUNT(?publication) AS?numberOfPublications)
+SELECT (COUNT(?publication) AS ?numberOfPublications)
 WHERE {
   ?publication schema:datePublished "2000".
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Base Model Output for Publications Count, label=code:gesis-pub-base]
-SELECT (COUNT(?publication) AS?numberOfPublications)
+SELECT (COUNT(?publication) AS ?numberOfPublications)
 WHERE {
   ?publication a schema:CreativeWork;
               gesiskg:datePublished "2000"^^xsd:gYear.
@@ -551,16 +555,16 @@ The fine-tuned model correctly uses the \texttt{schema:datePublished} property w
 Another example is for the question "How many works did 'Zecevic, Andjelka' create?":
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Author Works, label=code:gesis-author-finetuned]
-SELECT (COUNT(?work) AS?numberOfWorks)
+SELECT (COUNT(?work) AS ?numberOfWorks)
 WHERE {
   ?work schema:author <https://data.gesis.org/gesiskg/resource/gesis-bib-105287_Zecevic_Andjelka>.
 }
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Base Model Output for Author Works, label=code:gesis-author-base]
-SELECT (COUNT(?work) AS?numberOfWorks)
+SELECT (COUNT(?work) AS ?numberOfWorks)
 WHERE {
-  <https://data.gesis.org/gesiskg/resource/gesis-bib-105287_Zecevic_Andjelka> gesiskg:author?work.
+  <https://data.gesis.org/gesiskg/resource/gesis-bib-105287_Zecevic_Andjelka> gesiskg:author ?work.
 }
 \end{lstlisting}
 
@@ -570,7 +574,7 @@ The fine-tuned model correctly identifies that the relationship between authors 
 Some queries involving complex entity relationships remain challenging. For example, the query "What resources are about 'Gleichstellung'?" (What resources are about 'Equality'?):
 
 \begin{lstlisting}[language=SPARQL, caption=Template Fine-tuned Model Output for Gleichstellung Resources, label=code:gesis-resources-template]
-SELECT DISTINCT?resource
+SELECT DISTINCT ?resource
 WHERE {
   ?resource schema:about "Gleichstellung".
 }
@@ -578,11 +582,11 @@ LIMIT 10
 \end{lstlisting}
 
 \begin{lstlisting}[language=SPARQL, caption=Random-Walk Fine-tuned Model Output for Gleichstellung Resources, label=code:gesis-resources-random]
-SELECT DISTINCT?resource
+SELECT DISTINCT ?resource
 WHERE {
-  ?resource schema:name?name.
+  ?resource schema:name ?name.
   FILTER regex(?name, "Gleichstellung", "i").
-  ?resource schema:about?topic.
+  ?resource schema:about ?topic.
   FILTER regex(?topic, "Gleichstellung", "i").
 }
 \end{lstlisting}
@@ -591,9 +595,11 @@ Both fine-tuned models incorrectly attempt to use "Gleichstellung" as a direct o
 
 The significant performance improvements on the GESIS Knowledge Graph can be attributed to several factors:
 
-1. The standardized schema based on schema.org vocabularies may be more familiar to large language models from their pre-training, enabling more effective fine-tuning.
-2. The scholarly domain has consistent patterns for relationships like authorship, publication dates, and topics that are amenable to template-based learning.
-3. The fine-tuning process effectively teaches models about domain-specific entities and relationships in the scholarly domain, particularly benefiting from the template-based approach that emphasizes common query patterns.
+\begin{enumerate}
+    \item The standardized schema based on schema.org vocabularies may be more familiar to large language models from their pre-training, enabling more effective fine-tuning.
+    \item The scholarly domain has consistent patterns for relationships like authorship, publication dates, and topics that are amenable to template-based learning.
+    \item The fine-tuning process effectively teaches models about domain-specific entities and relationships in the scholarly domain, particularly benefiting from the template-based approach that emphasizes common query patterns.
+\end{enumerate}
 
 \subsection{Multilingual Support}
 \label{multilingual-support}
@@ -645,10 +651,10 @@ Our experiments evaluated four different large language models across multiple k
     \hline
     \RaggedRight{\textbf{Model}} & \textbf{Parameters} & \textbf{Base Model (Avg)} & \textbf{Fine-tuned (Avg)} & \textbf{Improvement} & \textbf{Training Tokens} \\
     \hline
-    \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & 7B & $0.2652$ & $\textbf{0.4838}$ & $+0.2186$ & 18T \\
-    \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & 7B & $0.3173$ & $0.4778$ & $+0.1605$ & 5.2T (70\% code) \\
-    \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & 8B & $0.2556$ & $0.4694$ & $\textbf{+0.2138}$ & 15T \\
-    \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & 12B & $0.2587$ & $0.4565$ & $+0.1978$ & Undisclosed \\
+    \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & 7B & $0.2652$ & $\textbf{0.4838}$ & $+0.2186$ & 18T \cite{qwen2023} \\
+    \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & 7B & $0.3173$ & $0.4778$ & $+0.1605$ & 5.2T (70\% code) \cite{qwen2023} \\
+    \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & 8B & $0.2556$ & $0.4694$ & $\textbf{+0.2138}$ & 15T \cite{llama3} \\
+    \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & 12B & $0.2587$ & $0.4565$ & $+0.1978$ & Undisclosed \cite{mistral2023} \\
     \hline
     \end{tabular}
 \end{adjustbox}
@@ -669,13 +675,15 @@ Fourth, the Mistral-Nemo-12B model, despite having the largest parameter count a
 
 These results highlight several important considerations for model selection in knowledge graph applications:
 
-1. **Pre-training Data Diversity**: The extensive and diverse pre-training of Qwen2.5-7B (18 trillion tokens) appears to provide advantages for knowledge graph reasoning tasks, suggesting that exposure to a wide range of text patterns benefits structured query generation.
-
-2. **Code-Specific Pre-training**: The Qwen2.5-Coder-7B's code-heavy pre-training provides initial advantages for structured query tasks, but may limit additional gains from fine-tuning on SPARQL datasets.
-
-3. **Parameter Efficiency**: Larger parameter counts do not necessarily translate to better performance, as demonstrated by the 7B and 8B models outperforming the 12B model in several scenarios.
-
-4. **Adaptability**: Models show different levels of adaptability to fine-tuning, with Llama-3.1-8B demonstrating the highest relative improvement despite not achieving the best overall performance.
+\begin{enumerate}
+    \item \textbf{Pre-training Data Diversity}: The extensive and diverse pre-training of Qwen2.5-7B (18 trillion tokens) appears to provide advantages for knowledge graph reasoning tasks, suggesting that exposure to a wide range of text patterns benefits structured query generation.
+    
+    \item \textbf{Code-Specific Pre-training}: The Qwen2.5-Coder-7B's code-heavy pre-training provides initial advantages for structured query tasks, but may limit additional gains from fine-tuning on SPARQL datasets.
+    
+    \item \textbf{Parameter Efficiency}: Larger parameter counts do not necessarily translate to better performance, as demonstrated by the 7B and 8B models outperforming the 12B model in several scenarios.
+    
+    \item \textbf{Adaptability}: Models show different levels of adaptability to fine-tuning, with Llama-3.1-8B demonstrating the highest relative improvement despite not achieving the best overall performance.
+\end{enumerate}
 
 These findings suggest that for knowledge graph applications, the combination of diverse pre-training and effective fine-tuning is more important than raw parameter count. The Qwen2.5-7B model's strong performance across all knowledge graph domains makes it our recommended model for general knowledge graph applications, while specialized variants like Qwen2.5-Coder-7B may offer advantages in specific scenarios where base model performance without fine-tuning is prioritized.
 
@@ -723,13 +731,15 @@ The GESIS and Legal knowledge graphs, with intermediate sizes (1-2 million tripl
 
 These findings lead to several important insights for knowledge graph applications:
 
-1. **URI Design Impact**: The design of URIs significantly influences the ease with which language models can generate accurate queries. Natural language-based URIs that encode semantic meaning facilitate better understanding and generation.
-
-2. **Schema Complexity**: Domain-specific knowledge graphs with well-defined schemas enable higher performance than general-purpose knowledge graphs with diverse entity types and relationships.
-
-3. **Scale Challenges**: Very large knowledge graphs present substantial challenges for query generation, even with fine-tuning. Domain-specific subsets or specialized views may be more practical for high-performance applications.
-
-4. **Standardization Benefits**: Knowledge graphs that adhere to widely used standards (like schema.org in the GESIS KG) may benefit more from fine-tuning, as these patterns may be partially represented in the models' pre-training data.
+\begin{enumerate}
+    \item \textbf{URI Design Impact}: The design of URIs significantly influences the ease with which language models can generate accurate queries. Natural language-based URIs that encode semantic meaning facilitate better understanding and generation.
+    
+    \item \textbf{Schema Complexity}: Domain-specific knowledge graphs with well-defined schemas enable higher performance than general-purpose knowledge graphs with diverse entity types and relationships.
+    
+    \item \textbf{Scale Challenges}: Very large knowledge graphs present substantial challenges for query generation, even with fine-tuning. Domain-specific subsets or specialized views may be more practical for high-performance applications.
+    
+    \item \textbf{Standardization Benefits}: Knowledge graphs that adhere to widely used standards (like schema.org in the GESIS KG) may benefit more from fine-tuning, as these patterns may be partially represented in the models' pre-training data.
+\end{enumerate}
 
 These insights highlight the importance of knowledge graph design considerations when building systems that leverage large language models for query generation. While fine-tuning improves performance across all knowledge graph types, the characteristics of the knowledge graph itself remain a fundamental determinant of achievable performance.
 
@@ -774,13 +784,15 @@ Fourth, fine-tuning effectiveness varies across knowledge graph types. The GESIS
 
 These findings lead to several important insights about our fine-tuning methodology:
 
-1. **Template Superiority**: The superiority of template-based fine-tuning suggests that focusing on common, linguistically diverse query patterns provides better learning signals than the more random, structure-focused patterns from random walks. This may be because templates better align with how humans naturally formulate questions about knowledge graphs.
-
-2. **Cross-Dataset Generalization**: The strong performance of template-trained models on random-walk test sets demonstrates effective cross-dataset generalization. This suggests that our fine-tuning approach is learning fundamental SPARQL generation capabilities rather than merely memorizing specific patterns.
-
-3. **Parameter Efficiency**: Our LoRA-based fine-tuning approach with carefully selected hyperparameters (rank=64 for SPARQL generation) provides substantial improvements while updating only 2-3% of model parameters. This demonstrates the parameter efficiency of our approach, making it practical for deployment scenarios with limited computational resources.
-
-4. **Knowledge Transfer**: The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, appears to facilitate effective knowledge transfer between domains. This is particularly valuable for specialized domains like legal and scholarly knowledge graphs.
+\begin{enumerate}
+    \item \textbf{Template Superiority}: The superiority of template-based fine-tuning suggests that focusing on common, linguistically diverse query patterns provides better learning signals than the more random, structure-focused patterns from random walks. This may be because templates better align with how humans naturally formulate questions about knowledge graphs.
+    
+    \item \textbf{Cross-Dataset Generalization}: The strong performance of template-trained models on random-walk test sets demonstrates effective cross-dataset generalization. This suggests that our fine-tuning approach is learning fundamental SPARQL generation capabilities rather than merely memorizing specific patterns.
+    
+    \item \textbf{Parameter Efficiency}: Our LoRA-based fine-tuning approach with carefully selected hyperparameters (rank=64 for Wikidata and Curriculum KG, rank=32 for Legal and GESIS KG due to resource limitations) provides substantial improvements while updating only 2-3\% of model parameters. This demonstrates the parameter efficiency of our approach, making it practical for deployment scenarios with limited computational resources.
+    
+    \item \textbf{Knowledge Transfer}: The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, appears to facilitate effective knowledge transfer between domains. This is particularly valuable for specialized domains like legal and scholarly knowledge graphs.
+\end{enumerate}
 
 Overall, these results validate our fine-tuning methodology and particularly highlight the effectiveness of template-based dataset generation for training robust SPARQL generation models. The consistent superiority of template-based fine-tuning across all scenarios suggests that this approach should be prioritized in future work on knowledge graph query generation.
 
@@ -819,173 +831,29 @@ Third, the random-walk generation method occasionally produces questions that ar
 
 These findings lead to several important insights about dataset generation for knowledge graph question answering:
 
-1. **Complementary Approaches**: The template-based and random-walk-based dataset generation methods serve complementary purposes. Template-based generation ensures linguistic diversity and high-quality questions, while random-walk-based generation ensures comprehensive coverage of knowledge graph patterns.
-
-2. **Training Data Quality**: The consistently superior performance of template-trained models suggests that training data quality (well-formed questions with clear semantics) may be more important than structural coverage for effective SPARQL generation.
-
-3. **Question Complexity Control**: The template-based approach provides better control over question complexity through explicit template design, while random-walk complexity is determined by the number of hops and pattern structures discovered in the graph.
-
-4. **Human Validation Importance**: Some random-walk-generated questions highlight the importance of human validation in dataset creation. Questions that appear syntactically valid but are semantically ambiguous or practically unanswerable reduce the effectiveness of evaluation benchmarks.
+\begin{enumerate}
+    \item \textbf{Complementary Approaches}: The template-based and random-walk-based dataset generation methods serve complementary purposes. Template-based generation ensures linguistic diversity and high-quality questions, while random-walk-based generation ensures comprehensive coverage of knowledge graph patterns.
+    
+    \item \textbf{Training Data Quality}: The consistently superior performance of template-trained models suggests that training data quality (well-formed questions with clear semantics) may be more important than structural coverage for effective SPARQL generation.
+    
+    \item \textbf{Question Complexity Control}: The template-based approach provides better control over question complexity through explicit template design, while random-walk complexity is determined by the number of hops and pattern structures discovered in the graph.
+    
+    \item \textbf{Human Validation Importance}: Some random-walk-generated questions highlight the importance of human validation in dataset creation. Questions that appear syntactically valid but are semantically ambiguous or practically unanswerable reduce the effectiveness of evaluation benchmarks.
+\end{enumerate}
 
 Based on these insights, we recommend a hybrid approach to dataset generation for knowledge graph question answering systems:
 
-1. Use template-based generation as the primary method for creating training data, focusing on linguistic diversity and common query patterns.
-
-2. Use random-walk-based generation to supplement training data with structurally diverse patterns discovered from the knowledge graph.
-
-3. Apply quality filtering and human validation to ensure that all generated questions are semantically meaningful and answerable.
-
-4. Maintain separate evaluation sets for both generation methods to provide comprehensive assessment of system performance across different query types.
+\begin{enumerate}
+    \item Use template-based generation as the primary method for creating training data, focusing on linguistic diversity and common query patterns.
+    
+    \item Use random-walk-based generation to supplement training data with structurally diverse patterns discovered from the knowledge graph.
+    
+    \item Apply quality filtering and human validation to ensure that all generated questions are semantically meaningful and answerable.
+    
+    \item Maintain separate evaluation sets for both generation methods to provide comprehensive assessment of system performance across different query types.
+\end{enumerate}
 
 This hybrid approach leverages the strengths of both methods while mitigating their individual limitations, resulting in more robust and comprehensive datasets for training and evaluating knowledge graph question answering systems.
-
-\section{Ablation Study}
-\label{ablation}
-To understand the contribution of each component in our enhanced GraphRAG system, we conduct an ablation study by systematically removing individual components and evaluating the impact on performance. This study focuses on three key aspects of our system: the fine-tuning approach, the dataset generation method, and the multi-agent architecture.
-
-\subsection{Fine-tuning Component Analysis}
-\label{ablation-finetune}
-
-To evaluate the impact of different components in our fine-tuning approach, we conduct experiments with variations of our fine-tuning methodology. Table \ref{table-ablation-finetune} presents the results for the Qwen2.5-7B model on the Curriculum KG template dataset.
-
-\begin{table}
-\centering
-\renewcommand{\arraystretch}{1.15}
-\setlength{\tabcolsep}{12pt}
-\begin{adjustbox}{width=\textwidth}
-    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
-    \hline
-    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} & \textbf{Change} \\
-    \hline
-    \RaggedRight{Full System (Qwen2.5-7B template fine-tuned)} & $\textbf{0.5963}$ & $-$ \\
-    \RaggedRight{Without Chain-of-Thought in training data} & $0.5427$ & $-0.0536$ \\
-    \RaggedRight{Without Entity Matching in training data} & $0.5341$ & $-0.0622$ \\
-    \RaggedRight{Without Property Matching in training data} & $0.4683$ & $-0.1280$ \\
-    \RaggedRight{With Lower LoRA rank (r=16)} & $0.5219$ & $-0.0744$ \\
-    \RaggedRight{Base model without fine-tuning} & $0.5387$ & $-0.0576$ \\
-    \hline
-    \end{tabular}
-\end{adjustbox}
-\vspace{1em}
-\caption{Ablation Study on Fine-tuning Components}
-\label{table-ablation-finetune}
-\end{table}
-
-The ablation study on fine-tuning components reveals several important insights:
-
-First, the inclusion of property matching information in training data has the most significant impact on performance, with its removal causing a substantial decrease in Jaccard similarity ($-0.1280$). This highlights the critical importance of property understanding in SPARQL generation, as properties define the relationships between entities and form the backbone of query structure.
-
-Second, entity matching information also contributes significantly to model performance, with its removal causing a notable decrease ($-0.0622$). However, this impact is less pronounced than for properties, suggesting that models may have better prior knowledge of entities from pre-training compared to the more specialized knowledge graph properties.
-
-Third, the inclusion of chain-of-thought reasoning steps in training data provides meaningful improvements ($+0.0536$), demonstrating the value of explicitly modeling the reasoning process for SPARQL generation. This aligns with findings in other domains where chain-of-thought prompting enhances reasoning capabilities.
-
-Fourth, the LoRA rank parameter significantly influences performance, with a lower rank (r=16) resulting in decreased accuracy ($-0.0744$) compared to our standard configuration (r=64). This confirms our hyperparameter selection and demonstrates the importance of providing sufficient capacity for adaptation in fine-tuning.
-
-Finally, even with all ablations, fine-tuned models outperform the base model in most configurations, highlighting the robustness of our fine-tuning approach. The only exception is the configuration without property matching, which performs slightly worse than the base model, emphasizing the critical role of property understanding in SPARQL generation.
-
-These findings provide valuable guidance for future fine-tuning efforts, suggesting that resources should be prioritized for comprehensive property matching, followed by entity matching and chain-of-thought reasoning. The results also validate our LoRA rank selection and demonstrate the overall effectiveness of our fine-tuning methodology.
-
-\subsection{Dataset Generation Component Analysis}
-\label{ablation-dataset}
-
-To understand the impact of different components in our dataset generation methodology, we evaluate performance with datasets created using variations of our generation approach. Table \ref{table-ablation-dataset} presents the results for the Qwen2.5-7B model on the Legal KG.
-
-\begin{table}
-\centering
-\renewcommand{\arraystretch}{1.15}
-\setlength{\tabcolsep}{12pt}
-\begin{adjustbox}{width=\textwidth}
-    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
-    \hline
-    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} & \textbf{Change} \\
-    \hline
-    \RaggedRight{Full System (Qwen2.5-7B template fine-tuned)} & $\textbf{0.4731}$ & $-$ \\
-    \RaggedRight{Without multi-language templates} & $0.4683$ & $-0.0048$ \\
-    \RaggedRight{Without template linguistic variations} & $0.4421$ & $-0.0310$ \\
-    \RaggedRight{Without complexity stratification} & $0.4312$ & $-0.0419$ \\
-    \RaggedRight{Template-only training (no random-walk data)} & $0.4701$ & $-0.0030$ \\
-    \RaggedRight{Random-walk-only training} & $0.3653$ & $-0.1078$ \\
-    \hline
-    \end{tabular}
-\end{adjustbox}
-\vspace{1em}
-\caption{Ablation Study on Dataset Generation Components}
-\label{table-ablation-dataset}
-\end{table}
-
-The ablation study on dataset generation components reveals several important insights:
-
-First, complexity stratification in dataset generation has a significant impact on performance, with its removal causing a notable decrease in Jaccard similarity ($-0.0419$). This highlights the importance of providing a balanced distribution of query complexity levels in training data to ensure models can handle both simple and complex questions effectively.
-
-Second, linguistic variation in templates also contributes meaningfully to performance ($+0.0310$), demonstrating the value of exposing models to diverse phrasings of the same underlying question intent. This linguistic diversity helps models generalize beyond specific question formulations to the underlying semantic intent.
-
-Third, multi-language templates have a smaller but still positive impact on performance ($+0.0048$), suggesting that exposure to multiple languages during training provides some benefit even when evaluating primarily on a single language. This may help models develop more robust representations of question semantics that transcend specific language formulations.
-
-Fourth, the comparison of training data sources reveals that template-only training performs nearly as well as the full system ($-0.0030$), while random-walk-only training shows a substantial performance drop ($-0.1078$). This further confirms our finding from the general analysis that template-based generation provides higher-quality training signals for SPARQL generation tasks.
-
-These findings provide valuable guidance for future dataset generation efforts, suggesting that resources should be prioritized for complexity stratification and linguistic variation in templates. The results also validate our hybrid dataset generation approach, with a primary focus on template-based generation supplemented by random-walk patterns for structural diversity.
-
-\subsection{Multi-Agent Architecture Component Analysis}
-\label{ablation-agent}
-
-To evaluate the contribution of different components in our multi-agent architecture, we conduct experiments with variations of our system design. Table \ref{table-ablation-agent} presents the results for the Qwen2.5-7B model on the GESIS KG.
-
-\begin{table}
-\centering
-\renewcommand{\arraystretch}{1.15}
-\setlength{\tabcolsep}{12pt}
-\begin{adjustbox}{width=\textwidth}
-    \begin{tabular}{| m{0.5\textwidth} | m{0.25\textwidth} | m{0.25\textwidth} |}
-    \hline
-    \RaggedRight{\textbf{Configuration}} & \textbf{Jaccard Similarity} & \textbf{Change} \\
-    \hline
-    \RaggedRight{Full System (with all agents)} & $\textbf{0.5328}$ & $-$ \\
-    \RaggedRight{Without Translation Agent} & $0.5312$ & $-0.0016$ \\
-    \RaggedRight{Without Strategy Selection (always use SPARQL)} & $0.5273$ & $-0.0055$ \\
-    \RaggedRight{Without Verbalization Agent (always use SPARQL)} & $0.5106$ & $-0.0222$ \\
-    \RaggedRight{Without Property Generation Agent} & $0.4537$ & $-0.0791$ \\
-    \RaggedRight{Without fine-tuned Entity Extraction} & $0.4826$ & $-0.0502$ \\
-    \RaggedRight{Without fine-tuned SPARQL Generation} & $0.3214$ & $-0.2114$ \\
-    \hline
-    \end{tabular}
-\end{adjustbox}
-\vspace{1em}
-\caption{Ablation Study on Multi-Agent Architecture Components}
-\label{table-ablation-agent}
-\end{table}
-
-The ablation study on multi-agent architecture components reveals several important insights:
-
-First, the fine-tuned SPARQL Generation Agent has the most significant impact on performance, with its replacement by a base model causing a dramatic decrease in Jaccard similarity ($-0.2114$). This confirms that specialized fine-tuning for SPARQL generation is the most critical component of our enhanced system.
-
-Second, the Property Generation Agent also contributes substantially to performance ($+0.0791$), highlighting the importance of comprehensive property retrieval for accurate query generation. This agent's role in expanding the set of potentially relevant properties beyond those initially extracted from the question proves valuable for handling implicit relationships not explicitly mentioned in the question.
-
-Third, fine-tuned Entity Extraction contributes significantly to overall performance ($+0.0502$), demonstrating the value of specialized entity extraction capabilities tailored to knowledge graph domains. This component helps bridge the gap between natural language expressions and knowledge graph entities.
-
-Fourth, the Verbalization Agent provides meaningful improvements ($+0.0222$) by handling simple questions through direct property lookup rather than full SPARQL generation. This specialized processing path for straightforward queries enhances overall system efficiency and accuracy.
-
-Fifth, the Strategy Selection Agent shows a modest but positive impact ($+0.0055$), validating the value of intelligent routing between verbalization and SPARQL generation paths based on question complexity. This adaptive approach helps the system handle a diverse range of question types efficiently.
-
-Finally, the Translation Agent has the smallest impact on performance when evaluating primarily English questions ($+0.0016$), but would likely show more significant contributions in multilingual evaluation scenarios.
-
-These findings provide valuable guidance for future multi-agent architecture design, suggesting that resources should be prioritized for SPARQL generation fine-tuning, comprehensive property retrieval, and specialized entity extraction. The results also validate our overall multi-agent approach, with particularly strong contributions from components that enhance property understanding and query generation capabilities.
-
-\subsection{Conclusion}
-\label{ablation-conclusion}
-
-The ablation studies across fine-tuning components, dataset generation methods, and multi-agent architecture reveal several consistent patterns that highlight the most critical aspects of our enhanced GraphRAG system:
-
-1. **Property Understanding**: Property matching in fine-tuning data and comprehensive property retrieval in the multi-agent architecture consistently show large impacts on performance. This suggests that understanding the relationships between entities (properties) is the most challenging aspect of knowledge graph question answering.
-
-2. **SPARQL Generation Specialization**: Fine-tuned SPARQL generation proves to be the single most important component of the system, with its removal causing the largest performance drop in our architecture ablation. This confirms the value of our specialized fine-tuning approach focused on SPARQL syntax and semantics.
-
-3. **Template Quality**: Template-based dataset generation consistently outperforms random-walk generation, and linguistic diversity within templates contributes meaningfully to performance. This highlights the importance of high-quality, linguistically diverse training examples for effective learning.
-
-4. **Complexity Balance**: Stratified complexity in dataset generation provides significant benefits, ensuring models can handle both simple and complex queries effectively. This balanced approach to training data creation enhances model generalization across query types.
-
-5. **Multi-Agent Synergy**: While individual agents show varying levels of contribution, their combined effect in the full system exceeds the sum of individual components. This demonstrates the synergistic nature of our multi-agent architecture, where specialized components work together to handle diverse question types.
-
-These insights validate our overall approach to enhancing GraphRAG systems through specialized fine-tuning, comprehensive dataset generation, and multi-agent architecture. The results also provide valuable guidance for future work, suggesting that resources should be prioritized for property understanding, SPARQL generation specialization, and high-quality template-based training data.
 
 \section{Dataset Issues}
 Upon concluding the experiments and obtaining all the results, we identified several issues in the evaluation datasets that affected our performance metrics. These issues highlight the challenges of creating and maintaining high-quality benchmarks for knowledge graph question answering.
