@@ -80,8 +80,9 @@ Create a `.env` file in the backend directory and add your Google Gemini API key
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
-   
+
 Configuration options:
+
 - `GEMINI_API_KEY`: Required. Your Google Gemini API key.
 
 Run the migrations to set up the database:
@@ -102,11 +103,12 @@ npm install
 
 #### Environment Configuration
 
-By default, the frontend connects to the ngrok URL `boss-amoeba-flying.ngrok-free.app`. 
+By default, the frontend connects to the ngrok URL `prepared-sheep-similarly.ngrok-free.app`.
 
 If you want to use a local backend instead:
 
 1. Create an `.env.local` file in the frontend directory:
+
 ```
 REACT_APP_API_HOST=localhost:8000
 ```
