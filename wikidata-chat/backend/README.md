@@ -1,6 +1,6 @@
 # Wikidata Agent Backend
 
-This is the Django backend for the Wikidata Agent chat application with multi-provider LLM support.
+This is the Django backend for the Wikidata Agent chat application with multi-provider LLM support and multiple knowledge graph integration.
 
 ## Setup Instructions
 
@@ -8,7 +8,9 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
 
 - Python 3.8 or higher
 - Google Gemini API key (required)
-- Optional: Ollama installation (for running local models)
+- Apache Jena Fuseki server (required for visualization logs)
+- Weaviate server (required for vector search)
+- Ollama installation (optional, only for running local models)
 
 ### Setup
 
@@ -35,21 +37,35 @@ This is the Django backend for the Wikidata Agent chat application with multi-pr
    ```
    pip install -r requirements.txt
    ```
-4. **Optional dependencies** (install based on which LLM providers you want to use):
 
-   ```bash
-   # For Ollama provider (required if using local models)
-   # Install Ollama from https://ollama.ai/
-   ```
+4. Set up required services:
+
+   **Apache Jena Fuseki** (Required):
+   - Install from https://jena.apache.org/download/
+   - Start the server on the default port (3030)
+   - No specific dataset setup is needed as the application will create them
+
+   **Weaviate** (Required):
+   - Use the included docker-compose file in the `weaviate` directory:
+     ```bash
+     cd weaviate
+     docker-compose up -d
+     ```
+
+   **Ollama** (Optional):
+   - Only required if you want to use local LLM models
+   - Install from https://ollama.ai/
+
 5. Create a `.env` file in the project root with your API keys:
 
    ```
    GEMINI_API_KEY=your_gemini_api_key_here
+   APACHE_JENA_URL=http://localhost:3030
+   WEAVIATE_URL=localhost
+   WEAVIATE_HTTP_PORT=8080
+   WEAVIATE_GRPC_PORT=50052
    ```
 
-   **Configuration options:**
-
-   - `GEMINI_API_KEY`: **Required**. Your Google Gemini API key.
 6. Run database migrations:
 
    ```
@@ -66,81 +82,92 @@ The server should now be running at http://localhost:8000.
 
 ## LLM Configuration System
 
-The backend now supports multiple LLM providers through a configuration-based system:
+The backend supports multiple LLM providers through a configuration-based system:
 
 ### Supported Providers
 
 1. **Gemini** - Google's Gemini models via API
-2. **Ollama** - Local models via Ollama
+2. **Ollama** - Local models via Ollama (optional)
 
 ### Configuration
 
 The LLM configuration is stored in `config/llm_config.json`. You can customize which models are used for different tasks:
 
-- **EntityExtractionNode**: Currently configured to use Ollama with Qwen3:0.6b
-- **VerbalizationNode**: Uses Gemini 2.0 Flash (default)
-- **SparqlGenerationNode**: Can be configured to use Hugging Face models via Ollama (see llm_config.example.json)
-- **AnswerGenerationNode**: Uses Gemini 1.5 Pro (default)
+- **EntityExtractionNode**: For extracting entities and properties from questions
+- **VerbalizationNode**: For generating natural language descriptions from knowledge graph data
+- **SparqlGenerationNode**: For generating SPARQL queries
+- **AnswerGenerationNode**: For generating final answers to user questions
 
-### Testing the Configuration
-
-Test your LLM factory setup:
-
-```bash
-python test_llm_factory.py
-```
-
-See example usage:
-
-```bash
-python example_llm_factory_usage.py
-```
+An example configuration file is provided in `config/llm_config.example.json`.
 
 ### Provider-Specific Setup
 
-#### Ollama Provider
+#### Gemini Provider
+
+- Uses Google's generative AI API
+- Requires the `GEMINI_API_KEY` environment variable
+- No local storage requirements
+
+#### Ollama Provider (Optional)
 
 - Requires Ollama to be installed (download from https://ollama.ai/)
 - Can pull models directly from Hugging Face using the format `huggingface/username/repo-name`
 - Supports chat templates automatically
 - Uses GPU memory if available - ensure adequate VRAM
 
-#### Gemini Provider
+## Knowledge Graph Sources
 
-- Uses Google's generative AI API
-- Requires only the `GEMINI_API_KEY` environment variable
-- No local storage requirements
+The backend supports multiple knowledge graph sources:
+
+1. **Wikidata** - The default knowledge graph with millions of entities
+2. **Curriculum KB** - University curriculum knowledge base
+3. **Legal Document KB** - Indonesian legal document knowledge base
+4. **GESIS Scholarly KB** - GESIS scholarly articles knowledge base
+
+The configuration for these knowledge sources is in `config/knowledge_graph_metadata.json`.
+
+## Agent Architecture
+
+The backend uses a LangGraph-based agent architecture with the following components:
+
+- **TranslationNode**: Translates non-English questions
+- **EntityExtractionNode**: Extracts entities and properties from questions
+- **StrategySelectionNode**: Decides between verbalization and SPARQL approaches
+- **VerbalizationNode**: Retrieves entity information directly
+- **PropertyGenerationNode**: Enhances properties for SPARQL queries
+- **SparqlGenerationNode**: Generates and executes SPARQL queries
+- **AnswerGenerationNode**: Generates final natural language answers
+- **GoogleSearchNode**: Fallback option when knowledge graph queries fail
 
 ## API Endpoints
 
--`GET /api/chats/` - List all chats
-
--`POST /api/chats/` - Create a new chat
-
--`GET /api/chats/<uuid>/` - Get a chat with all messages
-
--`DELETE /api/chats/<uuid>/` - Delete a chat
+- `GET /api/chats/` - List all chats
+- `POST /api/chats/` - Create a new chat
+- `GET /api/chats/<uuid>/` - Get a chat with all messages
+- `DELETE /api/chats/<uuid>/` - Delete a chat
+- `POST /api/chats/<uuid>/send_message/` - Send a message to a chat
+- `GET /api/chats/<uuid>/download_visualization/` - Download visualization files
 
 ## WebSocket Connection
 
 To connect to a chat via WebSocket, use the following URL:
 
 ```
-
 ws://localhost:8000/ws/chat/<chat_uuid>/
-
 ```
 
 You can send messages to the WebSocket in the following format:
 
 ```json
-
 {
-
-"message": "Your question here"
-
+  "message": "Your question here",
+  "settings": {
+    "useVerbalization": true,
+    "useGoogleSearch": true,
+    "useTranslation": true,
+    "knowledgeSource": "wikidata"
+  }
 }
-
 ```
 
 The WebSocket will send back messages in the following formats:
@@ -148,38 +175,41 @@ The WebSocket will send back messages in the following formats:
 - Regular messages:
 
 ```json
-
 {
-
-"message": "Message content",
-
-"role": "user|assistant|system"
-
+  "message": "Message content",
+  "role": "user|assistant|system",
+  "message_id": "message_uuid"
 }
-
 ```
 
 - Debug messages:
 
 ```json
-
 {
-
-"debug": "Debug output content",
-
-"role": "system"
-
+  "debug": "Debug output content",
+  "role": "system",
+  "message_id": "debug_id"
 }
-
 ```
 
+- Visualization files:
 
+```json
+{
+  "visualization_files": {
+    "json": {"download_url": "/api/chats/<uuid>/download_visualization/?type=json", "file_name": "file.json"},
+    "mermaid": {"download_url": "/api/chats/<uuid>/download_visualization/?type=mermaid", "file_name": "file.mmd"},
+    "ttl": {"download_url": "/api/chats/<uuid>/download_visualization/?type=ttl", "file_name": "file.ttl"}
+  },
+  "message_id": "message_uuid"
+}
+```
 
-# Apache Jena Visualization Analysis
+## Apache Jena Visualization Analysis
 
-This backend now integrates with Apache Jena Fuseki to store visualization logs in RDF format. This enables powerful semantic querying of agent execution patterns.
+This backend integrates with Apache Jena Fuseki to store visualization logs in RDF format. This enables powerful semantic querying of agent execution patterns.
 
-## Configuration
+### Configuration
 
 Ensure the following environment variable is set in your `.env` file:
 
