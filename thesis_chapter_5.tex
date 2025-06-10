@@ -756,7 +756,7 @@ These findings lead to several important insights about our fine-tuning methodol
     
     \item \textbf{Cross-Dataset Generalization}: The strong performance of template-trained models on random-walk test sets demonstrates effective cross-dataset generalization. This suggests that our fine-tuning approach is learning fundamental SPARQL generation capabilities rather than merely memorizing specific patterns.
     
-    \item \textbf{Parameter Efficiency}: Our LoRA-based fine-tuning approach with carefully selected hyperparameters (rank=64 for Wikidata and Curriculum KG, rank=32 for Legal and GESIS KG due to resource limitations) provides substantial improvements while updating only 2-3\% of model parameters. This demonstrates the parameter efficiency of our approach, making it practical for deployment scenarios with limited computational resources.
+    \item \textbf{Parameter Efficiency}: Our QLoRA-based fine-tuning approach with carefully selected hyperparameters (rank=64 for Wikidata and Curriculum KG, rank=32 for Legal and GESIS KG due to resource limitations) provides substantial improvements while updating only 2-3\% of model parameters. This demonstrates the parameter efficiency of our approach, making it practical for deployment scenarios with limited computational resources.
     
     \item \textbf{Knowledge Transfer}: The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, appears to facilitate effective knowledge transfer between domains. This is particularly valuable for specialized domains like legal and scholarly knowledge graphs.
 \end{enumerate}

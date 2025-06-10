@@ -695,7 +695,7 @@ To overcome limitations in previous approaches that relied on few-shot prompting
 \begin{figure}[htbp]
     \centering
         \includegraphics[width=0.8\textwidth]{assets/pics/lora.jpg}
-    \caption{LoRA Architecture: Only small adapter modules are trained while the base model remains frozen, reducing trainable parameters by over 99\% compared to full fine-tuning}
+    \caption{QLoRA Architecture: Only small adapter modules are trained while the base model remains frozen, reducing trainable parameters by over 99\% compared to full fine-tuning}
     \label{fig:lora-architecture}
 \end{figure}
 
@@ -722,7 +722,7 @@ We designed the output to follow a structured format with ``entities" and ``prop
 \subsubsection{Model Selection Criteria and Adaptation Strategy}
 Our model selection methodology focused on large language models with demonstrated capabilities in understanding natural language semantics, contextual interpretation, and structured output generation. We evaluated state-of-the-art models including Mistral, Qwen, and Llama families, prioritizing instruction-tuned versions that have been optimized for following specific task instructions.
 
-For the entity and property extraction task, we designed a lighter LoRA configuration since this task requires less adaptation from the base model's capabilities:
+For the entity and property extraction task, we designed a lighter QLoRA configuration since this task requires less adaptation from the base model's capabilities:
 
 \begin{itemize}
     \item \textbf{Rank (r)}: 16 - Selected as the optimal rank through empirical analysis of extraction quality
@@ -730,7 +730,7 @@ For the entity and property extraction task, we designed a lighter LoRA configur
     \item \textbf{Target modules}: Selected attention layers and MLP layers for fine-tuning
     \item \textbf{Dropout}: 0 - Chosen to optimize for deterministic behavior in extraction tasks
     \item \textbf{Bias training}: None - Excluded to minimize trainable parameters
-    \item \textbf{LoRA configuration}: Standard approach without rank stabilization, as extraction tasks showed less susceptibility to training instabilities
+    \item \textbf{QLoRA configuration}: Standard approach without rank stabilization, as extraction tasks showed less susceptibility to training instabilities
 \end{itemize}
 
 This configuration approach results in approximately 40-60 million trainable parameters (depending on model size), representing less than 1\% of the original model parameters, enabling efficient adaptation while capturing domain-specific extraction patterns.
@@ -807,7 +807,7 @@ For SPARQL generation, we designed domain-specific adaptation configurations due
     \item \textbf{Target modules}: Comprehensive selection of attention and MLP layers
     \item \textbf{Dropout}: 0.1 - Increased dropout for enhanced generalization on complex tasks
     \item \textbf{Bias training}: Included to improve syntax pattern learning
-    \item \textbf{LoRA configuration}: Rank-Stabilized approach to prevent training instabilities
+    \item \textbf{QLoRA configuration}: Rank-Stabilized approach to prevent training instabilities
 \end{itemize}
 
 This methodological approach results in approximately 160-230 million trainable parameters, representing less than 3\% of the original model parameters, but providing sufficient capacity to learn complex SPARQL patterns across different knowledge graph domains.
@@ -906,7 +906,7 @@ To enable adaptation of large language models on standard research infrastructur
 
 \begin{itemize}
     \item \textbf{Numerical precision methodology}: Adoption of 4-bit precision, reducing memory requirements by up to 8x
-    \item \textbf{Parameter-Efficient Adaptation}: Application of LoRA to reduce trainable parameters to less than 3\% of the full model
+    \item \textbf{Parameter-Efficient Adaptation}: Application of QLoRA to reduce trainable parameters to less than 3\% of the full model
     \item \textbf{Gradient computation strategy}: Implementation of gradient checkpointing to optimize memory usage
     \item \textbf{Optimizer methodology}: Utilization of 8-bit optimization to reduce state memory footprint
     \item \textbf{Batch processing approach}: Application of gradient accumulation for effective batch size management

@@ -1724,7 +1724,7 @@ A key challenge in fine-tuning large language models is managing memory constrai
     \item \textbf{Gradient Checkpointing}: Implemented via the \texttt{use\_gradient\_checkpointing} parameter, this technique trades computation for memory by recomputing intermediate activations during backpropagation rather than storing them.
     
     \begin{lstlisting}[breaklines=true,language=python, caption=Gradient Checkpointing Implementation, label=code:gradient-checkpointing]
-    # Enable gradient checkpointing in LoRA configuration
+    # Enable gradient checkpointing in QLoRA configuration
     model = FastLanguageModel.get_peft_model(
         model,
         r=64,
@@ -1842,12 +1842,12 @@ The expected assistant output is a structured JSON response:
 
 \subsubsection{Low-Rank Adaptation Implementation}
 
-For the entity extraction task, we implemented a specialized LoRA configuration optimized for structured extraction tasks:
+For the entity extraction task, we implemented a specialized QLoRA configuration optimized for structured extraction tasks:
 
 \begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction LoRA Configuration, label=code:entity-extraction-lora]
 def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num_epochs=5):
     """
-    Fine-tune a model with LoRA for entity and property extraction
+    Fine-tune a model with QLoRA for entity and property extraction
     """
     model, tokenizer = load_model(model_name)
     
@@ -1863,7 +1863,7 @@ def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num
         bias="none",                      # No bias parameters to minimize trainable params
         use_gradient_checkpointing="unsloth",  # Memory optimization
         random_state=42,                  # Reproducibility
-        use_rslora=False,                 # Standard LoRA for stability
+        use_rslora=False,                 # Standard QLoRA for stability
         loftq_config=None,                # No quantization for adapter weights
     )
     
@@ -1991,12 +1991,12 @@ SELECT ?population WHERE \{ \\
 
 \subsubsection{Enhanced LoRA Configuration for SPARQL Generation}
 
-For the SPARQL generation task, we implemented a more extensive LoRA configuration with higher rank and additional adaptations:
+For the SPARQL generation task, we implemented a more extensive QLoRA configuration with higher rank and additional adaptations:
 
 \begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation LoRA Configuration, label=code:sparql-generation-lora]
 def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledge_domain="wikidata", num_epochs=10):
     """
-    Fine-tune a model with enhanced LoRA for SPARQL generation
+    Fine-tune a model with enhanced QLoRA for SPARQL generation
     
     Args:
         model_name: Name of the base model
@@ -2025,7 +2025,7 @@ def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledg
         bias = "all",                     # Include bias for syntax learning
         use_gradient_checkpointing = "unsloth",
         random_state = 42,
-        use_rslora = True,                # Rank-Stabilized LoRA for stability
+        use_rslora = True,                # Rank-Stabilized QLoRA for stability
         loftq_config = None,
     )
     
@@ -2094,7 +2094,7 @@ def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledg
     return model, tokenizer
 \end{lstlisting}
 
-This enhanced configuration uses a variable rank (r=32 or r=64 depending on the knowledge graph) to provide appropriate capacity for learning complex SPARQL syntax patterns. Specifically, a lower rank (r=32) is used for Legal and GESIS knowledge graphs which have longer inputs, while a higher rank (r=64) is used for Wikidata and Curriculum knowledge graphs. We also implemented rank-stabilized LoRA (RSLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
+This enhanced configuration uses a variable rank (r=32 or r=64 depending on the knowledge graph) to provide appropriate capacity for learning complex SPARQL syntax patterns. Specifically, a lower rank (r=32) is used for Legal and GESIS knowledge graphs which have longer inputs, while a higher rank (r=64) is used for Wikidata and Curriculum knowledge graphs. We also implemented rank-stabilized QLoRA (RSQLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
 
 \subsection{Dataset Formatting and Processing}
 
@@ -2320,8 +2320,8 @@ Our training process involves careful hyperparameter selection and monitoring to
 We employed a methodical approach to hyperparameter selection, balancing performance and computational efficiency:
 
 \begin{itemize}
-    \item \textbf{Entity Extraction Model}: Moderate rank (r=16), no dropout, no bias training, standard LoRA, linear learning rate schedule, 5 epochs
-    \item \textbf{SPARQL Generation Model}: Variable rank (r=32 for Legal/GESIS KGs, r=64 for Wikidata/Curriculum KGs), moderate dropout (0.1), bias training, rank-stabilized LoRA, polynomial learning rate schedule, 10 epochs
+    \item \textbf{Entity Extraction Model}: Moderate rank (r=16), no dropout, no bias training, standard QLoRA, linear learning rate schedule, 5 epochs
+    \item \textbf{SPARQL Generation Model}: Variable rank (r=32 for Legal/GESIS KGs, r=64 for Wikidata/Curriculum KGs), moderate dropout (0.1), bias training, rank-stabilized QLoRA, polynomial learning rate schedule, 10 epochs
 \end{itemize}
 
 These hyperparameter configurations were determined through empirical testing on validation sets, with a focus on minimizing validation loss while preventing overfitting.
@@ -2449,12 +2449,12 @@ Throughout the implementation process, we encountered and addressed several tech
         dtype=None          # Auto-detect optimal precision
     )
     
-    # Memory-efficient LoRA configuration
+    # Memory-efficient QLoRA configuration
     model = FastLanguageModel.get_peft_model(
         model,
         r=64,  # Rank parameter
         use_gradient_checkpointing="unsloth",  # Trade computation for memory
-        # Only these modules get LoRA adapters (saves memory)
+        # Only these modules get QLoRA adapters (saves memory)
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", 
                         "gate_proj", "up_proj", "down_proj"]
     )
@@ -2480,16 +2480,16 @@ Throughout the implementation process, we encountered and addressed several tech
         return has_chat_template
     \end{lstlisting}
     
-    \item \textbf{Training Stability}: Higher-rank LoRA configurations occasionally experienced training instabilities, particularly for SPARQL generation. We implemented rank-stabilized LoRA (RSLoRA) to address this issue.
+    \item \textbf{Training Stability}: Higher-rank QLoRA configurations occasionally experienced training instabilities, particularly for SPARQL generation. We implemented rank-stabilized QLoRA (RSQLoRA) to address this issue.
     
     \begin{lstlisting}[breaklines=true,language=python, caption=Training Stability Improvements, label=code:training-stability]
-    # Standard LoRA for entity extraction (more stable task)
+    # Standard QLoRA for entity extraction (more stable task)
     entity_model = FastLanguageModel.get_peft_model(
         base_model,
         r=16,                  # Lower rank for stability
         lora_alpha=16,
         lora_dropout=0,
-        use_rslora=False,      # Standard LoRA is sufficient
+        use_rslora=False,      # Standard QLoRA is sufficient
         bias="none"            # Fewer parameters to update
     )
     
@@ -2499,7 +2499,7 @@ Throughout the implementation process, we encountered and addressed several tech
         r=64,                  # Higher rank needed for complexity (r=32 for Legal/GESIS KGs, r=64 for Wikidata/Curriculum KGs)
         lora_alpha=64,
         lora_dropout=0.1,      # Dropout for generalization
-        use_rslora=True,       # Rank-Stabilized LoRA for stability
+        use_rslora=True,       # Rank-Stabilized QLoRA for stability
         bias="all"             # Include bias for syntax learning
     )
     \end{lstlisting}
