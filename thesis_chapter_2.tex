@@ -934,14 +934,14 @@ While the FrOG framework established a solid foundation for knowledge graph ques
 \begin{enumerate}
     \item \textbf{Limited Entity and Property Extraction}: The original system's entity and property extraction methods were constrained in their ability to handle diverse and complex question types, particularly for multi-hop reasoning scenarios.
     
-    \item \textbf{Single-Agent Architecture}: The pipeline architecture, while straightforward, lacked the sophisticated reasoning capabilities that a multi-agent approach could provide for adaptive strategy selection and intelligent query routing.
-    
+    \item \textbf{Pipeline Architecture Limitations}: The original pipeline architecture, while implementing a basic multi-component approach, lacked the runtime configurability, comprehensive fallback mechanisms, and semantic logging capabilities that a LangGraph-based architecture could provide for enhanced adaptability, fault tolerance, and operational transparency
+
     \item \textbf{Few-Shot Prompting Approach}: The system relied on few-shot prompting for language models rather than specialized model training, limiting its ability to learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation.
     
     \item \textbf{Restricted Dataset Scope}: The datasets used for evaluation were limited in scope and variety, constraining the system's ability to handle diverse query types and adapt to different knowledge domains.
     
-    \item \textbf{Sequential Processing}: The rigid pipeline architecture provided limited opportunities for feedback loops, error recovery, or alternative processing paths when primary approaches failed.
-    
+    \item \textbf{Fixed Workflow Limitations}: The original pipeline implemented fixed processing paths with limited fault tolerance, providing minimal opportunities for runtime configuration, expanded fallback mechanisms, or alternative processing paths when primary approaches failed.
+
     \item \textbf{Transparency Limitations}: The system offered limited visibility into its reasoning process, making it difficult for users to understand and verify how answers were derived.
 \end{enumerate}
 
@@ -980,7 +980,7 @@ Despite significant advances in each of these areas, several important research 
     
     \item \textbf{Insufficient Dataset Generation Methodologies}: Existing approaches to NL2SPARQL dataset generation often lack the scale, diversity, and quality needed for effective model training. The combination of template-based, graph exploration, and LLM-enhanced approaches offers potential solutions but requires further development and validation.
     
-    \item \textbf{Single-Agent Limitations}: Many current GraphRAG systems employ single-agent or simple pipeline architectures that lack the sophisticated reasoning capabilities, adaptive processing, and robust fallback mechanisms provided by multi-agent approaches.
+    \item \textbf{Pipeline Architecture Limitations}: Many current GraphRAG systems employ fixed pipeline architectures that lack runtime configurability, expanded fallback mechanisms, and comprehensive logging capabilities needed for adaptability, fault tolerance, and operational transparency in complex knowledge graph environments.
     
     \item \textbf{Transparency Challenges}: Knowledge graph question answering systems often operate as black boxes, providing limited visibility into their reasoning processes and making it difficult for users to verify or understand how answers are derived.
     

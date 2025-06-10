@@ -28,13 +28,13 @@ While previous work \citep{ongris2024frog} established the foundational FrOG (Fr
 
 First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios when working directly with knowledge graphs. The system relied on simple few-shot prompting approaches without specialized training for Natural Language to SPARQL (NL2SPARQL) generation tasks, which is crucial for effective querying of structured knowledge bases.
 
-Second, the architecture lacked the sophisticated reasoning capabilities needed for adaptive strategy selection and intelligent query routing when dealing with heterogeneous knowledge graph structures. The original system used fixed processing paths without considering query complexity or providing robust fallback mechanisms when primary approaches failed to retrieve relevant information from the knowledge graphs.
+Second, the original pipeline architecture lacked runtime-configurable components, comprehensive fallback mechanisms, and semantic logging capabilities needed for adaptive strategy selection, fault tolerance, and operational transparency when dealing with heterogeneous knowledge graph structures. The original system used fixed processing paths without considering query complexity or providing robust fallback mechanisms when primary approaches failed to retrieve relevant information from the knowledge graphs.
 
 Third, the absence of specialized model training meant the system could not learn domain-specific patterns for entity extraction and SPARQL generation, limiting its ability to adapt to different knowledge domains effectively. The original approach relied solely on few-shot prompting, which showed inconsistent performance across different query types and knowledge graph domains, particularly when dealing with complex relational structures inherent in knowledge graphs.
 
 Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively. The original system lacked comprehensive evaluation across multiple knowledge graph domains and did not provide sufficient transparency into the decision-making process for knowledge graph querying.
 
-Building upon the foundational work of FrOG, we propose \textbf{MEGA-FrOG: Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG}. Our enhanced system addresses the identified limitations through three main improvements: (1) comprehensive dataset generation using both template-based and random-walk approaches to create diverse, high-quality training data across multiple knowledge domains, specifically designed for knowledge graph querying tasks, (2) specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques on generated NL2SPARQL datasets to improve entity extraction and SPARQL generation accuracy for direct knowledge graph access, and (3) sophisticated multi-agent architecture using LangGraph that enables intelligent query routing, adaptive strategy selection, and robust fallback mechanisms while providing comprehensive transparency through process visualization and semantic logging.
+Building upon the foundational work of FrOG, we propose \textbf{MEGA-FrOG: Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG}. Our enhanced system addresses the identified limitations through three main improvements: (1) comprehensive dataset generation using both template-based and random-walk approaches to create diverse, high-quality training data across multiple knowledge domains, specifically designed for knowledge graph querying tasks, (2) specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques on generated NL2SPARQL datasets to improve entity extraction and SPARQL generation accuracy for direct knowledge graph access, and (3) enhanced LangGraph-based implementation that provides runtime-configurable components, expanded fallback mechanisms including Google Search integration, and comprehensive semantic logging while improving adaptability, fault tolerance, and operational transparency through process visualization and RDF-based event tracking.
 
 This enhanced approach offers significant improvements in reasoning capabilities, domain adaptability, and system transparency, making the GraphRAG framework more robust and suitable for complex knowledge graph querying tasks across diverse domains including general knowledge (Wikidata), academic curricula, legal documents, and scholarly research. By focusing specifically on QA over existing knowledge graphs rather than text-to-graph conversion, our system can leverage the rich structural and semantic information already present in these knowledge repositories more effectively.
 
@@ -48,8 +48,8 @@ Building upon the foundational GraphRAG framework established in previous work a
     
     \item How can specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques improve the accuracy of entity extraction and SPARQL generation for direct knowledge graph querying compared to few-shot prompting approaches in the original GraphRAG framework?
     
-    \item How can a multi-agent architecture with intelligent routing and adaptive strategy selection enhance the reasoning capabilities and robustness of GraphRAG systems when performing QA over structured knowledge graphs compared to single-agent approaches?
-    
+    \item How can a LangGraph-based multi-agent architecture with runtime-configurable components, expanded fallback mechanisms, and comprehensive semantic logging enhance the adaptability, fault tolerance, and operational transparency of GraphRAG systems compared to the original pipeline approach?
+
     \item How does the enhanced GraphRAG system perform in end-to-end question-answering tasks across different existing knowledge graph domains and query complexity levels compared to the original baseline system?
 \end{enumerate}
 
@@ -64,8 +64,8 @@ Based on the aforementioned research questions and the specific focus on QA over
     
     \item To implement and evaluate specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques on entity extraction and SPARQL generation tasks for knowledge graph querying, demonstrating improved performance over few-shot prompting approaches used in the original GraphRAG framework.
     
-    \item To design and implement a sophisticated multi-agent architecture using LangGraph that enables intelligent query routing, adaptive strategy selection, and robust fallback mechanisms specifically optimized for knowledge graph querying while providing comprehensive transparency through process visualization and semantic logging.
-    
+    \item To design and implement a LangGraph-based multi-agent architecture that enables runtime configuration, expanded fallback mechanisms including Google Search integration, and comprehensive semantic logging for enhanced operational transparency, specifically optimized for knowledge graph querying.
+
     \item To conduct comprehensive end-to-end evaluation of the enhanced GraphRAG system across multiple existing knowledge graph domains (Wikidata, Curriculum KG, Legal KG, and GESIS KG) and query complexity levels, quantifying the overall system performance improvements achieved through the integration of all enhanced components.
     
 \end{enumerate}
