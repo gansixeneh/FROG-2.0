@@ -43,6 +43,19 @@
     tdb2:location      "/Users/muflihmaxi/Documents/FROG-2.0/fuseki-data/gesis" ;
 .
 
+:service_legal  a                   fuseki:Service ;
+    rdfs:label                        "legal Dataset" ;
+    fuseki:dataset                    :dataset_legal ;
+    fuseki:name                       "legal" ;
+    fuseki:serviceQuery               "query" , "sparql" ;
+    fuseki:serviceReadGraphStore      "get" ;
+    fuseki:serviceReadWriteGraphStore "data" ;
+    fuseki:serviceUpdate              "update" ;
+    fuseki:serviceUpload              "upload" .
+:dataset_legal  a        tdb2:DatasetTDB2 ;
+    tdb2:location      "/Users/muflihmaxi/Documents/FROG-2.0/fuseki-data/legal" ;
+.
+
 :service_modified-lex2kg  a                   fuseki:Service ;
     rdfs:label                        "modified-lex2kg Dataset" ;
     fuseki:dataset                    :dataset_modified-lex2kg ;
