@@ -2460,7 +2460,7 @@ Throughout the implementation process, we encountered and addressed several tech
     )
     \end{lstlisting}
     
-    \item \textbf{Model Compatibility}: Each model family required specific adaptations to ensure compatibility with our training approach. We implemented model-specific chat template handling and tokenization to ensure consistent behavior.
+    \item \textbf{Model Compatibility}: Each model family required specific adaptations to ensure compatibility with our training approach. We implemented model-specific chat template handling and tokenization to ensure consistent behavior, especially for \texttt{Qwen/Qwen2.5-7B-Instruct} where it doesn't have its own chat template.
     
     \begin{lstlisting}[breaklines=true,language=python, caption=Model-Specific Compatibility Handling, label=code:model-compatibility]
     # Model-specific chat template handling
@@ -2496,45 +2496,14 @@ Throughout the implementation process, we encountered and addressed several tech
     # Enhanced stability for SPARQL generation (complex task)
     sparql_model = FastLanguageModel.get_peft_model(
         base_model,
-        r=64,                  # Higher rank needed for complexity
+        r=64,                  # Higher rank needed for complexity (r=32 for Legal/GESIS KGs, r=64 for Wikidata/Curriculum KGs)
         lora_alpha=64,
         lora_dropout=0.1,      # Dropout for generalization
         use_rslora=True,       # Rank-Stabilized LoRA for stability
         bias="all"             # Include bias for syntax learning
     )
     \end{lstlisting}
-    
-    \item \textbf{Cross-Domain Adaptation}: Adapting models across different knowledge graph domains required careful balancing of general and domain-specific knowledge. Our sequential adaptation approach effectively mitigated catastrophic forgetting while enabling efficient domain adaptation.
-    
-    \begin{lstlisting}[breaklines=true,language=python, caption=Cross-Domain Adaptation Approach, label=code:cross-domain-adaptation]
-    # Phase 1: Train on Wikidata (general knowledge)
-    wikidata_model, tokenizer = finetune_sparql(
-        model_name, 
-        wikidata_train_dataset, 
-        wikidata_val_dataset,
-        "ft_model_wikidata",
-        num_epochs=10           # Full training on Wikidata
-    )
-    
-    # Phase 2: Domain adaptation with reduced learning rate
-    def adapt_to_domain(base_model_name, wikidata_checkpoint, domain_dataset):
-        # Load the Wikidata-trained model
-        model, tokenizer = load_model(base_model_name)
-        model = PeftModel.from_pretrained(model, wikidata_checkpoint)
         
-        # Continue training with domain data (reduced parameters)
-        trainer = SFTTrainer(
-            model=model,
-            # Training args with lower learning rate and fewer epochs
-            args=TrainingArguments(
-                learning_rate=5e-6,     # Reduced learning rate
-                num_train_epochs=3,     # Shorter training
-                warmup_ratio=0.05       # Shorter warmup
-            )
-        )
-        trainer.train()
-    \end{lstlisting}
-    
     \item \textbf{Component Initialization Order}: We discovered critical incompatibilities between Unsloth and Weaviate when both were initialized in the same Python process. Specifically, Unsloth's CUDA optimizations conflicted with Weaviate's GPU memory management. This required careful implementation sequencing where Weaviate client initialization had to be performed after all Unsloth fine-tuning processes were completed:
 
     \begin{lstlisting}[breaklines=true,language=python, caption=Component Initialization Order, label=code:initialization-order]
@@ -4486,16 +4455,16 @@ async def debug_callback(self, output):
     """Callback function for agent debugging output with real-time streaming"""
     # Fun emojis for each node type
     node_emojis = {
-        "Translation Node": "��",
-        "Entity Extraction Node": "��️",
-        "Strategy Selection Node": "��",
-        "Verbalization Node": "��️", 
-        "Property Generation Node": "��",
-        "SPARQL Generation Node": "⚙️",
-        "Answer Generation Node": "��",
-        "Google Search Node": "��",
+        "Translation Node": "...",
+        "Entity Extraction Node": "...",
+        "Strategy Selection Node": "...",
+        "Verbalization Node": "...", 
+        "Property Generation Node": "...",
+        "SPARQL Generation Node": "...",
+        "Answer Generation Node": "...",
+        "Google Search Node": "...",
         # Default emoji for any unrecognized nodes
-        "default": "��"
+        "default": "..."
     }
     
     # Extract the node name from the output if possible
@@ -4929,7 +4898,7 @@ logid:EventType_executing_query_from_attempt_1 a log:EventType ;
 In addition to the RDF-based logging system, we implemented a real-time visualization system that provides immediate feedback on the agent's execution process. This system is particularly useful for debugging and understanding the agent's decision-making process.
 
 \subsubsection{BoxologyVisualizer Implementation}
-The core of our visualization system is the \texttt{BoxologyVisualizer} class, which captures execution events and generates Mermaid diagrams representing the process flow:
+The core of our visualization system is the \texttt{BoxologyVisualizer} class, which captures execution events and generates Mermaid\footnote{\url{https://mermaid.js.org/}} diagrams representing the process flow:
 
 \begin{lstlisting}[language=python, caption=BoxologyVisualizer class implementation, label=code:boxology-visualizer]
 class BoxologyVisualizer:
@@ -5278,16 +5247,16 @@ async def debug_callback(self, output):
     """Callback function for agent debugging output with real-time streaming"""
     # Fun emojis for each node type
     node_emojis = {
-        "Translation Node": "��",
-        "Entity Extraction Node": "��️",
-        "Strategy Selection Node": "��",
-        "Verbalization Node": "��️", 
-        "Property Generation Node": "��",
-        "SPARQL Generation Node": "⚙️",
-        "Answer Generation Node": "��",
-        "Google Search Node": "��",
+        "Translation Node": "...",
+        "Entity Extraction Node": "...",
+        "Strategy Selection Node": "...",
+        "Verbalization Node": "...", 
+        "Property Generation Node": "...",
+        "SPARQL Generation Node": "...",
+        "Answer Generation Node": "...",
+        "Google Search Node": "...",
         # Default emoji for any unrecognized nodes
-        "default": "��"
+        "default": "..."
     }
     
     # Extract the node name from the output if possible

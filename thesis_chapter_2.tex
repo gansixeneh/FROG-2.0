@@ -131,7 +131,64 @@ An example of a simple RDF graph representing information about Julian Hillyer i
 \end{table}
 
 RDF data can be serialized in various formats, including RDF/XML, JSON-LD, and Turtle, each with its own advantages and trade-offs. These serialization formats allow RDF data to be stored, exchanged, and processed across different systems and applications.
+\subsection{Semantic Storage and Indexing with Apache Jena}
+Apache Jena is an open-source framework for building Semantic Web and linked data applications, providing comprehensive tools for working with RDF data, SPARQL queries, and OWL ontologies \citep{jena2011apache}. Originally developed by HP Labs and now maintained by the Apache Software Foundation, Jena serves as both a programming framework and a robust storage system for knowledge graph applications.
 
+\subsubsection{Jena Architecture}
+Jena's modular architecture integrates several key components supporting the complete lifecycle of Semantic Web applications. The core RDF API implements the RDF data model through an intuitive interface representing statements as subject-predicate-object triples \citep{carroll2004jena}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{assets/pics/jena-architecture.png}
+\caption{Apache Jena Architecture Overview \citep{jena2022architecture}}
+\label{fig:jena-architecture}
+\end{figure}
+
+As shown in Figure \ref{fig:jena-architecture}, Jena's architecture includes:
+\begin{itemize}
+\item \textbf{RDF API}: Foundation for creating and manipulating RDF graphs
+\item \textbf{ARQ}: SPARQL 1.1 compliant query engine
+\item \textbf{TDB}: Native high-performance triple store
+\item \textbf{Fuseki}: SPARQL server exposing endpoints over HTTP
+\item \textbf{Ontology API}: OWL and RDFS processing support
+\item \textbf{Inference API}: Reasoning capabilities using rule engines
+\end{itemize}
+
+\subsubsection{TDB Triple Store and Indexing}
+\label{sec:tdb-indexing}
+TDB is Jena's native persistent triple store, designed specifically for efficient RDF data storage and retrieval. Unlike adapted general-purpose databases, TDB implements specialized indexing techniques optimized for RDF graph characteristics \citep{owens2008tdb}.
+
+TDB stores RDF data using node tables that map RDF terms to fixed-length identifiers, and triple/quad indexes that store actual triples using these identifiers. This enables efficient compression since URIs and literals are stored once in node tables while triple indexes use compact integer identifiers.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{assets/pics/tree.png}
+\caption{TDB Indexing Structure \citep{owens2008tdb}}
+\label{fig:tdb-indexing}
+\end{figure}
+
+TDB implements comprehensive indexing using B+trees optimized for RDF data patterns. For triple stores, it maintains SPO, POS, and OSP indexes, while quad stores use six indexes (GSPO, GPOS, GOSP, SPOG, POSG, OSPG) to optimize queries regardless of which components are specified \citep{dieng2022triplestoreindexing}. Each index uses concatenated node IDs as keys, enabling efficient range queries and prefix matching essential for SPARQL processing.
+
+The B+tree implementation includes optimizations such as fixed-size records, prefix compression, record-level compression, and memory-mapped files, enabling TDB to handle millions of triples per second for basic graph pattern queries \citep{fletcher2009scalable}.
+
+\subsubsection{Fuseki and Query Optimization}
+\label{sec:fuseki}
+Fuseki provides a standardized HTTP interface for querying and updating RDF data, implementing SPARQL 1.1 Protocol and Graph Store Protocol \citep{jena2023fuseki}. It supports query operations (SELECT, CONSTRUCT, ASK, DESCRIBE), update operations, and provides both embedded and standalone deployment options.
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth]{assets/pics/jena.png}
+\caption{Fuseki Server Dashboard Interface \citep{jena2023fuseki}}
+\label{fig:fuseki-dashboard}
+\end{figure}
+
+Jena's ARQ query engine implements several optimization techniques including statistical optimization using data distribution, filter placement, join reordering, and property path optimization \citep{carroll2004jena}. The optimizer considers various execution strategies (index-based joins, hash joins, merge joins) and selects appropriate methods based on query patterns and data characteristics \citep{stocker2008sparqloptimization}.
+
+\subsubsection{TDB2 and Applications}
+\label{sec:tdb2}
+TDB2 represents the next generation with improvements including ACID-compliant transactions, enhanced concurrency, improved indexing with better space efficiency, and online backup capabilities \citep{jena2023tdb2}.
+
+In knowledge graph systems, Apache Jena provides efficient storage for large RDF datasets, fast SPARQL query execution, standardized interfaces, and flexible integration capabilities. These features make it particularly suitable for GraphRAG systems requiring efficient storage and retrieval of structured data for semantic analysis and complex analytical queries \citep{wilcke2017knowledge}.
 \section{Large Language Models (LLM)}
 \label{sec:llm}
 Large Language Models (LLMs) are deep neural networks trained on vast amounts of text data that have revolutionized natural language processing capabilities. These models can understand, generate, and respond with human-like text by capturing deep contextual information and subtle linguistic patterns. Unlike traditional rule-based or statistical natural language processing methods, LLMs demonstrate remarkable abilities across a wide range of tasks, from translation and summarization to complex reasoning and creative writing \citep{raschka2024build}.

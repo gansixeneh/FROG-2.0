@@ -69,7 +69,7 @@ The enhanced architecture supports multiple knowledge bases including Wikidata, 
 
 For model selection, we utilize multiple finetuned versions of state-of-the-art models. The LLMs we use for the enhanced pipeline are \texttt{Mistral NeMo}, \texttt{LLaMA 3.1}, \texttt{Qwen2.5 Coder}, and \texttt{Qwen2.5}. Likewise, all models are the instruction fine-tuned versions. The multi-agent system supports configurable model providers for different processing tasks. The evaluation encompasses both the original Jaccard similarity metrics and additional comprehensive metrics for component-wise analysis.
 
-Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure \footnote{\url{http://kaggle.com/}} to ensure computational scalability and reproducibility of our enhanced approach compared to the original baseline systems.
+Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to ensure computational scalability and reproducibility of our enhanced approach compared to the original baseline systems.
 
 % =============================================================================
 
@@ -156,7 +156,7 @@ The curriculum knowledge graph utilizes a custom ontology with the prefix \textt
 The knowledge graph also defines four main classes: \texttt{ns1:course}, \texttt{ns1:evaluation}, \texttt{ns1:course\_category}, and \texttt{ns1:research\_lab}, which provide the structural foundation for organizing curriculum information. For efficient processing in our enhanced GraphRAG system, we maintain 108 entities and 8 properties in our Weaviate vector database for semantic search and retrieval.
 
 \subsubsection{Sample Data}
-The following code shows sample triples about a "Basis Data" (Database) course in RDF Turtle format:
+The following code shows sample triples about a ``Basis Data" (Database) course in RDF Turtle format:
 
 \lstinputlisting[caption=Sample RDF Triples for Curriculum Knowledge Graph, label=code:curriculum-sample, style=uistyle, language=turtle]{assets/codes/sample-triple.ttl}
 
@@ -197,31 +197,31 @@ Class assignments & 256,416 \\
 To improve data quality and consistency for our enhanced GraphRAG system, we applied several modifications to the original Lex2KG dataset:
 
 \begin{itemize}
-    \item \textbf{Location Standardization}: Fixed inconsistent city names in the \texttt{lex2kg-o:disahkanDi} property (e.g., "Jakart", "Jakar" → "Jakarta")
-    \item \textbf{URI Cleanup}: Removed unnecessary "/text" suffixes from URIs and moved textual content properties to their appropriate parent entities
-    \item \textbf{Person Name Standardization}: Normalized variations in person names in the \texttt{lex2kg-o:disahkanOleh} property (e.g., "JOKO WIDODO" → "Joko Widodo")
+    \item \textbf{Location Standardization}: Fixed inconsistent city names in the \texttt{lex2kg-o:disahkanDi} property (e.g., ``Jakart", ``Jakar" → ``Jakarta")
+    \item \textbf{URI Cleanup}: Removed unnecessary ``/text" suffixes from URIs and moved textual content properties to their appropriate parent entities
+    \item \textbf{Person Name Standardization}: Normalized variations in person names in the \texttt{lex2kg-o:disahkanOleh} property (e.g., ``JOKO WIDODO" → ``Joko Widodo")
     \item \textbf{Position Title Correction}: Standardized official position titles in the \texttt{lex2kg-o:jabatanPengesah} property
-    \item \textbf{Structural Simplification}: Connected entities directly without intermediate "daftar" (list) entities to reduce query complexity
+    \item \textbf{Structural Simplification}: Connected entities directly without intermediate ``daftar" (list) entities to reduce query complexity
     \item \textbf{Orphaned Entity Removal}: Removed entities that only appeared as subjects in type declarations without meaningful relationships
 \end{itemize}
 
 These modifications resulted in a cleaner, more consistent knowledge graph that better supports our enhanced dataset generation and query processing capabilities. Our vector database contains 243,708 legal entities and 28 legal properties for efficient semantic search.
 
 \subsubsection{Examples of Inconsistencies Before Modification}
-We found several inconsistencies in the original legal knowledge graph that resulted from extraction errors during the knowledge graph creation process and required standardization. Figures~\ref{fig:legal-position-query1} and~\ref{fig:legal-position-query2} show SPARQL query examples to retrieve position titles (\texttt{jabatanPengesah}) from the legal knowledge graph, where position titles were inconsistently extracted and formatted as "PRESIDEN REPUBLIK INDONESIA" (without comma) and "PRESIDEN REPUBLIK INDONESIA," (with comma) respectively due to variations in the extraction process.
+We found several inconsistencies in the original legal knowledge graph that resulted from extraction errors during the knowledge graph creation process and required standardization. Figures~\ref{fig:legal-position-query1} and~\ref{fig:legal-position-query2} show SPARQL query examples to retrieve position titles (\texttt{jabatanPengesah}) from the legal knowledge graph, where position titles were inconsistently extracted and formatted as ``PRESIDEN REPUBLIK INDONESIA" (without comma) and ``PRESIDEN REPUBLIK INDONESIA," (with comma) respectively due to variations in the extraction process.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\linewidth]{assets/pics/legal-position-query1.png}
-    \caption{SPARQL query showing position title formatted as "PRESIDEN REPUBLIK INDONESIA"}
+    \caption{SPARQL query showing position title formatted as ``PRESIDEN REPUBLIK INDONESIA"}
     \label{fig:legal-position-query1}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\linewidth]{assets/pics/legal-position-query2.png}
-    \caption{SPARQL query showing position title formatted as "PRESIDEN REPUBLIK INDONESIA," with comma}
+    \caption{SPARQL query showing position title formatted as ``PRESIDEN REPUBLIK INDONESIA," with comma}
     \label{fig:legal-position-query2}
 \end{figure}
-Figure~\ref{fig:legal-document-sample} shows a sample of an Indonesian law document signed by President Joko Widodo, where the document uses "PRESIDEN REPUBLIK INDONESIA" in all capital letters. The extraction process captured these formatting variations inconsistently, leading to multiple representations of the same entity. These extraction-induced inconsistencies were standardized to "Presiden Republik Indonesia" in our modified knowledge graph.
+Figure~\ref{fig:legal-document-sample} shows a sample of an Indonesian law document signed by President Joko Widodo, where the document uses ``PRESIDEN REPUBLIK INDONESIA" in all capital letters. The extraction process captured these formatting variations inconsistently, leading to multiple representations of the same entity. These extraction-induced inconsistencies were standardized to ``Presiden Republik Indonesia" in our modified knowledge graph.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{assets/pics/legal-document-sample.png}
@@ -293,7 +293,7 @@ For our enhanced GraphRAG system, we applied quality improvements to the GESIS d
 After processing, our enhanced dataset contains 358,530 entities and 33 properties stored in our Weaviate vector database for efficient semantic search and property matching.
 
 \subsubsection{Example of a GESIS Entity}
-Figure~\ref{fig:gesis-entity-example} shows an example of a GESIS entity (\texttt{gesis-bib-43272}) as accessible through the GESIS knowledge graph interface. This entity represents a scholarly article titled "The topicality of the problem of the person in Islamic thought" published in the International Social Science Journal.
+Figure~\ref{fig:gesis-entity-example} shows an example of a GESIS entity (\texttt{gesis-bib-43272}) as accessible through the GESIS knowledge graph interface. This entity represents a scholarly article titled ``The topicality of the problem of the person in Islamic thought" published in the International Social Science Journal.
 
 \begin{figure}[htbp]
     \centering
@@ -714,10 +714,10 @@ The entity and property extraction model methodology serves as the foundational 
 Our methodological approach for entity and property extraction focuses on identifying two key elements from natural language questions:
 \begin{itemize}
     \item All entities mentioned in the question (e.g., people, organizations, concepts)
-    \item All properties relevant to answering the question (e.g., "author", "located in", "published date")
+    \item All properties relevant to answering the question (e.g., ``author", ``located in", ``published date")
 \end{itemize}
 
-We designed the output to follow a structured format with "entities" and "properties" keys, each containing an array of relevant terms identified from the question. This structured approach ensures consistent processing in subsequent pipeline stages and allows for clear evaluation of extraction quality.
+We designed the output to follow a structured format with ``entities" and ``properties" keys, each containing an array of relevant terms identified from the question. This structured approach ensures consistent processing in subsequent pipeline stages and allows for clear evaluation of extraction quality.
 
 \subsubsection{Model Selection Criteria and Adaptation Strategy}
 Our model selection methodology focused on large language models with demonstrated capabilities in understanding natural language semantics, contextual interpretation, and structured output generation. We evaluated state-of-the-art models including Mistral, Qwen, and Llama families, prioritizing instruction-tuned versions that have been optimized for following specific task instructions.
@@ -799,11 +799,11 @@ Our methodological approach for SPARQL generation focused on the transformation 
 The training data preparation incorporates our comprehensive SPARQL post-processing pipeline (see Section~\ref{sec:dataset-postprocessing}), ensuring that all training examples follow consistent formatting patterns that align with the natural generation tendencies of language models. This formatting consistency significantly improves the model's ability to generate syntactically correct and properly formatted SPARQL queries.
 
 \subsubsection{Model Adaptation Strategy}
-For SPARQL generation, we designed a more intensive adaptation configuration due to the task's complexity and the need for precise syntax generation:
+For SPARQL generation, we designed domain-specific adaptation configurations due to the task's complexity and the need for precise syntax generation:
 
 \begin{itemize}
-    \item \textbf{Rank (r)}: 64 - Higher rank to provide increased capacity for learning complex syntax patterns
-    \item \textbf{Alpha ($\alpha$)}: 64 - Matched to the rank parameter for consistent adaptation
+    \item \textbf{Rank (r)}: Varied by knowledge graph domain - 64 for Wikidata and Curriculum KG, 32 for Legal and GESIS KG (which have longer inputs with more complex data structures)
+    \item \textbf{Alpha ($\alpha$)}: Matched to the rank parameter for consistent adaptation (64 or 32 depending on domain)
     \item \textbf{Target modules}: Comprehensive selection of attention and MLP layers
     \item \textbf{Dropout}: 0.1 - Increased dropout for enhanced generalization on complex tasks
     \item \textbf{Bias training}: Included to improve syntax pattern learning
@@ -855,7 +855,10 @@ We incorporated advanced methodological optimizations including gradient computa
 
 \subsection{Cross-Domain Adaptation Methodology}
 \label{cross-domain}
-A key innovation in our fine-tuning methodology is the cross-domain adaptation approach, which enables efficient knowledge transfer between different knowledge graph domains. Rather than developing separate models for each domain, we formulated a sequential adaptation methodology:
+
+A key innovation in our fine-tuning methodology is the cross-domain adaptation approach, which enables efficient development across different knowledge graph domains. We formulated a sequential experimental approach to optimize our methodology:
+
+Our methodology follows these key principles:
 
 \begin{figure}[htbp]
     \centering
@@ -865,17 +868,31 @@ A key innovation in our fine-tuning methodology is the cross-domain adaptation a
 \end{figure}
 
 \begin{enumerate}
-    \item \textbf{Base adaptation}: Initial adaptation using the Wikidata domain, which contains the most diverse entity and property types
-    \item \textbf{Domain adaptation}: Further adaptation to domain-specific patterns using the Wikidata-adapted model as the foundation
+    \item \textbf{Experimental Foundation}: We first conducted comprehensive experiments using Wikidata as our primary testbed. This phase focused on:
+    \begin{itemize}
+        \item Testing various prompt structures to determine optimal instruction formats
+        \item Exploring different dataset formats and organization methods
+        \item Evaluating multiple finetuning parameter configurations (learning rates, LoRA ranks, etc.)
+    \end{itemize}
+    
+    \item \textbf{Methodology Knowledge Transfer}: Our approach transfers the methodological insights gained from Wikidata experiments:
+    \begin{itemize}
+        \item Each domain-specific knowledge graph (Curriculum KG, Legal KG, GESIS KG) is finetuned directly from the base model
+        \item We apply the optimal prompt structures, dataset formats, and hyperparameters discovered in the Wikidata experiments
+        \item This ensures each domain model is specialized to its knowledge domain
+    \end{itemize}
+    
+    \item \textbf{Domain-Specific Adaptations}: For each knowledge graph, we implemented specific adaptations:
+    \begin{itemize}
+        \item Domain-specific prefixes and namespace conventions
+        \item Schema-aware prompt structures reflecting the ontology of each domain
+        \item Query pattern templates appropriate for each knowledge domain
+    \end{itemize}
 \end{enumerate}
 
-This methodological approach significantly reduces computational requirements while enabling models to leverage general knowledge graph reasoning capabilities across domains. The key domain adaptations include:
+This methodological approach significantly reduces experimental overhead while ensuring each domain receives optimized finetuning configurations. By using Wikidata as our experimental foundation, we identified best practices that could be directly applied to other domains without requiring extensive parameter searching for each new knowledge graph.
 
-\begin{itemize}
-    \item \textbf{Domain-specific prefixes}: Adaptation of URI patterns and namespace conventions
-    \item \textbf{Schema awareness}: Integration of domain-specific ontology structures
-    \item \textbf{Query patterns}: Learning of domain-specific query formulations
-\end{itemize}
+The workflow ensures that each domain-specific model is directly finetuned from the base model, preserving domain purity while benefiting from the methodological insights gained through our Wikidata experiments.
 
 \subsection{Computational Efficiency Methodology}
 To enable adaptation of large language models on standard research infrastructure, we developed a comprehensive methodology for computational efficiency:
@@ -906,6 +923,13 @@ This methodological approach to computational efficiency enables adaptation of l
 
 This comprehensive fine-tuning methodology provides significant advantages over the few-shot prompting approach used in the original GraphRAG system, enabling more accurate entity extraction and SPARQL generation across diverse knowledge graph domains while maintaining computational efficiency through parameter-efficient adaptation techniques.
 
+\subsection{Model Deployment Methodology}
+To bridge the gap between model training and deployment in our multi-agent system, we implement a standardized model deployment approach. All fine-tuned models are converted to GGUF\footnote{\url{https://github.com/ggerganov/ggml/blob/master/docs/gguf.md}} (GPT-Generated Unified Format) format, which significantly reduces model size while maintaining inference quality. This conversion process optimizes the models for runtime efficiency with 4-bit quantization, reducing the memory footprint by up to 8x compared to full-precision models.
+
+For model serving within our multi-agent architecture, we utilize Ollama\footnote{\url{https://ollama.com/}}, an open-source runtime environment for efficient local model deployment. Ollama provides a lightweight API interface that allows the LangGraph agents to make inference requests to the deployed models through a consistent REST API, simplifying the integration of multiple fine-tuned models into our production workflow.
+
+This deployment approach creates a clean separation between model training and model serving components, enabling independent scaling and versioning of models within the multi-agent system. Each LangGraph agent accesses the appropriate fine-tuned model (entity extraction or SPARQL generation) through standardized API calls, ensuring consistent model availability across the workflow.
+
 % --------------------------
 
 \section{Multi-Agent Architecture Design}
@@ -926,7 +950,7 @@ As illustrated in Figure~\ref{fig:multi-agent-architecture}, the multi-agent sys
 \begin{enumerate}
     \item \textbf{Translation Agent}: The entry point of the workflow responsible for detecting the language of the input question and translating non-English queries to English for processing. This ensures the system can handle multilingual queries while maintaining high accuracy.
     
-    \item \textbf{Entity Extraction Agent}: Analyzes the (translated) natural language question to identify relevant entities and properties mentioned. This agent leverages a fine-tuned language model specifically trained for entity and property extraction tasks as described in Section~\ref{entity-prop-extract}.
+    \item \textbf{Entity Extraction Agent}: Analyzes the (translated) natural language question to identify relevant entities and properties mentioned. This agent leverages a fine-tuned language model specifically trained for entity and property extraction tasks as described in Section~\ref{entity-prop-extract}. The fine-tuned model is deployed in GGUF format and served through Ollama, allowing efficient integration within the LangGraph workflow.
     
     \item \textbf{Strategy Selection Agent}: Determines the optimal processing approach based on query complexity, extracted entities, and user settings. This critical decision point routes the query to either the verbalization path (for simple queries) or the SPARQL generation path (for complex queries).
     
@@ -934,7 +958,7 @@ As illustrated in Figure~\ref{fig:multi-agent-architecture}, the multi-agent sys
     
     \item \textbf{Property Generation Agent}: Enhances the list of potential properties for a query using semantic search techniques against the property vector database, improving the coverage of relevant properties beyond those initially extracted.
     
-    \item \textbf{SPARQL Generation Agent}: Generates executable SPARQL queries for complex questions using a fine-tuned language model specifically trained on NL2SPARQL tasks as described in Section~\ref{sparql-gen}. This agent can handle multi-hop reasoning and complex query patterns.
+    \item \textbf{SPARQL Generation Agent}: Generates executable SPARQL queries for complex questions using a fine-tuned language model specifically trained on NL2SPARQL tasks as described in Section~\ref{sparql-gen}. Like the entity extraction model, this fine-tuned model is deployed in GGUF format and accessed through Ollama's API interface, enabling consistent model availability within the multi-agent system.
 
     \item \textbf{Google Search Agent}: Provides an optional fallback mechanism when knowledge graph approaches fail to provide sufficient results, ensuring the system can still deliver useful information even when faced with queries outside the knowledge graph's domain.
     
@@ -978,7 +1002,7 @@ As depicted in Figure~\ref{fig:multi-agent-architecture}, the strategy selection
     \item \textbf{Complexity Analysis}: The system analyzes question complexity by examining several factors:
     \begin{itemize}
         \item \textit{Entity Count}: Questions with multiple entities are routed to the SPARQL generation path.
-        \item \textit{Relationship Indicators}: Phrases like "and," "or," "as well as" suggest relationships between multiple entities, triggering SPARQL generation.
+        \item \textit{Relationship Indicators}: Phrases like ``and," ``or," ``as well as" suggest relationships between multiple entities, triggering SPARQL generation.
         \item \textit{User Settings}: Runtime settings can force specific processing paths based on user preferences.
     \end{itemize}
     
@@ -1010,7 +1034,7 @@ This configurability provides users with fine-grained control over the system's 
 
 \subsection{Visualization and Transparency}
 \label{vis-transparency}
-A significant enhancement in our multi-agent architecture is the comprehensive visualization and transparency system that provides detailed insights into the reasoning process. This addresses the "black box" nature of many AI systems by making the decision-making process explicit and reviewable.
+A significant enhancement in our multi-agent architecture is the comprehensive visualization and transparency system that provides detailed insights into the reasoning process. This addresses the ``black box" nature of many AI systems by making the decision-making process explicit and reviewable.
 
 The visualization system captures detailed logs of each agent's operations, including:
 
