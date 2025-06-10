@@ -284,6 +284,43 @@ During inference, the LoRA update can be merged with the original weights by com
 
 The rank $r$ is a hyperparameter that controls the capacity and expressiveness of the adaptation. Higher ranks provide more modeling capacity but require more parameters and computation. The scaling factor $\alpha$ is another important hyperparameter that controls the magnitude of the LoRA update.
 
+\subsubsection{Quantized Low-Rank Adaptation (QLoRA)}
+\label{sec:qlora}
+Quantized Low-Rank Adaptation (QLoRA), introduced by \cite{dettmers2023qlora}, extends LoRA by incorporating quantization techniques to further improve memory efficiency while maintaining performance. QLoRA addresses the memory bottleneck in fine-tuning large language models by quantizing the pre-trained model weights to 4-bit precision while keeping the LoRA parameters in higher precision.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/pics/qlora.png}
+    \caption{QLoRA architecture: The base model weights are quantized to 4-bit precision (shown in blue), while only the adapter modules (low-rank matrices $A$ and $B$) remain in higher precision for training (shown in orange).}
+    \label{fig:qlora-concept}
+\end{figure}
+
+As illustrated in \pic~\ref{fig:qlora-concept}, QLoRA introduces several key innovations beyond standard LoRA:
+
+\begin{enumerate}
+    \item \textbf{4-bit NormalFloat Quantization}: Instead of standard integer quantization, QLoRA employs a 4-bit data type called NormalFloat that is specifically designed to better represent the distribution of weights in neural networks. This format allocates quantization bins according to the standard normal distribution, better preserving the fidelity of model weights.
+    
+    \item \textbf{Double Quantization}: QLoRA uses a technique called double quantization that quantizes the quantization constants themselves, further reducing memory requirements without significant impact on model quality.
+    
+    \item \textbf{Paged Optimizers}: To manage memory more efficiently during training, QLoRA implements paged optimizers that offload optimizer states to CPU memory when not in use and fetch them back to GPU memory as needed.
+    
+    \item \textbf{Backpropagation-Free Embedding Gradients}: QLoRA optimizes gradient computation for embedding layers, avoiding storing activation gradients for large embedding tables.
+\end{enumerate}
+
+The combination of these techniques enables fine-tuning of much larger models on consumer hardware. For example, QLoRA makes it possible to fine-tune models with tens of billions of parameters on a single consumer GPU with 24GB of VRAM, a task that would be impossible with standard fine-tuning or even with LoRA alone.
+
+QLoRA offers several significant advantages:
+
+\begin{itemize}
+    \item \textbf{Extreme memory efficiency}: Reduces memory requirements by up to 75\% compared to standard LoRA and up to 98\% compared to full fine-tuning.
+    \item \textbf{Accessibility}: Enables fine-tuning of large models on consumer hardware, democratizing access to LLM adaptation.
+    \item \textbf{Performance preservation}: Maintains performance comparable to full fine-tuning despite aggressive quantization.
+    \item \textbf{Compatibility}: Retains all the advantages of LoRA including parameter efficiency and composability.
+    \item \textbf{Inference efficiency}: Like LoRA, the adapter weights can be merged with the original model for inference without additional latency.
+\end{itemize}
+
+QLoRA has become particularly valuable for researchers and developers working with large language models under resource constraints, enabling adaptation of state-of-the-art models on accessible hardware while maintaining high quality results.
+
 \subsection{Example Models}
 The introduction of the Transformer architecture led to the development of numerous influential language models. We discuss several key models that have shaped the field and are relevant to our work on knowledge graph question answering.
 
