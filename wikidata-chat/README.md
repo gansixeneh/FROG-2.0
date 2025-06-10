@@ -249,6 +249,7 @@ The backend uses a LangGraph-based agent architecture with the following compone
 This project integrates with Apache Jena Fuseki to store visualization logs in RDF format. This enables powerful semantic querying of agent execution patterns. You can access the Jena logs interface by clicking the "Logs" button in the header.
 
 The following query types are available:
+
 - List all runs with timestamps
 - Find runs with specific entities
 - Find SPARQL queries used in runs
