@@ -1,6 +1,6 @@
 \chapter{\babEmpat}
 \label{bab:4}
-
+In this chapter, we will explain the detailed implementation and the libraries or resources we utilize.
 
 \section{Dataset Generation Implementation}
 
@@ -1660,7 +1660,7 @@ Our finetuning implementation supports multiple state-of-the-art large language 
     \item \texttt{mistralai/Mistral-Nemo-Instruct-2407}: Specialized model based on Mistral architecture with enhanced reasoning capabilities
 \end{itemize}
 
-This diverse model selection enables us to evaluate how different architecture families respond to our finetuning approach, with parameter counts ranging from 7 billion to 8 billion parameters.
+This diverse model selection enables us to evaluate how different architecture families respond to our finetuning approach, with parameter counts ranging from 7 billion to 12 billion parameters.
 
 \subsubsection{Technical Foundation and Libraries}
 
@@ -1784,7 +1784,7 @@ A key challenge in fine-tuning large language models is managing memory constrai
 
 \end{enumerate}
 
-These optimizations enable us to fine-tune 7-8 billion parameter models on a single GPU with 24GB of memory, making our approach accessible to researchers with limited computational resources.
+These optimizations enable us to fine-tune 7-8 billion parameter models on a single GPU with 16GB of memory, making our approach accessible to researchers with limited computational resources.
 
 \subsection{Entity and Property Extraction Model}
 
@@ -1920,7 +1920,7 @@ def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num
     return model, tokenizer
 \end{lstlisting}
 
-This configuration uses a moderate rank (r=16) which we determined empirically to provide sufficient capacity for the entity extraction task while maintaining computational efficiency. The approach achieves approximately 99% parameter efficiency compared to full model fine-tuning, using only about 40-60 million trainable parameters depending on the base model size.
+This configuration uses a moderate rank (r=16) which we determined empirically to provide sufficient capacity for the entity extraction task while maintaining computational efficiency. The approach achieves approximately 99\% parameter efficiency compared to full model fine-tuning, using only about 40-60 million trainable parameters depending on the base model size.
 
 \subsection{SPARQL Generation Model}
 
@@ -2094,7 +2094,7 @@ def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledg
     return model, tokenizer
 \end{lstlisting}
 
-This enhanced configuration uses a higher rank (r=64) to provide greater capacity for learning complex SPARQL syntax patterns. We also implemented rank-stabilized LoRA (RSLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
+This enhanced configuration uses a variable rank (r=32 or r=64 depending on the knowledge graph) to provide appropriate capacity for learning complex SPARQL syntax patterns. Specifically, a lower rank (r=32) is used for Legal and GESIS knowledge graphs which have longer inputs, while a higher rank (r=64) is used for Wikidata and Curriculum knowledge graphs. We also implemented rank-stabilized LoRA (RSLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
 
 \subsection{Dataset Formatting and Processing}
 
@@ -2186,69 +2186,6 @@ SPARQL:"""
 \end{lstlisting}
 
 Our implementation carefully handles model-specific chat templates, ensuring that examples are properly formatted for each model's expected input format. For models without native chat templates, we apply appropriate formatting to maintain consistency.
-
-\subsection{Cross-Domain Adaptation Strategy}
-
-Our implementation includes a cross-domain adaptation strategy that enables efficient knowledge transfer between different knowledge graph domains. Rather than training separate models for each domain from scratch, we implemented a sequential adaptation approach:
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{assets/pics/cross_domain_finetune_4.jpg}
-    \caption{Cross-Domain Adaptation Process}
-    \label{fig:cross-domain-adaptation}
-\end{figure}
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Cross-Domain Adaptation Implementation, label=code:cross-domain-adaptation]
-def cross_domain_adaptation(base_model_name, wikidata_adapter_path, domain_dataset, output_dir):
-    """
-    Perform cross-domain adaptation from Wikidata to a specific domain
-    
-    Args:
-        base_model_name: Original model name
-        wikidata_adapter_path: Path to Wikidata-adapted model
-        domain_dataset: Dataset for domain-specific adaptation
-        output_dir: Output path for domain-adapted model
-    """
-    # Load Wikidata-adapted model
-    base_model, tokenizer = load_model(base_model_name)
-    
-    # Load Wikidata adapter weights
-    adapter_config = PeftConfig.from_pretrained(wikidata_adapter_path)
-    model = PeftModel.from_pretrained(base_model, wikidata_adapter_path)
-    
-    # Split domain dataset
-    train_data, val_data = train_test_split(domain_dataset, test_size=0.2, random_state=42)
-    
-    # Continue training with domain data (reduced epochs)
-    trainer = SFTTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        train_dataset=train_data,
-        eval_dataset=val_data,
-        dataset_text_field="text",
-        max_seq_length=max_seq_length,
-        args=TrainingArguments(
-            # Reduced training parameters for domain adaptation
-            num_train_epochs=3,            # Fewer epochs for adaptation
-            learning_rate=5e-6,            # Lower learning rate
-            warmup_ratio=0.05,             # Shorter warmup period
-            weight_decay=0.05,             # Moderate regularization
-            
-            # Keep other parameters similar to original training
-            per_device_train_batch_size=1,
-            gradient_accumulation_steps=8,
-            # ... other parameters
-            
-            output_dir=output_dir,
-        )
-    )
-    
-    trainer.train()
-    model.save_pretrained(output_dir)
-    tokenizer.save_pretrained(output_dir)
-\end{lstlisting}
-
-This approach significantly reduces computational requirements while enabling effective knowledge transfer across domains. For domain-specific knowledge graphs (Curriculum KG, Legal KG, and GESIS KG), we first fine-tune models on Wikidata data, then perform additional adaptation using domain-specific datasets.
 
 \subsection{Model Export and Deployment Strategy}
 
@@ -2384,7 +2321,7 @@ We employed a methodical approach to hyperparameter selection, balancing perform
 
 \begin{itemize}
     \item \textbf{Entity Extraction Model}: Moderate rank (r=16), no dropout, no bias training, standard LoRA, linear learning rate schedule, 5 epochs
-    \item \textbf{SPARQL Generation Model}: Higher rank (r=64), moderate dropout (0.1), bias training, rank-stabilized LoRA, polynomial learning rate schedule, 10 epochs
+    \item \textbf{SPARQL Generation Model}: Variable rank (r=32 for Legal/GESIS KGs, r=64 for Wikidata/Curriculum KGs), moderate dropout (0.1), bias training, rank-stabilized LoRA, polynomial learning rate schedule, 10 epochs
 \end{itemize}
 
 These hyperparameter configurations were determined through empirical testing on validation sets, with a focus on minimizing validation loss while preventing overfitting.
@@ -2405,30 +2342,7 @@ This approach ensures that only the best-performing model on validation data is 
 
 \subsection{Model Evaluation Methodology}
 
-Our finetuning implementation includes a comprehensive evaluation methodology to assess model performance across different tasks and knowledge domains. We employ both component-level evaluation and end-to-end assessment to provide a holistic view of model capabilities.
-
-\subsubsection{Component-Level Evaluation}
-
-For entity and property extraction models, we evaluate:
-
-\begin{itemize}
-    \item \textbf{Entity Recognition Accuracy}: Percentage of entities correctly identified
-    \item \textbf{Property Recognition Accuracy}: Percentage of properties correctly identified
-    \item \textbf{Format Adherence}: Ability to produce properly formatted JSON output
-\end{itemize}
-
-For SPARQL generation models, we evaluate:
-
-\begin{itemize}
-    \item \textbf{Syntax Validity}: Percentage of generated queries with valid SPARQL syntax
-    \item \textbf{Entity Selection Accuracy}: Correct selection of entities from candidates
-    \item \textbf{Property Selection Accuracy}: Correct selection of properties from candidates
-    \item \textbf{Reasoning Quality}: Accuracy and coherence of step-by-step reasoning chains
-\end{itemize}
-
-\subsubsection{End-to-End Evaluation}
-
-Beyond component-level metrics, we implement comprehensive end-to-end evaluation to assess the real-world performance of models in the question-answering pipeline:
+Our finetuning implementation includes a comprehensive evaluation methodology to assess model performance across different tasks and knowledge domains. We employ an end-to-end assessment approach to provide a holistic view of model capabilities.
 
 \begin{lstlisting}[breaklines=true,language=python, caption=End-to-End Evaluation Implementation, label=code:end-to-end-evaluation]
 def evaluate_batch_results(results_df, ground_truth_queries, questions, complexities):
@@ -2488,6 +2402,36 @@ def evaluate_batch_results(results_df, ground_truth_queries, questions, complexi
 \end{lstlisting}
 
 Our evaluation approach includes stratified assessment by complexity level (for domain-specific knowledge graphs) and comprehensive comparison between base and fine-tuned models. This structured evaluation methodology enables detailed understanding of model performance across different scenarios and knowledge domains.
+
+\subsubsection{Reproducibility Configuration}
+To ensure consistent and reproducible evaluation results across multiple runs, we implemented comprehensive deterministic behavior configuration in our evaluation pipeline:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Deterministic Configuration for Reproducibility, label=code:deterministic-config]
+# Set up deterministic behavior for reproducibility
+import os
+os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+
+import torch
+import random
+import numpy as np
+
+random.seed(42)
+np.random.seed(42)
+torch.manual_seed(42)
+torch.cuda.manual_seed_all(42)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+torch.use_deterministic_algorithms(True)
+\end{lstlisting}
+
+Additionally, all models were explicitly set to evaluation mode before inference to ensure deterministic forward passes:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Model Evaluation Mode Setting, label=code:model-eval-mode]
+self.model = SentenceTransformer(model_name, **model_kwargs)
+self.model.eval()
+\end{lstlisting}
+
+This configuration was essential for meaningful comparison between model variants and evaluation runs, ensuring that any observed performance differences were attributable to actual model capabilities rather than random initialization or stochastic behavior during inference.
 
 \subsection{Implementation Challenges and Solutions}
 
