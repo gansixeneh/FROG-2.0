@@ -1,0 +1,49 @@
+\chapter{\kesimpulan}
+\label{bab:6}
+This chapter presents the summary of our research on enhancing the GraphRAG framework with comprehensive dataset generation, specialized model fine-tuning, and multi-agent architecture. Additionally, we outline several promising future research directions to further improve the system.
+
+\section{Conclusion}
+In this research, we have developed MEGA-FrOG, a Multi-agent Enhanced Generation and Adaptation Framework of Open GraphRAG, which significantly improves upon the original FrOG framework through three key innovations. First, we implemented comprehensive dataset generation methodologies using both template-based and random-walk approaches. Second, we applied specialized model fine-tuning using Low-Rank Adaptation (LoRA) techniques. Third, we designed a sophisticated multi-agent architecture with intelligent routing and adaptive strategy selection.
+
+Our extensive evaluation across four knowledge graph domains (Wikidata, Curriculum KG, Legal KG, and GESIS KG) demonstrates substantial improvements over the original framework. The Qwen2.5-7B model achieved the highest average performance after fine-tuning (0.4838), with particularly strong results on the Curriculum KG (0.6029). Our findings indicate that knowledge graph characteristics, particularly URI representation schemes and knowledge graph size, significantly influence performance. Knowledge graphs with natural language-based URIs, such as the Curriculum KG, enable models to achieve substantially higher performance compared to those with numeric identifiers like Wikidata.
+
+Addressing our research questions directly:
+
+Regarding our first research question on comprehensive dataset generation methodologies, we successfully developed and implemented both template-based and random-walk approaches. The template-based approach focused on creating linguistically diverse questions with clear semantics, while the random-walk approach ensured comprehensive structural coverage of the knowledge graph. Our evaluation revealed that template-based generation produced higher-quality training data, with models fine-tuned on template datasets consistently outperforming those trained on random-walk datasets. This finding suggests that linguistic diversity and clear semantics are more important than structural coverage for effective SPARQL generation. We recommend a hybrid approach that leverages template-based generation as the primary method, supplemented with random-walk generation to capture diverse structural patterns.
+
+For our second research question on specialized model fine-tuning, we demonstrated that Low-Rank Adaptation (LoRA) techniques significantly improve entity extraction and SPARQL generation accuracy compared to few-shot prompting approaches. All fine-tuned models substantially outperformed both their base model counterparts and the previous framework. The Llama-3.1-8B model showed the largest relative improvement from fine-tuning (+0.2138), while the Qwen2.5-7B model achieved the highest overall performance (0.4838). Our parameter-efficient approach updated only 2-3\% of model parameters while providing substantial improvements, making it practical for deployment scenarios with limited computational resources. The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, facilitated effective knowledge transfer between domains.
+
+Addressing our third research question on multi-agent architecture, we successfully implemented a sophisticated LangGraph-based system with intelligent routing, adaptive strategy selection, and robust fallback mechanisms. The multi-agent architecture orchestrated specialized agents for translation, entity extraction, strategy selection, verbalization, property generation, SPARQL generation, answer generation, and Google search. This approach enabled dynamic workflow decisions based on query complexity and agent outputs, with verbalization for simple queries and SPARQL generation for complex questions. The system incorporated comprehensive visualization and semantic logging features, providing unprecedented transparency into the reasoning process. Our RDF-based logging system transformed execution logs into a knowledge graph using standardized ontologies, enabling sophisticated analysis of execution patterns, component performance, and knowledge graph usage.
+
+For our fourth research question on performance across different knowledge graph domains, our evaluation demonstrated that the enhanced system significantly outperforms the original baseline across all knowledge graphs and query complexity levels. The most substantial improvements were observed on domain-specific knowledge graphs with well-defined schemas, particularly the Curriculum KG (0.6029) and GESIS KG (0.4859). Knowledge graph characteristics, especially URI representation schemes and knowledge graph size, emerged as fundamental determinants of achievable performance. The modest performance improvements on Wikidata (0.3101) highlight the ongoing challenges in handling extremely large and diverse knowledge graphs effectively. Our analysis also revealed that template-based fine-tuning consistently outperformed random-walk-based fine-tuning across all knowledge graph domains and dataset types, suggesting that structured, pattern-focused training provides advantages even when evaluating on diverse query types.
+
+The objectives from Chapter 1 (\ref{sec:tujuan}) have been successfully completed through this research by:
+\begin{enumerate}
+    \item Developing comprehensive dataset generation methodologies using both template-based and random-walk approaches, creating diverse, high-quality NL2SPARQL training datasets across multiple knowledge graph domains that significantly improved model training and evaluation.
+    
+    \item Implementing specialized model fine-tuning using LoRA techniques for both entity extraction and SPARQL generation tasks, demonstrating substantial performance improvements over the few-shot prompting approaches used in the original GraphRAG framework.
+    
+    \item Designing and implementing a sophisticated multi-agent architecture using LangGraph that provides intelligent query routing, adaptive strategy selection based on query complexity, and robust fallback mechanisms, all with comprehensive transparency through RDF-based logging and process visualization.
+    
+    \item Conducting extensive evaluation across four knowledge graph domains and multiple query complexity levels, quantifying significant performance improvements and identifying key factors affecting system performance across different scenarios.
+\end{enumerate}
+
+\section{Future Works}
+Based on the limitations and findings of our current research, we identify several promising directions for future work:
+
+\begin{enumerate}
+    \item \textbf{Hybrid Dataset Generation Optimization}: Develop methods to automatically determine the optimal balance between template-based and random-walk generation for specific knowledge graph domains. This would involve creating metrics to assess dataset quality and coverage, then using these metrics to guide the generation process adaptively.
+    
+    \item \textbf{Advanced Fine-tuning Techniques}: Future research could explore more sophisticated fine-tuning approaches beyond LoRA, such as QLoRA, PEFT, or full model fine-tuning with gradient checkpointing, to potentially achieve even better performance. Additionally, investigating the impact of different hyperparameter configurations and model architectures could provide valuable insights for optimizing GraphRAG systems.
+    
+    \item \textbf{Automated Knowledge Graph Quality Assessment}: Develop tools to automatically identify and correct inconsistencies in knowledge graphs, addressing issues like those found in our evaluation datasets. This could involve combining statistical analysis with reasoning-based approaches to detect anomalies and suggest corrections.
+    
+    \item \textbf{Federated Knowledge Graph Querying}: Extend the system to support querying across multiple knowledge graphs simultaneously, enabling more comprehensive answers that combine information from different sources. This would require developing methods for entity alignment, schema mapping, and distributed query execution.
+    
+    \item \textbf{Reinforcement Learning from User Feedback}: Develop methods to continuously improve the system based on user feedback, using reinforcement learning to adjust model weights and generation strategies based on which approaches yield the most satisfactory results for users.
+    
+    \item \textbf{Knowledge Graph Schema Induction}: Create methods to automatically induce schema information from knowledge graphs with limited or inconsistent schema definitions. This would enable the system to work more effectively with real-world knowledge graphs that may not have complete schema documentation.
+    
+\end{enumerate}
+
+These future directions would address both the immediate limitations identified in our current implementation and the broader challenges in the field of knowledge graph question answering. By pursuing these avenues, researchers can further enhance the accessibility, accuracy, and applicability of knowledge graph systems across diverse domains and use cases.
