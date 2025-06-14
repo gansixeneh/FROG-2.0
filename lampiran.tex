@@ -1,0 +1,991 @@
+%-----------------------------------------------------------------------------%
+\addappendix{Task Distribution}
+\chapter*{Appendix 1: Task Distribution}
+\label{sec:task-dist}
+
+As this project focuses on developing an enhanced GraphRAG framework specifically designed for question-answering over existing knowledge graphs, the work was distributed across three major research and development areas. The collaborative approach ensured comprehensive coverage of dataset generation, model optimization, and system architecture while maintaining coherent integration across all components designed for knowledge graph interrogation tasks.
+
+The task distribution was organized as follows: Christopher Nathanael Wijaya led the foundational dataset generation and knowledge graph infrastructure components, Febrian Dwi Kimhan specialized in the parameter-efficient fine-tuning methodologies and model optimization, and Muflih Naufal Maxi implemented the enhanced system architecture and user interface components.
+
+\section*{Christopher Nathanael Wijaya - Dataset Generation and Knowledge Graph Infrastructure}
+
+Christopher's primary responsibility encompassed developing comprehensive dataset generation methodologies and establishing robust knowledge graph infrastructure. His work formed the foundational layer enabling effective model training and semantic analysis throughout the enhanced GraphRAG system.
+
+Christopher designed and implemented two complementary dataset generation approaches: a \textbf{template-based methodology} involving linguistically diverse question templates with discovery-first instantiation ensuring valid entity-property combinations, and a \textbf{random-walk methodology} discovering query patterns through systematic graph traversal for 1-, 2-, and 3-property patterns. He developed unified schema extraction interfaces for different knowledge graph sources, implemented domain-specific processors for Curriculum, Legal, and GESIS knowledge graphs, and created sophisticated vector search integration using Weaviate for semantic entity and property matching.
+
+Additionally, Christopher established the semantic logging infrastructure by setting up Apache Jena Fuseki servers, implementing RDF-based logging systems capturing detailed execution traces, and developing SPARQL query interfaces for performance analysis. His work included comprehensive post-processing pipelines standardizing SPARQL formats and cross-domain adaptation methodologies enabling effective application across diverse knowledge domains.
+
+\section*{Febrian Dwi Kimhan - Parameter-Efficient Fine-Tuning and Model Optimization}
+
+Febrian's contribution centered on developing parameter-efficient fine-tuning methodologies specifically designed for knowledge graph question-answering tasks. His work encompassed model adaptation strategies, hyperparameter optimization, and computational efficiency techniques enabling deployment on standard research infrastructure.
+
+Febrian implemented sophisticated LoRA configurations tailored for different pipeline aspects: lightweight configurations (rank=16) for entity extraction and intensive configurations (rank=64/32) for SPARQL generation with rank-stabilized LoRA for training stability. He conducted comprehensive evaluations across four state-of-the-art models (Qwen2.5-7B, Qwen2.5-Coder-7B, Llama-3.1-8B, Mistral-Nemo-12B), analyzing how different pre-training approaches affect knowledge graph task performance.
+
+His cross-domain adaptation methodology enables efficient knowledge transfer between knowledge graph domains through initial Wikidata adaptation followed by domain-specific fine-tuning. Febrian implemented memory optimization techniques including 4-bit quantization, gradient checkpointing, and 8-bit optimizers, enabling fine-tuning of 7-12B parameter models on standard hardware while developing specialized data formatting pipelines optimizing training examples for knowledge graph tasks.
+
+\section*{Muflih Naufal Maxi - Enhanced System Architecture and User Interface}
+
+Muflih's responsibility focused on implementing the enhanced GraphRAG system architecture and developing comprehensive user interface components. His work created the integration layer connecting dataset generation and fine-tuned models into a cohesive, user-accessible system.
+
+Muflih implemented the sophisticated multi-agent architecture using LangGraph, designing specialized agent nodes including Translation, Entity Extraction, Strategy Selection, Verbalization, Property Generation, SPARQL Generation, and Answer Generation agents. He developed intelligent routing mechanisms enabling adaptive processing paths based on query complexity, robust fallback systems ensuring reliable performance, and comprehensive state management maintaining processing context across the workflow.
+
+The system architecture includes multi-source knowledge graph integration supporting Wikidata, Curriculum KG, Legal KG, and GESIS KG through source-aware SPARQL wrappers and metadata-driven configuration. Muflih developed the interactive web interface using React and Django, implementing real-time WebSocket communication through Pusher for live process visualization, comprehensive settings management for user control, and detailed execution tracing with Mermaid diagram generation.
+
+His implementation supports multiple model backends including API-based models and locally deployed fine-tuned models, providing deployment flexibility while maintaining comprehensive logging and debugging capabilities through RDF-based semantic logging integration with Christopher's infrastructure components.
+
+
+%-----------------------------------------------------------------------------%
+
+\addappendix{FrOG README}
+\chapter*{Appendix 2: FrOG README}
+\label{sec:frog-readme}
+
+FrOG (Framework of Open GraphRAG) is a full-stack web application that enables natural language querying of knowledge graphs. It integrates a sophisticated GraphRAG agent with a modern React frontend and Django backend, allowing users to ask questions and receive answers through an intuitive chat interface with real-time reasoning visualization.
+
+\section*{Features}
+
+\begin{itemize}
+    \item \textbf{Modern Chat Interface}: Clean, responsive design similar to Claude's web interface
+    \item \textbf{Real-time Reasoning Visualization}: Watch the agent's thinking process as it answers your questions
+    \item \textbf{Multiple Knowledge Sources}: Switch between different knowledge graphs:
+    \begin{itemize}
+        \item \textbf{Wikidata}: Comprehensive public knowledge graph with millions of entities
+        \item \textbf{Curriculum KB}: University curriculum knowledge base
+        \item \textbf{Legal Document KB}: Indonesian legal document knowledge base
+        \item \textbf{GESIS Scholarly KB}: GESIS scholarly articles knowledge base
+    \end{itemize}
+    \item \textbf{Runtime Settings Control}:
+    \begin{itemize}
+        \item \textbf{Use Verbalization}: Toggle between entity verbalization and SPARQL generation approaches
+        \item \textbf{Google Search Fallback}: Enable/disable Google Search when knowledge graph methods fail
+        \item \textbf{Translation Support}: Automatic detection and translation of non-English questions
+    \end{itemize}
+    \item \textbf{Chat History Management}: Save, browse, and reload previous conversations
+    \item \textbf{Detailed Traceability}: Download visualization files (JSON, Mermaid diagrams, TTL graphs)
+    \item \textbf{Apache Jena Integration}: Semantic querying of agent execution patterns
+    \item \textbf{Multi-provider LLM Support}: Use Google Gemini or local Ollama models
+\end{itemize}
+
+\section*{Architecture}
+
+The project uses a modular architecture:
+
+\begin{enumerate}
+    \item \textbf{Frontend}: React application with Tailwind CSS for styling
+    \item \textbf{Backend}: Django with LangGraph-based agent architecture
+    \item \textbf{Knowledge Graphs}: Accessible via SPARQL endpoints
+    \item \textbf{LLM Integration}: Configurable multi-provider system
+    \item \textbf{Real-time Communication}: WebSockets for streaming agent reasoning
+    \item \textbf{Visualization}: Apache Jena Fuseki for execution logging and analysis
+\end{enumerate}
+
+\section*{Project Structure}
+
+\begin{lstlisting}[language=bash]
+wikidata-chat/
+├── backend/              # Django backend
+│   ├── agent/            # Modified Wikidata Agent
+│   ├── chat/             # Chat application
+│   ├── tools/            # Wikidata tools
+│   ├── wikidata_web/     # Django project settings
+│   ├── .env              # Environment file for API keys
+│   ├── manage.py         # Django management script
+│   └── requirements.txt  # Python dependencies
+├── frontend/             # React frontend
+│   ├── public/           # Static assets
+│   ├── src/              # Source code
+│   │   ├── components/   # React components
+│   │   ├── context/      # Context providers
+│   │   ├── types/        # TypeScript interfaces
+│   │   └── utils/        # Utility functions
+│   ├── package.json      # Node.js dependencies
+│   └── tailwind.config.js # Tailwind CSS configuration
+└── fuseki-data/          # Apache Jena Fuseki configuration
+    ├── config.ttl        # Fuseki configuration file
+    ├── create_config.sh  # Script to generate configuration
+    └── start_apache_jena.sh # Script to start Fuseki server
+\end{lstlisting}
+
+\section*{Prerequisites}
+
+\begin{itemize}
+    \item Python 3.8 or higher
+    \item Node.js 16 or higher
+    \item Google Gemini API key (required)
+    \item Apache Jena Fuseki server (required for query executions and visualization logs)
+    \item Weaviate server (required for vector search)
+    \item Ollama installation (optional, only for running local models)
+\end{itemize}
+
+\section*{Installation and Setup}
+
+\subsection*{1. Clone the Repository}
+
+First, clone the repository and navigate to the project directory:
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/yourusername/wikidata-chat.git
+cd wikidata-chat
+\end{lstlisting}
+
+\subsection*{2. Backend Setup}
+
+Navigate to the backend directory and set up the Python environment:
+
+\begin{lstlisting}[language=bash]
+cd backend
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+\end{lstlisting}
+
+Create a \texttt{.env} file in the backend directory and add your API keys:
+
+\begin{lstlisting}
+GEMINI_API_KEY=your_gemini_api_key_here
+APACHE_JENA_URL=http://localhost:3030
+WEAVIATE_URL=localhost
+WEAVIATE_HTTP_PORT=8080
+WEAVIATE_GRPC_PORT=50052
+\end{lstlisting}
+
+Run the migrations to set up the database:
+
+\begin{lstlisting}[language=bash]
+python manage.py makemigrations chat
+python manage.py migrate
+\end{lstlisting}
+
+\subsection*{3. Apache Jena Fuseki Setup}
+
+Navigate to the fuseki-data directory and set up the Fuseki server:
+
+\begin{lstlisting}[language=bash]
+cd ../fuseki-data
+
+# Make the scripts executable
+chmod +x start_apache_jena.sh create_config.sh
+
+# Start the Fuseki server
+./start_apache_jena.sh
+\end{lstlisting}
+
+The Fuseki server will start at \url{http://localhost:3030}.
+
+\subsection*{4. Weaviate Setup}
+
+Use the included docker-compose file in the \texttt{weaviate} directory:
+
+\begin{lstlisting}[language=bash]
+cd ../backend/weaviate
+docker-compose up -d
+\end{lstlisting}
+
+\subsection*{5. Frontend Setup}
+
+In a new terminal, navigate to the frontend directory and install dependencies:
+
+\begin{lstlisting}[language=bash]
+cd ../../frontend
+npm install
+\end{lstlisting}
+
+\subsubsection*{Environment Configuration}
+
+By default, the frontend connects to the ngrok URL \texttt{prepared-sheep-similarly.ngrok-free.app}.
+
+If you want to use a local backend instead:
+
+\begin{enumerate}
+    \item Create an \texttt{.env.local} file in the frontend directory:
+\begin{lstlisting}
+REACT_APP_API_HOST=localhost:8000
+\end{lstlisting}
+    \item Restart the development server if it's already running.
+\end{enumerate}
+
+\subsection*{6. Start the Application}
+
+\subsubsection*{Start the Backend}
+
+In the backend directory with the virtual environment activated:
+
+\begin{lstlisting}[language=bash]
+python manage.py runserver
+\end{lstlisting}
+
+The Django server will start at \url{http://localhost:8000}.
+
+\subsubsection*{Start the Frontend}
+
+In the frontend directory:
+
+\begin{lstlisting}[language=bash]
+npm start
+\end{lstlisting}
+
+The React development server will start at \url{http://localhost:3000}.
+
+\section*{Usage}
+
+\begin{enumerate}
+    \item Open your browser and navigate to \url{http://localhost:3000}
+    \item Click on ``New Chat'' to start a new conversation
+    \item \textbf{Configure Settings}: Click the ``Settings'' button in the header to configure:
+    \begin{itemize}
+        \item \textbf{Use Verbalization}: When enabled, FrOG tries entity verbalization first for simple questions
+        \item \textbf{Google Search Fallback}: When enabled, uses Google Search if knowledge graph methods fail
+        \item \textbf{Translation}: When enabled, automatically detects and translates non-English questions
+        \item \textbf{Knowledge Source}: Switch between Wikidata, Curriculum, Legal, and GESIS sources
+    \end{itemize}
+    \item Type your question in the input field and press Enter
+    \item View the agent's response and real-time tracing of its reasoning process
+    \item Access previous chats from the side menu
+    \item Download visualization files for further analysis
+\end{enumerate}
+
+\section*{Example Questions}
+
+Try asking the agent questions like:
+
+\begin{enumerate}
+    \item ``Who is the current president of France?''
+    \item ``What is the capital of Japan and what is its population?''
+    \item ``List the spouses of Albert Einstein''
+    \item ``Which mountains in the Himalayas are higher than 8000 meters?''
+    \item ``What books did Isaac Asimov write?''
+\end{enumerate}
+
+\section*{LLM Configuration System}
+
+The backend supports multiple LLM providers through a configuration-based system:
+
+\subsection*{Supported Providers}
+
+\begin{enumerate}
+    \item \textbf{Gemini} - Google's Gemini models via API
+    \item \textbf{Ollama} - Local models via Ollama (optional)
+\end{enumerate}
+
+\subsection*{Configuration}
+
+The LLM configuration is stored in \texttt{config/llm\_config.json}. You can customize which models are used for different tasks:
+
+\begin{itemize}
+    \item \textbf{EntityExtractionNode}: For extracting entities and properties from questions
+    \item \textbf{VerbalizationNode}: For generating natural language descriptions from knowledge graph data
+    \item \textbf{SparqlGenerationNode}: For generating SPARQL queries
+    \item \textbf{AnswerGenerationNode}: For generating final answers to user questions
+\end{itemize}
+
+An example configuration file is provided in \texttt{config/llm\_config.example.json}.
+
+\section*{Agent Architecture}
+
+The backend uses a LangGraph-based agent architecture with the following components:
+
+\begin{itemize}
+    \item \textbf{TranslationNode}: Translates non-English questions
+    \item \textbf{EntityExtractionNode}: Extracts entities and properties from questions
+    \item \textbf{StrategySelectionNode}: Decides between verbalization and SPARQL approaches
+    \item \textbf{VerbalizationNode}: Retrieves entity information directly
+    \item \textbf{PropertyGenerationNode}: Enhances properties for SPARQL queries
+    \item \textbf{SparqlGenerationNode}: Generates and executes SPARQL queries
+    \item \textbf{AnswerGenerationNode}: Generates final natural language answers
+    \item \textbf{GoogleSearchNode}: Fallback option when knowledge graph queries fail
+\end{itemize}
+
+\section*{Apache Jena Visualization Analysis}
+
+This project integrates with Apache Jena Fuseki to store visualization logs in RDF format. This enables powerful semantic querying of agent execution patterns. You can access the Jena logs interface by clicking the ``Logs'' button in the header.
+
+The following query types are available:
+\begin{itemize}
+    \item List all runs with timestamps
+    \item Find runs with specific entities
+    \item Find SPARQL queries used in runs
+    \item Analyze approach distribution
+    \item Calculate average duration by component
+    \item Find most common entities and properties
+    \item Track failed vs successful SPARQL queries
+    \item Analyze query performance over time
+\end{itemize}
+
+\section*{Customization}
+
+\subsection*{Backend}
+\begin{itemize}
+    \item Modify the agent's behavior by editing \texttt{backend/agent/agent.py}
+    \item Add new tools by extending the tools in the \texttt{backend/tools/} directory
+    \item Change API endpoints by editing \texttt{backend/chat/views.py}
+    \item Configure LLM providers in \texttt{config/llm\_config.json}
+\end{itemize}
+
+\subsection*{Frontend}
+\begin{itemize}
+    \item Change the UI styling by modifying the components in \texttt{frontend/src/components/}
+    \item Update the application behavior by editing the context in \texttt{frontend/src/context/ChatContext.tsx}
+    \item Modify the theme by editing \texttt{frontend/tailwind.config.js}
+\end{itemize}
+
+\section*{License}
+
+This project is licensed under the MIT License.
+
+\addappendix{FrOG Backend README}
+\chapter*{Appendix 3: FrOG Backend README}
+\label{sec:frog-backend-readme}
+
+This is the Django backend for the Wikidata Agent chat application with multi-provider LLM support and multiple knowledge graph integration.
+
+\section*{Setup Instructions}
+
+\subsection*{Prerequisites}
+
+\begin{itemize}
+    \item Python 3.8 or higher
+    \item Google Gemini API key (required)
+    \item Apache Jena Fuseki server (required for query executions and visualization logs)
+    \item Weaviate server (required for vector search)
+    \item Ollama installation (optional, only for running local models)
+\end{itemize}
+
+\subsection*{Setup}
+
+\begin{enumerate}
+    \item Create a virtual environment:
+    \begin{lstlisting}[language=bash]
+python -m venv venv
+    \end{lstlisting}
+
+    \item Activate the virtual environment:
+    \begin{itemize}
+        \item On Windows:
+        \begin{lstlisting}[language=bash]
+venv\Scripts\activate
+        \end{lstlisting}
+        \item On macOS/Linux:
+        \begin{lstlisting}[language=bash]
+source venv/bin/activate
+        \end{lstlisting}
+    \end{itemize}
+
+    \item Install dependencies:
+    \begin{lstlisting}[language=bash]
+pip install -r requirements.txt
+    \end{lstlisting}
+
+    \item Set up required services:
+    \begin{itemize}
+        \item \textbf{Apache Jena Fuseki} (Required):
+        \begin{itemize}
+            \item Install from \url{https://jena.apache.org/download/}
+            \item Start the server on the default port (3030)
+            \item No specific dataset setup is needed as the application will create them
+        \end{itemize}
+
+        \item \textbf{Weaviate} (Required):
+        \begin{itemize}
+            \item Use the included docker-compose file in the \texttt{weaviate} directory:
+            \begin{lstlisting}[language=bash]
+cd weaviate
+docker-compose up -d
+            \end{lstlisting}
+        \end{itemize}
+
+        \item \textbf{Ollama} (Optional):
+        \begin{itemize}
+            \item Only required if you want to use local LLM models
+            \item Install from \url{https://ollama.ai/}
+        \end{itemize}
+    \end{itemize}
+
+    \item Create a \texttt{.env} file in the project root with your API keys:
+    \begin{lstlisting}
+GEMINI_API_KEY=your_gemini_api_key_here
+APACHE_JENA_URL=http://localhost:3030
+WEAVIATE_URL=localhost
+WEAVIATE_HTTP_PORT=8080
+WEAVIATE_GRPC_PORT=50052
+    \end{lstlisting}
+
+    \item Run database migrations:
+    \begin{lstlisting}[language=bash]
+python manage.py makemigrations chat
+python manage.py migrate
+    \end{lstlisting}
+
+    \item Start the development server:
+    \begin{lstlisting}[language=bash]
+python manage.py runserver
+    \end{lstlisting}
+\end{enumerate}
+
+The server should now be running at \url{http://localhost:8000}.
+
+\section*{LLM Configuration System}
+
+The backend supports multiple LLM providers through a configuration-based system:
+
+\subsection*{Supported Providers}
+
+\begin{enumerate}
+    \item \textbf{Gemini} - Google's Gemini models via API
+    \item \textbf{Ollama} - Local models via Ollama (optional)
+\end{enumerate}
+
+\subsection*{Configuration}
+
+The LLM configuration is stored in \texttt{config/llm\_config.json}. You can customize which models are used for different tasks:
+
+\begin{itemize}
+    \item \textbf{EntityExtractionNode}: For extracting entities and properties from questions
+    \item \textbf{VerbalizationNode}: For generating natural language descriptions from knowledge graph data
+    \item \textbf{SparqlGenerationNode}: For generating SPARQL queries
+    \item \textbf{AnswerGenerationNode}: For generating final answers to user questions
+\end{itemize}
+
+An example configuration file is provided in \texttt{config/llm\_config.example.json}.
+
+\subsection*{Provider-Specific Setup}
+
+\subsubsection*{Gemini Provider}
+
+\begin{itemize}
+    \item Uses Google's generative AI API
+    \item Requires the \texttt{GEMINI\_API\_KEY} environment variable
+    \item No local storage requirements
+\end{itemize}
+
+\subsubsection*{Ollama Provider (Optional)}
+
+\begin{itemize}
+    \item Requires Ollama to be installed (download from \url{https://ollama.ai/})
+    \item Can pull models directly from Hugging Face using the format \texttt{huggingface/username/repo-name}
+    \item Supports chat templates automatically
+    \item Uses GPU memory if available - ensure adequate VRAM
+\end{itemize}
+
+\section*{Knowledge Graph Sources}
+
+The backend supports multiple knowledge graph sources:
+
+\begin{enumerate}
+    \item \textbf{Wikidata} - The default knowledge graph with millions of entities
+    \item \textbf{Curriculum KB} - University curriculum knowledge base
+    \item \textbf{Legal Document KB} - Indonesian legal document knowledge base
+    \item \textbf{GESIS Scholarly KB} - GESIS scholarly articles knowledge base
+\end{enumerate}
+
+The configuration for these knowledge sources is in \texttt{config/knowledge\_graph\_metadata.json}.
+
+\section*{Agent Architecture}
+
+The backend uses a LangGraph-based agent architecture with the following components:
+
+\begin{itemize}
+    \item \textbf{TranslationNode}: Translates non-English questions
+    \item \textbf{EntityExtractionNode}: Extracts entities and properties from questions
+    \item \textbf{StrategySelectionNode}: Decides between verbalization and SPARQL approaches
+    \item \textbf{VerbalizationNode}: Retrieves entity information directly
+    \item \textbf{PropertyGenerationNode}: Enhances properties for SPARQL queries
+    \item \textbf{SparqlGenerationNode}: Generates and executes SPARQL queries
+    \item \textbf{AnswerGenerationNode}: Generates final natural language answers
+    \item \textbf{GoogleSearchNode}: Fallback option when knowledge graph queries fail
+\end{itemize}
+
+\section*{API Endpoints}
+
+\begin{itemize}
+    \item \texttt{GET /api/chats/} - List all chats
+    \item \texttt{POST /api/chats/} - Create a new chat
+    \item \texttt{GET /api/chats/<uuid>/} - Get a chat with all messages
+    \item \texttt{DELETE /api/chats/<uuid>/} - Delete a chat
+    \item \texttt{POST /api/chats/<uuid>/send\_message/} - Send a message to a chat
+    \item \texttt{GET /api/chats/<uuid>/download\_visualization/} - Download visualization files
+\end{itemize}
+
+\section*{WebSocket Connection}
+
+To connect to a chat via WebSocket, use the following URL:
+
+\begin{lstlisting}
+ws://localhost:8000/ws/chat/<chat_uuid>/
+\end{lstlisting}
+
+You can send messages to the WebSocket in the following format:
+
+\begin{lstlisting}[language=json]
+{
+  "message": "Your question here",
+  "settings": {
+    "useVerbalization": true,
+    "useGoogleSearch": true,
+    "useTranslation": true,
+    "knowledgeSource": "wikidata"
+  }
+}
+\end{lstlisting}
+
+The WebSocket will send back messages in the following formats:
+
+\begin{itemize}
+    \item Regular messages:
+    
+    \begin{lstlisting}[language=json]
+{
+  "message": "Message content",
+  "role": "user|assistant|system",
+  "message_id": "message_uuid"
+}
+    \end{lstlisting}
+    
+    \item Debug messages:
+    
+    \begin{lstlisting}[language=json]
+{
+  "debug": "Debug output content",
+  "role": "system",
+  "message_id": "debug_id"
+}
+    \end{lstlisting}
+    
+    \item Visualization files:
+    
+    \begin{lstlisting}[language=json]
+{
+  "visualization_files": {
+    "json": {"download_url": "/api/chats/<uuid>/download_visualization/?type=json", "file_name": "file.json"},
+    "mermaid": {"download_url": "/api/chats/<uuid>/download_visualization/?type=mermaid", "file_name": "file.mmd"},
+    "ttl": {"download_url": "/api/chats/<uuid>/download_visualization/?type=ttl", "file_name": "file.ttl"}
+  },
+  "message_id": "message_uuid"
+}
+    \end{lstlisting}
+\end{itemize}
+
+\section*{Apache Jena Visualization Analysis}
+
+This backend integrates with Apache Jena Fuseki to store visualization logs in RDF format. This enables powerful semantic querying of agent execution patterns.
+
+\subsection*{Configuration}
+
+Ensure the following environment variable is set in your \texttt{.env} file:
+
+\begin{lstlisting}
+APACHE_JENA_URL=http://localhost:3030
+\end{lstlisting}
+
+\section*{Recommended SPARQL Queries}
+
+Use these queries on the Fuseki SPARQL endpoint (\url{http://localhost:3030/visualization-logs/sparql}) to analyze agent execution patterns:
+
+\subsection*{1. List All Runs with Timestamps}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?run ?startTime ?endTime ?duration ?totalEvents
+WHERE {
+  ?run rdf:type logex:ConversionMetadata ;
+       logex:startTime ?startTime ;
+       logex:endTime ?endTime ;
+       logex:totalDuration ?duration ;
+       logex:totalEvents ?totalEvents .
+} 
+ORDER BY DESC(?startTime)
+\end{lstlisting}
+
+\subsection*{2. Find Runs with Specific Entities}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+
+SELECT DISTINCT ?run ?entityLabel ?startTime
+WHERE {
+  ?event log:hasEntity ?entity .
+  ?event logex:belongsToRun ?run .
+  ?entity rdfs:label ?entityLabel .
+  ?run logex:startTime ?startTime .
+  
+  # Filter for specific entity (remove or change this filter as needed)
+  FILTER(CONTAINS(LCASE(?entityLabel), "ma huateng"))
+}
+ORDER BY DESC(?startTime)
+\end{lstlisting}
+
+\subsection*{3. Find SPARQL Queries Used in Runs}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+
+SELECT ?run ?queryText ?startTime
+WHERE {
+  ?event log:hasQuery ?query .
+  ?event logex:belongsToRun ?run .
+  ?query rdfs:label ?queryText .
+  ?run logex:startTime ?startTime .
+}
+ORDER BY DESC(?startTime)
+\end{lstlisting}
+
+\subsection*{4. Analyze Approach Distribution}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+
+SELECT ?approach (COUNT(?event) as ?count)
+WHERE {
+  ?event log:approach ?approach .
+}
+GROUP BY ?approach
+ORDER BY DESC(?count)
+\end{lstlisting}
+
+\subsection*{5. Calculate Average Duration by Component}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logid: <https://sepses.ifs.tuwien.ac.at/id/log#>
+
+SELECT ?component (AVG(?duration) as ?avgDuration) (COUNT(?event) as ?count)
+WHERE {
+  ?event log:pname ?componentUri ;
+         log:duration ?duration .
+  BIND(STRAFTER(STR(?componentUri), "log#") as ?component)
+}
+GROUP BY ?component
+ORDER BY DESC(?avgDuration)
+\end{lstlisting}
+
+\subsection*{6. Find Most Common Entities}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+
+SELECT ?entityLabel (COUNT(?entity) as ?count)
+WHERE {
+  ?event log:hasEntity ?entity .
+  ?entity rdfs:label ?entityLabel .
+}
+GROUP BY ?entityLabel
+ORDER BY DESC(?count)
+LIMIT 20
+\end{lstlisting}
+
+\subsection*{7. Find Most Common Wikidata Properties}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+
+SELECT ?propertyId (COUNT(?property) as ?count)
+WHERE {
+  ?query log:referencesProperty ?property .
+  ?property log:wikidataId ?propertyId .
+}
+GROUP BY ?propertyId
+ORDER BY DESC(?count)
+LIMIT 20
+\end{lstlisting}
+
+\subsection*{8. Track Failed vs Successful SPARQL Queries}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+
+SELECT ?status (COUNT(?run) as ?count)
+WHERE {
+  {
+    ?run logex:hasEventType ?eventType .
+    ?eventType rdfs:label "all attempts failed" .
+    BIND("failed" as ?status)
+  }
+  UNION
+  {
+    ?run logex:hasEventType ?eventType .
+    ?eventType rdfs:label "successful query execution" .
+    BIND("successful" as ?status)
+  }
+}
+GROUP BY ?status
+\end{lstlisting}
+
+\subsection*{9. Analyze Query Performance Over Time}
+
+\begin{lstlisting}[language=sparql]
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX log: <https://w3id.org/sepses/ns/log#>
+PREFIX logex: <https://w3id.org/sepses/ns/logex#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?date (AVG(?duration) as ?avgDuration) (COUNT(?run) as ?runCount)
+WHERE {
+  ?run logex:totalDuration ?duration ;
+       logex:startTime ?startTime .
+  BIND(SUBSTR(STR(?startTime), 1, 10) as ?date)
+}
+GROUP BY ?date
+ORDER BY ?date
+\end{lstlisting}
+
+\section*{Exporting Visualization Data}
+
+The visualization data is automatically stored in Apache Jena when queries are executed. You can:
+
+\begin{enumerate}
+    \item Use the Fuseki web interface to browse and download the data
+    \item Use the generated TTL files for archiving or sharing
+    \item Import the data into other RDF stores or visualization tools
+\end{enumerate}
+
+For more information about Apache Jena Fuseki, see the \href{https://jena.apache.org/documentation/fuseki2/}{official documentation}.
+
+\addappendix{FrOG Frontend README}
+\chapter*{Appendix 4: FrOG Frontend README}
+\label{sec:frog-frontend-readme}
+
+This directory contains the React frontend application for FrOG (Framework of Open GraphRAG), a system that enables natural language querying of knowledge graphs.
+
+\section*{Overview}
+
+The FrOG frontend provides a chat interface for interacting with the GraphRAG system. It allows users to ask questions in natural language and receive answers based on knowledge graphs. The system searches for entities, constructs SPARQL queries, and provides detailed explanations of its reasoning process.
+
+\section*{Features}
+
+\begin{itemize}
+    \item \textbf{Chat Interface}: Clean and responsive interface for conversing with the FrOG agent
+    \item \textbf{Multiple Knowledge Sources}: Switch between Wikidata, Curriculum, Legal, and GESIS scholarly knowledge graphs
+    \item \textbf{Reasoning Transparency}: View the agent's reasoning process, including entity recognition, query construction, and execution
+    \item \textbf{Visualization Files}: Download JSON, Mermaid diagrams, and TTL graphs for further analysis
+    \item \textbf{Real-time Updates}: See the agent's thinking process in real-time via Pusher integration
+    \item \textbf{Translation Support}: Automatic detection and translation of non-English questions
+    \item \textbf{Google Search Fallback}: Option to use Google Search when knowledge graph methods are insufficient
+    \item \textbf{Settings Management}: Configure agent behavior through a user-friendly settings panel
+    \item \textbf{Execution Logs}: Access and analyze visualization logs through Apache Jena Fuseki
+\end{itemize}
+
+\section*{Tech Stack}
+
+\begin{itemize}
+    \item React 18
+    \item TypeScript
+    \item Tailwind CSS
+    \item Pusher.js for real-time communication
+    \item React Markdown for rendering markdown content
+    \item SPARQL Formatter for formatting SPARQL queries
+\end{itemize}
+
+\section*{Setup Instructions}
+
+\begin{enumerate}
+    \item Clone the repository
+    \item Navigate to the \texttt{frontend} directory
+    \item Install dependencies:
+    \begin{lstlisting}[language=bash]
+npm install
+    \end{lstlisting}
+    \item Create a \texttt{.env.local} file based on \texttt{.env.example} (if needed to customize the API host)
+    \item Start the development server:
+    \begin{lstlisting}[language=bash]
+npm start
+    \end{lstlisting}
+\end{enumerate}
+
+The application will be available at \url{http://localhost:3000}.
+
+\section*{Environment Configuration}
+
+The application connects to the backend API using the following environment variables:
+
+\begin{itemize}
+    \item \texttt{REACT\_APP\_API\_HOST}: The hostname of the API server (defaults to \texttt{prepared-sheep-similarly.ngrok-free.app} if not specified)
+\end{itemize}
+
+You can override this in \texttt{.env.local} for local development:
+
+\begin{lstlisting}
+REACT_APP_API_HOST=localhost:8000
+\end{lstlisting}
+
+\section*{Project Structure}
+
+\begin{itemize}
+    \item \texttt{src/components}: UI components including chat interface, message display, etc.
+    \item \texttt{src/context}: React context for global state management
+    \item \texttt{src/services}: Service classes for external integrations (e.g., Pusher)
+    \item \texttt{src/utils}: Utility functions for API calls, SPARQL formatting, etc.
+    \item \texttt{src/types}: TypeScript interfaces and type definitions
+    \item \texttt{src/config}: Configuration constants
+    \item \texttt{src/styles}: Custom CSS styles
+\end{itemize}
+
+\section*{Key Components}
+
+\begin{itemize}
+    \item \texttt{ChatArea.tsx}: Main chat display area
+    \item \texttt{ChatMessage.tsx}: Individual message rendering
+    \item \texttt{MessageInput.tsx}: Input field for sending messages
+    \item \texttt{Header.tsx}: Top navigation bar
+    \item \texttt{SideNav.tsx}: Chat history sidebar
+    \item \texttt{Settings.tsx}: Settings configuration panel
+    \item \texttt{JenaLogsModal.tsx}: Interface for accessing Apache Jena logs
+    \item \texttt{SystemMessageGroup.tsx}: Displays agent reasoning traces
+\end{itemize}
+
+\section*{API Integration}
+
+The frontend communicates with the backend using a RESTful API. Key endpoints include:
+
+\begin{itemize}
+    \item GET \texttt{/api/chats/}: Retrieve all chats
+    \item GET \texttt{/api/chats/\{id\}/}: Get a specific chat with messages
+    \item POST \texttt{/api/chats/}: Create a new chat
+    \item POST \texttt{/api/chats/\{id\}/send\_message/}: Send a message in a specific chat
+\end{itemize}
+
+Real-time updates are received through Pusher channels for each chat.
+
+\section*{Styling}
+
+The application uses Tailwind CSS for styling with a custom frog-themed color palette defined in \texttt{tailwind.config.js}.
+
+\addappendix{FrOG Fuseki Data README}
+\chapter*{Appendix 5: FrOG Fuseki Data README}
+\label{sec:frog-fuseki-readme}
+
+This directory contains configuration files and scripts for setting up Apache Jena Fuseki as the SPARQL endpoint for the FrOG (Framework of Open GraphRAG) system.
+
+\section*{Overview}
+
+Apache Jena Fuseki serves as the backend SPARQL server for our knowledge graphs. It hosts multiple RDF datasets that power the GraphRAG capabilities of the FrOG system.
+
+\section*{Datasets}
+
+The Fuseki server is configured with the following datasets:
+
+\begin{itemize}
+    \item \textbf{curi}: Curriculum knowledge graph
+    \item \textbf{modified-lex2kg}: Modified Indonesian legal document knowledge graph
+    \item \textbf{gesis}: Modified GESIS scholarly articles knowledge graph
+    \item \textbf{visualization-logs}: Stores execution logs of the agent in RDF format, enabling powerful semantic querying of agent execution patterns
+\end{itemize}
+
+\section*{Setup Instructions}
+
+\begin{enumerate}
+    \item Ensure you have Apache Jena Fuseki installed on your system
+    \item Clone this repository
+    \item Navigate to the \texttt{fuseki-data} directory
+    \item Make the scripts executable:
+    \begin{lstlisting}[language=bash]
+chmod +x start_apache_jena.sh create_config.sh
+    \end{lstlisting}
+    \item Run the start script:
+    \begin{lstlisting}[language=bash]
+./start_apache_jena.sh
+    \end{lstlisting}
+\end{enumerate}
+
+This will:
+\begin{itemize}
+    \item Create the necessary configuration file (\texttt{config.ttl})
+    \item Create required directories if they don't exist
+    \item Start the Fuseki server on port 3030
+\end{itemize}
+
+You can then access the Fuseki server at \url{http://localhost:3030}.
+
+\section*{Files}
+
+\begin{itemize}
+    \item \texttt{config.ttl}: Main configuration file for Fuseki (automatically generated)
+    \item \texttt{create\_config.sh}: Script to generate the Fuseki configuration
+    \item \texttt{start\_apache\_jena.sh}: Script to start the Fuseki server
+    \item \texttt{.gitignore}: Ignores data directories that store TDB files
+\end{itemize}
+
+\section*{Using the Visualization Logs}
+
+The visualization logs dataset contains RDF data that tracks how the FrOG agent processes questions. You can use SPARQL queries to analyze:
+
+\begin{itemize}
+    \item Query patterns and approaches
+    \item Entity recognition
+    \item Performance metrics
+    \item Success rates
+    \item User interaction patterns
+\end{itemize}
+
+Sample SPARQL queries for analyzing the logs are available in the frontend's JenaLogsModal component.
+
+\section*{Customization}
+
+If you need to add new datasets or modify the configuration:
+
+\begin{enumerate}
+    \item Edit the \texttt{create\_config.sh} script
+    \item Run the script to regenerate the configuration:
+    \begin{lstlisting}[language=bash]
+./create_config.sh
+    \end{lstlisting}
+    \item Restart Fuseki using \texttt{./start\_apache\_jena.sh}
+\end{enumerate}
+
+%-----------------------------------------------------------------------------%
+\addappendix{GitHub Repository Information}
+\chapter*{Appendix 6: GitHub Repository Information}
+\label{sec:github-repo}
+
+All code for MEGA-FrOG (Multi-agent Enhanced Generation and Adaptation Framework of Open GraphRAG) is available in our GitHub repository, organized into several branches for different components of the system:
+
+\begin{itemize}
+    \item \textbf{Dataset Generation}: 
+    \begin{itemize}
+        \item Repository: \href{https://github.com/gansixeneh/FROG-2.0/tree/dataset}{\texttt{github.com/gansixeneh/FROG-2.0/tree/dataset}}
+        \item Contains all code and resources for template-based and random-walk dataset generation methodologies
+        \item Includes processors for Wikidata, Curriculum KG, Legal KG, and GESIS KG
+    \end{itemize}
+    
+    \item \textbf{Model Fine-tuning}: 
+    \begin{itemize}
+        \item Repository: \href{https://github.com/gansixeneh/FROG-2.0/tree/finetuning}{\texttt{github.com/gansixeneh/FROG-2.0/tree/finetuning}}
+        \item Contains all Jupyter notebooks for QLoRA fine-tuning processes
+        \item Includes training configurations for entity extraction and SPARQL generation models
+    \end{itemize}
+    
+    \item \textbf{Web Implementation}: 
+    \begin{itemize}
+        \item Repository: \href{https://github.com/gansixeneh/FROG-2.0/tree/web}{\texttt{github.com/gansixeneh/FROG-2.0/tree/web}}
+        \item Contains the complete multi-agent system implementation
+        \item Includes frontend and backend components, LangGraph agent definitions, and integration with knowledge graph endpoints
+    \end{itemize}
+\end{itemize}
+
+Researchers and developers interested in extending this work or applying our methodologies to new knowledge graph domains are encouraged to explore these repositories for implementation details and example code.
