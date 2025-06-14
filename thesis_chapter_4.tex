@@ -163,7 +163,49 @@ To enable efficient entity and property matching, we integrated Weaviate vector 
 
 \subsubsection{N-gram Processing Implementation}
 
-We implemented n-gram processing to break down natural language questions into searchable chunks, enabling more effective matching with knowledge graph elements. The complete implementation is provided in \hyperref[code:ngram-processing]{Appendix~\ref{sec:implementation-code}}.
+We implemented n-gram processing to break down natural language questions into searchable chunks, enabling more effective matching with knowledge graph elements. The implementation is shown below:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=N-gram Processing Implementation]
+def _preprocess_into_tokens(self, q: str) -> list[str]:
+    """
+    Preprocess question into tokens using NLTK RegexpTokenizer
+    
+    Args:
+        q (str): Question string
+        
+    Returns:
+        list[str]: List of tokens
+    """
+    tok_pattern = r"\w+"
+    tokenizer = RegexpTokenizer(tok_pattern)
+    tokenized = tokenizer.tokenize(q)
+    result = []
+    for tok in tokenized:
+        tok = tok.lower()
+        if tok not in self.stopwords:
+            result.append(tok)
+    return result
+
+def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+    """
+    Generate n-grams from tokens using NLTK
+    
+    Args:
+        tokens (list[str]): List of tokens
+        max_n (int): Maximum n-gram size
+        
+    Returns:
+        list[str]: List of n-grams
+    """
+    result = []
+    
+    # Generate unigrams, bigrams, and trigrams using NLTK
+    for n in range(1, min(max_n + 1, len(tokens) + 1)):
+        n_grams = ngrams(tokens, n)
+        result.extend([" ".join(ng) for ng in n_grams])
+    
+    return result
+\end{lstlisting}
 
 \subsubsection{Weaviate Vector Search Implementation}
 
@@ -188,7 +230,41 @@ The template-based generator creates diverse question-SPARQL pairs by defining q
 
 \subsubsection{Template Structure and Initialization}
 
-Templates are structured as dictionaries with fields for question variations, SPARQL patterns, reasoning chains, and metadata. The complete template structure implementation is provided in \hyperref[code:template-structure]{Appendix~\ref{sec:implementation-code}}.
+Templates are structured as dictionaries with fields for question variations, SPARQL patterns, reasoning chains, and metadata. The implementation is shown below:
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Template Structure Definition]
+def initialize_templates(self):
+    """Initialize question-query template pairs with domain-specific templates"""
+    # Basic templates (40% of dataset)
+    basic_templates = [
+        {
+            "id": "course-credits",
+            "category": "university",
+            "questionTemplates": [
+                "How many credits does the {entity} course have?",
+                "What is the credit value for {entity}?",
+                "Can you tell me the number of credits for the {entity} course?"
+            ],
+            "sparqlTemplate": """
+                SELECT ?value WHERE {
+                {entity} ns1:has_credits ?value .
+                }
+            """,
+            "thoughtsTemplate": [
+                "1. The question asks for the credit value of {entity}.",
+                "2. The entity '{entity}' represents a course in the university domain.",
+                "3. The property 'ns1:has_credits' links a course to its credit value.",
+                "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
+                "5. Construct a SPARQL query to retrieve the credit value for {entity}."
+            ],
+            "complexity": "basic"
+        },
+        # Additional templates...
+    ]
+    
+    # Combine all templates
+    return basic_templates + intermediate_templates + advanced_templates
+\end{lstlisting}
 
 \subsubsection{Discovery-First Template Instantiation}
 
@@ -1141,7 +1217,7 @@ The system leverages Django Channels for WebSocket support, configured through t
 
 The WebSocket routes are defined in the \texttt{routing.py} file, which maps URL patterns to consumer classes:
 
-\begin{lstlisting}[breaklines=true,language=python, caption=WebSocket Routing Configuration, label=code:websocket-routing]
+\begin{lstlisting}[breaklines=true,language=python, caption=WebSocket Routing Configuration]
 # backend/chat/routing.py
 from django.urls import re_path
 from . import consumers
@@ -1154,7 +1230,7 @@ websocket_urlpatterns = [
 \subsubsection{REST API Implementation}
 The REST API endpoints are implemented using Django REST Framework through a ViewSet that handles all chat-related operations:
 
-\begin{lstlisting}[breaklines=true,language=python, caption=REST API ViewSet Implementation, label=code:rest-api-viewset]
+\begin{lstlisting}[breaklines=true,language=python, caption=REST API ViewSet Implementation]
 class ChatViewSet(viewsets.ViewSet):
     def list(self, request):
         """Get all chats"""
@@ -1193,7 +1269,7 @@ The API endpoints support the following operations:
 \subsubsection{Agent Singleton Pattern}
 To ensure efficient resource usage, the backend implements a singleton pattern for the agent instance, allowing it to be shared across multiple WebSocket connections:
 
-\begin{lstlisting}[breaklines=true,language=python, caption=Agent Singleton Implementation, label=code:agent-singleton]
+\begin{lstlisting}[breaklines=true,language=python, caption=Agent Singleton Implementation]
 # Import the agent singleton instead of the WikidataAgent directly
 from agent.singletons import get_agent
 
@@ -1263,14 +1339,60 @@ frontend/src/
 The component architecture implements a unidirectional data flow, where state changes propagate downward through the component tree, while user interactions trigger events that are handled by the context provider.
 
 \subsubsection{Context-Based State Management}
-The application uses the React Context API for state management, implemented through the \texttt{ChatContext} provider. The complete implementation is provided in \hyperref[code:context-state-management]{Appendix~\ref{sec:implementation-code}}.
+The application uses the React Context API for state management, implemented through the \texttt{ChatContext} provider:
+
+\begin{lstlisting}[breaklines=true,language=typescript, caption=Context-Based State Management]
+// frontend/src/context/ChatContext.tsx
+export const ChatProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [pusherStatus, setPusherStatus] = useState(() => pusherService.getConnectionStatus());
+  const [settings, setSettings] = useState<AgentSettings>(() => {
+    // Load settings from localStorage or use defaults
+    // ...
+  });
+
+  // State management functions
+  const loadChat = async (chatId: string) => {/* ... */};
+  const startNewChat = async () => {/* ... */};
+  const sendMessage = (content: string) => {/* ... */};
+  const toggleNav = () => {/* ... */};
+  const updateSettings = (newSettings: AgentSettings) => {/* ... */};
+
+  return (
+    <ChatContext.Provider
+      value={{
+        chats,
+        currentChat,
+        isNavOpen,
+        isLoading,
+        isProcessing,
+        settings,
+        pusherStatus,
+        loadChat,
+        startNewChat,
+        sendMessage,
+        toggleNav,
+        updateSettings,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+\end{lstlisting}
 
 This implementation provides centralized state management without the need for additional state management libraries, making the code more maintainable and reducing dependencies.
 
 \subsubsection{Type-Safe API Client}
 The frontend communicates with the backend through a type-safe API client that provides strongly-typed functions for interacting with the REST API:
 
-\begin{lstlisting}[breaklines=true,language=typescript, caption=Type-Safe API Client Implementation, label=code:type-safe-api-client]
+\begin{lstlisting}[breaklines=true,language=typescript, caption=Type-Safe API Client Implementation]
 // frontend/src/utils/api.ts
 export const fetchChats = async (): Promise<Chat[]> => {
   const response = await fetch(`${API_BASE_URL}/chats/`, {
@@ -1301,7 +1423,7 @@ export const sendMessage = async (chatId: string, message: string, settings: Age
 
 TypeScript interfaces ensure that the data structures passed between the frontend and backend are consistent and properly validated:
 
-\begin{lstlisting}[breaklines=true,language=typescript, caption=TypeScript Interface Definitions, label=code:typescript-interfaces]
+\begin{lstlisting}[breaklines=true,language=typescript, caption=TypeScript Interface Definitions]
 // frontend/src/types/index.ts
 export interface Chat {
   id: string;
@@ -1535,14 +1657,59 @@ This message processing logic handles different types of messages:
 \subsubsection{Deduplication and Message Ordering}
 To handle potential duplicate messages and ensure proper ordering, the system implements a deduplication mechanism using message IDs:
 
-To handle potential duplicate messages and ensure proper ordering, the system implements a deduplication mechanism using message IDs. The complete implementation is provided in \hyperref[code:message-deduplication]{Appendix~\ref{sec:implementation-code}}.
+\begin{lstlisting}[breaklines=true,language=typescript, caption=Message Deduplication Implementation]
+// Set of already processed message IDs to prevent duplicates
+const processedMessageIds = new Set<string>();
 
-This implementation ensures that messages are only processed once, even if they are received multiple times through different channels (WebSocket, REST API, etc.), maintaining a consistent user experience.
+// Clear processed message IDs when switching chats
+const clearProcessedMessageIds = () => {
+  processedMessageIds.clear();
+};
+
+// When loading a chat, add existing message IDs to the processed set
+const loadChat = async (chatId: string) => {
+  try {
+    // ...loading code...
+    
+    // Clear processed message IDs when loading a new chat
+    clearProcessedMessageIds();
+
+    // Add existing message IDs to the processed set
+    chatData.messages.forEach((msg) => {
+      processedMessageIds.add(msg.id);
+    });
+    
+    // ...additional code...
+  } catch (error) {
+    // ...error handling...
+  }
+};
+\end{lstlisting}
 
 \subsubsection{Configuration-Based Communication}
 The communication system is designed to be configurable, with separate configuration for development and production environments:
 
-The communication system is designed to be configurable, with separate configuration for development and production environments. The complete implementation is provided in \hyperref[code:api-configuration]{Appendix~\ref{sec:implementation-code}}.
+\begin{lstlisting}[breaklines=true,language=typescript, caption=API Configuration Implementation]
+// frontend/src/config/api.ts
+// Default host is the ngrok URL
+const DEFAULT_HOST = 'boss-amoeba-flying.ngrok-free.app';
+
+// Check if the environment has a custom API host
+export const API_HOST = process.env.REACT_APP_API_HOST || DEFAULT_HOST;
+
+// Determine API protocol (use HTTPS for production/ngrok, HTTP for localhost)
+export const API_PROTOCOL = API_HOST.includes('localhost') ? 'http' : 'https';
+
+// Build the base URLs
+export const API_BASE_URL = `${API_PROTOCOL}://${API_HOST}/api`;
+
+// Pusher configuration
+export const PUSHER_CONFIG = {
+  key: '0379edb726d89ea8c1e9',
+  cluster: 'ap1',
+  forceTLS: true
+};
+\end{lstlisting}
 
 This approach allows developers to easily switch between different environments by setting environment variables or modifying configuration files, facilitating testing and deployment.
 
@@ -2048,7 +2215,7 @@ The decision to use Pusher as an intermediary WebSocket service was necessitated
 \subsection{Weaviate Vector Database}
 The Weaviate vector database is deployed on Device 2 using Docker Compose with the following configuration:
 
-\begin{lstlisting}[breaklines=true,language=yaml, caption=Weaviate Docker Compose Configuration, label=code:weaviate-docker]
+\begin{lstlisting}[breaklines=true,language=yaml, caption=Weaviate Docker Compose Configuration]
 services:
   weaviate:
     image: semitechnologies/weaviate:latest
