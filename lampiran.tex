@@ -2097,11 +2097,339 @@ SPARQL:"""
         return state
 \end{lstlisting}
 
-\section*{System Integration and Communication Code}
 
-\subsection*{Backend Architecture}
 
-\begin{lstlisting}[breaklines=true,language=python, caption=Django Settings Configuration, label=code:django-settings]
+\begin{lstlisting}[breaklines=true,language=python, caption=Google Search Node Implementation, label=code:google-search-node]
+class GoogleSearchNode:
+    """Node for searching the internet using Google Search as a fallback"""
+    
+    def __init__(self):
+        pass
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        try:
+            # Execute Google Search using Gemini API
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("Gemini API key not found in environment variables")
+
+            client = genai.Client(api_key=api_key)
+            
+            # Execute search and process results
+            search_results = self._execute_search(client, state.translated_question)
+                
+            # Update state with results
+            state.google_search_result = search_results
+            state.approach_used = "google_search"
+            
+            # Prepare context for answer generation
+            state.context_str = self._format_search_context(search_results)
+                
+        except Exception as e:
+            state.context_str = "I couldn't find information to answer this question."
+            state.approach_used = "google_search_failed"
+            
+        return state
+        
+    def _execute_search(self, client, query):
+        """Execute a Google Search query using Gemini's built-in search capability"""
+        try:
+            # Execute the search query using Gemini's built-in search
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=query,
+                config=types.GenerateContentConfig(
+                    tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
+                ),
+            )
+
+            # Process and format the results
+            search_results = {
+                "content": "",
+                "citations": []
+            }
+
+            if hasattr(response, "candidates") and len(response.candidates) > 0:
+                candidate = response.candidates[0]
+                # Extract content and citations
+                # [detailed processing code omitted for brevity]
+            
+            return search_results
+            
+        except Exception as e:
+            return {"content": "", "citations": []}
+            
+    def _format_search_context(self, search_results):
+        """Format search results into a context string with citations"""
+        if not search_results or not search_results.get("content"):
+            return "I couldn't find information to answer this question from web search."
+            
+        # Format the main content
+        context_str = f'Based on web search results: {search_results["content"]}'
+        
+        # Add citation information
+        if search_results.get("citations"):
+            context_str += "\n\nSources:\n"
+            for citation in search_results["citations"]:
+                title = citation.get('title', 'Unknown Source')
+                url = citation.get('url', '')
+                context_str += f"- {title}: {url}\n"
+        
+        return context_str
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Answer Generation Node Implementation, label=code:answer-generation-node]
+class AnswerGenerationNode:
+    """Node for generating the final natural language answer"""
+    def __init__(self, llm_factory=None):
+        self.llm_factory = llm_factory
+        self.translator = googletrans.Translator()
+        
+        # Initialize the LLM provider
+        self._llm_provider = self.llm_factory.get_model_for_answer_generation()
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Create prompt for answer generation
+        lang_detected = state.original_lang if state.original_lang else "en"
+        
+        # Build prompt for answer generation
+        prompt = f"""You are an assistant for question-answering tasks. Use the following retrieved context to answer the question.
+Answer directly and concisely in three sentences or less. If you don't know the answer, say so.{f" Answer in {googletrans.LANGUAGES.get(lang_detected, 'the appropriate')} language." if lang_detected != 'en' else ''}
+
+Question: {state.question} 
+Context: {state.context_str} 
+
+Answer:"""
+        
+        # Generate response using configured model
+        if self._llm_provider.is_chat_template_supported():
+            # Use chat template if supported
+            messages = [
+                {"role": "system", "content": "You are an assistant for question-answering tasks."},
+                {"role": "user", "content": prompt}
+            ]
+            formatted_prompt = self._llm_provider.apply_chat_template(messages)
+        else:
+            # Use direct prompt
+            formatted_prompt = prompt
+        
+        state.final_answer = self._llm_provider.generate_response(formatted_prompt)
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=LLM Factory Integration, label=code:llm-factory-integration]
+class FROGGraphAgent:
+    """Agent that uses LangGraph for Wikidata question answering"""
+
+    def __init__(
+        self,
+        gemini_api_key=None,
+        print_output=False,
+        debug_callback=None,
+    ):
+        # Set API key
+        self.gemini_api_key = gemini_api_key or os.environ.get("GEMINI_API_KEY")
+        if not self.gemini_api_key:
+            raise ValueError(
+                "Gemini API key must be provided or set as GEMINI_API_KEY environment variable"
+            )
+
+        # Store configuration
+        self.print_output = print_output
+        self.debug_callback = debug_callback
+        self.visualizer = None  # Will be set when running a query with boxology_verbose > 0
+
+        # Initialize LLM Factory
+        try:
+            self.llm_factory = LLMFactory()
+            logger.info("Initialized LLM Factory with configuration")
+        except Exception as e:
+            logger.error(f"Failed to initialize LLM Factory: {e}")
+            logger.info("Creating LLM Factory with default Gemini configuration")
+            # Create a minimal default config for Gemini
+            import tempfile
+            import json
+
+            default_config = {
+                "default": {
+                    "provider": "gemini",
+                    "model": "gemini-2.0-flash",
+                    "config": {"temperature": 0.2},
+                },
+                "nodes": {},
+                "providers": {"gemini": {"default_config": {"temperature": 0.2}}},
+            }
+            # Write to temp file and initialize factory
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False
+            ) as f:
+                json.dump(default_config, f)
+                temp_config_path = f.name
+
+            self.llm_factory = LLMFactory(config_path=temp_config_path)
+
+        # Initialize Wikidata API
+        self.api = WikidataAPI()
+
+        # Initialize source-aware SPARQL wrapper
+        from .utils.sparql_wrapper import SourceAwareSPARQLWrapper
+        self.sparql_wrapper = SourceAwareSPARQLWrapper(source="wikidata")
+
+        # Initialize property retrieval factory (will handle entity retrieval as well)
+        from .utils.property_retrieval_factory import get_property_retrieval_factory
+        self.property_factory = get_property_retrieval_factory()
+        logger.info("Successfully initialized property retrieval factory")
+
+        # Load properties data
+        try:
+            df_properties = pd.read_csv("./data/wikidata_ontology/properties.csv")
+        except FileNotFoundError:
+            # Create minimal example for testing if file doesn't exist
+            df_properties = pd.DataFrame(
+                {
+                    "propertyId": ["P31", "P279", "P17", "P131"],
+                    "label": ["instance of", "subclass of", "country", "located in"],
+                    "description": [
+                        "that class of which this subject is a particular example",
+                        "the subject is a subclass of a class",
+                        "sovereign state of this item",
+                        "the item is located on the territory of the following administrative entity",
+                    ],
+                }
+            )
+
+        # Initialize property retrieval
+        self.property_retrieval = WikidataPropertyRetrieval(df_properties)
+
+        # Build the graph
+        self.build_graph()
+
+        # Visualization files
+        self.visualization_files = {}
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=LLM Factory Class, label=code:llm-factory-class]
+class LLMFactory:
+    """
+    Factory class for creating and managing LLM providers based on configuration
+    """
+    
+    def __init__(self, config_path: str = "config/llm_config.json"):
+        """
+        Initialize the LLM factory
+        
+        Args:
+            config_path: Path to the configuration file
+        """
+        self.config_path = config_path
+        self._model_cache: Dict[str, BaseLLMProvider] = {}
+        
+        try:
+            self.config = load_llm_config(config_path)
+        except Exception as e:
+            logger.warning(f"Failed to load config from {config_path}: {e}")
+            logger.info("Using default Gemini configuration")
+            # Create default config for Gemini
+            self.config = {
+                "default": {
+                    "provider": "gemini",
+                    "model": "gemini-2.0-flash",
+                    "config": {"temperature": 0.2}
+                },
+                "nodes": {},
+                "providers": {
+                    "gemini": {
+                        "default_config": {"temperature": 0.2}
+                    },
+                    "ollama": {
+                        "default_config": {
+                            "base_url": "http://localhost:11434",
+                            "temperature": 0.2,
+                            "top_p": 0.9,
+                            "num_predict": 512
+                        }
+                    }
+                }
+            }
+        
+        # Validate environment variables
+        self.env_status = validate_environment_variables()
+        self._log_environment_status()
+        
+        logger.info("Initialized LLMFactory")
+    
+    def get_model_for_entity_extraction(self) -> BaseLLMProvider:
+        """Get model specifically for entity extraction"""
+        return self.get_model("EntityExtractionNode")
+    
+    def get_model_for_verbalization(self) -> BaseLLMProvider:
+        """Get model specifically for verbalization"""
+        return self.get_model("VerbalizationNode")
+    
+    def get_model_for_sparql_generation(self) -> BaseLLMProvider:
+        """Get model specifically for SPARQL generation"""
+        return self.get_model("SparqlGenerationNode")
+    
+    def get_model_for_answer_generation(self) -> BaseLLMProvider:
+        """Get model specifically for answer generation"""
+        return self.get_model("AnswerGenerationNode")
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Runtime Settings Implementation, label=code:runtime-settings]
+def query(self, question, settings=None):
+    """
+    Process a question using the FROG GraphRAG system
+    
+    Args:
+        question (str): User question
+        settings (dict): Runtime settings
+        
+    Returns:
+        tuple: (answer, visualization_files)
+    """
+    # Default settings
+    default_settings = {
+        "use_verbalization": True,
+        "use_google_search": True,
+        "use_translation": True,
+        "knowledge_source": "wikidata",
+        "include_references": True,
+        "boxology_verbose": 0,
+        "try_threshold": 5
+    }
+    
+    # Override with user settings
+    if settings:
+        default_settings.update(settings)
+        
+    # Create initial state
+    state = FROGGraphRAGState(
+        question=question,
+        **default_settings
+    )
+    
+    # Initialize visualization if enabled
+    if default_settings["boxology_verbose"] > 0:
+        self.visualizer = BoxologyVisualizer()
+        state.visualizer = self.visualizer
+        
+    # Set debug callback if provided
+    if self.debug_callback:
+        state.debug_callback = self.debug_callback
+        
+    # Execute the workflow
+    final_state = self.graph.invoke(state)
+    
+    # Generate visualization files if enabled
+    if default_settings["boxology_verbose"] > 0 and self.visualizer:
+        visualization_files = self.visualizer.save_visualization_files()
+        self.visualization_files = visualization_files
+    else:
+        visualization_files = {}
+        
+    return final_state.final_answer, visualization_files
+\end{lstlisting}
 # Channel layers configuration for WebSockets
 CHANNEL_LAYERS = {
     'default': {
@@ -2149,27 +2477,122 @@ application = ProtocolTypeRouter({
     "websocket": AuthMiddlewareStack(
         URLRouter(
             websocket_urlpatterns
+\begin{lstlisting}[breaklines=true,language=python, caption=Real-time Message Processing, label=code:real-time-message-processing]
+async def receive(self, text_data):
+    text_data_json = json.loads(text_data)
+    
+    message = text_data_json['message']
+    settings = text_data_json.get('settings', {})  # Get settings from the message
+    
+    # Send message to room group to indicate typing
+    await self.channel_layer.group_send(
+        self.room_group_name,
+        {
+            'type': 'system_message',
+            'message': '🤔 Agent is thinking...',
+            'message_id': f"system_{self.message_counter}"
+        }
+    )
+    self.message_counter += 1
+    
+    # Save user message
+    message_obj = await self.save_message(message, 'user')
+    
+    # Process the message with the agent
+    try:
+        # Create a task to run the agent query - now returns tuple (response, visualization_files_paths)
+        loop = asyncio.get_event_loop()
+        response, visualization_files_paths = await loop.run_in_executor(None, self.agent.query, message, settings)
+        
+        # Save assistant message
+        assistant_message = await self.save_message(response, 'assistant')
+        
+        # Create visualization file URLs if files exist
+        visualization_files = None
+        if visualization_files_paths:
+            visualization_files = {}
+            for file_type, file_path in visualization_files_paths.items():
+                if file_path and os.path.exists(file_path):
+                    # Create download URL for each file type
+                    download_url = f"/api/chats/{self.chat_id}/download_visualization/?type={file_type}"
+                    visualization_files[file_type] = {
+                        'download_url': download_url,
+                        'file_name': os.path.basename(file_path)
+                    }
+        
+        # Send message to room group with visualization files URLs included
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': response,
+                'role': 'assistant',
+                'message_id': str(assistant_message.id),
+                'visualization_files': visualization_files if visualization_files else None
+            }
         )
-    ),
-})
+            
+    except Exception as e:
+        # Error handling code...
 \end{lstlisting}
 
-\begin{lstlisting}[breaklines=true,language=python, caption=WebSocket Consumer Implementation, label=code:websocket-consumer]
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
-        self.room_group_name = f'chat_{self.chat_id}'
+\begin{lstlisting}[breaklines=true,language=python, caption=Debug Callback Implementation, label=code:debug-callback]
+async def debug_callback(self, output):
+    """Callback function for agent debugging output with real-time streaming"""
+    # Fun emojis for each node type
+    node_emojis = {
+        "Translation Node": "🌐",
+        "Entity Extraction Node": "🔍",
+        "Strategy Selection Node": "🧠",
+        "Verbalization Node": "💬", 
+        "Property Generation Node": "🧩",
+        "SPARQL Generation Node": "📊",
+        "Answer Generation Node": "📝",
+        "Google Search Node": "🔎",
+        # Default emoji for any unrecognized nodes
+        "default": "⚙️"
+    }
+    
+    # Extract the node name from the output if possible
+    node_name = None
+    for key in node_emojis:
+        if key in output:
+            node_name = key
+            break
+    
+    # Use the appropriate emoji
+    emoji = node_emojis.get(node_name, node_emojis["default"])
+    
+    # Format the message with the emoji
+    decorated_output = f"{emoji} {output}"
+    
+    # Send immediately without buffering
+    try:
+        await self.send(text_data=json.dumps({
+            'debug': decorated_output,
+            'role': 'system',
+            'message_id': f"debug_{self.message_counter}",
+            'timestamp': time.time()  # Add timestamp for debugging
+        }))
         
-        # Check if chat exists before proceeding
-        chat_exists = await self.chat_exists(self.chat_id)
-        if not chat_exists:
-            # If chat doesn't exist, create it automatically
-            await self.create_chat(self.chat_id)
-        
-        # Join room group
-        await self.channel_layer.group_add(
+        # Also send to the group for consistency
+        await self.channel_layer.group_send(
             self.room_group_name,
-            self.channel_name
+            {
+                'type': 'debug_message',
+                'message': decorated_output,
+                'message_id': f"debug_{self.message_counter}",
+                'immediate': True  # Flag for immediate processing
+            }
+        )
+        self.message_counter += 1
+        
+        # Force flush any potential buffers
+        await asyncio.sleep(0)  # Yield control to ensure message is sent
+        
+    except Exception as e:
+        logger.error(f"Error sending debug message: {e}")
+\end{lstlisting}
         )
         
         await self.accept()
@@ -2186,7 +2609,56 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 \subsection*{Frontend Implementation}
 
-\begin{lstlisting}[breaklines=true,language=typescript, caption=Context-Based State Management, label=code:context-state-management]
+\begin{lstlisting}[breaklines=true,language=typescript, caption=Message Deduplication Implementation, label=code:message-deduplication]
+// Set of already processed message IDs to prevent duplicates
+const processedMessageIds = new Set<string>();
+
+// Clear processed message IDs when switching chats
+const clearProcessedMessageIds = () => {
+  processedMessageIds.clear();
+};
+
+// When loading a chat, add existing message IDs to the processed set
+const loadChat = async (chatId: string) => {
+  try {
+    // ...loading code...
+    
+    // Clear processed message IDs when loading a new chat
+    clearProcessedMessageIds();
+
+    // Add existing message IDs to the processed set
+    chatData.messages.forEach((msg) => {
+      processedMessageIds.add(msg.id);
+    });
+    
+    // ...additional code...
+  } catch (error) {
+    // ...error handling...
+  }
+};
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=typescript, caption=API Configuration Implementation, label=code:api-configuration]
+// frontend/src/config/api.ts
+// Default host is the ngrok URL
+const DEFAULT_HOST = 'boss-amoeba-flying.ngrok-free.app';
+
+// Check if the environment has a custom API host
+export const API_HOST = process.env.REACT_APP_API_HOST || DEFAULT_HOST;
+
+// Determine API protocol (use HTTPS for production/ngrok, HTTP for localhost)
+export const API_PROTOCOL = API_HOST.includes('localhost') ? 'http' : 'https';
+
+// Build the base URLs
+export const API_BASE_URL = `${API_PROTOCOL}://${API_HOST}/api`;
+
+// Pusher configuration
+export const PUSHER_CONFIG = {
+  key: '0379edb726d89ea8c1e9',
+  cluster: 'ap1',
+  forceTLS: true
+};
+\end{lstlisting}
 // frontend/src/context/ChatContext.tsx
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -2232,11 +2704,124 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 };
 \end{lstlisting}
 
-\section*{Visualization and Logging System Code}
+\begin{lstlisting}[language=python, caption=JenaUploader implementation, label=code:jena-uploader]
+class JenaUploader:
+    """Class for uploading TTL data to Apache Jena Fuseki server"""
+    
+    def __init__(self, base_url=None, dataset_name="visualization-logs"):
+        # Get the base URL from environment variable or use default
+        self.base_url = base_url or os.environ.get("APACHE_JENA_URL", "http://localhost:3030")
+        self.dataset_name = dataset_name
+        
+        # Ensure base_url has no trailing slash
+        if self.base_url.endswith('/'):
+            self.base_url = self.base_url[:-1]
+    
+    def create_dataset_if_not_exists(self):
+        """Check if dataset exists, create it if not"""
+        try:
+            # First check if the dataset already exists
+            response = requests.get(f"{self.base_url}/$/datasets")
+            if response.status_code == 200:
+                datasets = response.json().get("datasets", [])
+                dataset_uris = [d.get("ds.name") for d in datasets]
+                
+                # Check if our dataset is in the list
+                if f"/{self.dataset_name}" in dataset_uris:
+                    return True
+            
+            # Dataset doesn't exist, create it
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            response = requests.post(
+                f"{self.base_url}/$/datasets",
+                headers=headers,
+                data=f"dbName={self.dataset_name}&dbType=tdb2"
+            )
+            
+            return response.status_code in [200, 201, 204]
+                
+        except Exception as e:
+            return False
+    
+    def upload_ttl(self, ttl_content, graph_name=None):
+        """Upload TTL content to Jena Fuseki server"""
+        try:
+            # Ensure dataset exists
+            if not self.create_dataset_if_not_exists():
+                return False
+            
+            # Prepare the endpoint URL
+            if graph_name:
+                # Upload to specific named graph
+                encoded_graph = requests.utils.quote(graph_name)
+                url = f"{self.base_url}/{self.dataset_name}/data?graph={encoded_graph}"
+            else:
+                # Upload to default graph
+                url = f"{self.base_url}/{self.dataset_name}/data"
+            
+            # Upload the TTL content
+            headers = {"Content-Type": "text/turtle"}
+            response = requests.post(url, headers=headers, data=ttl_content.encode('utf-8'))
+            
+            return response.status_code in [200, 201, 204]
+                
+        except Exception as e:
+            return False
+\end{lstlisting}
 
-\subsection*{RDF-Based Logging}
+\begin{lstlisting}[language=turtle, caption=Example TTL representation of execution logs, label=code:ttl-example]
+@prefix cee: <https://cee.mitre.org/cee#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix log: <https://w3id.org/sepses/ns/log#> .
+@prefix logex: <https://w3id.org/sepses/ns/logex#> .
+@prefix logid: <https://sepses.ifs.tuwien.ac.at/id/log#> .
+@prefix logs: <https://sepses.ifs.tuwien.ac.at/id/logs/> .
+@prefix lxid: <https://sepses.ifs.tuwien.ac.at/id/logex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-\begin{lstlisting}[breaklines=true,language=python, caption=LogToRDF Event Conversion, label=code:log-to-rdf-events]
+logs:AllRuns a logex:RunCollection ;
+    rdfs:label "Collection of All Runs" .
+
+logs:run_20250606121358_a8f69bcd a logex:ConversionMetadata ;
+    log:approach "SPARQL Generation" ;
+    logex:endTime "2025-06-06T12:14:32.541289"^^xsd:dateTime ;
+    logex:hasEventType logid:EventType_sparql_generation_start,
+        logid:EventType_start ;
+    logex:hasNode logid:Entity_Extraction_Node_Node,
+        logid:SPARQL_Generation_Node_Node,
+        logid:Translation_Node_Node ;
+    logex:startTime "2025-06-06T12:13:58.324156"^^xsd:dateTime ;
+    logex:totalDuration 34.217133 ;
+    logex:totalEvents 42 .
+
+logs:Event_b7a5d1c2 a log:Event ;
+    log:eventType logid:EventType_executing_query_from_attempt_1 ;
+    log:hasQuery logs:Query_b7a5d1c2 ;
+    log:pname logid:SPARQL_Generation_Node ;
+    log:time "2025-06-06T12:14:12.845903"^^xsd:dateTime ;
+    logex:belongsToRun logs:run_20250606121358_a8f69bcd .
+
+logs:Query_b7a5d1c2 a logex:SPARQLQuery ;
+    log:referencesEntity logs:WikidataEntity_Q5 ;
+    log:referencesProperty logs:WikidataProperty_P31,
+        logs:WikidataProperty_P106 ;
+    rdfs:label "PREFIX wd: <http://www.wikidata.org/entity/>\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\nPREFIX p: <http://www.wikidata.org/prop/>\nPREFIX ps: <http://www.wikidata.org/prop/statement/>\nPREFIX pr: <http://www.wikidata.org/prop/reference/>\nPREFIX prov: <http://www.w3.org/ns/prov#>\nPREFIX wikibase: <http://wikiba.se/ontology#>\nPREFIX bd: <http://www.bigdata.com/rdf#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>\n\nSELECT DISTINCT ?person ?occupation ?refUrl ?refDate\nWHERE {\n  ?person wdt:P31 wd:Q5 .\n  ?person wdt:P106 ?occupation .\n  \n  OPTIONAL {\n    ?statement prov:wasDerivedFrom ?ref .\n    OPTIONAL { ?ref pr:P854 ?refUrl . }\n    OPTIONAL { ?ref pr:P813 ?refDate . }\n  }\n}\nLIMIT 100" .
+
+logs:WikidataEntity_Q5 a log:WikidataEntity ;
+    log:wikidataId "Q5" .
+
+logs:WikidataProperty_P31 a log:WikidataProperty ;
+    log:wikidataId "P31" .
+
+logs:WikidataProperty_P106 a log:WikidataProperty ;
+    log:wikidataId "P106" .
+
+logid:EventType_executing_query_from_attempt_1 a log:EventType ;
+    logex:eventCount 1 ;
+    rdfs:label "executing query from attempt 1" .
+\end{lstlisting}
 def add_log_event(self, log_entry):
     """Convert a single log entry to RDF triples with sophisticated patterns"""
     event_id = self.generate_event_id(log_entry)
@@ -2274,7 +2859,205 @@ def add_log_event(self, log_entry):
 
 \subsection*{BoxologyVisualizer Implementation}
 
-\begin{lstlisting}[breaklines=true,language=python, caption=BoxologyVisualizer Class Implementation, label=code:boxology-visualizer]
+\begin{lstlisting}[breaklines=true,language=python, caption=Property Generation Node Implementation, label=code:property-generation-node]
+class PropertyGenerationNode:
+    """Node for enhancing and retrieving additional properties"""
+    def __init__(self, property_retrieval):
+        self.property_retrieval = property_retrieval
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Get knowledge source and use appropriate property retrieval
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        
+        # Use property retrieval factory to get the appropriate retriever
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        property_factory = get_property_retrieval_factory()
+        current_property_retrieval = property_factory.get_property_retriever(knowledge_source)
+        
+        # If properties were already extracted, use those as a starting point
+        initial_properties = state.related_properties if state.related_properties else []
+        
+        try:
+            # Process n-grams and get vector-based property matches
+            ngram_properties = self._get_ngram_properties(state.translated_question, current_property_retrieval)
+            
+            # Get combined properties with vector search
+            combined_properties = self._combine_properties(initial_properties, ngram_properties)
+            
+            # Get semantic matches using vector search
+            state.related_properties = current_property_retrieval.get_related_candidates(
+                state.translated_question, 
+                property_candidates=combined_properties
+            )["properties"]
+                
+        except Exception:
+            # Make sure we have at least the initial properties
+            if not state.related_properties:
+                state.related_properties = initial_properties if initial_properties else state.extracted_entities
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Verbalization Node Implementation, label=code:verbalization-node]
+class VerbalizationNode:
+    """Node for retrieving entity information through verbalization"""
+    def __init__(self, llm_factory=None, property_retrieval=None):
+        self.llm_factory = llm_factory
+        self.property_retrieval = property_retrieval
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
+        
+        # Initialize a default SPARQL endpoint
+        self.api = SPARQLWrapper("https://query.wikidata.org/sparql")
+        self.api.setReturnFormat(JSON)
+        
+        # Get property retrieval factory for different sources
+        from ..utils.property_retrieval_factory import get_property_retrieval_factory
+        self.property_factory = get_property_retrieval_factory()
+        
+        # Initialize the LLM provider
+        self._llm_provider = self.llm_factory.get_model_for_verbalization()
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Update verbalization object based on knowledge source
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        if hasattr(self, 'verbalization'):
+            self.verbalization.set_knowledge_source(knowledge_source)
+        else:
+            # Create verbalization if it doesn't exist
+            self.verbalization = WikidataVerbalization(
+                model_name="jinaai/jina-embeddings-v3",
+                knowledge_source=knowledge_source
+            )
+        
+        # Use appropriate property retrieval based on knowledge source
+        current_property_retrieval = self.property_factory.get_property_retriever(
+            knowledge_source, 
+            df_properties=self.property_retrieval.df_properties if knowledge_source == "wikidata" else None
+        )
+        
+        if not state.extracted_entities:
+            state.next = "sparql_generation"
+            return state
+        
+        entity = state.extracted_entities[0]
+        retrieved_resources, err = self.get_entities(entity, k=5, source=knowledge_source)
+        
+        entity_uri = self.get_most_appropriate_entity_uri(
+            entity, 
+            state.translated_question, 
+            retrieved_resources, 
+            knowledge_source
+        )
+        state.entity_uri = entity_uri
+
+        entity_label = "no label found"
+        for resource in retrieved_resources:
+            if resource.get('uri') == entity_uri:
+                entity_label = resource.get('label')
+                break
+        
+        if entity_uri:
+            try:
+                # Get candidates - do this ONCE only
+                candidates, po, sp = self.verbalization.get_list_of_candidates(
+                    entity_uri=entity_uri, 
+                    entity_label=entity_label,
+                    property_retrieval=current_property_retrieval
+                )
+                
+                # Only continue if we have candidates
+                if not candidates:
+                    state.next = "sparql_generation"
+                    return state
+                
+                # Encode question once
+                question_embed = self.verbalization.encode_text([state.translated_question])[0]
+                
+                # Encode all candidates once
+                cands = list(candidates.values())
+                passages_embed = self.verbalization.encode_text(cands)
+                
+                # Compute similarities once
+                similarities = self.verbalization.model.similarity(
+                    question_embed, 
+                    passages_embed
+                ).numpy().flatten()
+                
+                # Get the best property
+                best_index = np.argmax(similarities)
+                similarity = float(max(similarities))
+                best_property = list(candidates.keys())[best_index]
+                
+                # Extract results for this property
+                result = self.verbalization.extract_results_for_property(
+                    best_property, 
+                    po, 
+                    sp, 
+                    output_uri=state.output_uri
+                )
+                
+                # Get references if needed
+                references = []
+                if (getattr(state, 'include_references', True) and 
+                    similarity >= 0.6 and result and
+                    knowledge_source == 'wikidata'):
+                    raw_references = self.verbalization.get_references_for_property(
+                        entity_uri, 
+                        best_property, 
+                        knowledge_source
+                    )
+                    
+                    # Format references
+                    for ref in raw_references:
+                        formatted_ref = {}
+                        if ref.get('refUrl'):
+                            formatted_ref['refUrl'] = ref['refUrl']
+                        if ref.get('refDate'):
+                            formatted_ref['refDate'] = ref['refDate']
+                            formatted_ref['formattedRefDate'] = format_reference_date(ref['refDate'])
+                        
+                        if formatted_ref:
+                            references.append(formatted_ref)
+                
+                # Store results in state
+                state.verbalization_result = result
+                state.verbalization_similarity = similarity
+                state.verbalization_references = references if references else []
+                    
+                # Determine if verbalization is successful
+                if similarity >= 0.6 and result:
+                    state.query_result = result
+                    
+                    # Process the results for the answer
+                    context_str = f'The answer to "{state.question}" is: '
+                    for c in result[:50]:
+                        for k, v in c.items():
+                            context_str += f"{k}={v}, "
+                    context_str = context_str[:-2] + "."
+                    
+                    # Add reference information to context if available
+                    if references:
+                        context_str += "\n\n**Reference sources:**"
+                        # Format references for display
+                        for ref in references:
+                            if ref.get('refUrl'):
+                                context_str += f"\n- Source: {ref['refUrl']}"
+                            if ref.get('formattedRefDate'):
+                                context_str += f"\n- Retrieved on: {ref['formattedRefDate']}"
+                    
+                    state.context_str = context_str
+                    state.next = "answer_generation"
+                    state.approach_used = "verbalization"
+                    
+                    return state
+                
+            except Exception:
+                pass
+        
+        # Fallback to SPARQL
+        state.next = "sparql_generation"
+        return state
+\end{lstlisting}
 class BoxologyVisualizer:
     """Visualizer for displaying detailed process flow of the FROGGraphRAG execution as a diagram using Mermaid Markdown"""
     def __init__(self, verbose=1, debug_callback=None):
@@ -2300,6 +3083,179 @@ class BoxologyVisualizer:
             "Google Search Node": "#ffccff",         # Light pink for web search
             "default": "#f5f5f5"                     # Light gray for default
         }
+\end{lstlisting}
+
+\begin{lstlisting}[language=python, caption=Mermaid diagram generation implementation, label=code:mermaid-generation]
+def save_mermaid_diagram(self):
+    """Generate and save the mermaid diagram to a file"""
+    if not self.logs:
+        return None
+        
+    # Create Mermaid diagram code
+    mermaid_code = ["graph LR;"]
+    
+    # Add title with approach information
+    title_text = f"FROGGraphRAG Process Flow"
+    if self.approach_used:
+        title_text += f" (Approach: {self.approach_used.title()})"
+    
+    mermaid_code.append(f'    title["{title_text}"]')
+    mermaid_code.append("    style title fill:#f9f9f9,stroke:#333,stroke-width:2px,font-size:16px,font-weight:bold,color:#444")
+    
+    # Group logs by component
+    components = {}
+    for log in self.logs:
+        comp = log["component"]
+        if comp not in components:
+            components[comp] = []
+        components[comp].append(log)
+    
+    # Node counter for unique IDs
+    node_counter = {'count': 0}
+    
+    # Create subgraphs for each component with proper background color
+    components_list = list(components.keys())
+    
+    for comp_name in components:
+        node_id = re.sub(r'\s+', '', comp_name)
+        shape = self.shapes.get(comp_name, self.shapes["default"])
+        color = self.colors.get(comp_name, self.colors["default"])
+        
+        # Create subgraph with background color
+        mermaid_code.append(f"    subgraph {node_id}_subgraph [\"{comp_name}`\"]")
+        mermaid_code.append(f"        style {node_id}_subgraph fill:{color},stroke:#333,stroke-width:3px,font-weight:bold,color:#444")
+        
+        # Sort logs by timestamp
+        events = sorted(components[comp_name], key=lambda x: x["timestamp"])
+        
+        # Add event nodes
+        for i, event in enumerate(events):
+            event_id = f"{node_id}_event_{i}"
+            event_type = event["event_type"]
+            
+            # Events show as notes
+            if event_type in ["start", "end"]:
+                event_text = f"{event_type.capitalize()} at {datetime.fromisoformat(event['timestamp']).strftime('%H:%M:%S.%f')[:-3]}"
+                if event_type == "end" and event["start_time"] and event["end_time"]:
+                    start_dt = datetime.fromisoformat(event["start_time"])
+                    end_dt = datetime.fromisoformat(event["end_time"])
+                    duration = (end_dt - start_dt).total_seconds()
+                    event_text += f" (Duration: {duration:.3f}s)"
+                mermaid_code.append(f"        {event_id}[\"{event_text}\"]")
+                mermaid_code.append(f"        style {event_id} fill:#f0f0f0,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#444")
+            else:
+                # Other event types
+                mermaid_code.append(f"        {event_id}[\"{event_type} at {datetime.fromisoformat(event['timestamp']).strftime('%H:%M:%S.%f')[:-3]}\"]")
+                mermaid_code.append(f"        style {event_id} fill:white,stroke:#444,stroke-width:2px,color:#444")
+            
+            # Add details if available
+            if event["details"]:
+                detail_id = f"{event_id}_details"
+                
+                # Format the details for display in a single box
+                if isinstance(event["details"], (dict, list)):
+                    # Format nested structures nicely
+                    detail_text = self.format_nested_structure(event["details"])
+                else:
+                    # Simple value details
+                    detail_text = self.sanitize_for_mermaid(str(event["details"]))
+                
+                # Create a single box with the formatted content
+                mermaid_code.append(f"        {detail_id}[\"`{detail_text}`\"]")
+                mermaid_code.append(f"        style {detail_id} fill:#f9f9f9,stroke:#aaa,stroke-width:1px,font-size:12px,text-align:left,color:#444")
+                mermaid_code.append(f"        {event_id} -->|\"details\"| {detail_id}")
+                # Make the detail arrow black
+                mermaid_code.append(f"        linkStyle {node_counter['count']} stroke:#000,stroke-width:1px,fill:none")
+                node_counter['count'] += 1
+            
+            # Connect events in sequence
+            if i > 0:
+                prev_event_id = f"{node_id}_event_{i-1}"
+                mermaid_code.append(f"        {prev_event_id} --> {event_id}")
+                # Make the event sequence arrow black
+                mermaid_code.append(f"        linkStyle {node_counter['count']} stroke:#000,stroke-width:2px,fill:none")
+                node_counter['count'] += 1
+        
+        mermaid_code.append("    end")
+    
+    # Create connections between subgraphs based on execution flow
+    for i in range(len(components_list) - 1):
+        current = re.sub(r'\s+', '', components_list[i])
+        next_comp = re.sub(r'\s+', '', components_list[i+1])
+        
+        # Get the last event from current component and first event from next component
+        current_events = sorted(components[components_list[i]], key=lambda x: x["timestamp"])
+        next_events = sorted(components[components_list[i+1]], key=lambda x: x["timestamp"])
+        
+        if current_events and next_events:
+            last_event_id = f"{current}_event_{len(current_events)-1}"
+            first_event_id = f"{next_comp}_event_0"
+            
+            # Add arrow between subgraphs with neon yellow color
+            mermaid_code.append(f"    {last_event_id} ==>|\"output\"| {first_event_id}")
+            mermaid_code.append(f"    linkStyle {node_counter['count']} stroke:#FFFF00,stroke-width:4px,fill:none")
+            node_counter['count'] += 1
+    
+    # Add overall execution info
+    total_duration = (datetime.now() - self.start_time).total_seconds()
+    execution_info = f"Total Duration: {total_duration:.3f} seconds"
+    if self.approach_used:
+        execution_info += f" | Approach: {self.approach_used.title()}"
+    
+    mermaid_code.append(f'    executionInfo["{execution_info}"]')
+    mermaid_code.append(f"    style executionInfo fill:#e8f7e8,stroke:#191,stroke-width:2px,font-weight:bold,color:#444")
+    mermaid_code.append(f"    title --> executionInfo")
+    mermaid_code.append(f"    linkStyle {node_counter['count']} stroke:#000,stroke-width:2px,fill:none")
+        
+    # Convert to Mermaid diagram markdown
+    mermaid_diagram = "\n".join(mermaid_code)
+    
+    # Create a temp file and save the Mermaid markdown
+    temp_file = tempfile.NamedTemporaryFile(suffix='.mmd', delete=False)
+    
+    # Create markdown content with mermaid code
+    approach_info = f" (Approach: {self.approach_used.title()})" if self.approach_used else ""
+    markdown_content = f"""# FROGGraphRAG Process Flow{approach_info}
+
+Question: {self.question}
+Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+```mermaid
+{mermaid_diagram}
+```
+"""
+    
+    with open(temp_file.name, 'w', encoding='utf-8') as f:
+        f.write(markdown_content)
+    
+    return temp_file.name
+\end{lstlisting}
+
+\begin{lstlisting}[language=python, caption=JSON log export implementation, label=code:json-export]
+def save_logs_to_json(self):
+    """Save logs to a JSON file with datetime and question in filename"""
+    if not self.logs:
+        return None
+    
+    # Prepare data for saving
+    log_data = {
+        "question": self.question,
+        "approach_used": self.approach_used,
+        "start_time": self.start_time.isoformat(),
+        "end_time": datetime.now().isoformat(),
+        "total_duration": (datetime.now() - self.start_time).total_seconds(),
+        "logs": self.logs
+    }
+    
+    # Create a temp file and save the JSON data
+    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+    with open(temp_file.name, 'w', encoding='utf-8') as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False, cls=CustomEncoder)
+    
+    if self.verbose > 0:
+        print(f"Logs saved to: {temp_file.name}")
+    
+    return temp_file.name
 \end{lstlisting}
 
 %-----------------------------------------------------------------------------%
