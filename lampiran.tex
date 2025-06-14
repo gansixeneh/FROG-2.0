@@ -1049,48 +1049,6 @@ def parse_university_course_graph(self, graph):
 
 \subsection*{Vector Search Integration}
 
-\begin{lstlisting}[breaklines=true,language=python, caption=N-gram Processing Implementation, label=code:ngram-processing]
-def _preprocess_into_tokens(self, q: str) -> list[str]:
-    """
-    Preprocess question into tokens using NLTK RegexpTokenizer
-    
-    Args:
-        q (str): Question string
-        
-    Returns:
-        list[str]: List of tokens
-    """
-    tok_pattern = r"\w+"
-    tokenizer = RegexpTokenizer(tok_pattern)
-    tokenized = tokenizer.tokenize(q)
-    result = []
-    for tok in tokenized:
-        tok = tok.lower()
-        if tok not in self.stopwords:
-            result.append(tok)
-    return result
-
-def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
-    """
-    Generate n-grams from tokens using NLTK
-    
-    Args:
-        tokens (list[str]): List of tokens
-        max_n (int): Maximum n-gram size
-        
-    Returns:
-        list[str]: List of n-grams
-    """
-    result = []
-    
-    # Generate unigrams, bigrams, and trigrams using NLTK
-    for n in range(1, min(max_n + 1, len(tokens) + 1)):
-        n_grams = ngrams(tokens, n)
-        result.extend([" ".join(ng) for ng in n_grams])
-    
-    return result
-\end{lstlisting}
-
 \begin{lstlisting}[breaklines=true,language=python, caption=Weaviate Vector Search Implementation, label=code:weaviate-search]
 class KnowledgeGraphVectorSearch:
     """Provides vector search capabilities for knowledge graph entities and properties"""
@@ -1199,40 +1157,6 @@ def get_related_candidates(
 \end{lstlisting}
 
 \subsection*{Template-Based Dataset Generation}
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Template Structure Definition, label=code:template-structure]
-def initialize_templates(self):
-    """Initialize question-query template pairs with domain-specific templates"""
-    # Basic templates (40% of dataset)
-    basic_templates = [
-        {
-            "id": "course-credits",
-            "category": "university",
-            "questionTemplates": [
-                "How many credits does the {entity} course have?",
-                "What is the credit value for {entity}?",
-                "Can you tell me the number of credits for the {entity} course?"
-            ],
-            "sparqlTemplate": """
-                SELECT ?value WHERE {
-                {entity} ns1:has_credits ?value .
-                }
-            """,
-            "thoughtsTemplate": [
-                "1. The question asks for the credit value of {entity}.",
-                "2. The entity '{entity}' represents a course in the university domain.",
-                "3. The property 'ns1:has_credits' links a course to its credit value.",
-                "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
-                "5. Construct a SPARQL query to retrieve the credit value for {entity}."
-            ],
-            "complexity": "basic"
-        },
-        # Additional templates...
-    ]
-    
-    # Combine all templates
-    return basic_templates + intermediate_templates + advanced_templates
-\end{lstlisting}
 
 \begin{lstlisting}[breaklines=true,language=python, caption=Discovery-First Template Instantiation, label=code:discovery-first]
 def create_discovery_query(self, template, placeholders):
@@ -2386,83 +2310,6 @@ def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledg
 
 \subsection*{Data Formatting and Export}
 
-\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction Data Formatting, label=code:entity-extraction-formatting]
-def format_instruction(row):
-    # Format entities and properties as JSON arrays
-    entities_json = json.dumps(row['entities'])
-    properties_json = json.dumps(row['properties'])
-    
-    user_prompt = f"""Question: {row['question']}
-
-Extract all entities and properties from this question that would be needed to generate a SPARQL query for Wikidata."""
-
-    asst_prompt = f"""```json
-{{
-  "entities": {entities_json},
-  "properties": {properties_json}
-}}
-```"""
-
-    if has_chat_template:
-        prompt = tokenizer.apply_chat_template(
-            [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-                {"role": "assistant", "content": asst_prompt}
-            ],
-            tokenize=False,
-            add_generation_prompt=False,
-            continue_final_message=False
-        )
-    else:
-        prompt = system_prompt + '\n' + user_prompt + '\n' + asst_prompt
-    
-    return prompt
-\end{lstlisting}
-
-\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Data Formatting, label=code:sparql-generation-formatting]
-def format_instruction(row):
-    entities_matches_formatted = format_entity_matches(row['entities_matches'])
-    properties_matches_formatted = format_property_matches(row['properties_matches'])
-
-    user_prompt = f"""Question: {row['question']}
-
-Entities:
-{entities_matches_formatted}
-
-Properties:
-{properties_matches_formatted}
-
-SPARQL:"""
-    
-    # Format thoughts to be more readable in the assistant's response
-    thoughts_formatted = "Let me analyze this step by step:\n\n"
-    for i, thought in enumerate(row['thoughts'], 1):
-        thoughts_formatted += f"{thought}\n"
-    
-    asst_prompt = f"""{thoughts_formatted}
-
-```sparql
-{row['sparql']}
-```"""
-
-    if has_chat_template:
-        prompt = tokenizer.apply_chat_template(
-            [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-                {"role": "assistant", "content": asst_prompt}
-            ],
-            tokenize=False,
-            add_generation_prompt=False,
-            continue_final_message=False
-        )
-    else:
-        prompt = system_prompt + '\n' + user_prompt + '\n' + asst_prompt
-    
-    return prompt
-\end{lstlisting}
-
 \begin{lstlisting}[breaklines=true,language=python, caption=GGUF Conversion and Hugging Face Upload, label=code:gguf-conversion]
 def export_model_to_gguf(model, tokenizer, model_name, repo_suffix, hf_token):
     """
@@ -2527,14 +2374,6 @@ def setup_ollama_model(model_repo, model_name):
     os.system(f"ollama create {model_name} -f Modelfile")
     
     return model_name
-\end{lstlisting}
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Training Monitoring Implementation, label=code:training-monitoring]
-# Checkpoint management in TrainingArguments
-save_total_limit=5,            # Keep last 5 checkpoints
-load_best_model_at_end=True,   # Load best model after training
-metric_for_best_model="eval_loss",  # Use validation loss for selection
-greater_is_better=False,       # Lower loss is better
 \end{lstlisting}
 
 \begin{lstlisting}[breaklines=true,language=python, caption=End-to-End Evaluation Implementation, label=code:end-to-end-evaluation]
