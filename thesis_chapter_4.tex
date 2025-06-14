@@ -37,89 +37,11 @@ The foundation of our dataset generation system is the knowledge graph schema ex
 
 \subsubsection{Unified Schema Extraction Interface}
 
-We implemented the schema extraction interface through the \texttt{KGSchemaExtractor} class, which provides multiple extraction methods to handle different knowledge graph sources:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Knowledge Graph Schema Extractor Interface, label=code:schema-extractor-interface]
-class KGSchemaExtractor:
-    def __init__(self, options=None):
-        # Initialize with domain-specific defaults
-        self.options = {
-            "sparql_endpoint": None,
-            "sample_size": 1000,
-            "prefixes": {
-                'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-                # Domain-specific prefixes added by adapters
-            }
-        }
-        if options:
-            self.options.update(options)
-            
-        # Initialize schema containers
-        self.schema_info = {
-            "properties": [],
-            "types": [],
-            "numericProperties": [],
-            "dateProperties": [],
-            "textProperties": []
-        }
-        
-    def extract_from_endpoint(self, endpoint):
-        """Extract schema from a SPARQL endpoint"""
-        # Implementation for remote endpoints
-        pass
-        
-    def extract_from_file(self, file_path, format='turtle'):
-        """Extract schema from a local RDF file"""
-        # Implementation for local files
-        pass
-\end{lstlisting}
+We implemented the schema extraction interface through the \texttt{KGSchemaExtractor} class, which provides multiple extraction methods to handle different knowledge graph sources. The complete implementation is shown in \hyperref[code:schema-extractor-interface]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Domain-Specific Schema Processing}
 
-For each knowledge graph domain, we implemented specialized parsers that handle domain-specific schema characteristics:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Domain-Specific Schema Processing, label=code:domain-schema-processing]
-def parse_university_course_graph(self, graph):
-    """
-    Parse the university course graph to extract schema information
-    
-    Args:
-        graph (rdflib.Graph): The RDF graph to parse
-    """
-    # Extract classes (types)
-    class_uris = set()
-    
-    # Find formal class declarations
-    for s, p, o in graph.triples((None, self.rdf.type, self.rdfs.Class)):
-        class_uris.add(s)
-    for s, p, o in graph.triples((None, self.rdf.type, self.owl.Class)):
-        class_uris.add(s)
-        
-    # Infer classes from usage patterns
-    type_objects = set()
-    for s, p, o in graph.triples((None, self.rdf.type, None)):
-        if isinstance(o, URIRef):
-            type_objects.add(o)
-    
-    # Add inferred classes
-    class_uris.update(type_objects)
-    
-    # Process each class
-    for class_uri in class_uris:
-        # Get class label
-        label = self._get_label_from_graph(class_uri) or self.extract_label_from_uri(str(class_uri))
-        
-        # Add to schema
-        self.schema_info["types"].append({
-            "value": self.shorten_uri(str(class_uri)),
-            "label": label,
-            "uri": str(class_uri)
-        })
-    
-    # Extract and categorize properties
-    # (Similar pattern for properties with domain-specific categorization)
-\end{lstlisting}
+For each knowledge graph domain, we implemented specialized parsers that handle domain-specific schema characteristics. The implementation details for the university course graph parsing are provided in \hyperref[code:domain-schema-processing]{Appendix~\ref{sec:implementation-code}}.
 
 The GESIS and Legal schema processors follow similar patterns but with domain-specific property categorization and label extraction logic.
 
@@ -241,164 +163,15 @@ To enable efficient entity and property matching, we integrated Weaviate vector 
 
 \subsubsection{N-gram Processing Implementation}
 
-We implemented n-gram processing to break down natural language questions into searchable chunks, enabling more effective matching with knowledge graph elements:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=N-gram Processing Implementation, label=code:ngram-processing]
-def _preprocess_into_tokens(self, q: str) -> list[str]:
-    """
-    Preprocess question into tokens using NLTK RegexpTokenizer
-    
-    Args:
-        q (str): Question string
-        
-    Returns:
-        list[str]: List of tokens
-    """
-    tok_pattern = r"\w+"
-    tokenizer = RegexpTokenizer(tok_pattern)
-    tokenized = tokenizer.tokenize(q)
-    result = []
-    for tok in tokenized:
-        tok = tok.lower()
-        if tok not in self.stopwords:
-            result.append(tok)
-    return result
-
-def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
-    """
-    Generate n-grams from tokens using NLTK
-    
-    Args:
-        tokens (list[str]): List of tokens
-        max_n (int): Maximum n-gram size
-        
-    Returns:
-        list[str]: List of n-grams
-    """
-    result = []
-    
-    # Generate unigrams, bigrams, and trigrams using NLTK
-    for n in range(1, min(max_n + 1, len(tokens) + 1)):
-        n_grams = ngrams(tokens, n)
-        result.extend([" ".join(ng) for ng in n_grams])
-    
-    return result
-\end{lstlisting}
+We implemented n-gram processing to break down natural language questions into searchable chunks, enabling more effective matching with knowledge graph elements. The complete implementation is provided in \hyperref[code:ngram-processing]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Weaviate Vector Search Implementation}
 
-The vector search implementation uses Weaviate collections to store and retrieve entity and property embeddings. This approach is shared across both template-based and random-walk generators:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Weaviate Vector Search Implementation, label=code:weaviate-search]
-class KnowledgeGraphVectorSearch:
-    """Provides vector search capabilities for knowledge graph entities and properties"""
-    
-    def __init__(self, embedding_model_name="jinaai/jina-embeddings-v3"):
-        # Initialize embedding model
-        self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
-        self.stopwords = set(stopwords.words("english"))
-        # Connect to vector database
-        self.client = self._connect_to_vector_db()
-    
-    def initialize_collections(self, domain_name, entities_df, properties_df):
-        """Initialize entity and property collections for a domain"""
-        # Create collection names based on domain
-        entities_collection_name = f"{domain_name}_entities"
-        properties_collection_name = f"{domain_name}_properties"
-        
-        # Setup collections
-        self.entities_collection = self._setup_collection(entities_collection_name, entities_df)
-        self.properties_collection = self._setup_collection(properties_collection_name, properties_df)
-    
-    def search_entities(self, query, k=5):
-        """Search entities using hybrid search"""
-        # Generate query embedding
-        query_vector = self.model_embed.encode([query])[0]
-        
-        # Execute hybrid search
-        response = self.entities_collection.query.hybrid(
-            query=query,
-            query_properties=["label"],
-            vector=query_vector,
-            limit=k,
-        )
-        
-        # Return results as dataframe
-        return pd.DataFrame([{**o.properties, "score": o.metadata.score} for o in response.objects])
-\end{lstlisting}
+The vector search implementation uses Weaviate collections to store and retrieve entity and property embeddings. This approach is shared across both template-based and random-walk generators. The complete implementation is shown in \hyperref[code:weaviate-search]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Entity and Property Matching}
 
-The entity and property matching system combines n-gram processing with vector search to identify which entities and properties are mentioned in natural language questions:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Entity and Property Matching Implementation, label=code:entity-property-matching]
-def get_related_candidates(
-    self,
-    q: str,
-    property_candidates: list[str] = [],
-    threshold: float = 0.6,
-    k: int = 5,
-) -> dict[str, list[dict]]:
-    """
-    Get related entity and property candidates using n-grams and vector search
-    
-    Args:
-        q (str): Question string
-        property_candidates (list[str]): Additional property candidates
-        threshold (float): Similarity threshold
-        k (int): Number of results per search
-        
-    Returns:
-        dict[str, list[dict]]: Dictionary with 'entities' and 'properties' lists
-    """
-    # Generate tokens and n-grams from question
-    tokens = self._preprocess_into_tokens(q)
-    ngrams = self._generate_ngrams(tokens)
-    
-    # Initialize result containers
-    result = {"entities": [], "properties": []}
-
-    # Search function for entity or property matching
-    def search(ngram, search_type, threshold=threshold):
-        if search_type == "entities":
-            df_res = self.search_entities(ngram, k=k)
-        else:
-            df_res = self.search_properties(ngram, k=k)
-        
-        # Filter by threshold and format results
-        filtered_results = []
-        for _, row in df_res.iterrows():
-            if row.get('score', 0) >= threshold:
-                filtered_results.append({
-                    'short': row.get('short', ''),
-                    'label': row.get('label', ''),
-                    'score': row.get('score', 0.0)
-                })
-        
-        return search_type, filtered_results
-
-    # Search using n-grams and property candidates
-    search_terms = ngrams + property_candidates
-    
-    for term in search_terms:
-        for search_type in result.keys():
-            search_result_type, df_res = search(term, search_type)
-            if df_res:
-                result[search_result_type].extend(df_res)
-    
-    # Remove duplicates
-    for key in result.keys():
-        seen = set()
-        unique_items = []
-        for item in result[key]:
-            item_tuple = (item['short'], item['label'])
-            if item_tuple not in seen:
-                seen.add(item_tuple)
-                unique_items.append(item)
-        result[key] = unique_items
-    
-    return result
-\end{lstlisting}
+The entity and property matching system combines n-gram processing with vector search to identify which entities and properties are mentioned in natural language questions. The complete implementation is provided in \hyperref[code:entity-property-matching]{Appendix~\ref{sec:implementation-code}}.
 
 This integrated approach for entity and property matching is used by both the template-based and random-walk generators, ensuring consistent matching behavior across the entire system.
 
@@ -415,253 +188,11 @@ The template-based generator creates diverse question-SPARQL pairs by defining q
 
 \subsubsection{Template Structure and Initialization}
 
-Templates are structured as dictionaries with fields for question variations, SPARQL patterns, reasoning chains, and metadata:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Template Structure Definition, label=code:template-structure]
-def initialize_templates(self):
-    """Initialize question-query template pairs with domain-specific templates"""
-    # Basic templates (40% of dataset)
-    basic_templates = [
-        {
-            "id": "course-credits",
-            "category": "university",
-            "questionTemplates": [
-                "How many credits does the {entity} course have?",
-                "What is the credit value for {entity}?",
-                "Can you tell me the number of credits for the {entity} course?"
-            ],
-            "sparqlTemplate": """
-                SELECT ?value WHERE {
-                {entity} ns1:has_credits ?value .
-                }
-            """,
-            "thoughtsTemplate": [
-                "1. The question asks for the credit value of {entity}.",
-                "2. The entity '{entity}' represents a course in the university domain.",
-                "3. The property 'ns1:has_credits' links a course to its credit value.",
-                "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
-                "5. Construct a SPARQL query to retrieve the credit value for {entity}."
-            ],
-            "complexity": "basic"
-        },
-        # Additional templates...
-    ]
-    
-    # Intermediate templates (30% of dataset)
-    intermediate_templates = [
-        {
-            "id": "count-prerequisites",
-            "category": "university",
-            "questionTemplates": [
-                "How many prerequisites does {entity} have?",
-                "What is the total number of prerequisite courses for {entity}?",
-                "How many courses must be completed before taking {entity}?"
-            ],
-            "sparqlTemplate": """
-                SELECT (COUNT(?prereq) AS ?count) WHERE {
-                {entity} ns1:has_prerequisite_course ?prereq .
-                }
-            """,
-            "thoughtsTemplate": [
-                "1. The question asks for the number of prerequisite courses for {entity}.",
-                "2. The entity '{entity}' represents a course in the university domain.",
-                "3. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-                "4. To solve this, count all prerequisite courses linked to {entity} via the 'ns1:has_prerequisite_course' property.",
-                "5. Construct a SPARQL query using the COUNT function to determine the number of prerequisites."
-            ],
-            "complexity": "intermediate"
-        },
-        # Additional templates...
-    ]
-    
-    # Advanced templates (30% of dataset)
-    advanced_templates = [
-        {
-            "id": "courses-with-prerequisite-eval",
-            "category": "university",
-            "questionTemplates": [
-                "What courses have prerequisites that have {entity} as their evaluation method?",
-                "Find courses whose prerequisite courses use {entity} for assessment.",
-                "Which courses require completion of courses that are evaluated using {entity}?"
-            ],
-            "sparqlTemplate": """
-                SELECT ?course WHERE {
-                ?course ns1:has_prerequisite_course ?prereq .
-                ?prereq ns1:has_evaluation_method {entity} .
-                }
-            """,
-            "thoughtsTemplate": [
-                "1. The question asks for courses whose prerequisites use '{entity}' as an evaluation method.",
-                "2. The property 'ns1:has_prerequisite_course' links courses to their prerequisites.",
-                "3. The property 'ns1:has_evaluation_method' links courses to their evaluation methods.",
-                "4. To solve this, find courses with prerequisites that have '{entity}' as their evaluation method.",
-                "5. Construct a SPARQL query using a nested pattern to find courses whose prerequisites use the specified evaluation method."
-            ],
-            "complexity": "advanced"
-        },
-        # Additional templates...
-    ]
-    
-    # Combine all templates
-    return basic_templates + intermediate_templates + advanced_templates
-\end{lstlisting}
+Templates are structured as dictionaries with fields for question variations, SPARQL patterns, reasoning chains, and metadata. The complete template structure implementation is provided in \hyperref[code:template-structure]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Discovery-First Template Instantiation}
 
-The key innovation in our implementation is the discovery-first approach that guarantees all generated question-SPARQL pairs are valid and executable:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Discovery-First Template Instantiation, label=code:discovery-first]
-def create_discovery_query(self, template, placeholders):
-    """
-    Create a discovery query that finds valid values for all placeholders
-    
-    Args:
-        template (dict): The template to convert
-        placeholders (set): Set of placeholders in the template
-        
-    Returns:
-        str: The discovery query
-    """
-    # Extract the WHERE clause from the template
-    where_match = re.search(r'WHERE\s*{(.*)}', template["sparqlTemplate"], re.DOTALL | re.IGNORECASE)
-    if not where_match:
-        return None
-        
-    # Start with SELECT clause including all placeholder variables
-    select_vars = set()
-    where_patterns = []
-    
-    # Process each line in the WHERE clause
-    where_clause = where_match.group(1).strip()
-    for line in where_clause.split('.'):
-        line = line.strip()
-        if not line:
-            continue
-            
-        # Replace placeholders with variables
-        processed_line = line
-        for placeholder in placeholders:
-            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
-            if re.search(pattern, processed_line):
-                var_name = f"?{placeholder}"
-                processed_line = re.sub(pattern, var_name, processed_line)
-                select_vars.add(var_name)
-                
-                # For entity placeholders, also select label
-                if placeholder.startswith('entity'):
-                    select_vars.add(f"?{placeholder}Label")
-        
-        where_patterns.append(processed_line + '.')
-    
-    # Construct the SELECT and WHERE clauses
-    select_clause = "SELECT DISTINCT " + " ".join(sorted(select_vars))
-    where_clause = "\n  ".join(where_patterns)
-    
-    # Add OPTIONAL label patterns for entity placeholders
-    optional_patterns = []
-    for placeholder in placeholders:
-        if placeholder.startswith('entity'):
-            optional_patterns.append(f"OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}")
-    
-    # Construct the complete discovery query
-    discovery_query = f"{select_clause} WHERE {{\n  {where_clause}\n  {' '.join(optional_patterns)}\n}}"
-    
-    return discovery_query
-
-def instantiate_template_with_discovery(self, template):
-    """
-    Instantiate a template using the discovery-first approach
-    
-    Args:
-        template (dict): The template to instantiate
-        
-    Returns:
-        dict: The instantiated question and SPARQL query or None if failed
-    """
-    # Extract placeholders from the template
-    placeholders = self.extract_placeholders(template)
-    
-    # Create a discovery query that includes all placeholders in the SELECT clause
-    discovery_query = self.create_discovery_query(template, placeholders)
-    
-    # Execute the discovery query
-    try:
-        results = list(self.graph.query(discovery_query))
-        
-        if not results:
-            print(f"No valid combinations found for template: {template['id']}")
-            return None
-            
-        # Randomly select one complete valid combination of values
-        selected = random.choice(results)
-        
-        # Create a mapping of placeholders to their values
-        replacements = {}
-        
-        # Get the variable names from the query
-        query_vars = [str(var) for var in self.graph.query(discovery_query).vars]
-        
-        # Map variable names to their indices
-        var_indices = {}
-        for i, var_name in enumerate(query_vars):
-            if var_name.startswith('?'):
-                var_name = var_name[1:]
-            var_indices[var_name] = i
-        
-        # Extract values for each placeholder
-        for placeholder in placeholders:
-            value_index = var_indices.get(placeholder)
-            if value_index is None:
-                continue
-                
-            value = selected[value_index]
-            
-            # Handle entity placeholders
-            if placeholder.startswith('entity'):
-                entity_uri = str(value)
-                
-                # Get label if available
-                label_var = f"{placeholder}Label"
-                if label_var in var_indices:
-                    entity_label = str(selected[var_indices[label_var]])
-                else:
-                    entity_label = self.extract_label_from_uri(entity_uri)
-                
-                replacements[placeholder] = {
-                    "value": self.shorten_uri(entity_uri),
-                    "label": entity_label,
-                    "uri": entity_uri
-                }
-            # Handle value placeholders
-            elif placeholder == "value" or placeholder.endswith("Value"):
-                value_str = str(value)
-                replacements[placeholder] = {
-                    "value": value_str,
-                    "label": value_str
-                }
-            # Handle other placeholders
-            else:
-                replacements[placeholder] = {
-                    "value": str(value),
-                    "label": str(value)
-                }
-        
-        # Randomly select a question template
-        question_template = random.choice(template["questionTemplates"])
-        
-        # Replace placeholders in question and SPARQL
-        question = self.replace_placeholders(question_template, replacements, "label")
-        sparql = self.replace_placeholders(template["sparqlTemplate"], replacements, "value")
-        
-        # Format the SPARQL query
-        sparql = self.format_sparql(sparql)
-        
-        return {"question": question, "sparql": sparql}
-        
-    except Exception as e:
-        print(f"Error executing discovery query: {e}")
-        return None
-\end{lstlisting}
+The key innovation in our implementation is the discovery-first approach that guarantees all generated question-SPARQL pairs are valid and executable. The complete implementation is shown in \hyperref[code:discovery-first]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Chain of Thoughts Generation}
 
@@ -764,92 +295,7 @@ The random-walk generator complements the template-based approach by discovering
 
 \subsubsection{Pattern Discovery Implementation}
 
-We implemented a pattern discovery system that traverses the knowledge graph to find valid patterns of varying complexity:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Pattern Discovery Implementation, label=code:pattern-discovery]
-def generate_1_property_patterns(self, count=100):
-    """
-    Generate 1-property patterns using discovery-first approach
-    
-    Args:
-        count (int): Number of patterns to generate
-        
-    Returns:
-        list: Generated patterns
-    """
-    patterns = []
-    
-    # Discovery query to find all valid property-entity combinations
-    discovery_query = """
-        SELECT DISTINCT ?prop ?entity WHERE {
-            ?s ?prop ?entity .
-            FILTER(STRSTARTS(STR(?prop), "http://example.org/"))
-            FILTER(STRSTARTS(STR(?entity), "http://example.org/"))
-        }
-    """
-    
-    try:
-        # Execute discovery query
-        results = list(self.graph.query(discovery_query))
-        print(f"Found {len(results)} valid property-entity combinations")
-        
-        if not results:
-            return patterns
-        
-        # Generate patterns from valid combinations
-        attempts = 0
-        max_attempts = count * 3
-        
-        while len(patterns) < count and attempts < max_attempts:
-            attempts += 1
-            
-            # Randomly select a valid combination
-            prop, entity = random.choice(results)
-            prop_str = self._shorten_uri(prop)
-            entity_str = self._shorten_uri(entity)
-            
-            # Generate both subject and object target patterns
-            pattern_type = random.choice(['subject_target', 'object_target'])
-            
-            if pattern_type == 'subject_target':
-                # Pattern: ?target prop fixed_entity
-                sparql = f"SELECT ?target WHERE {{ ?target {prop_str} {entity_str} . }}"
-                pattern_id = f'1p_subj_{len(patterns)}'
-                pattern_type_name = '1_prop_subject_target'
-            else:
-                # Find a valid subject for this property
-                subject_query = f"""
-                    SELECT DISTINCT ?subj WHERE {{
-                        ?subj <{str(prop)}> <{str(entity)}> .
-                    }}
-                """
-                subject_results = list(self.graph.query(subject_query))
-                if not subject_results:
-                    continue
-                    
-                subj = random.choice(subject_results)[0]
-                subj_str = self._shorten_uri(subj)
-                sparql = f"SELECT ?target WHERE {{ {subj_str} {prop_str} ?target . }}"
-                pattern_id = f'1p_obj_{len(patterns)}'
-                pattern_type_name = '1_prop_object_target'
-            
-            # Validate that this pattern has results
-            if self._validate_pattern(sparql):
-                pattern = {
-                    'id': pattern_id,
-                    'sparql': self._format_sparql(sparql),
-                    'pattern_type': pattern_type_name,
-                    'complexity': 'basic',
-                    'property': prop_str,
-                    'fixed_entity': entity_str if pattern_type == 'subject_target' else subj_str
-                }
-                patterns.append(pattern)
-        
-    except Exception as e:
-        print(f"Error in 1-property pattern discovery: {e}")
-    
-    return patterns
-\end{lstlisting}
+We implemented a pattern discovery system that traverses the knowledge graph to find valid patterns of varying complexity. The complete implementation is provided in \hyperref[code:pattern-discovery]{Appendix~\ref{sec:implementation-code}}.
 
 We implemented similar pattern discovery methods for 2-property and 3-property patterns, increasing complexity with each level:
 
@@ -1664,41 +1110,11 @@ This diverse model selection enables us to evaluate how different architecture f
 
 \subsubsection{Technical Foundation and Libraries}
 
-Our implementation is built on the Unsloth library, which provides optimized fine-tuning capabilities for large language models:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Finetuning Infrastructure Implementation, label=code:finetuning-infrastructure]
-from unsloth import FastLanguageModel
-import torch
-from trl import SFTTrainer
-from transformers import TrainingArguments
-from unsloth import is_bfloat16_supported
-from datasets import Dataset
-from typing import Optional
-from torch.nn.parallel import DataParallel
-import gc
-from huggingface_hub import HfApi, create_repo
-import shutil
-
-# Model loading implementation
-def load_model(model_name: str):
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=model_name,
-        max_seq_length=max_seq_length,
-        dtype=dtype,
-        load_in_4bit=load_in_4bit,
-    )
-        
-    # Set chat template for models that need it
-    if not hasattr(tokenizer, "chat_template") and tokenizer.chat_template is not None and 'qwen' in model.config.name_or_path:
-        tokenizer.chat_template = "<|im_start|>system\n{{ messages[0]['content'] }}<|im_end|>\n{% for message in messages[1:] %}<|im_start|>{{ message['role'] }}\n{{ message['content'] }}<|im_end|>\n{% endfor %}"
-        print("Model's tokenizer has been set.")
-    
-    return model, tokenizer
-\end{lstlisting}
+Our implementation is built on the Unsloth library, which provides optimized fine-tuning capabilities for large language models. The complete technical implementation is provided in \hyperref[code:finetuning-infrastructure]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Memory Optimization Techniques}
 
-A key challenge in fine-tuning large language models is managing memory constraints. Our implementation incorporates several techniques to optimize memory usage:
+A key challenge in fine-tuning large language models is managing memory constraints. Our implementation incorporates several memory optimization techniques, with complete implementation details provided in \hyperref[code:memory-optimization]{Appendix~\ref{sec:implementation-code}}.
 
 \begin{figure}
     \centering
@@ -1706,82 +1122,16 @@ A key challenge in fine-tuning large language models is managing memory constrai
     \caption{Memory Optimization Techniques and Their Impact on GPU Memory Usage}
 \end{figure}
 
+The memory optimization techniques include:
+
 \begin{enumerate}
     \item \textbf{4-bit Quantization}: Models are loaded with 4-bit precision, reducing memory requirements by up to 8x compared to full precision.
     
-    \begin{lstlisting}[breaklines=true,language=python, caption=4-bit Quantization Implementation, label=code:4bit-quantization]
-    # Load model with 4-bit quantization
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=model_name,
-        max_seq_length=max_seq_length,
-        load_in_4bit=True,  # Enable 4-bit quantization
-        dtype=None          # Auto-detect precision based on hardware
-    )
-    # Memory usage before: ~28GB for 7B model
-    # Memory usage after: ~3.5GB for 7B model
-    \end{lstlisting}
-    
     \item \textbf{Gradient Checkpointing}: Implemented via the \texttt{use\_gradient\_checkpointing} parameter, this technique trades computation for memory by recomputing intermediate activations during backpropagation rather than storing them.
-    
-    \begin{lstlisting}[breaklines=true,language=python, caption=Gradient Checkpointing Implementation, label=code:gradient-checkpointing]
-    # Enable gradient checkpointing in QLoRA configuration
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=64,
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-        use_gradient_checkpointing="unsloth",  # Enable optimized checkpointing
-        # Other parameters...
-    )
-    
-    # Also enable in training arguments
-    training_args = TrainingArguments(
-        # Other arguments...
-        gradient_checkpointing=True,  # Recompute activations instead of storing
-        # Other arguments...
-    )
-    \end{lstlisting}
     
     \item \textbf{Memory-Efficient Optimizers}: We use 8-bit optimizers to reduce the memory footprint of optimizer states.
     
-    \begin{lstlisting}[breaklines=true,language=python, caption=8-bit Optimizer Implementation, label=code:8bit-optimizer]
-    # Configure 8-bit Adam optimizer in training arguments
-    training_args = TrainingArguments(
-        # Other arguments...
-        optim="adamw_8bit",  # Use 8-bit version of AdamW
-        # Standard AdamW requires 8 bytes per parameter
-        # 8-bit version requires only 1 byte per parameter
-        
-        # Additional precision settings based on hardware
-        fp16=not is_bfloat16_supported(),
-        bf16=is_bfloat16_supported(),
-        # Other arguments...
-    )
-    \end{lstlisting}
-    
     \item \textbf{Aggressive Memory Clearing}: Between training phases, we employ aggressive memory clearing with explicit synchronization to ensure maximum memory availability.
-
-    \begin{lstlisting}[breaklines=true,language=python, caption=Memory Optimization Implementation, label=code:memory-optimization]
-    def clear_memory():
-        """Aggressively clear GPU memory"""
-        import gc
-        import torch
-        
-        # Clear CUDA cache
-        torch.cuda.empty_cache()
-        
-        # Force garbage collection
-        gc.collect()
-        
-        # Add synchronization
-        if torch.cuda.is_available():
-            torch.cuda.synchronize()
-            
-        # Log memory status
-        if torch.cuda.is_available():
-            print(f"GPU memory allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
-            print(f"GPU memory reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
-    \end{lstlisting}
-
 \end{enumerate}
 
 These optimizations enable us to fine-tune 7-8 billion parameter models on a single GPU with 16GB of memory, making our approach accessible to researchers with limited computational resources.
@@ -1842,83 +1192,7 @@ The expected assistant output is a structured JSON response:
 
 \subsubsection{Low-Rank Adaptation Implementation}
 
-For the entity extraction task, we implemented a specialized QLoRA configuration optimized for structured extraction tasks:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction LoRA Configuration, label=code:entity-extraction-lora]
-def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num_epochs=5):
-    """
-    Fine-tune a model with QLoRA for entity and property extraction
-    """
-    model, tokenizer = load_model(model_name)
-    
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=16,                             # Rank of update matrices
-        target_modules=[                  # Attention and MLP layers
-            "q_proj", "k_proj", "v_proj", "o_proj",
-            "gate_proj", "up_proj", "down_proj"
-        ],
-        lora_alpha=16,                    # Scaling factor for updates
-        lora_dropout=0,                   # No dropout for deterministic behavior
-        bias="none",                      # No bias parameters to minimize trainable params
-        use_gradient_checkpointing="unsloth",  # Memory optimization
-        random_state=42,                  # Reproducibility
-        use_rslora=False,                 # Standard QLoRA for stability
-        loftq_config=None,                # No quantization for adapter weights
-    )
-    
-    trainer = SFTTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        train_dataset=train_dataset,
-        eval_dataset=val_dataset,
-        dataset_text_field="text",
-        max_seq_length=max_seq_length,
-        dataset_num_proc=2,
-        packing=False,                    # No packing to preserve structure
-        args=TrainingArguments(
-            # Training parameters
-            per_device_train_batch_size=1,
-            per_device_eval_batch_size=1,
-            gradient_accumulation_steps=4,
-            warmup_steps=5,
-            num_train_epochs=num_epochs,
-            learning_rate=2e-5,
-            
-            # Precision options
-            fp16=not is_bfloat16_supported(),
-            bf16=is_bfloat16_supported(),
-            optim="adamw_8bit",
-            weight_decay=0.01,
-            lr_scheduler_type="linear",
-            
-            # Evaluation strategy
-            eval_strategy="steps",
-            save_strategy="steps",
-            save_steps=20,
-            eval_steps=20,
-            logging_steps=10,
-            
-            # Checkpoint management
-            save_total_limit=5,
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_loss",
-            greater_is_better=False,
-            
-            # Output directory
-            output_dir="outputs",
-            report_to="none",
-            seed=42,
-        ),
-    )
-
-    trainer.train()
-
-    model.save_pretrained(output_dir)
-    tokenizer.save_pretrained(output_dir)
-    
-    return model, tokenizer
-\end{lstlisting}
+For the entity extraction task, we implemented a specialized QLoRA configuration optimized for structured extraction tasks. The complete implementation is provided in \hyperref[code:entity-extraction-lora]{Appendix~\ref{sec:implementation-code}}.
 
 This configuration uses a moderate rank (r=16) which we determined empirically to provide sufficient capacity for the entity extraction task while maintaining computational efficiency. The approach achieves approximately 99\% parameter efficiency compared to full model fine-tuning, using only about 40-60 million trainable parameters depending on the base model size.
 
@@ -1991,108 +1265,7 @@ SELECT ?population WHERE \{ \\
 
 \subsubsection{Enhanced LoRA Configuration for SPARQL Generation}
 
-For the SPARQL generation task, we implemented a more extensive QLoRA configuration with higher rank and additional adaptations:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation LoRA Configuration, label=code:sparql-generation-lora]
-def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledge_domain="wikidata", num_epochs=10):
-    """
-    Fine-tune a model with enhanced QLoRA for SPARQL generation
-    
-    Args:
-        model_name: Name of the base model
-        train_dataset: Training dataset
-        val_dataset: Validation dataset
-        output_dir: Directory to save the model
-        knowledge_domain: The knowledge graph domain (wikidata, curriculum, legal, or gesis)
-        num_epochs: Number of training epochs
-    """
-    model, tokenizer = load_model(model_name)
-    
-    # Set rank based on knowledge domain
-    # Use lower rank (32) for Legal and GESIS KGs which have longer inputs
-    # Use higher rank (64) for Wikidata and Curriculum KGs
-    rank = 32 if knowledge_domain in ["legal", "gesis"] else 64
-    
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r = rank,                         # Domain-specific rank value
-        target_modules = [                # Comprehensive layer selection
-            "q_proj", "k_proj", "v_proj", "o_proj",
-            "gate_proj", "up_proj", "down_proj"
-        ],
-        lora_alpha = rank,                # Scaling factor matching rank
-        lora_dropout = 0.1,               # Dropout for generalization
-        bias = "all",                     # Include bias for syntax learning
-        use_gradient_checkpointing = "unsloth",
-        random_state = 42,
-        use_rslora = True,                # Rank-Stabilized QLoRA for stability
-        loftq_config = None,
-    )
-    
-    trainer = SFTTrainer(
-        model = model,
-        tokenizer = tokenizer,
-        train_dataset = train_dataset,
-        eval_dataset = val_dataset,
-        dataset_text_field = "text",
-        max_seq_length = max_seq_length,
-        dataset_num_proc = 4,             # More processors for complex data
-        packing = True,                   # Enable packing for efficiency
-        args = TrainingArguments(
-            # Batch sizing
-            per_device_train_batch_size = 1,
-            per_device_eval_batch_size = 1,
-            gradient_accumulation_steps = 16,  # Larger effective batch
-            
-            # Learning rate
-            learning_rate = 1e-5,         # Lower learning rate for convergence
-            weight_decay = 0.1,           # Stronger regularization
-            
-            # Schedule
-            num_train_epochs = num_epochs,
-            lr_scheduler_type = "polynomial",  # Better for syntax learning
-            warmup_ratio = 0.1,           # 10% warmup period
-            
-            # Precision
-            fp16 = not is_bfloat16_supported(),
-            bf16 = is_bfloat16_supported(),
-            optim = "adamw_8bit",
-            
-            # Evaluation
-            eval_strategy = "steps",
-            save_strategy = "steps",
-            eval_steps = 25,
-            save_steps = 25,
-            logging_steps = 5,
-            
-            # Checkpoint management
-            save_total_limit = 5,
-            load_best_model_at_end = True,
-            metric_for_best_model = "eval_loss",
-            greater_is_better = False,
-            
-            # Additional settings
-            group_by_length = True,
-            gradient_checkpointing = True,
-            dataloader_drop_last = False,
-            
-            # Label smoothing for SPARQL syntax tokens
-            label_smoothing_factor = 0.05,
-            
-            # Output
-            output_dir = "outputs",
-            report_to = "tensorboard",
-            seed = 42,
-        ),
-    )
-    
-    trainer.train()
-
-    model.save_pretrained(output_dir)
-    tokenizer.save_pretrained(output_dir)
-    
-    return model, tokenizer
-\end{lstlisting}
+For the SPARQL generation task, we implemented a more extensive QLoRA configuration with higher rank and additional adaptations. The complete implementation is provided in \hyperref[code:sparql-generation-lora]{Appendix~\ref{sec:implementation-code}}.
 
 This enhanced configuration uses a variable rank (r=32 or r=64 depending on the knowledge graph) to provide appropriate capacity for learning complex SPARQL syntax patterns. Specifically, a lower rank (r=32) is used for Legal and GESIS knowledge graphs which have longer inputs, while a higher rank (r=64) is used for Wikidata and Curriculum knowledge graphs. We also implemented rank-stabilized QLoRA (RSQLoRA) to prevent training instabilities that can occur with higher-rank adapters. The configuration results in approximately 160-230 million trainable parameters, still achieving over 97\% parameter efficiency compared to full model fine-tuning.
 
@@ -2581,49 +1754,7 @@ These implementation challenges highlight the complexity of building production-
 The multi-agent system represents the core architectural component of our enhanced GraphRAG framework. We implemented a sophisticated orchestration of specialized agents using LangGraph, a directed graph-based framework designed for composing language agents. This section details the technical implementation of our multi-agent architecture, including the state graph construction, multi-source knowledge graph infrastructure, specialized agent nodes, and integration with our multi-provider LLM factory.
 
 \subsection{LangGraph Architecture}
-The foundation of our multi-agent system is built on LangGraph, which provides a structured approach to defining agent workflows through directed state graphs. Our implementation orchestrates data flow between specialized agents, each responsible for a distinct aspect of the question-answering process.
-
-\begin{lstlisting}[breaklines=true,language=python, caption=LangGraph State Graph Construction, label=code:state-graph]
-def build_graph(self):
-    """Build the LangGraph workflow"""
-    # Create nodes with LLM factory
-    translation_node = TranslationNode()
-    entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
-    verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
-    sparql_generation_node = SparqlGenerationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
-    answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
-    strategy_selection_node = StrategySelectionNode()
-    property_generation_node = PropertyGenerationNode(self.property_retrieval)
-    google_search_node = GoogleSearchNode()
-
-    # Create the graph
-    workflow = StateGraph(FROGGraphRAGState)
-
-    # Add nodes
-    workflow.add_node("translation", translation_node)
-    workflow.add_node("entity_extraction", entity_extraction_node)
-    workflow.add_node("strategy_selection", strategy_selection_node)
-    workflow.add_node("verbalization", verbalization_node)
-    workflow.add_node("property_generation", property_generation_node)
-    workflow.add_node("sparql_generation", sparql_generation_node)
-    workflow.add_node("answer_generation", answer_generation_node)
-    workflow.add_node("google_search", google_search_node)
-
-    # Define the flow
-    workflow.set_entry_point("translation")
-    workflow.add_edge("translation", "entity_extraction")
-    workflow.add_edge("entity_extraction", "strategy_selection")
-    
-    # Add conditional edges for adaptive routing
-    workflow.add_conditional_edges(
-        "strategy_selection",
-        lambda x: x.next,
-        {"verbalization": "verbalization", "sparql_generation": "property_generation"}
-    )
-    
-    # Compile the graph
-    self.graph = workflow.compile()
-\end{lstlisting}
+The foundation of our multi-agent system is built on LangGraph, which provides a structured approach to defining agent workflows through directed state graphs. The complete implementation is provided in \hyperref[code:state-graph]{Appendix~\ref{sec:implementation-code}}.
 
 The state graph implementation offers several technical advantages over a linear pipeline:
 
@@ -2643,46 +1774,7 @@ The state graph implementation offers several technical advantages over a linear
 \end{figure}
 
 \subsubsection{State Management Implementation}
-The core of our multi-agent system is the \texttt{FROGGraphRAGState} class, which defines the shared state that flows through the agent graph. We implement this as a Pydantic model to ensure type safety and validation:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=State Management Implementation, label=code:state-management]
-# backend/agent/langgraph/utils/state.py
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
-
-class FROGGraphRAGState(BaseModel):
-    """State for the FROGGraphRAG workflow"""
-    question: str
-    translated_question: Optional[str] = None
-    original_lang: Optional[str] = None
-    extracted_entities: Optional[List[str]] = Field(default_factory=list)
-    use_sparql: Optional[bool] = None
-    entity_uri: Optional[str] = None
-    verbalization_result: Optional[List[Dict]] = Field(default_factory=list)
-    verbalization_similarity: Optional[float] = None
-    verbalization_references: Optional[List[Dict]] = Field(default_factory=list)
-    sparql_references: Optional[List[Dict]] = Field(default_factory=list)
-    related_properties: Optional[List[str]] = Field(default_factory=list)
-    sparql_query: Optional[str] = None
-    query_result: Optional[List[Dict]] = Field(default_factory=list)
-    context_str: Optional[str] = None
-    final_answer: Optional[str] = None
-    verbose: Optional[int] = 0
-    use_cot: Optional[bool] = True
-    output_uri: Optional[bool] = False
-    try_threshold: Optional[int] = 5
-    approach_used: Optional[str] = None
-    next: Optional[str] = None
-    visualizer: Optional[Any] = None
-    boxology_verbose: Optional[int] = 0
-    debug_callback: Optional[Any] = None
-    include_references: Optional[bool] = True
-    google_search_result: Optional[Dict] = None
-    use_verbalization: Optional[bool] = True
-    use_google_search: Optional[bool] = True
-    use_translation: Optional[bool] = True
-    knowledge_source: Optional[str] = "wikidata"
-\end{lstlisting}
+The core of our multi-agent system is the \texttt{FROGGraphRAGState} class, which defines the shared state that flows through the agent graph. The complete implementation is provided in \hyperref[code:state-management]{Appendix~\ref{sec:implementation-code}}.
 
 The state object captures all processing context, including:
 
@@ -2703,38 +1795,7 @@ This comprehensive state design ensures that each agent has access to all previo
 Our implementation utilizes a source-aware architecture that enables seamless integration with multiple knowledge graphs. This flexibility allows the system to handle diverse knowledge domains through a unified interface while accommodating domain-specific requirements.
 
 \subsubsection{Knowledge Graph Metadata System}
-The foundation of our multi-source architecture is a comprehensive metadata system that defines the configuration for each knowledge graph. We implemented this using a structured JSON configuration file:
-
-\begin{lstlisting}[breaklines=true,language=json, caption=Knowledge Graph Metadata Configuration, label=code:kg-metadata]
-// backend/config/knowledge_graph_metadata.json (excerpt)
-{
-  "wikidata": {
-    "name": "Wikidata",
-    "description": "Wikidata knowledge graph",
-    "endpoint": "https://query.wikidata.org/sparql",
-    "prefixes": {
-      "wd": "http://www.wikidata.org/entity/",
-      "wdt": "http://www.wikidata.org/prop/direct/",
-      "p": "http://www.wikidata.org/prop/",
-      // Additional prefixes...
-    },
-    "sparql_instructions": [
-      "Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs",
-      "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed",
-      "Return entity IDs directly without using label services"
-    ],
-    "verbalization_templates": {
-      "po_template": "SELECT distinct ?p ?o ?oLabel\nWHERE {{\n  BIND(wd:{entity} AS ?s) .\n  \n  ?s ?p ?o .\n  FILTER(?p != wd:P18)\n  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n    FILTER (LANG(?oLabel) = \"en\")\n  }}\n}} LIMIT 1000",
-      "sp_template": "SELECT ?s ?sLabel ?p\nWHERE {{\n  BIND(wd:{entity} AS ?o) .\n  \n  ?s ?p ?o .\n  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n    FILTER (LANG(?sLabel) = \"en\")\n  }}\n}} LIMIT 1000"
-    },
-    "user_agent": "FROG Wikidata Agent/1.0",
-    "entity_uri_format": "wd:{entity_id}",
-    "property_uri_format": "wdt:{property_id}",
-    "supports_references": true
-  },
-  // Additional knowledge graph configurations...
-}
-\end{lstlisting}
+The foundation of our multi-source architecture is a comprehensive metadata system that defines the configuration for each knowledge graph. The complete configuration structure is provided in \hyperref[code:kg-metadata]{Appendix~\ref{sec:implementation-code}}.
 
 For each knowledge graph, the metadata includes:
 \begin{itemize}
@@ -2874,175 +1935,17 @@ Our multi-agent system consists of eight specialized agent nodes, each implement
 \end{enumerate}
 
 \subsubsection{Translation Node}
-The Translation Node serves as the entry point for our workflow, detecting the language of user questions and translating non-English questions to English if needed:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Translation Node Implementation, label=code:translation-node]
-class TranslationNode:
-    """Node for translating non-English questions"""
-    def __init__(self):
-        self.translator = Translator()
-    
-    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Start timing for visualization
-        start_time = datetime.now()
-        
-        # Log start if visualizer is available
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Translation Node", 
-                "start",
-                {"question": state.question},
-                start_time=start_time
-            )
-            
-        # Check if translation is enabled
-        use_translation = getattr(state, 'use_translation', True)
-        
-        # Detect language
-        detected = self.translator.detect(state.question)
-        state.original_lang = detected.lang
-        
-        # Log detection
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Translation Node",
-                "language detection",
-                {"detected_language": detected.lang, "translation_enabled": use_translation}
-            )
-        
-        # Translate if not English and translation is enabled
-        if state.original_lang != "en" and use_translation:
-            state.translated_question = self.translator.translate(
-                state.question, 
-                dest="en"
-            ).text
-            
-            # Log translation
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Translation Node",
-                    "translation",
-                    {"original": state.question, "translated": state.translated_question}
-                )
-                
-        else:
-            state.translated_question = state.question
-            
-            # Log no translation needed/used
-            if hasattr(state, 'visualizer') and state.visualizer:
-                state.visualizer.log_event(
-                    "Translation Node",
-                    "no translation " + ("needed" if state.original_lang == "en" else "enabled"),
-                    {"question": state.question}
-                )
-        
-        # End timing and log completion
-        end_time = datetime.now()
-        if hasattr(state, 'visualizer') and state.visualizer:
-            state.visualizer.log_event(
-                "Translation Node", 
-                "end", 
-                None,
-                start_time=start_time,
-                end_time=end_time
-            )
-            
-        return state
-\end{lstlisting}
+The Translation Node serves as the entry point for our workflow, detecting the language of user questions and translating non-English questions to English if needed. The complete implementation is provided in \hyperref[code:translation-node]{Appendix~\ref{sec:implementation-code}}.
 
 The implementation integrates Google's Translation API via the \texttt{googletrans} library, providing support for over 100 languages. The node also includes comprehensive event logging for process visualization.
 
 \subsubsection{Entity Extraction Node}
-The Entity Extraction Node analyzes the (translated) natural language question to identify relevant entities and properties. This node integrates with our LLM factory to utilize fine-tuned models for entity extraction:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction Node Implementation, label=code:entity-extraction-node]
-class EntityExtractionNode:
-    """Node for extracting entities and properties from questions"""
-    def __init__(self, llm_factory=None):
-        self.llm_factory = llm_factory
-        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
-        self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
-        
-    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Get knowledge source name for prompts
-        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        kg_metadata = get_knowledge_graph_metadata()
-        source_name = kg_metadata.get_name(knowledge_source)
-        
-        # Define system prompt
-        system_prompt = f"""You are an expert entity and property extractor for {source_name}.
-Extract all entities and properties from the question that would be needed for a SPARQL query.
-Format as JSON with 'entities' and 'properties' arrays."""
-
-        # Create user prompt
-        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties."
-        
-        # Generate extraction using configured model
-        if self._llm_provider.is_chat_template_supported():
-            messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ]
-            prompt = self._llm_provider.apply_chat_template(messages)
-        else:
-            prompt = f"{system_prompt}\n\n{user_prompt}"
-            
-        completion = self._llm_provider.generate_response(prompt)
-        
-        # Extract JSON content from completion
-        match = re.search(self.json_pattern, completion)
-        if match:
-            json_str = match.group(1).strip()
-            extracted_data = json.loads(json_str)
-        else:
-            # Try direct parsing if no JSON code block found
-            extracted_data = json.loads(completion)
-        
-        # Update state with extracted entities and properties
-        state.extracted_entities = extracted_data.get("entities", [])
-        state.related_properties = extracted_data.get("properties", [])
-            
-        return state
-\end{lstlisting}
+The Entity Extraction Node analyzes the (translated) natural language question to identify relevant entities and properties. The complete implementation is provided in \hyperref[code:entity-extraction-node]{Appendix~\ref{sec:implementation-code}}.
 
 The implementation integrates with the \texttt{llm\_factory} to access fine-tuned models specifically optimized for entity and property extraction tasks. The node handles model-specific formatting, including chat templates for models that support them, and implements robust error handling to ensure the workflow continues even if extraction fails.
 
 \subsubsection{Strategy Selection Node}
-The Strategy Selection Node analyzes the question complexity and extracted entities to determine the optimal processing approach:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Strategy Selection Node Implementation, label=code:strategy-selection-node]
-def contains_multiple_entities(question):
-    """Check if the question has multiple entities"""
-    keywords = ["and", "or", "as well as", "both", "along with", "together with"]
-    question = question.lower()
-    return any(
-        f" {keyword} " in question
-        or question.startswith(f"{keyword} ")
-        or question.endswith(f" {keyword}")
-        for keyword in keywords
-    )
-
-class StrategySelectionNode:
-    """Node for deciding between SPARQL and verbalization strategies"""
-    def __init__(self):
-        pass
-        
-    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Determine if we should use SPARQL or verbalization
-        contains_multiple = contains_multiple_entities(state.translated_question)
-        
-        # Check runtime settings - if useVerbalization is False, skip verbalization
-        use_verbalization = getattr(state, 'use_verbalization', True)
-        state.use_sparql = (not use_verbalization) or contains_multiple
-        
-        # Route to appropriate next step
-        if not state.use_sparql and state.extracted_entities:
-            state.next = "verbalization"
-        else:
-            state.next = "sparql_generation"
-        
-        return state
-\end{lstlisting}
+The Strategy Selection Node analyzes the question complexity and extracted entities to determine the optimal processing approach. The complete implementation is provided in \hyperref[code:strategy-selection-node]{Appendix~\ref{sec:implementation-code}}.
 
 The strategy selection implements a heuristic approach to determine whether verbalization (direct property lookup) or SPARQL generation is more appropriate for a given question. This decision is based on linguistic analysis of the question text and user settings. The node sets the \texttt{next} field in the state object, which is used by the conditional routing logic in the LangGraph framework.
 
@@ -3281,287 +2184,7 @@ The Verbalization Node implements a sophisticated approach that:
 This node enables efficient handling of simple questions without requiring SPARQL generation, significantly improving system responsiveness for common query types.
 
 \subsubsection{SPARQL Generation Node}
-The SPARQL Generation Node is responsible for generating executable SPARQL queries based on extracted entities and properties, and executing them against the appropriate knowledge graph:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation, label=code:sparql-generation-node]
-class SparqlGenerationNode:
-    """Node for generating and executing SPARQL queries"""
-    def __init__(self, llm_factory=None, property_retrieval=None):
-        self.llm_factory = llm_factory
-        self.property_retrieval = property_retrieval
-        self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
-        
-        # Use source-aware SPARQL wrapper
-        from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
-        self.api = SourceAwareSPARQLWrapper("wikidata")
-        
-        # Initialize the LLM provider
-        self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
-    
-    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
-        # Determine the knowledge source
-        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        
-        # Get knowledge graph metadata
-        kg_metadata = get_knowledge_graph_metadata()
-        source_name = kg_metadata.get_name(knowledge_source)
-        instructions = kg_metadata.get_sparql_instructions(knowledge_source)
-        
-        # Build the system prompt based on metadata
-        instructions_text = "\n".join(
-            [f"{i+1}. {instruction}" for i, instruction in enumerate(instructions)]
-        )
-        
-        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query using the provided entity and property resolutions.
-
-Guidelines:
-1. First identify which entities from the list match the question's intent
-2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question
-3. When multiple entities have similar labels, choose the one whose description best matches the question's context
-4. From the properties list, choose which properties are needed to answer the question
-5. Select only the minimum necessary properties required to answer the question correctly
-6. Use ALL identified entities and necessary properties in your SPARQL query
-7. {instructions_text}
-8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
-9. Return ONLY the raw SPARQL query with no explanations or comments in this format:
-   ```sparql
-   <your_sparql_query_here>
-   ```"""
-        
-        # Gather resources for the query generation
-        entities_matches_formatted = ""
-        for entity in state.extracted_entities:
-            entity_resources, _ = self.get_entities(entity, k=5, source=knowledge_source)
-            for resource in entity_resources:
-                if 'description' in resource and resource['description']:
-                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
-                else:
-                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}\n"
-
-        # Format properties context
-        properties_matches_formatted = ""
-        for prop in state.related_properties:
-            # Format property based on knowledge source
-            if " - " in prop:
-                prop_id, prop_label = prop.split(" - ", 1)
-                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}\n"
-            else:
-                properties_matches_formatted += f"- id: {prop}, label: {prop}\n"
-        
-        # Create user prompt template
-        user_prompt_template = f"""Question: {state.translated_question}
-
-Entities:
-{entities_matches_formatted}
-
-Properties:
-{properties_matches_formatted}
-
-SPARQL:"""
-        
-        query_attempts = []
-        curr_question = state.translated_question
-        attempts_left = state.try_threshold
-        
-        while attempts_left > 0:
-            attempt_num = state.try_threshold - attempts_left + 1
-                
-            try:
-                # Generate SPARQL query using configured model
-                if self._llm_provider.is_chat_template_supported():
-                    # Use chat template
-                    messages = [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt_template}
-                    ]
-                    prompt = self._llm_provider.apply_chat_template(messages)
-                else:
-                    # Fallback to simple concatenation
-                    prompt = f"{system_prompt}\n\n{user_prompt_template}"
-                
-                completion = self._llm_provider.generate_response(prompt)
-                
-                # Extract the SPARQL query using regex
-                match = re.search(self.sparql_pattern, completion)
-                if match:
-                    sparql_query = match.group(1).strip()
-                else:
-                    sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
-                
-                # Add PREFIX declarations if not already present
-                if sparql_query:
-                    # Check if PREFIX declarations are already in the query
-                    if not sparql_query.upper().startswith("PREFIX"):
-                        # Get PREFIX declarations from metadata
-                        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
-                        if prefixes_declaration:
-                            sparql_query = prefixes_declaration + "\n\n" + sparql_query
-                
-                # Enhance the query with references if requested
-                if sparql_query and state.include_references:
-                    original_query = sparql_query
-                    sparql_query = self._enhance_query_with_references(sparql_query, state)
-                
-                # Record query attempt
-                attempt = {
-                    "attempt_number": attempt_num,
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],
-                    "query": sparql_query if sparql_query else "Empty query"
-                }
-                
-                query_attempts.append(attempt)
-                
-                # Skip empty queries
-                if not sparql_query:
-                    attempts_left -= 1
-                    continue
-                
-                # Execute the query
-                result, err = self.execute_sparql(sparql_query, state)
-                
-                # Check if we got results
-                if result and not (len(result) == 1 and list(result[0].values())[0] == "0"):
-                    state.sparql_query = sparql_query
-                    state.query_result = result
-                    state.approach_used = "sparql"
-                    
-                    # Extract references if the query included reference fields
-                    references = []
-                    if state.include_references and result:
-                        references = self._extract_references_from_results(result)
-                        if references:
-                            state.sparql_references = references
-                    
-                    # Process the results for the answer
-                    if not result:
-                        state.context_str = "I couldn't find information to answer this question."
-                    else:
-                        # Format context as string
-                        context_str = f'The answer to "{state.question}" is: '
-                        for c in result[:50]:
-                            for k, v in c.items():
-                                context_str += f"{k}={v}, "
-                        context_str = context_str[:-2] + "."
-                        
-                        # Add reference information if available
-                        if references:
-                            context_str += "\n\n**Reference sources:**"
-                            # Format references for display
-                        
-                        state.context_str = context_str
-                        
-                    return state
-                
-                # Query failed, try again
-                attempts_left -= 1
-                
-                # Update the question to improve the query
-                curr_question = f"""The SPARQL query you generated to answer '{state.translated_question}' produced empty results. 
-Please generate a better query. Try using different properties or restructuring the query."""
-                
-            except Exception:
-                attempts_left -= 1
-        
-        # Failed after all attempts
-        use_google_search = getattr(state, 'use_google_search', True)
-        
-        if use_google_search:
-            state.context_str = "I couldn't generate a working query to answer this question."
-            state.approach_used = "sparql_failed"
-        else:
-            state.context_str = f"I couldn't generate a working SPARQL query to answer this question using {source_name}. Google Search fallback is disabled in settings."
-            state.approach_used = "sparql_failed_no_fallback"
-            
-        return state
-        
-    def execute_sparql(self, query, state=None):
-        """
-        Execute a SPARQL query with retries and error handling
-        """
-        # Configure SPARQL endpoint based on knowledge source
-        knowledge_source = getattr(state, 'knowledge_source', 'wikidata') if state else 'wikidata'
-        
-        # Get source-aware SPARQL wrapper for the appropriate knowledge source
-        source_aware_api = SourceAwareSPARQLWrapper(knowledge_source)
-        
-        # Execute the query with retries
-        max_retries = 3
-        retry_count = 0
-        
-        while retry_count < max_retries:
-            try:
-                # Execute query using source-aware wrapper
-                results, err = source_aware_api.execute_query(query)
-                
-                if err:
-                    retry_count += 1
-                    time.sleep(1)  # Wait before retrying
-                    continue
-                    
-                return results, None
-                
-            except Exception:
-                retry_count += 1
-                time.sleep(1)  # Wait before retrying
-        
-        # All retries failed
-        return None, "Query execution failed after multiple attempts"
-        
-    def _enhance_query_with_references(self, query, state):
-        """
-        Enhance a SPARQL query to include reference information
-        """
-        # Only enhance if references are requested and supported by the knowledge source
-        if not getattr(state, 'include_references', True):
-            return query
-            
-        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
-        kg_metadata = get_knowledge_graph_metadata()
-        
-        if not kg_metadata.supports_references(knowledge_source):
-            return query
-        
-        # Check if this is a simple SELECT query that we can enhance
-        if not query.upper().startswith("SELECT ") or "GROUP BY" in query.upper():
-            return query
-        
-        try:
-            # Parse the query to find variables
-            select_match = re.search(r'SELECT\s+(.+?)\s+WHERE', query, re.IGNORECASE | re.DOTALL)
-            if not select_match:
-                return query
-                
-            # Add reference variables to the SELECT clause
-            select_vars = select_match.group(1)
-            if "?refUrl" not in select_vars and "?refDate" not in select_vars:
-                enhanced_select = select_vars + " ?refUrl ?refDate"
-                enhanced_query = query.replace(select_vars, enhanced_select)
-            else:
-                enhanced_query = query
-            
-            # Add reference patterns to the WHERE clause
-            where_match = re.search(r'WHERE\s*{(.+)}', enhanced_query, re.IGNORECASE | re.DOTALL)
-            if not where_match:
-                return query
-                
-            where_clause = where_match.group(1)
-            reference_patterns = """
-  OPTIONAL {
-    ?statement prov:wasDerivedFrom ?ref .
-    OPTIONAL { ?ref pr:P854 ?refUrl . }
-    OPTIONAL { ?ref pr:P813 ?refDate . }
-  }
-"""
-            # Add reference patterns before the closing brace
-            enhanced_where = where_clause + reference_patterns
-            enhanced_query = enhanced_query.replace(where_clause, enhanced_where)
-            
-            return enhanced_query
-            
-        except Exception as e:
-            # If any error occurs during enhancement, return the original query
-            return query
-\end{lstlisting}
+The SPARQL Generation Node is responsible for generating executable SPARQL queries based on extracted entities and properties, and executing them against the appropriate knowledge graph. The complete implementation is provided in \hyperref[code:sparql-generation-node]{Appendix~\ref{sec:implementation-code}}.
 
 The SPARQL Generation Node implements a sophisticated retry mechanism that attempts to generate and execute valid SPARQL queries up to a configurable threshold. The node:
 
@@ -4030,63 +2653,10 @@ chat/                      # Chat application
 └── routing.py            # WebSocket routing
 \end{lstlisting}
 
-The \texttt{settings.py} file configures the Django application with appropriate middleware, installed apps, and database settings. Key configuration elements include:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=Django Settings Configuration, label=code:django-settings]
-# Channel layers configuration for WebSockets
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
-
-# CORS settings for cross-origin requests
-CORS_ALLOW_ALL_ORIGINS = True  # For development - restrict in production
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'ngrok-skip-browser-warning',
-]
-\end{lstlisting}
+The Django application is configured with appropriate middleware, installed apps, and database settings. The complete configuration is provided in \hyperref[code:django-settings]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{ASGI and WebSocket Configuration}
-The system leverages Django Channels for WebSocket support, configured through the ASGI application. This enables bidirectional communication between the frontend and backend:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=ASGI Configuration for WebSockets, label=code:asgi-configuration]
-# backend/wikidata_web/asgi.py
-import os
-import django
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-
-# Set the Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wikidata_web.settings')
-
-# Initialize Django first
-django.setup()
-
-# Import websocket_urlpatterns AFTER Django setup
-from chat.routing import websocket_urlpatterns
-
-# Create the ASGI application
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        )
-    ),
-})
-\end{lstlisting}
+The system leverages Django Channels for WebSocket support, configured through the ASGI application. The complete configuration is provided in \hyperref[code:asgi-configuration]{Appendix~\ref{sec:implementation-code}}.
 
 The WebSocket routes are defined in the \texttt{routing.py} file, which maps URL patterns to consumer classes:
 
@@ -4212,53 +2782,7 @@ frontend/src/
 The component architecture implements a unidirectional data flow, where state changes propagate downward through the component tree, while user interactions trigger events that are handled by the context provider.
 
 \subsubsection{Context-Based State Management}
-The application uses the React Context API for state management, implemented through the \texttt{ChatContext} provider:
-
-\begin{lstlisting}[breaklines=true,language=typescript, caption=Context-Based State Management, label=code:context-state-management]
-// frontend/src/context/ChatContext.tsx
-export const ChatProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
-  const [isNavOpen, setIsNavOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [pusherStatus, setPusherStatus] = useState(() => pusherService.getConnectionStatus());
-  const [settings, setSettings] = useState<AgentSettings>(() => {
-    // Load settings from localStorage or use defaults
-    // ...
-  });
-
-  // State management functions
-  const loadChat = async (chatId: string) => {/* ... */};
-  const startNewChat = async () => {/* ... */};
-  const sendMessage = (content: string) => {/* ... */};
-  const toggleNav = () => {/* ... */};
-  const updateSettings = (newSettings: AgentSettings) => {/* ... */};
-
-  return (
-    <ChatContext.Provider
-      value={{
-        chats,
-        currentChat,
-        isNavOpen,
-        isLoading,
-        isProcessing,
-        settings,
-        pusherStatus,
-        loadChat,
-        startNewChat,
-        sendMessage,
-        toggleNav,
-        updateSettings,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
-};
-\end{lstlisting}
+The application uses the React Context API for state management, implemented through the \texttt{ChatContext} provider. The complete implementation is provided in \hyperref[code:context-state-management]{Appendix~\ref{sec:implementation-code}}.
 
 This implementation provides centralized state management without the need for additional state management libraries, making the code more maintainable and reducing dependencies.
 
@@ -4333,37 +2857,7 @@ export interface AgentSettings {
 The real-time communication between the frontend and backend is a critical component of the system, enabling instantaneous updates as the multi-agent system processes queries and generates responses. This is implemented through a combination of WebSockets and the Pusher service.
 
 \subsubsection{WebSocket Consumer Implementation}
-The core of the real-time communication is the \texttt{ChatConsumer} class, which handles WebSocket connections for individual chat sessions:
-
-\begin{lstlisting}[breaklines=true,language=python, caption=WebSocket Consumer Implementation, label=code:websocket-consumer]
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
-        self.room_group_name = f'chat_{self.chat_id}'
-        
-        # Check if chat exists before proceeding
-        chat_exists = await self.chat_exists(self.chat_id)
-        if not chat_exists:
-            # If chat doesn't exist, create it automatically
-            await self.create_chat(self.chat_id)
-        
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-        
-        await self.accept()
-        
-        # Get API key from environment
-        gemini_api_key = os.environ.get('GEMINI_API_KEY')
-        
-        # Use the agent singleton instead of creating a new instance
-        self.agent = get_agent(api_key=gemini_api_key, debug_callback=self.debug_callback)
-        
-        # Add a message counter to prevent duplicate message issues
-        self.message_counter = 0
-\end{lstlisting}
+The core of the real-time communication is the \texttt{ChatConsumer} class, which handles WebSocket connections for individual chat sessions. The complete implementation is provided in \hyperref[code:websocket-consumer]{Appendix~\ref{sec:implementation-code}}.
 
 This implementation uses Django Channels' \texttt{AsyncWebsocketConsumer} as the base class, providing asynchronous handling of WebSocket connections. The consumer is responsible for:
 
@@ -4702,59 +3196,7 @@ The visualization and logging system represents a critical component of our FROG
 To enable advanced semantic analysis of agent execution patterns, we implemented a sophisticated RDF-based logging system that captures detailed execution traces in a machine-readable, queryable format. The system follows the SLOGERT (Semantic Log Event Rule Templates) approach, which transforms execution logs into a knowledge graph using standardized ontologies.
 
 \subsubsection{LogToRDF Converter Implementation}
-The core of our RDF-based logging is the \texttt{LogToRDF} class, which transforms execution logs into structured RDF triples. We defined custom namespaces for representing log events, components, and execution metadata:
-
-\begin{lstlisting}[language=python, caption=LogToRDF namespace definitions, label=code:log-to-rdf-namespaces]
-def __init__(self, run_id=None, approach_used=None):
-    # Define namespaces
-    self.LOG = Namespace("https://w3id.org/sepses/ns/log#")
-    self.LOGEX = Namespace("https://w3id.org/sepses/ns/logex#")
-    self.LOGID = Namespace("https://sepses.ifs.tuwien.ac.at/id/log#")  # For shared vocabulary
-    self.LXID = Namespace("https://sepses.ifs.tuwien.ac.at/id/logex#")
-    self.CEE = Namespace("https://cee.mitre.org/cee#")
-    self.FOAF = Namespace("http://xmlns.com/foaf/0.1/")
-    
-    # Add a global namespace for all runs instead of run-specific namespace
-    self.LOGS_NS = Namespace("https://sepses.ifs.tuwien.ac.at/id/logs/")
-\end{lstlisting}
-
-The converter transforms each log event into a set of RDF triples that represent the execution process, including entities, queries, parameters, and results. The implementation handles sophisticated semantic patterns for representing various types of events:
-
-\begin{lstlisting}[language=python, caption=LogToRDF event conversion method, label=code:log-to-rdf-events]
-def add_log_event(self, log_entry):
-    """Convert a single log entry to RDF triples with sophisticated patterns"""
-    event_id = self.generate_event_id(log_entry)
-    event_uri = self.LOGS_NS[f"Event_{event_id}"]
-    
-    # Add event type and basic properties
-    self.graph.add((event_uri, RDF.type, self.LOG.Event))
-    # Add reference to the run metadata entity (foreign key)
-    self.graph.add((event_uri, self.LOGEX.belongsToRun, self.metadata_uri))
-    
-    # Add timestamp
-    timestamp = datetime.fromisoformat(log_entry['timestamp'])
-    self.graph.add((event_uri, self.LOG.time, Literal(timestamp, datatype=XSD.dateTime)))
-    
-    # Add component as process/service
-    component = log_entry['component']
-    self.graph.add((event_uri, self.LOG.pname, self.LOGID[f"{component.replace(' ', '_')}"]))
-    
-    # Add event type
-    event_type = log_entry['event_type']
-    event_type_uri = self.LOGID[f"EventType_{event_type.replace(' ', '_')}"]
-    self.graph.add((event_uri, self.LOG.eventType, event_type_uri))
-    
-    # Process event details with sophisticated patterns
-    if log_entry.get('details'):
-        self._process_details(event_uri, log_entry['details'], event_id)
-    
-    # Add duration if available
-    if log_entry.get('start_time') and log_entry.get('end_time'):
-        start = datetime.fromisoformat(log_entry['start_time'])
-        end = datetime.fromisoformat(log_entry['end_time'])
-        duration = (end - start).total_seconds()
-        self.graph.add((event_uri, self.LOG.duration, Literal(duration, datatype=XSD.float)))
-\end{lstlisting}
+The core of our RDF-based logging is the \texttt{LogToRDF} class, which transforms execution logs into structured RDF triples. The complete implementation is provided in \hyperref[code:log-to-rdf-events]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{RDF Schema Design}
 Our RDF schema design follows the W3C PROV Ontology for representing provenance information, combined with custom extensions for agent-specific execution patterns. The schema includes:
@@ -4898,48 +3340,7 @@ logid:EventType_executing_query_from_attempt_1 a log:EventType ;
 In addition to the RDF-based logging system, we implemented a real-time visualization system that provides immediate feedback on the agent's execution process. This system is particularly useful for debugging and understanding the agent's decision-making process.
 
 \subsubsection{BoxologyVisualizer Implementation}
-The core of our visualization system is the \texttt{BoxologyVisualizer} class, which captures execution events and generates Mermaid\footnote{\url{https://mermaid.js.org/}} diagrams representing the process flow:
-
-\begin{lstlisting}[language=python, caption=BoxologyVisualizer class implementation, label=code:boxology-visualizer]
-class BoxologyVisualizer:
-    """Visualizer for displaying detailed process flow of the FROGGraphRAG execution as a diagram using Mermaid Markdown"""
-    def __init__(self, verbose=1, debug_callback=None):
-        self.logs = []
-        self.verbose = verbose
-        self.start_time = datetime.now()
-        self.question = None  # Add this to store the question
-        self.debug_callback = debug_callback
-        self.approach_used = None  # Track the approach used
-        
-        # Initialize Jena uploader
-        self.jena_uploader = JenaUploader()
-        
-        # Define color scheme based on boxology notation
-        self.colors = {
-            "Translation Node": "#d6efc7",           # Light green for transformation
-            "Entity Extraction Node": "#bcd6e7",     # Light blue for data process
-            "Strategy Selection Node": "#f6d5a7",    # Light orange for decision
-            "Verbalization Node": "#e7d3f2",         # Light purple for generation
-            "Property Generation Node": "#ffd5d5",   # Light red for property related
-            "SPARQL Generation Node": "#d5f5f5",     # Light teal for query related
-            "Answer Generation Node": "#f5f5d5",     # Light yellow for inference
-            "Google Search Node": "#ffccff",         # Light pink for web search
-            "default": "#f5f5f5"                     # Light gray for default
-        }
-        
-        # Define shapes based on boxology notation
-        self.shapes = {
-            "Translation Node": "rounded",           # Rounded rectangle for transformation process
-            "Entity Extraction Node": "rounded",     # Rounded rectangle for process
-            "Strategy Selection Node": "diamond",    # Diamond for decision
-            "Verbalization Node": "rounded",         # Rounded rectangle for generation
-            "Property Generation Node": "rounded",   # Rounded rectangle for generation
-            "SPARQL Generation Node": "rounded",     # Rounded rectangle for inference
-            "Answer Generation Node": "rounded",     # Rounded rectangle for inference
-            "Google Search Node": "rounded",         # Rounded rectangle for web search
-            "default": "box"                         # Rectangle for default
-        }
-\end{lstlisting}
+The core of our visualization system is the \texttt{BoxologyVisualizer} class, which captures execution events and generates Mermaid\footnote{\url{https://mermaid.js.org/}} diagrams representing the process flow. The complete implementation is provided in \hyperref[code:boxology-visualizer]{Appendix~\ref{sec:implementation-code}}.
 
 The visualizer maintains an in-memory log of execution events, capturing detailed information about each step in the agent's processing pipeline. This information includes:
 

@@ -959,8 +959,1352 @@ If you need to add new datasets or modify the configuration:
 \end{enumerate}
 
 %-----------------------------------------------------------------------------%
+\addappendix{Implementation Code Examples}
+\chapter*{Appendix 6: Implementation Code Examples}
+\label{sec:implementation-code}
+
+This appendix contains the detailed implementation code examples referenced throughout Chapter 4. The code examples are organized by the system component they belong to, providing complete implementation details for researchers and developers interested in reproducing or extending this work.
+
+\section*{Dataset Generation Implementation Code}
+
+\subsection*{Knowledge Graph Schema Extraction}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Knowledge Graph Schema Extractor Interface, label=code:schema-extractor-interface]
+class KGSchemaExtractor:
+    def __init__(self, options=None):
+        # Initialize with domain-specific defaults
+        self.options = {
+            "sparql_endpoint": None,
+            "sample_size": 1000,
+            "prefixes": {
+                'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+                # Domain-specific prefixes added by adapters
+            }
+        }
+        if options:
+            self.options.update(options)
+            
+        # Initialize schema containers
+        self.schema_info = {
+            "properties": [],
+            "types": [],
+            "numericProperties": [],
+            "dateProperties": [],
+            "textProperties": []
+        }
+        
+    def extract_from_endpoint(self, endpoint):
+        """Extract schema from a SPARQL endpoint"""
+        # Implementation for remote endpoints
+        pass
+        
+    def extract_from_file(self, file_path, format='turtle'):
+        """Extract schema from a local RDF file"""
+        # Implementation for local files
+        pass
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Domain-Specific Schema Processing, label=code:domain-schema-processing]
+def parse_university_course_graph(self, graph):
+    """
+    Parse the university course graph to extract schema information
+    
+    Args:
+        graph (rdflib.Graph): The RDF graph to parse
+    """
+    # Extract classes (types)
+    class_uris = set()
+    
+    # Find formal class declarations
+    for s, p, o in graph.triples((None, self.rdf.type, self.rdfs.Class)):
+        class_uris.add(s)
+    for s, p, o in graph.triples((None, self.rdf.type, self.owl.Class)):
+        class_uris.add(s)
+        
+    # Infer classes from usage patterns
+    type_objects = set()
+    for s, p, o in graph.triples((None, self.rdf.type, None)):
+        if isinstance(o, URIRef):
+            type_objects.add(o)
+    
+    # Add inferred classes
+    class_uris.update(type_objects)
+    
+    # Process each class
+    for class_uri in class_uris:
+        # Get class label
+        label = self._get_label_from_graph(class_uri) or self.extract_label_from_uri(str(class_uri))
+        
+        # Add to schema
+        self.schema_info["types"].append({
+            "value": self.shorten_uri(str(class_uri)),
+            "label": label,
+            "uri": str(class_uri)
+        })
+    
+    # Extract and categorize properties
+    # (Similar pattern for properties with domain-specific categorization)
+\end{lstlisting}
+
+\subsection*{Vector Search Integration}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=N-gram Processing Implementation, label=code:ngram-processing]
+def _preprocess_into_tokens(self, q: str) -> list[str]:
+    """
+    Preprocess question into tokens using NLTK RegexpTokenizer
+    
+    Args:
+        q (str): Question string
+        
+    Returns:
+        list[str]: List of tokens
+    """
+    tok_pattern = r"\w+"
+    tokenizer = RegexpTokenizer(tok_pattern)
+    tokenized = tokenizer.tokenize(q)
+    result = []
+    for tok in tokenized:
+        tok = tok.lower()
+        if tok not in self.stopwords:
+            result.append(tok)
+    return result
+
+def _generate_ngrams(self, tokens: list[str], max_n: int = 3) -> list[str]:
+    """
+    Generate n-grams from tokens using NLTK
+    
+    Args:
+        tokens (list[str]): List of tokens
+        max_n (int): Maximum n-gram size
+        
+    Returns:
+        list[str]: List of n-grams
+    """
+    result = []
+    
+    # Generate unigrams, bigrams, and trigrams using NLTK
+    for n in range(1, min(max_n + 1, len(tokens) + 1)):
+        n_grams = ngrams(tokens, n)
+        result.extend([" ".join(ng) for ng in n_grams])
+    
+    return result
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Weaviate Vector Search Implementation, label=code:weaviate-search]
+class KnowledgeGraphVectorSearch:
+    """Provides vector search capabilities for knowledge graph entities and properties"""
+    
+    def __init__(self, embedding_model_name="jinaai/jina-embeddings-v3"):
+        # Initialize embedding model
+        self.model_embed = SentenceTransformer(embedding_model_name, trust_remote_code=True)
+        self.stopwords = set(stopwords.words("english"))
+        # Connect to vector database
+        self.client = self._connect_to_vector_db()
+    
+    def initialize_collections(self, domain_name, entities_df, properties_df):
+        """Initialize entity and property collections for a domain"""
+        # Create collection names based on domain
+        entities_collection_name = f"{domain_name}_entities"
+        properties_collection_name = f"{domain_name}_properties"
+        
+        # Setup collections
+        self.entities_collection = self._setup_collection(entities_collection_name, entities_df)
+        self.properties_collection = self._setup_collection(properties_collection_name, properties_df)
+    
+    def search_entities(self, query, k=5):
+        """Search entities using hybrid search"""
+        # Generate query embedding
+        query_vector = self.model_embed.encode([query])[0]
+        
+        # Execute hybrid search
+        response = self.entities_collection.query.hybrid(
+            query=query,
+            query_properties=["label"],
+            vector=query_vector,
+            limit=k,
+        )
+        
+        # Return results as dataframe
+        return pd.DataFrame([{**o.properties, "score": o.metadata.score} for o in response.objects])
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity and Property Matching Implementation, label=code:entity-property-matching]
+def get_related_candidates(
+    self,
+    q: str,
+    property_candidates: list[str] = [],
+    threshold: float = 0.6,
+    k: int = 5,
+) -> dict[str, list[dict]]:
+    """
+    Get related entity and property candidates using n-grams and vector search
+    
+    Args:
+        q (str): Question string
+        property_candidates (list[str]): Additional property candidates
+        threshold (float): Similarity threshold
+        k (int): Number of results per search
+        
+    Returns:
+        dict[str, list[dict]]: Dictionary with 'entities' and 'properties' lists
+    """
+    # Generate tokens and n-grams from question
+    tokens = self._preprocess_into_tokens(q)
+    ngrams = self._generate_ngrams(tokens)
+    
+    # Initialize result containers
+    result = {"entities": [], "properties": []}
+
+    # Search function for entity or property matching
+    def search(ngram, search_type, threshold=threshold):
+        if search_type == "entities":
+            df_res = self.search_entities(ngram, k=k)
+        else:
+            df_res = self.search_properties(ngram, k=k)
+        
+        # Filter by threshold and format results
+        filtered_results = []
+        for _, row in df_res.iterrows():
+            if row.get('score', 0) >= threshold:
+                filtered_results.append({
+                    'short': row.get('short', ''),
+                    'label': row.get('label', ''),
+                    'score': row.get('score', 0.0)
+                })
+        
+        return search_type, filtered_results
+
+    # Search using n-grams and property candidates
+    search_terms = ngrams + property_candidates
+    
+    for term in search_terms:
+        for search_type in result.keys():
+            search_result_type, df_res = search(term, search_type)
+            if df_res:
+                result[search_result_type].extend(df_res)
+    
+    # Remove duplicates
+    for key in result.keys():
+        seen = set()
+        unique_items = []
+        for item in result[key]:
+            item_tuple = (item['short'], item['label'])
+            if item_tuple not in seen:
+                seen.add(item_tuple)
+                unique_items.append(item)
+        result[key] = unique_items
+    
+    return result
+\end{lstlisting}
+
+\subsection*{Template-Based Dataset Generation}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Template Structure Definition, label=code:template-structure]
+def initialize_templates(self):
+    """Initialize question-query template pairs with domain-specific templates"""
+    # Basic templates (40% of dataset)
+    basic_templates = [
+        {
+            "id": "course-credits",
+            "category": "university",
+            "questionTemplates": [
+                "How many credits does the {entity} course have?",
+                "What is the credit value for {entity}?",
+                "Can you tell me the number of credits for the {entity} course?"
+            ],
+            "sparqlTemplate": """
+                SELECT ?value WHERE {
+                {entity} ns1:has_credits ?value .
+                }
+            """,
+            "thoughtsTemplate": [
+                "1. The question asks for the credit value of {entity}.",
+                "2. The entity '{entity}' represents a course in the university domain.",
+                "3. The property 'ns1:has_credits' links a course to its credit value.",
+                "4. To solve this, retrieve the credit value linked to {entity} via the 'ns1:has_credits' property.",
+                "5. Construct a SPARQL query to retrieve the credit value for {entity}."
+            ],
+            "complexity": "basic"
+        },
+        # Additional templates...
+    ]
+    
+    # Combine all templates
+    return basic_templates + intermediate_templates + advanced_templates
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Discovery-First Template Instantiation, label=code:discovery-first]
+def create_discovery_query(self, template, placeholders):
+    """
+    Create a discovery query that finds valid values for all placeholders
+    
+    Args:
+        template (dict): The template to convert
+        placeholders (set): Set of placeholders in the template
+        
+    Returns:
+        str: The discovery query
+    """
+    # Extract the WHERE clause from the template
+    where_match = re.search(r'WHERE\s*{(.*)}', template["sparqlTemplate"], re.DOTALL | re.IGNORECASE)
+    if not where_match:
+        return None
+        
+    # Start with SELECT clause including all placeholder variables
+    select_vars = set()
+    where_patterns = []
+    
+    # Process each line in the WHERE clause
+    where_clause = where_match.group(1).strip()
+    for line in where_clause.split('.'):
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Replace placeholders with variables
+        processed_line = line
+        for placeholder in placeholders:
+            pattern = r'{[\s]*' + re.escape(placeholder) + r'[\s]*}'
+            if re.search(pattern, processed_line):
+                var_name = f"?{placeholder}"
+                processed_line = re.sub(pattern, var_name, processed_line)
+                select_vars.add(var_name)
+                
+                # For entity placeholders, also select label
+                if placeholder.startswith('entity'):
+                    select_vars.add(f"?{placeholder}Label")
+        
+        where_patterns.append(processed_line + '.')
+    
+    # Construct the SELECT and WHERE clauses
+    select_clause = "SELECT DISTINCT " + " ".join(sorted(select_vars))
+    where_clause = "\n  ".join(where_patterns)
+    
+    # Add OPTIONAL label patterns for entity placeholders
+    optional_patterns = []
+    for placeholder in placeholders:
+        if placeholder.startswith('entity'):
+            optional_patterns.append(f"OPTIONAL {{ ?{placeholder} rdfs:label ?{placeholder}Label . }}")
+    
+    # Construct the complete discovery query
+    discovery_query = f"{select_clause} WHERE {{\n  {where_clause}\n  {' '.join(optional_patterns)}\n}}"
+    
+    return discovery_query
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Chain of Thoughts Generation, label=code:chain-of-thoughts]
+def generate_chain_of_thoughts(self, question, sparql, template):
+    """
+    Generate a chain of thoughts explaining how to translate the question to SPARQL
+    
+    Args:
+        question (str): Natural language question
+        sparql (str): SPARQL query
+        template (dict): Template used to generate the question-query pair
+        
+    Returns:
+        list: List of thought steps
+    """
+    if "thoughtsTemplate" not in template:
+        # Fallback for templates without thoughtsTemplate
+        return self.generate_default_thoughts()
+    
+    # Get the thoughts template
+    thoughts_template = template["thoughtsTemplate"]
+    
+    # Extract entity and property URIs from SPARQL
+    entity_uris, property_uris = self._extract_uris_from_sparql(sparql)
+    
+    # Create mappings for replacement
+    all_mappings = self._create_replacement_mappings(entity_uris, property_uris, sparql)
+    
+    # Replace placeholders in thoughts
+    processed_thoughts = []
+    for thought in thoughts_template:
+        processed_thought = thought
+        
+        # Replace each placeholder with the appropriate value
+        for placeholder, mapping in all_mappings.items():
+            pattern = r'\{' + re.escape(placeholder) + r'\}'
+            replacement_value = self.get_appropriate_replacement(thought, placeholder, mapping)
+            processed_thought = re.sub(pattern, replacement_value, processed_thought)
+        
+        # Handle special case for the first entity
+        if 'entity' in all_mappings and '{entity}' not in processed_thought and '{entity1}' in processed_thought:
+            entity_mapping = all_mappings['entity']
+            processed_thought = re.sub(r'\{entity1\}', self.get_appropriate_replacement(thought, 'entity1', entity_mapping), processed_thought)
+        
+        processed_thoughts.append(processed_thought)
+    
+    return processed_thoughts
+\end{lstlisting}
+
+\subsection*{Random-Walk Dataset Generation}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Pattern Discovery Implementation, label=code:pattern-discovery]
+def generate_1_property_patterns(self, count=100):
+    """
+    Generate 1-property patterns using discovery-first approach
+    
+    Args:
+        count (int): Number of patterns to generate
+        
+    Returns:
+        list: Generated patterns
+    """
+    patterns = []
+    
+    # Discovery query to find all valid property-entity combinations
+    discovery_query = """
+        SELECT DISTINCT ?prop ?entity WHERE {
+            ?s ?prop ?entity .
+            FILTER(STRSTARTS(STR(?prop), "http://example.org/"))
+            FILTER(STRSTARTS(STR(?entity), "http://example.org/"))
+        }
+    """
+    
+    try:
+        # Execute discovery query
+        results = list(self.graph.query(discovery_query))
+        print(f"Found {len(results)} valid property-entity combinations")
+        
+        if not results:
+            return patterns
+        
+        # Generate patterns from valid combinations
+        attempts = 0
+        max_attempts = count * 3
+        
+        while len(patterns) < count and attempts < max_attempts:
+            attempts += 1
+            
+            # Randomly select a valid combination
+            prop, entity = random.choice(results)
+            prop_str = self._shorten_uri(prop)
+            entity_str = self._shorten_uri(entity)
+            
+            # Generate both subject and object target patterns
+            pattern_type = random.choice(['subject_target', 'object_target'])
+            
+            if pattern_type == 'subject_target':
+                # Pattern: ?target prop fixed_entity
+                sparql = f"SELECT ?target WHERE {{ ?target {prop_str} {entity_str} . }}"
+                pattern_id = f'1p_subj_{len(patterns)}'
+                pattern_type_name = '1_prop_subject_target'
+            else:
+                # Find a valid subject for this property
+                subject_query = f"""
+                    SELECT DISTINCT ?subj WHERE {{
+                        ?subj <{str(prop)}> <{str(entity)}> .
+                    }}
+                """
+                subject_results = list(self.graph.query(subject_query))
+                if not subject_results:
+                    continue
+                    
+                subj = random.choice(subject_results)[0]
+                subj_str = self._shorten_uri(subj)
+                sparql = f"SELECT ?target WHERE {{ {subj_str} {prop_str} ?target . }}"
+                pattern_id = f'1p_obj_{len(patterns)}'
+                pattern_type_name = '1_prop_object_target'
+            
+            # Validate that this pattern has results
+            if self._validate_pattern(sparql):
+                pattern = {
+                    'id': pattern_id,
+                    'sparql': self._format_sparql(sparql),
+                    'pattern_type': pattern_type_name,
+                    'complexity': 'basic',
+                    'property': prop_str,
+                    'fixed_entity': entity_str if pattern_type == 'subject_target' else subj_str
+                }
+                patterns.append(pattern)
+        
+    except Exception as e:
+        print(f"Error in 1-property pattern discovery: {e}")
+    
+    return patterns
+\end{lstlisting}
+
+\section*{Model Finetuning Implementation Code}
+
+\subsection*{Infrastructure and Memory Optimization}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Finetuning Infrastructure Implementation, label=code:finetuning-infrastructure]
+from unsloth import FastLanguageModel
+import torch
+from trl import SFTTrainer
+from transformers import TrainingArguments
+from unsloth import is_bfloat16_supported
+from datasets import Dataset
+from typing import Optional
+from torch.nn.parallel import DataParallel
+import gc
+from huggingface_hub import HfApi, create_repo
+import shutil
+
+# Model loading implementation
+def load_model(model_name: str):
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_name,
+        max_seq_length=max_seq_length,
+        dtype=dtype,
+        load_in_4bit=load_in_4bit,
+    )
+        
+    # Set chat template for models that need it
+    if not hasattr(tokenizer, "chat_template") and tokenizer.chat_template is not None and 'qwen' in model.config.name_or_path:
+        tokenizer.chat_template = "<|im_start|>system\n{{ messages[0]['content'] }}<|im_end|>\n{% for message in messages[1:] %}<|im_start|>{{ message['role'] }}\n{{ message['content'] }}<|im_end|>\n{% endfor %}"
+        print("Model's tokenizer has been set.")
+    
+    return model, tokenizer
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Memory Optimization Implementation, label=code:memory-optimization]
+def clear_memory():
+    """Aggressively clear GPU memory"""
+    import gc
+    import torch
+    
+    # Clear CUDA cache
+    torch.cuda.empty_cache()
+    
+    # Force garbage collection
+    gc.collect()
+    
+    # Add synchronization
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        
+    # Log memory status
+    if torch.cuda.is_available():
+        print(f"GPU memory allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+        print(f"GPU memory reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
+\end{lstlisting}
+
+\subsection*{LoRA Configuration}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction LoRA Configuration, label=code:entity-extraction-lora]
+def finetune_entity_prop(model_name, train_dataset, val_dataset, output_dir, num_epochs=5):
+    """
+    Fine-tune a model with QLoRA for entity and property extraction
+    """
+    model, tokenizer = load_model(model_name)
+    
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=16,                             # Rank of update matrices
+        target_modules=[                  # Attention and MLP layers
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj"
+        ],
+        lora_alpha=16,                    # Scaling factor for updates
+        lora_dropout=0,                   # No dropout for deterministic behavior
+        bias="none",                      # No bias parameters to minimize trainable params
+        use_gradient_checkpointing="unsloth",  # Memory optimization
+        random_state=42,                  # Reproducibility
+        use_rslora=False,                 # Standard QLoRA for stability
+        loftq_config=None,                # No quantization for adapter weights
+    )
+    
+    trainer = SFTTrainer(
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=train_dataset,
+        eval_dataset=val_dataset,
+        dataset_text_field="text",
+        max_seq_length=max_seq_length,
+        dataset_num_proc=2,
+        packing=False,                    # No packing to preserve structure
+        args=TrainingArguments(
+            # Training parameters
+            per_device_train_batch_size=1,
+            per_device_eval_batch_size=1,
+            gradient_accumulation_steps=4,
+            warmup_steps=5,
+            num_train_epochs=num_epochs,
+            learning_rate=2e-5,
+            
+            # Precision options
+            fp16=not is_bfloat16_supported(),
+            bf16=is_bfloat16_supported(),
+            optim="adamw_8bit",
+            weight_decay=0.01,
+            lr_scheduler_type="linear",
+            
+            # Evaluation strategy
+            eval_strategy="steps",
+            save_strategy="steps",
+            save_steps=20,
+            eval_steps=20,
+            logging_steps=10,
+            
+            # Checkpoint management
+            save_total_limit=5,
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            
+            # Output directory
+            output_dir="outputs",
+            report_to="none",
+            seed=42,
+        ),
+    )
+
+    trainer.train()
+
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    
+    return model, tokenizer
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation LoRA Configuration, label=code:sparql-generation-lora]
+def finetune_sparql(model_name, train_dataset, val_dataset, output_dir, knowledge_domain="wikidata", num_epochs=10):
+    """
+    Fine-tune a model with enhanced QLoRA for SPARQL generation
+    
+    Args:
+        model_name: Name of the base model
+        train_dataset: Training dataset
+        val_dataset: Validation dataset
+        output_dir: Directory to save the model
+        knowledge_domain: The knowledge graph domain (wikidata, curriculum, legal, or gesis)
+        num_epochs: Number of training epochs
+    """
+    model, tokenizer = load_model(model_name)
+    
+    # Set rank based on knowledge domain
+    # Use lower rank (32) for Legal and GESIS KGs which have longer inputs
+    # Use higher rank (64) for Wikidata and Curriculum KGs
+    rank = 32 if knowledge_domain in ["legal", "gesis"] else 64
+    
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r = rank,                         # Domain-specific rank value
+        target_modules = [                # Comprehensive layer selection
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj"
+        ],
+        lora_alpha = rank,                # Scaling factor matching rank
+        lora_dropout = 0.1,               # Dropout for generalization
+        bias = "all",                     # Include bias for syntax learning
+        use_gradient_checkpointing = "unsloth",
+        random_state = 42,
+        use_rslora = True,                # Rank-Stabilized QLoRA for stability
+        loftq_config = None,
+    )
+    
+    trainer = SFTTrainer(
+        model = model,
+        tokenizer = tokenizer,
+        train_dataset = train_dataset,
+        eval_dataset = val_dataset,
+        dataset_text_field = "text",
+        max_seq_length = max_seq_length,
+        dataset_num_proc = 4,             # More processors for complex data
+        packing = True,                   # Enable packing for efficiency
+        args = TrainingArguments(
+            # Batch sizing
+            per_device_train_batch_size = 1,
+            per_device_eval_batch_size = 1,
+            gradient_accumulation_steps = 16,  # Larger effective batch
+            
+            # Learning rate
+            learning_rate = 1e-5,         # Lower learning rate for convergence
+            weight_decay = 0.1,           # Stronger regularization
+            
+            # Schedule
+            num_train_epochs = num_epochs,
+            lr_scheduler_type = "polynomial",  # Better for syntax learning
+            warmup_ratio = 0.1,           # 10% warmup period
+            
+            # Precision
+            fp16 = not is_bfloat16_supported(),
+            bf16 = is_bfloat16_supported(),
+            optim = "adamw_8bit",
+            
+            # Evaluation
+            eval_strategy = "steps",
+            save_strategy = "steps",
+            eval_steps = 25,
+            save_steps = 25,
+            logging_steps = 5,
+            
+            # Checkpoint management
+            save_total_limit = 5,
+            load_best_model_at_end = True,
+            metric_for_best_model = "eval_loss",
+            greater_is_better = False,
+            
+            # Additional settings
+            group_by_length = True,
+            gradient_checkpointing = True,
+            dataloader_drop_last = False,
+            
+            # Label smoothing for SPARQL syntax tokens
+            label_smoothing_factor = 0.05,
+            
+            # Output
+            output_dir = "outputs",
+            report_to = "tensorboard",
+            seed = 42,
+        ),
+    )
+    
+    trainer.train()
+
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    
+    return model, tokenizer
+\end{lstlisting}
+
+\section*{Multi-Agent System Implementation Code}
+
+\subsection*{LangGraph Architecture}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=LangGraph State Graph Construction, label=code:state-graph]
+def build_graph(self):
+    """Build the LangGraph workflow"""
+    # Create nodes with LLM factory
+    translation_node = TranslationNode()
+    entity_extraction_node = EntityExtractionNode(llm_factory=self.llm_factory)
+    verbalization_node = VerbalizationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
+    sparql_generation_node = SparqlGenerationNode(llm_factory=self.llm_factory, property_retrieval=self.property_retrieval)
+    answer_generation_node = AnswerGenerationNode(llm_factory=self.llm_factory)
+    strategy_selection_node = StrategySelectionNode()
+    property_generation_node = PropertyGenerationNode(self.property_retrieval)
+    google_search_node = GoogleSearchNode()
+
+    # Create the graph
+    workflow = StateGraph(FROGGraphRAGState)
+
+    # Add nodes
+    workflow.add_node("translation", translation_node)
+    workflow.add_node("entity_extraction", entity_extraction_node)
+    workflow.add_node("strategy_selection", strategy_selection_node)
+    workflow.add_node("verbalization", verbalization_node)
+    workflow.add_node("property_generation", property_generation_node)
+    workflow.add_node("sparql_generation", sparql_generation_node)
+    workflow.add_node("answer_generation", answer_generation_node)
+    workflow.add_node("google_search", google_search_node)
+
+    # Define the flow
+    workflow.set_entry_point("translation")
+    workflow.add_edge("translation", "entity_extraction")
+    workflow.add_edge("entity_extraction", "strategy_selection")
+    
+    # Add conditional edges for adaptive routing
+    workflow.add_conditional_edges(
+        "strategy_selection",
+        lambda x: x.next,
+        {"verbalization": "verbalization", "sparql_generation": "property_generation"}
+    )
+    
+    # Compile the graph
+    self.graph = workflow.compile()
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=State Management Implementation, label=code:state-management]
+# backend/agent/langgraph/utils/state.py
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+
+class FROGGraphRAGState(BaseModel):
+    """State for the FROGGraphRAG workflow"""
+    question: str
+    translated_question: Optional[str] = None
+    original_lang: Optional[str] = None
+    extracted_entities: Optional[List[str]] = Field(default_factory=list)
+    use_sparql: Optional[bool] = None
+    entity_uri: Optional[str] = None
+    verbalization_result: Optional[List[Dict]] = Field(default_factory=list)
+    verbalization_similarity: Optional[float] = None
+    verbalization_references: Optional[List[Dict]] = Field(default_factory=list)
+    sparql_references: Optional[List[Dict]] = Field(default_factory=list)
+    related_properties: Optional[List[str]] = Field(default_factory=list)
+    sparql_query: Optional[str] = None
+    query_result: Optional[List[Dict]] = Field(default_factory=list)
+    context_str: Optional[str] = None
+    final_answer: Optional[str] = None
+    verbose: Optional[int] = 0
+    use_cot: Optional[bool] = True
+    output_uri: Optional[bool] = False
+    try_threshold: Optional[int] = 5
+    approach_used: Optional[str] = None
+    next: Optional[str] = None
+    visualizer: Optional[Any] = None
+    boxology_verbose: Optional[int] = 0
+    debug_callback: Optional[Any] = None
+    include_references: Optional[bool] = True
+    google_search_result: Optional[Dict] = None
+    use_verbalization: Optional[bool] = True
+    use_google_search: Optional[bool] = True
+    use_translation: Optional[bool] = True
+    knowledge_source: Optional[str] = "wikidata"
+\end{lstlisting}
+
+\subsection*{Multi-Source Knowledge Graph Architecture}
+
+\begin{lstlisting}[breaklines=true,language=json, caption=Knowledge Graph Metadata Configuration, label=code:kg-metadata]
+// backend/config/knowledge_graph_metadata.json (excerpt)
+{
+  "wikidata": {
+    "name": "Wikidata",
+    "description": "Wikidata knowledge graph",
+    "endpoint": "https://query.wikidata.org/sparql",
+    "prefixes": {
+      "wd": "http://www.wikidata.org/entity/",
+      "wdt": "http://www.wikidata.org/prop/direct/",
+      "p": "http://www.wikidata.org/prop/",
+      // Additional prefixes...
+    },
+    "sparql_instructions": [
+      "Use PREFIX NOTATION ONLY (e.g., wd:Q123, wdt:P123), NOT full URIs",
+      "Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed",
+      "Return entity IDs directly without using label services"
+    ],
+    "verbalization_templates": {
+      "po_template": "SELECT distinct ?p ?o ?oLabel\nWHERE {{\n  BIND(wd:{entity} AS ?s) .\n  \n  ?s ?p ?o .\n  FILTER(?p != wd:P18)\n  FILTER NOT EXISTS {{ ?o a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?o rdfs:label ?oLabel .\n    FILTER (LANG(?oLabel) = \"en\")\n  }}\n}} LIMIT 1000",
+      "sp_template": "SELECT ?s ?sLabel ?p\nWHERE {{\n  BIND(wd:{entity} AS ?o) .\n  \n  ?s ?p ?o .\n  FILTER NOT EXISTS {{ ?s a ontolex:LexicalSense }}\n  ?prop wikibase:directClaim ?p .\n  OPTIONAL {{\n    ?s rdfs:label ?sLabel .\n    FILTER (LANG(?sLabel) = \"en\")\n  }}\n}} LIMIT 1000"
+    },
+    "user_agent": "FROG Wikidata Agent/1.0",
+    "entity_uri_format": "wd:{entity_id}",
+    "property_uri_format": "wdt:{property_id}",
+    "supports_references": true
+  },
+  // Additional knowledge graph configurations...
+}
+\end{lstlisting}
+
+\subsection*{Specialized Agent Nodes}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Translation Node Implementation, label=code:translation-node]
+class TranslationNode:
+    """Node for translating non-English questions"""
+    def __init__(self):
+        self.translator = Translator()
+    
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Start timing for visualization
+        start_time = datetime.now()
+        
+        # Log start if visualizer is available
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node", 
+                "start",
+                {"question": state.question},
+                start_time=start_time
+            )
+            
+        # Check if translation is enabled
+        use_translation = getattr(state, 'use_translation', True)
+        
+        # Detect language
+        detected = self.translator.detect(state.question)
+        state.original_lang = detected.lang
+        
+        # Log detection
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node",
+                "language detection",
+                {"detected_language": detected.lang, "translation_enabled": use_translation}
+            )
+        
+        # Translate if not English and translation is enabled
+        if state.original_lang != "en" and use_translation:
+            state.translated_question = self.translator.translate(
+                state.question, 
+                dest="en"
+            ).text
+            
+            # Log translation
+            if hasattr(state, 'visualizer') and state.visualizer:
+                state.visualizer.log_event(
+                    "Translation Node",
+                    "translation",
+                    {"original": state.question, "translated": state.translated_question}
+                )
+                
+        else:
+            state.translated_question = state.question
+            
+            # Log no translation needed/used
+            if hasattr(state, 'visualizer') and state.visualizer:
+                state.visualizer.log_event(
+                    "Translation Node",
+                    "no translation " + ("needed" if state.original_lang == "en" else "enabled"),
+                    {"question": state.question}
+                )
+        
+        # End timing and log completion
+        end_time = datetime.now()
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node", 
+                "end", 
+                None,
+                start_time=start_time,
+                end_time=end_time
+            )
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction Node Implementation, label=code:entity-extraction-node]
+class EntityExtractionNode:
+    """Node for extracting entities and properties from questions"""
+    def __init__(self, llm_factory=None):
+        self.llm_factory = llm_factory
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
+        self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Get knowledge source name for prompts
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
+        
+        # Define system prompt
+        system_prompt = f"""You are an expert entity and property extractor for {source_name}.
+Extract all entities and properties from the question that would be needed for a SPARQL query.
+Format as JSON with 'entities' and 'properties' arrays."""
+
+        # Create user prompt
+        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties."
+        
+        # Generate extraction using configured model
+        if self._llm_provider.is_chat_template_supported():
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+            prompt = self._llm_provider.apply_chat_template(messages)
+        else:
+            prompt = f"{system_prompt}\n\n{user_prompt}"
+            
+        completion = self._llm_provider.generate_response(prompt)
+        
+        # Extract JSON content from completion
+        match = re.search(self.json_pattern, completion)
+        if match:
+            json_str = match.group(1).strip()
+            extracted_data = json.loads(json_str)
+        else:
+            # Try direct parsing if no JSON code block found
+            extracted_data = json.loads(completion)
+        
+        # Update state with extracted entities and properties
+        state.extracted_entities = extracted_data.get("entities", [])
+        state.related_properties = extracted_data.get("properties", [])
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Strategy Selection Node Implementation, label=code:strategy-selection-node]
+def contains_multiple_entities(question):
+    """Check if the question has multiple entities"""
+    keywords = ["and", "or", "as well as", "both", "along with", "together with"]
+    question = question.lower()
+    return any(
+        f" {keyword} " in question
+        or question.startswith(f"{keyword} ")
+        or question.endswith(f" {keyword}")
+        for keyword in keywords
+    )
+
+class StrategySelectionNode:
+    """Node for deciding between SPARQL and verbalization strategies"""
+    def __init__(self):
+        pass
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Determine if we should use SPARQL or verbalization
+        contains_multiple = contains_multiple_entities(state.translated_question)
+        
+        # Check runtime settings - if useVerbalization is False, skip verbalization
+        use_verbalization = getattr(state, 'use_verbalization', True)
+        state.use_sparql = (not use_verbalization) or contains_multiple
+        
+        # Route to appropriate next step
+        if not state.use_sparql and state.extracted_entities:
+            state.next = "verbalization"
+        else:
+            state.next = "sparql_generation"
+        
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation, label=code:sparql-generation-node]
+class SparqlGenerationNode:
+    """Node for generating and executing SPARQL queries"""
+    def __init__(self, llm_factory=None, property_retrieval=None):
+        self.llm_factory = llm_factory
+        self.property_retrieval = property_retrieval
+        self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
+        
+        # Use source-aware SPARQL wrapper
+        from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
+        self.api = SourceAwareSPARQLWrapper("wikidata")
+        
+        # Initialize the LLM provider
+        self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
+    
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Determine the knowledge source
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        
+        # Get knowledge graph metadata
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
+        instructions = kg_metadata.get_sparql_instructions(knowledge_source)
+        
+        # Build the system prompt based on metadata
+        instructions_text = "\n".join(
+            [f"{i+1}. {instruction}" for i, instruction in enumerate(instructions)]
+        )
+        
+        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query using the provided entity and property resolutions.
+
+Guidelines:
+1. First identify which entities from the list match the question's intent
+2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question
+3. When multiple entities have similar labels, choose the one whose description best matches the question's context
+4. From the properties list, choose which properties are needed to answer the question
+5. Select only the minimum necessary properties required to answer the question correctly
+6. Use ALL identified entities and necessary properties in your SPARQL query
+7. {instructions_text}
+8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
+9. Return ONLY the raw SPARQL query with no explanations or comments in this format:
+   ```sparql
+   <your_sparql_query_here>
+   ```"""
+        
+        # Gather resources for the query generation
+        entities_matches_formatted = ""
+        for entity in state.extracted_entities:
+            entity_resources, _ = self.get_entities(entity, k=5, source=knowledge_source)
+            for resource in entity_resources:
+                if 'description' in resource and resource['description']:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
+                else:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}\n"
+
+        # Format properties context
+        properties_matches_formatted = ""
+        for prop in state.related_properties:
+            # Format property based on knowledge source
+            if " - " in prop:
+                prop_id, prop_label = prop.split(" - ", 1)
+                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}\n"
+            else:
+                properties_matches_formatted += f"- id: {prop}, label: {prop}\n"
+        
+        # Create user prompt template
+        user_prompt_template = f"""Question: {state.translated_question}
+
+Entities:
+{entities_matches_formatted}
+
+Properties:
+{properties_matches_formatted}
+
+SPARQL:"""
+        
+        query_attempts = []
+        curr_question = state.translated_question
+        attempts_left = state.try_threshold
+        
+        while attempts_left > 0:
+            attempt_num = state.try_threshold - attempts_left + 1
+                
+            try:
+                # Generate SPARQL query using configured model
+                if self._llm_provider.is_chat_template_supported():
+                    # Use chat template
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt_template}
+                    ]
+                    prompt = self._llm_provider.apply_chat_template(messages)
+                else:
+                    # Fallback to simple concatenation
+                    prompt = f"{system_prompt}\n\n{user_prompt_template}"
+                
+                completion = self._llm_provider.generate_response(prompt)
+                
+                # Extract the SPARQL query using regex
+                match = re.search(self.sparql_pattern, completion)
+                if match:
+                    sparql_query = match.group(1).strip()
+                else:
+                    sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
+                
+                # Add PREFIX declarations if not already present
+                if sparql_query:
+                    # Check if PREFIX declarations are already in the query
+                    if not sparql_query.upper().startswith("PREFIX"):
+                        # Get PREFIX declarations from metadata
+                        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
+                        if prefixes_declaration:
+                            sparql_query = prefixes_declaration + "\n\n" + sparql_query
+                
+                # Execute the query
+                result, err = self.execute_sparql(sparql_query, state)
+                
+                # Check if we got results
+                if result and not (len(result) == 1 and list(result[0].values())[0] == "0"):
+                    state.sparql_query = sparql_query
+                    state.query_result = result
+                    state.approach_used = "sparql"
+                    
+                    # Process the results for the answer
+                    if not result:
+                        state.context_str = "I couldn't find information to answer this question."
+                    else:
+                        # Format context as string
+                        context_str = f'The answer to "{state.question}" is: '
+                        for c in result[:50]:
+                            for k, v in c.items():
+                                context_str += f"{k}={v}, "
+                        context_str = context_str[:-2] + "."
+                        
+                        state.context_str = context_str
+                        
+                    return state
+                
+                # Query failed, try again
+                attempts_left -= 1
+                
+            except Exception:
+                attempts_left -= 1
+        
+        # Failed after all attempts
+        use_google_search = getattr(state, 'use_google_search', True)
+        
+        if use_google_search:
+            state.context_str = "I couldn't generate a working query to answer this question."
+            state.approach_used = "sparql_failed"
+        else:
+            state.context_str = f"I couldn't generate a working SPARQL query to answer this question using {source_name}. Google Search fallback is disabled in settings."
+            state.approach_used = "sparql_failed_no_fallback"
+            
+        return state
+\end{lstlisting}
+
+\section*{System Integration and Communication Code}
+
+\subsection*{Backend Architecture}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Django Settings Configuration, label=code:django-settings]
+# Channel layers configuration for WebSockets
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
+# CORS settings for cross-origin requests
+CORS_ALLOW_ALL_ORIGINS = True  # For development - restrict in production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'ngrok-skip-browser-warning',
+]
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=ASGI Configuration for WebSockets, label=code:asgi-configuration]
+# backend/wikidata_web/asgi.py
+import os
+import django
+from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+
+# Set the Django settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wikidata_web.settings')
+
+# Initialize Django first
+django.setup()
+
+# Import websocket_urlpatterns AFTER Django setup
+from chat.routing import websocket_urlpatterns
+
+# Create the ASGI application
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            websocket_urlpatterns
+        )
+    ),
+})
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=WebSocket Consumer Implementation, label=code:websocket-consumer]
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
+        self.room_group_name = f'chat_{self.chat_id}'
+        
+        # Check if chat exists before proceeding
+        chat_exists = await self.chat_exists(self.chat_id)
+        if not chat_exists:
+            # If chat doesn't exist, create it automatically
+            await self.create_chat(self.chat_id)
+        
+        # Join room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        
+        await self.accept()
+        
+        # Get API key from environment
+        gemini_api_key = os.environ.get('GEMINI_API_KEY')
+        
+        # Use the agent singleton instead of creating a new instance
+        self.agent = get_agent(api_key=gemini_api_key, debug_callback=self.debug_callback)
+        
+        # Add a message counter to prevent duplicate message issues
+        self.message_counter = 0
+\end{lstlisting}
+
+\subsection*{Frontend Implementation}
+
+\begin{lstlisting}[breaklines=true,language=typescript, caption=Context-Based State Management, label=code:context-state-management]
+// frontend/src/context/ChatContext.tsx
+export const ChatProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [currentChat, setCurrentChat] = useState<ChatWithMessages | null>(null);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [pusherStatus, setPusherStatus] = useState(() => pusherService.getConnectionStatus());
+  const [settings, setSettings] = useState<AgentSettings>(() => {
+    // Load settings from localStorage or use defaults
+    // ...
+  });
+
+  // State management functions
+  const loadChat = async (chatId: string) => {/* ... */};
+  const startNewChat = async () => {/* ... */};
+  const sendMessage = (content: string) => {/* ... */};
+  const toggleNav = () => {/* ... */};
+  const updateSettings = (newSettings: AgentSettings) => {/* ... */};
+
+  return (
+    <ChatContext.Provider
+      value={{
+        chats,
+        currentChat,
+        isNavOpen,
+        isLoading,
+        isProcessing,
+        settings,
+        pusherStatus,
+        loadChat,
+        startNewChat,
+        sendMessage,
+        toggleNav,
+        updateSettings,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+\end{lstlisting}
+
+\section*{Visualization and Logging System Code}
+
+\subsection*{RDF-Based Logging}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=LogToRDF Event Conversion, label=code:log-to-rdf-events]
+def add_log_event(self, log_entry):
+    """Convert a single log entry to RDF triples with sophisticated patterns"""
+    event_id = self.generate_event_id(log_entry)
+    event_uri = self.LOGS_NS[f"Event_{event_id}"]
+    
+    # Add event type and basic properties
+    self.graph.add((event_uri, RDF.type, self.LOG.Event))
+    # Add reference to the run metadata entity (foreign key)
+    self.graph.add((event_uri, self.LOGEX.belongsToRun, self.metadata_uri))
+    
+    # Add timestamp
+    timestamp = datetime.fromisoformat(log_entry['timestamp'])
+    self.graph.add((event_uri, self.LOG.time, Literal(timestamp, datatype=XSD.dateTime)))
+    
+    # Add component as process/service
+    component = log_entry['component']
+    self.graph.add((event_uri, self.LOG.pname, self.LOGID[f"{component.replace(' ', '_')}"]))
+    
+    # Add event type
+    event_type = log_entry['event_type']
+    event_type_uri = self.LOGID[f"EventType_{event_type.replace(' ', '_')}"]
+    self.graph.add((event_uri, self.LOG.eventType, event_type_uri))
+    
+    # Process event details with sophisticated patterns
+    if log_entry.get('details'):
+        self._process_details(event_uri, log_entry['details'], event_id)
+    
+    # Add duration if available
+    if log_entry.get('start_time') and log_entry.get('end_time'):
+        start = datetime.fromisoformat(log_entry['start_time'])
+        end = datetime.fromisoformat(log_entry['end_time'])
+        duration = (end - start).total_seconds()
+        self.graph.add((event_uri, self.LOG.duration, Literal(duration, datatype=XSD.float)))
+\end{lstlisting}
+
+\subsection*{BoxologyVisualizer Implementation}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=BoxologyVisualizer Class Implementation, label=code:boxology-visualizer]
+class BoxologyVisualizer:
+    """Visualizer for displaying detailed process flow of the FROGGraphRAG execution as a diagram using Mermaid Markdown"""
+    def __init__(self, verbose=1, debug_callback=None):
+        self.logs = []
+        self.verbose = verbose
+        self.start_time = datetime.now()
+        self.question = None  # Add this to store the question
+        self.debug_callback = debug_callback
+        self.approach_used = None  # Track the approach used
+        
+        # Initialize Jena uploader
+        self.jena_uploader = JenaUploader()
+        
+        # Define color scheme based on boxology notation
+        self.colors = {
+            "Translation Node": "#d6efc7",           # Light green for transformation
+            "Entity Extraction Node": "#bcd6e7",     # Light blue for data process
+            "Strategy Selection Node": "#f6d5a7",    # Light orange for decision
+            "Verbalization Node": "#e7d3f2",         # Light purple for generation
+            "Property Generation Node": "#ffd5d5",   # Light red for property related
+            "SPARQL Generation Node": "#d5f5f5",     # Light teal for query related
+            "Answer Generation Node": "#f5f5d5",     # Light yellow for inference
+            "Google Search Node": "#ffccff",         # Light pink for web search
+            "default": "#f5f5f5"                     # Light gray for default
+        }
+\end{lstlisting}
+
+%-----------------------------------------------------------------------------%
 \addappendix{GitHub Repository Information}
-\chapter*{Appendix 6: GitHub Repository Information}
+\chapter*{Appendix 7: GitHub Repository Information}
 \label{sec:github-repo}
 
 All code for MEGA-FrOG (Multi-agent Enhanced Generation and Adaptation Framework of Open GraphRAG) is available in our GitHub repository, organized into several branches for different components of the system:
