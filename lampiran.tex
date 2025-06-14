@@ -1780,7 +1780,163 @@ class FROGGraphRAGState(BaseModel):
 }
 \end{lstlisting}
 
-\subsection*{Specialized Agent Nodes}
+\begin{lstlisting}[breaklines=true,language=python, caption=Translation Node Implementation, label=code:translation-node]
+class TranslationNode:
+    """Node for translating non-English questions"""
+    def __init__(self):
+        self.translator = Translator()
+    
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Start timing for visualization
+        start_time = datetime.now()
+        
+        # Log start if visualizer is available
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node", 
+                "start",
+                {"question": state.question},
+                start_time=start_time
+            )
+            
+        # Check if translation is enabled
+        use_translation = getattr(state, 'use_translation', True)
+        
+        # Detect language
+        detected = self.translator.detect(state.question)
+        state.original_lang = detected.lang
+        
+        # Log detection
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node",
+                "language detection",
+                {"detected_language": detected.lang, "translation_enabled": use_translation}
+            )
+        
+        # Translate if not English and translation is enabled
+        if state.original_lang != "en" and use_translation:
+            state.translated_question = self.translator.translate(
+                state.question, 
+                dest="en"
+            ).text
+            
+            # Log translation
+            if hasattr(state, 'visualizer') and state.visualizer:
+                state.visualizer.log_event(
+                    "Translation Node",
+                    "translation",
+                    {"original": state.question, "translated": state.translated_question}
+                )
+                
+        else:
+            state.translated_question = state.question
+            
+            # Log no translation needed/used
+            if hasattr(state, 'visualizer') and state.visualizer:
+                state.visualizer.log_event(
+                    "Translation Node",
+                    "no translation " + ("needed" if state.original_lang == "en" else "enabled"),
+                    {"question": state.question}
+                )
+        
+        # End timing and log completion
+        end_time = datetime.now()
+        if hasattr(state, 'visualizer') and state.visualizer:
+            state.visualizer.log_event(
+                "Translation Node", 
+                "end", 
+                None,
+                start_time=start_time,
+                end_time=end_time
+            )
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Entity Extraction Node Implementation, label=code:entity-extraction-node]
+class EntityExtractionNode:
+    """Node for extracting entities and properties from questions"""
+    def __init__(self, llm_factory=None):
+        self.llm_factory = llm_factory
+        self.json_pattern = r"```(?:json)?\s*([\s\S]*?)```"
+        self._llm_provider = self.llm_factory.get_model_for_entity_extraction()
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Get knowledge source name for prompts
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
+        
+        # Define system prompt
+        system_prompt = f"""You are an expert entity and property extractor for {source_name}.
+Extract all entities and properties from the question that would be needed for a SPARQL query.
+Format as JSON with 'entities' and 'properties' arrays."""
+
+        # Create user prompt
+        user_prompt = f"Question: {state.translated_question}\n\nExtract all entities and properties."
+        
+        # Generate extraction using configured model
+        if self._llm_provider.is_chat_template_supported():
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+            prompt = self._llm_provider.apply_chat_template(messages)
+        else:
+            prompt = f"{system_prompt}\n\n{user_prompt}"
+            
+        completion = self._llm_provider.generate_response(prompt)
+        
+        # Extract JSON content from completion
+        match = re.search(self.json_pattern, completion)
+        if match:
+            json_str = match.group(1).strip()
+            extracted_data = json.loads(json_str)
+        else:
+            # Try direct parsing if no JSON code block found
+            extracted_data = json.loads(completion)
+        
+        # Update state with extracted entities and properties
+        state.extracted_entities = extracted_data.get("entities", [])
+        state.related_properties = extracted_data.get("properties", [])
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Strategy Selection Node Implementation, label=code:strategy-selection-node]
+def contains_multiple_entities(question):
+    """Check if the question has multiple entities"""
+    keywords = ["and", "or", "as well as", "both", "along with", "together with"]
+    question = question.lower()
+    return any(
+        f" {keyword} " in question
+        or question.startswith(f"{keyword} ")
+        or question.endswith(f" {keyword}")
+        for keyword in keywords
+    )
+
+class StrategySelectionNode:
+    """Node for deciding between SPARQL and verbalization strategies"""
+    def __init__(self):
+        pass
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Determine if we should use SPARQL or verbalization
+        contains_multiple = contains_multiple_entities(state.translated_question)
+        
+        # Check runtime settings - if useVerbalization is False, skip verbalization
+        use_verbalization = getattr(state, 'use_verbalization', True)
+        state.use_sparql = (not use_verbalization) or contains_multiple
+        
+        # Route to appropriate next step
+        if not state.use_sparql and state.extracted_entities:
+            state.next = "verbalization"
+        else:
+            state.next = "sparql_generation"
+        
+        return state
+\end{lstlisting}
 
 \begin{lstlisting}[breaklines=true,language=python, caption=Translation Node Implementation, label=code:translation-node]
 class TranslationNode:
@@ -3231,31 +3387,402 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     return temp_file.name
 \end{lstlisting}
 
-\begin{lstlisting}[language=python, caption=JSON log export implementation, label=code:json-export]
-def save_logs_to_json(self):
-    """Save logs to a JSON file with datetime and question in filename"""
-    if not self.logs:
-        return None
+\begin{lstlisting}[breaklines=true,language=python, caption=LLM Factory Class, label=code:llm-factory-class]
+class LLMFactory:
+    """
+    Factory class for creating and managing LLM providers based on configuration
+    """
     
-    # Prepare data for saving
-    log_data = {
-        "question": self.question,
-        "approach_used": self.approach_used,
-        "start_time": self.start_time.isoformat(),
-        "end_time": datetime.now().isoformat(),
-        "total_duration": (datetime.now() - self.start_time).total_seconds(),
-        "logs": self.logs
+    def __init__(self, config_path: str = "config/llm_config.json"):
+        """
+        Initialize the LLM factory
+        
+        Args:
+            config_path: Path to the configuration file
+        """
+        self.config_path = config_path
+        self._model_cache: Dict[str, BaseLLMProvider] = {}
+        
+        try:
+            self.config = load_llm_config(config_path)
+        except Exception as e:
+            logger.warning(f"Failed to load config from {config_path}: {e}")
+            logger.info("Using default Gemini configuration")
+            # Create default config for Gemini
+            self.config = {
+                "default": {
+                    "provider": "gemini",
+                    "model": "gemini-2.0-flash",
+                    "config": {"temperature": 0.2}
+                },
+                "nodes": {},
+                "providers": {
+                    "gemini": {
+                        "default_config": {"temperature": 0.2}
+                    },
+                    "ollama": {
+                        "default_config": {
+                            "base_url": "http://localhost:11434",
+                            "temperature": 0.2,
+                            "top_p": 0.9,
+                            "num_predict": 512
+                        }
+                    }
+                }
+            }
+        
+        # Validate environment variables
+        self.env_status = validate_environment_variables()
+        self._log_environment_status()
+        
+        logger.info("Initialized LLMFactory")
+    
+    def get_model_for_entity_extraction(self) -> BaseLLMProvider:
+        """Get model specifically for entity extraction"""
+        return self.get_model("EntityExtractionNode")
+    
+    def get_model_for_verbalization(self) -> BaseLLMProvider:
+        """Get model specifically for verbalization"""
+        return self.get_model("VerbalizationNode")
+    
+    def get_model_for_sparql_generation(self) -> BaseLLMProvider:
+        """Get model specifically for SPARQL generation"""
+        return self.get_model("SparqlGenerationNode")
+    
+    def get_model_for_answer_generation(self) -> BaseLLMProvider:
+        """Get model specifically for answer generation"""
+        return self.get_model("AnswerGenerationNode")
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Runtime Settings Implementation, label=code:runtime-settings]
+def query(self, question, settings=None):
+    """
+    Process a question using the FROG GraphRAG system
+    
+    Args:
+        question (str): User question
+        settings (dict): Runtime settings
+        
+    Returns:
+        tuple: (answer, visualization_files)
+    """
+    # Default settings
+    default_settings = {
+        "use_verbalization": True,
+        "use_google_search": True,
+        "use_translation": True,
+        "knowledge_source": "wikidata",
+        "include_references": True,
+        "boxology_verbose": 0,
+        "try_threshold": 5
     }
     
-    # Create a temp file and save the JSON data
-    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
-    with open(temp_file.name, 'w', encoding='utf-8') as f:
-        json.dump(log_data, f, indent=2, ensure_ascii=False, cls=CustomEncoder)
+    # Override with user settings
+    if settings:
+        default_settings.update(settings)
+        
+    # Create initial state
+    state = FROGGraphRAGState(
+        question=question,
+        **default_settings
+    )
     
-    if self.verbose > 0:
-        print(f"Logs saved to: {temp_file.name}")
+    # Initialize visualization if enabled
+    if default_settings["boxology_verbose"] > 0:
+        self.visualizer = BoxologyVisualizer()
+        state.visualizer = self.visualizer
+        
+    # Set debug callback if provided
+    if self.debug_callback:
+        state.debug_callback = self.debug_callback
+        
+    # Execute the workflow
+    final_state = self.graph.invoke(state)
     
-    return temp_file.name
+    # Generate visualization files if enabled
+    if default_settings["boxology_verbose"] > 0 and self.visualizer:
+        visualization_files = self.visualizer.save_visualization_files()
+        self.visualization_files = visualization_files
+    else:
+        visualization_files = {}
+        
+    return final_state.final_answer, visualization_files
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=SPARQL Generation Node Implementation, label=code:sparql-generation-node]
+class SparqlGenerationNode:
+    """Node for generating and executing SPARQL queries"""
+    def __init__(self, llm_factory=None, property_retrieval=None):
+        self.llm_factory = llm_factory
+        self.property_retrieval = property_retrieval
+        self.sparql_pattern = r"```(?:sparql)?\s*([\s\S]*?)```"
+        
+        # Use source-aware SPARQL wrapper
+        from ..utils.sparql_wrapper import SourceAwareSPARQLWrapper
+        self.api = SourceAwareSPARQLWrapper("wikidata")
+        
+        # Initialize the LLM provider
+        self._llm_provider = self.llm_factory.get_model_for_sparql_generation()
+    
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Determine the knowledge source
+        knowledge_source = getattr(state, 'knowledge_source', 'wikidata')
+        
+        # Get knowledge graph metadata
+        kg_metadata = get_knowledge_graph_metadata()
+        source_name = kg_metadata.get_name(knowledge_source)
+        instructions = kg_metadata.get_sparql_instructions(knowledge_source)
+        
+        # Build the system prompt based on metadata
+        instructions_text = "\n".join(
+            [f"{i+1}. {instruction}" for i, instruction in enumerate(instructions)]
+        )
+        
+        system_prompt = f"""You are a SPARQL generator expert for {source_name} knowledge graph. Your task is to convert the following natural language question to a SPARQL query using the provided entity and property resolutions.
+
+Guidelines:
+1. First identify which entities from the list match the question's intent
+2. Identify which entities are relevant to the question and select EXACTLY ONE entity ID for each distinct concept in the question
+3. When multiple entities have similar labels, choose the one whose description best matches the question's context
+4. From the properties list, choose which properties are needed to answer the question
+5. Select only the minimum necessary properties required to answer the question correctly
+6. Use ALL identified entities and necessary properties in your SPARQL query
+7. {instructions_text}
+8. Optimize your query by using appropriate SPARQL features (DISTINCT, FILTER, ORDER BY, LIMIT) when needed
+9. Return ONLY the raw SPARQL query with no explanations or comments in this format:
+   ```sparql
+   <your_sparql_query_here>
+   ```"""
+        
+        # Gather resources for the query generation
+        entities_matches_formatted = ""
+        for entity in state.extracted_entities:
+            entity_resources, _ = self.get_entities(entity, k=5, source=knowledge_source)
+            for resource in entity_resources:
+                if 'description' in resource and resource['description']:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}, description: {resource['description']}\n"
+                else:
+                    entities_matches_formatted += f"- id: {resource['uri']}, label: {resource['label']}\n"
+
+        # Format properties context
+        properties_matches_formatted = ""
+        for prop in state.related_properties:
+            # Format property based on knowledge source
+            if " - " in prop:
+                prop_id, prop_label = prop.split(" - ", 1)
+                properties_matches_formatted += f"- id: {prop_id}, label: {prop_label}\n"
+            else:
+                properties_matches_formatted += f"- id: {prop}, label: {prop}\n"
+        
+        # Create user prompt template
+        user_prompt_template = f"""Question: {state.translated_question}
+
+Entities:
+{entities_matches_formatted}
+
+Properties:
+{properties_matches_formatted}
+
+SPARQL:"""
+        
+        query_attempts = []
+        curr_question = state.translated_question
+        attempts_left = state.try_threshold
+        
+        while attempts_left > 0:
+            attempt_num = state.try_threshold - attempts_left + 1
+                
+            try:
+                # Generate SPARQL query using configured model
+                if self._llm_provider.is_chat_template_supported():
+                    # Use chat template
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt_template}
+                    ]
+                    prompt = self._llm_provider.apply_chat_template(messages)
+                else:
+                    # Fallback to simple concatenation
+                    prompt = f"{system_prompt}\n\n{user_prompt_template}"
+                
+                completion = self._llm_provider.generate_response(prompt)
+                
+                # Extract the SPARQL query using regex
+                match = re.search(self.sparql_pattern, completion)
+                if match:
+                    sparql_query = match.group(1).strip()
+                else:
+                    sparql_query = completion if "SELECT" in completion and "WHERE" in completion else ""
+                
+                # Add PREFIX declarations if not already present
+                if sparql_query:
+                    # Check if PREFIX declarations are already in the query
+                    if not sparql_query.upper().startswith("PREFIX"):
+                        # Get PREFIX declarations from metadata
+                        prefixes_declaration = kg_metadata.get_prefixes_declaration(knowledge_source)
+                        if prefixes_declaration:
+                            sparql_query = prefixes_declaration + "\n\n" + sparql_query
+                
+                # Execute the query
+                result, err = self.execute_sparql(sparql_query, state)
+                
+                # Check if we got results
+                if result and not (len(result) == 1 and list(result[0].values())[0] == "0"):
+                    state.sparql_query = sparql_query
+                    state.query_result = result
+                    state.approach_used = "sparql"
+                    
+                    # Process the results for the answer
+                    if not result:
+                        state.context_str = "I couldn't find information to answer this question."
+                    else:
+                        # Format context as string
+                        context_str = f'The answer to "{state.question}" is: '
+                        for c in result[:50]:
+                            for k, v in c.items():
+                                context_str += f"{k}={v}, "
+                        context_str = context_str[:-2] + "."
+                        
+                        state.context_str = context_str
+                        
+                    return state
+                
+                # Query failed, try again
+                attempts_left -= 1
+                
+            except Exception:
+                attempts_left -= 1
+        
+        # Failed after all attempts
+        use_google_search = getattr(state, 'use_google_search', True)
+        
+        if use_google_search:
+            state.context_str = "I couldn't generate a working query to answer this question."
+            state.approach_used = "sparql_failed"
+        else:
+            state.context_str = f"I couldn't generate a working SPARQL query to answer this question using {source_name}. Google Search fallback is disabled in settings."
+            state.approach_used = "sparql_failed_no_fallback"
+            
+        return state
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Google Search Node Implementation, label=code:google-search-node]
+class GoogleSearchNode:
+    """Node for searching the internet using Google Search as a fallback"""
+    
+    def __init__(self):
+        pass
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        try:
+            # Execute Google Search using Gemini API
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("Gemini API key not found in environment variables")
+
+            client = genai.Client(api_key=api_key)
+            
+            # Execute search and process results
+            search_results = self._execute_search(client, state.translated_question)
+                
+            # Update state with results
+            state.google_search_result = search_results
+            state.approach_used = "google_search"
+            
+            # Prepare context for answer generation
+            state.context_str = self._format_search_context(search_results)
+                
+        except Exception as e:
+            state.context_str = "I couldn't find information to answer this question."
+            state.approach_used = "google_search_failed"
+            
+        return state
+        
+    def _execute_search(self, client, query):
+        """Execute a Google Search query using Gemini's built-in search capability"""
+        try:
+            # Execute the search query using Gemini's built-in search
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=query,
+                config=types.GenerateContentConfig(
+                    tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
+                ),
+            )
+
+            # Process and format the results
+            search_results = {
+                "content": "",
+                "citations": []
+            }
+
+            if hasattr(response, "candidates") and len(response.candidates) > 0:
+                candidate = response.candidates[0]
+                # Extract content and citations
+                # [detailed processing code omitted for brevity]
+            
+            return search_results
+            
+        except Exception as e:
+            return {"content": "", "citations": []}
+            
+    def _format_search_context(self, search_results):
+        """Format search results into a context string with citations"""
+        if not search_results or not search_results.get("content"):
+            return "I couldn't find information to answer this question from web search."
+            
+        # Format the main content
+        context_str = f'Based on web search results: {search_results["content"]}'
+        
+        # Add citation information
+        if search_results.get("citations"):
+            context_str += "\n\nSources:\n"
+            for citation in search_results["citations"]:
+                title = citation.get('title', 'Unknown Source')
+                url = citation.get('url', '')
+                context_str += f"- {title}: {url}\n"
+        
+        return context_str
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,language=python, caption=Answer Generation Node Implementation, label=code:answer-generation-node]
+class AnswerGenerationNode:
+    """Node for generating the final natural language answer"""
+    def __init__(self, llm_factory=None):
+        self.llm_factory = llm_factory
+        self.translator = googletrans.Translator()
+        
+        # Initialize the LLM provider
+        self._llm_provider = self.llm_factory.get_model_for_answer_generation()
+        
+    def __call__(self, state: FROGGraphRAGState) -> FROGGraphRAGState:
+        # Create prompt for answer generation
+        lang_detected = state.original_lang if state.original_lang else "en"
+        
+        # Build prompt for answer generation
+        prompt = f"""You are an assistant for question-answering tasks. Use the following retrieved context to answer the question.
+Answer directly and concisely in three sentences or less. If you don't know the answer, say so.{f" Answer in {googletrans.LANGUAGES.get(lang_detected, 'the appropriate')} language." if lang_detected != 'en' else ''}
+
+Question: {state.question} 
+Context: {state.context_str} 
+
+Answer:"""
+        
+        # Generate response using configured model
+        if self._llm_provider.is_chat_template_supported():
+            # Use chat template if supported
+            messages = [
+                {"role": "system", "content": "You are an assistant for question-answering tasks."},
+                {"role": "user", "content": prompt}
+            ]
+            formatted_prompt = self._llm_provider.apply_chat_template(messages)
+        else:
+            # Use direct prompt
+            formatted_prompt = prompt
+        
+        state.final_answer = self._llm_provider.generate_response(formatted_prompt)
+            
+        return state
 \end{lstlisting}
 
 %-----------------------------------------------------------------------------%
