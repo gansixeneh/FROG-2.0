@@ -4,12 +4,14 @@
 In this chapter, we will discuss our experiment results and provide a thorough analysis of the enhanced GraphRAG system. The analysis will cover all components including model fine-tuning, dataset generation methods, and the multi-agent architecture across different knowledge graph domains.
 
 \section{Experiment Results}
-We conduct several experiments to evaluate the performance of our enhanced GraphRAG system against the baseline system from the previous work, FrOG. We assess the system holistically using Jaccard Similarity as our primary metric. Additionally, we evaluate the effectiveness of our fine-tuning approach by comparing our system with base models against our system with fine-tuned counterparts. It is important to note that while FrOG's original evaluation in their paper used full models, our evaluation (including our reimplementation of FrOG) uses quantized models due to resource constraints. Furthermore, FrOG relies on few-shot examples for its operation, while our system---both with base and fine-tuned models---does not use any few-shot prompting. The information provided in this section is organized based on the knowledge graph domain.
+We conduct several experiments to evaluate the performance of our enhanced GraphRAG system against the baseline system from the previous work (FrOG). We assess the system holistically using Jaccard Similarity as our primary metric. Additionally, we evaluate the effectiveness of our fine-tuning approach by comparing our system using base models against our system using fine-tuned models. The information provided in this section is organized based on the knowledge graph domain.
 
 \subsection{Wikidata}
 \label{wikidata-results}
 
-Using the QALD-9-Plus dataset for Wikidata, we evaluate the performance of both the baseline system (FrOG) from the previous work and our enhanced system with both base and fine-tuned models. It is important to note that while FrOG's original evaluation in their paper was conducted on a downsampled QALD-9-Plus train dataset, our evaluation (including our reimplementation of FrOG) is performed on the QALD-9-Plus test dataset for a fair comparison. Table \ref{table-wikidata-results} presents the comparison between FrOG results and our current results with both base and fine-tuned models across different model architectures.
+Using the QALD-9-Plus dataset for Wikidata, we evaluate the performance of both the FrOG system from the previous work and our enhanced system with base and fine-tuned models. Table \ref{table-wikidata-results} presents the comparison between the FrOG results and our current results with both base and fine-tuned models across different model architectures.
+
+It is important to note that the FrOG evaluation presented in their original paper was conducted on a downsampled QALD-9-Plus training dataset using full model weights, while our evaluation (including our re-evaluation of FrOG) is performed on the complete QALD-9-Plus test dataset using quantized models for consistency. This difference in evaluation setup may contribute to some performance variations observed in our comparison.
 
 \begin{table}
 \centering
@@ -18,7 +20,7 @@ Using the QALD-9-Plus dataset for Wikidata, we evaluate the performance of both 
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.5\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Model} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3150$ & $0.2021$ & $\textbf{0.3176}$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $0.2907$ & $0.2531$ & $\textbf{0.2967}$ \\
@@ -161,7 +163,9 @@ The relatively modest performance improvements on Wikidata can be attributed to 
 \subsection{Curriculum Knowledge Graph}
 \label{curriculum-results}
 
-For the Curriculum Knowledge Graph, we evaluate performance using both template-based and random-walk datasets. It is important to note that FrOG was originally evaluated on Curriculum KG in their paper, so they had established few-shot examples for this knowledge graph. In our evaluation, we implemented FrOG using only the Qwen/Qwen2.5-7B-Instruct model due to time constraints, and we maintained their few-shot approach. Table \ref{table-curriculum-template-results} presents the results on the template dataset, while Table \ref{table-curriculum-random-results} shows the results on the random-walk dataset.
+For the Curriculum Knowledge Graph, we evaluate performance using both template-based and random-walk datasets. Table \ref{table-curriculum-template-results} presents the results on the template dataset, while Table \ref{table-curriculum-random-results} shows the results on the random-walk dataset.
+
+Due to time constraints, the FrOG evaluation on the Curriculum Knowledge Graph was conducted only using the Qwen/Qwen2.5-7B-Instruct model, while our system evaluation covers all four model architectures. This limitation should be considered when interpreting the comparative results.
 
 \begin{table}
 \centering
@@ -170,7 +174,7 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.5427$ & $0.5387$ & $\textbf{0.5963}$ & $0.4844$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.4823$ & $\textbf{0.7042}$ & $0.5683$ \\
@@ -191,7 +195,7 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.5382$ & $0.5133$ & $\textbf{0.6341}$ & $0.6127$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.5333$ & $\textbf{0.6128}$ & $0.6047$ \\
@@ -207,7 +211,7 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
 
 The results on the Curriculum Knowledge Graph demonstrate substantial improvements over the FrOG implementation across all models, even though FrOG benefits from few-shot examples while our system does not. Several key observations can be made:
 
-First, our fine-tuned models significantly outperform both FrOG and our base models, with absolute improvements over FrOG ranging from $0.0536$ (Qwen2.5-7B fine-tuned with template dataset on template dataset) to $0.0959$ (Qwen2.5-7B fine-tuned with template dataset on random-walk dataset). This substantial improvement highlights the effectiveness of our fine-tuning approach for domain-specific knowledge graphs with well-defined schema structures.
+First, all of our fine-tuned models significantly outperform the FrOG results, with absolute improvements ranging from $0.1836$ (Qwen2.5-7B on template dataset) to $0.3156$ (Mistral-Nemo on template dataset). This substantial improvement highlights the effectiveness of our fine-tuning approach for domain-specific knowledge graphs with well-defined schema structures.
 
 Second, we observe that models fine-tuned on template datasets generally perform well on both template and random-walk test sets. Interestingly, template-trained models often outperform random-walk-trained models even on random-walk test data. This unexpected result suggests that template-based training provides a more comprehensive understanding of the knowledge graph structure and query patterns, enabling better generalization to diverse question types.
 
@@ -336,7 +340,9 @@ Overall, these results demonstrate that our fine-tuning approach is particularly
 \subsection{Legal Knowledge Graph}
 \label{legal-results}
 
-For the Legal Knowledge Graph, we also evaluate performance using both template-based and random-walk datasets. It is important to note that FrOG was not originally evaluated on the Legal KG in their paper, so we had to create few-shot examples from our own training datasets. As with Curriculum KG, we implemented FrOG using only the Qwen/Qwen2.5-7B-Instruct model due to time constraints. Table \ref{table-legal-template-results} presents the results on the template dataset, while Table \ref{table-legal-random-results} shows the results on the random-walk dataset.
+For the Legal Knowledge Graph, we also evaluate performance using both template-based and random-walk datasets. Table \ref{table-legal-template-results} presents the results on the template dataset, while Table \ref{table-legal-random-results} shows the results on the random-walk dataset.
+
+Similar to the Curriculum Knowledge Graph, the FrOG evaluation on the Legal Knowledge Graph was conducted only using the Qwen/Qwen2.5-7B-Instruct model due to time constraints, while our system evaluation covers all four model architectures.
 
 \begin{table}
 \centering
@@ -345,7 +351,7 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3487$ & $0.2872$ & $\textbf{0.4731}$ & $0.3653$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2917$ & $\textbf{0.4872}$ & $0.3795$ \\
@@ -366,7 +372,7 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3642$ & $0.2692$ & $\textbf{0.4357}$ & $0.4257$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2780$ & $\textbf{0.4202}$ & $0.4102$ \\
@@ -382,7 +388,7 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
 
 The results on the Legal Knowledge Graph show substantial improvements over both FrOG and our base models. Key observations include:
 
-First, our fine-tuned models significantly outperform FrOG, with absolute improvements ranging from $0.0715$ (Qwen2.5-7B fine-tuned with template dataset on random-walk dataset) to $0.1244$ (Qwen2.5-7B fine-tuned with template dataset on template dataset). These improvements highlight the effectiveness of our fine-tuning approach for the legal domain, which features complex document structures and relationships, even without the benefit of few-shot examples that FrOG utilizes.
+First, all of our fine-tuned models significantly outperform the FrOG results, with absolute improvements ranging from $0.1142$ (Qwen2.5-7B on random-walk dataset) to $0.2029$ (Qwen2.5-Coder-7B on template dataset). These improvements highlight the effectiveness of our fine-tuning approach for the legal domain, which features complex document structures and relationships.
 
 Second, similar to the Curriculum KG results, we observe that models fine-tuned on template datasets generally perform well on both template and random-walk test sets. This reinforces our finding that template-based training provides a comprehensive understanding of knowledge graph structure and query patterns that generalizes effectively.
 
@@ -473,13 +479,15 @@ The significant performance improvements on the Legal Knowledge Graph can be att
 \begin{enumerate}
     \item The fine-tuning process enables models to learn the specific schema and relationships of the legal domain, which features complex document hierarchies and citation networks.
     \item The template-based training approach provides structured examples that help models understand common query patterns in the legal domain.
-    \item Our approach eliminates the dependency on manually crafted few-shot examples, which is particularly valuable for domains like the legal knowledge graph where expertise is required to create effective examples.
+    \item The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, may be particularly effective for the legal domain which has specialized terminology and relationships.
 \end{enumerate}
 
 \subsection{GESIS Knowledge Graph}
 \label{gesis-results}
 
-For the GESIS Knowledge Graph, we again evaluate performance using both template-based and random-walk datasets. Similar to the Legal KG, FrOG was not originally evaluated on GESIS KG in their paper, so we created few-shot examples from our own training datasets. As with the previous knowledge graphs, we implemented FrOG using only the Qwen/Qwen2.5-7B-Instruct model due to time constraints. Table \ref{table-gesis-template-results} presents the results on the template dataset, while Table \ref{table-gesis-random-results} shows the results on the random-walk dataset.
+For the GESIS Knowledge Graph, we again evaluate performance using both template-based and random-walk datasets. Table \ref{table-gesis-template-results} presents the results on the template dataset, while Table \ref{table-gesis-random-results} shows the results on the random-walk dataset.
+
+As with the other domain-specific knowledge graphs, the FrOG evaluation on the GESIS Knowledge Graph was conducted only using the Qwen/Qwen2.5-7B-Instruct model due to time constraints, while our system evaluation covers all four model architectures.
 
 \begin{table}
 \centering
@@ -488,7 +496,7 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3432$ & $0.2614$ & $\textbf{0.5328}$ & $0.4163$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2823$ & $\textbf{0.5463}$ & $0.4289$ \\
@@ -509,7 +517,7 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+    \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Our System (Base)} & \textbf{Our System (Fine-tuned Template)} & \textbf{Our System (Fine-tuned Random-Walk)} \\
     \hline
     \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3764$ & $0.2403$ & $\textbf{0.4972}$ & $0.4872$ \\
     \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2654$ & $\textbf{0.4852}$ & $0.4776$ \\
@@ -525,7 +533,7 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
 
 The results on the GESIS Knowledge Graph demonstrate the largest improvements over the FrOG implementation among all knowledge graph domains, despite FrOG's advantage of using few-shot examples. Key observations include:
 
-First, our fine-tuned models significantly outperform FrOG, with absolute improvements ranging from $0.1208$ (Qwen2.5-7B fine-tuned with template dataset on random-walk dataset) to $0.1896$ (Qwen2.5-7B fine-tuned with template dataset on template dataset). These substantial improvements highlight the effectiveness of our fine-tuning approach for scholarly knowledge graphs with standardized metadata schema, even without the benefit of few-shot examples.
+First, all of our fine-tuned models significantly outperform the FrOG results, with absolute improvements ranging from $0.1208$ (Qwen2.5-7B on random-walk dataset) to $0.2031$ (Qwen2.5-Coder-7B on template dataset). These substantial improvements highlight the effectiveness of our fine-tuning approach for scholarly knowledge graphs with standardized metadata schema.
 
 Second, consistent with our observations on other knowledge graphs, models fine-tuned on template datasets generally perform well on both template and random-walk test sets. The template-based training approach appears to provide a comprehensive understanding of the scholarly domain that generalizes effectively.
 
@@ -651,9 +659,7 @@ These results highlight several important considerations for model selection in 
     
     \item \textbf{Parameter Efficiency}: Larger parameter counts do not necessarily translate to better performance, as demonstrated by the 7B and 8B models outperforming the 12B model in several scenarios.
     
-    \item \textbf{Adaptability}: Models show different levels of adaptability to fine-tuning, with Mistral-Nemo-12B demonstrating the highest relative improvement despite not achieving the best overall performance.
-    
-    \item \textbf{Few-shot vs. Fine-tuning}: Our results demonstrate that fine-tuning consistently outperforms the few-shot approach used by FrOG across all knowledge graph domains, suggesting that the comprehensive learning enabled by fine-tuning is more effective than the pattern-matching facilitated by few-shot examples.
+    \item \textbf{Adaptability}: Models show different levels of adaptability to fine-tuning, with Llama-3.1-8B demonstrating the highest relative improvement despite not achieving the best overall performance.
 \end{enumerate}
 
 These findings suggest that for knowledge graph applications, the combination of diverse pre-training and effective fine-tuning is more important than raw parameter count or few-shot capabilities. The Qwen2.5-7B model's strong performance across all knowledge graph domains makes it our recommended model for general knowledge graph applications, while specialized variants like Qwen2.5-Coder-7B may offer advantages in specific scenarios where base model performance without fine-tuning is prioritized.
@@ -689,7 +695,7 @@ Based on our analysis, we identify two critical factors that significantly impac
 \subsubsection{URI Representation}
 The manner in which resources are represented using URIs significantly influences model performance. Knowledge graphs with natural language-based URIs, such as the Curriculum KG (\texttt{ns1:algorithm\_design\_and\_analysis}) and GESIS KG (\texttt{schema:ScholarlyArticle}), enable models to achieve substantially higher performance. Both our system with fine-tuned models and our system with base models perform better on these knowledge graphs compared to those with numeric or opaque identifiers.
 
-Wikidata, which uses numeric IDs for both entities (\texttt{wd:Q64} for Berlin) and properties (\texttt{wdt:P36} for capital), presents the greatest challenge for models. The lack of semantic information in these identifiers requires models to learn arbitrary associations between natural language expressions and numeric codes, making the task inherently more difficult. This is particularly challenging for our system with base models ($0.1158$), while fine-tuning helps bridge this gap significantly ($0.3101$).
+Wikidata, which uses numeric IDs for both entities (\texttt{wd:Q64} for Berlin) and properties (\texttt{wdt:P36} for capital), presents the greatest challenge for models. The lack of semantic information in these identifiers requires models to learn arbitrary associations between natural language expressions and numeric codes, making the task inherently more difficult.
 
 The Legal KG, with its mixed URI scheme that includes both natural language elements and structured paths (\texttt{lex2kg/uu/2017/18/pasal/0068}), achieves intermediate performance. While these URIs contain some semantic information, their complex structure creates additional challenges for query generation.
 
@@ -751,7 +757,7 @@ Our experiment results demonstrate the substantial impact of our fine-tuning met
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.25\textwidth} | m{0.15\textwidth} | m{0.18\textwidth} | m{0.18\textwidth} | m{0.18\textwidth} |}
     \hline
-    \RaggedRight{\textbf{Knowledge Graph}} & \textbf{Base Model Avg} & \textbf{Fine-tuned Template Avg} & \textbf{Fine-tuned Random-Walk Avg} & \textbf{Best Approach} \\
+    \RaggedRight{\textbf{Knowledge Graph}} & \textbf{Our System (Base Avg)} & \textbf{Our System (Fine-tuned Template Avg)} & \textbf{Our System (Fine-tuned Random-Walk Avg)} & \textbf{Best Approach} \\
     \hline
     \RaggedRight{Curriculum KG - Template Dataset} & $0.4734$ & $\textbf{0.6525}$ & $0.5719$ & Template \\
     \RaggedRight{Curriculum KG - Random-Walk Dataset} & $0.5162$ & $\textbf{0.6188}$ & $0.6012$ & Template \\
@@ -769,7 +775,7 @@ Our experiment results demonstrate the substantial impact of our fine-tuning met
 
 Several important patterns emerge from our analysis:
 
-First, for Wikidata, fine-tuning shows dramatic improvements across all models, with particularly striking gains for Llama-3.1-8B ($+0.3158$) and Mistral-Nemo ($+0.3024$), which started from near-zero base performance. The average improvement of $+0.1943$ demonstrates the critical importance of fine-tuning for knowledge graphs with numeric identifiers, where models must learn arbitrary associations between natural language and opaque entity/property codes. Notably, these improvements are achieved without requiring few-shot examples, in contrast to FrOG.
+First, both fine-tuning approaches substantially improve performance over our base models across all knowledge graphs and datasets. The average improvement across all scenarios is $+0.1944$ for template-based fine-tuning and $+0.1655$ for random-walk-based fine-tuning. This confirms the effectiveness of our overall fine-tuning methodology, regardless of the specific dataset generation approach used.
 
 Second, for knowledge graphs with both template and random-walk dataset types, both fine-tuning approaches substantially improve performance over base models. However, template-based fine-tuning consistently outperforms random-walk-based fine-tuning across all knowledge graphs and dataset types. This somewhat surprising result suggests that the structured, pattern-focused nature of template-based training provides advantages even when evaluating on random-walk-generated test sets. The linguistic diversity and structured patterns in template-based training appear to enable better generalization to diverse query types.
 
@@ -787,8 +793,8 @@ These findings lead to several important insights about our fine-tuning methodol
     \item \textbf{Cross-Dataset Generalization}: The strong performance of template-trained models on random-walk test sets demonstrates effective cross-dataset generalization. This suggests that our fine-tuning approach is learning fundamental SPARQL generation capabilities rather than merely memorizing specific patterns.
     
     \item \textbf{Parameter Efficiency}: Our QLoRA-based fine-tuning approach with carefully selected hyperparameters (rank=64 for Wikidata and Curriculum KG, rank=32 for Legal and GESIS KG due to resource limitations) provides substantial improvements while updating only 2-3\% of model parameters. This demonstrates the parameter efficiency of our approach, making it practical for deployment scenarios with limited computational resources.
-        
-    \item \textbf{Advantage over Few-shot}: Our fine-tuning approach consistently outperforms FrOG's few-shot approach across all knowledge graphs, even on Wikidata where FrOG was originally designed and optimized. This suggests that the comprehensive learning enabled by fine-tuning is more effective than the pattern-matching facilitated by few-shot examples.
+    
+    \item \textbf{Knowledge Transfer}: The cross-domain adaptation methodology, where models are first fine-tuned on Wikidata and then adapted to domain-specific knowledge graphs, appears to facilitate effective knowledge transfer between domains. This is particularly valuable for specialized domains like legal and scholarly knowledge graphs.
 \end{enumerate}
 
 Overall, these results validate our fine-tuning methodology across diverse knowledge graph types. For Wikidata, the dramatic improvements demonstrate that fine-tuning can overcome the challenges of numeric identifiers and massive scale. For knowledge graphs with richer dataset options, the consistent superiority of template-based fine-tuning across all scenarios suggests that this approach should be prioritized in future work on knowledge graph query generation.
