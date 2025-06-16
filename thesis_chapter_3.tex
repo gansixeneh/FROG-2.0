@@ -7,7 +7,7 @@ In this chapter, we will explain the research methodology we employ, including t
 The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
 \begin{enumerate}
     \item \textbf{Problem identification and motivation}: While the previous GraphRAG framework provided a foundation for leveraging open-source components with knowledge graphs, several limitations were identified that hindered optimal performance and scalability. First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios. Second, the original pipeline architecture lacked runtime-configurable components, expanded fallback mechanisms, and comprehensive semantic logging capabilities needed for adaptability, fault tolerance, and operational transparency when dealing with heterogeneous knowledge graph structures. Third, the absence of specialized model training meant the system could not learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation, relying solely on few-shot prompting approaches. Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively.
-    \item \textbf{Definition of the objectives for a solution}: Building upon the original GraphRAG framework, our objective is to develop a significantly enhanced system that addresses the identified limitations through three main improvements: (1) developing comprehensive dataset generation methods using both template-based and random-walk approaches to create diverse, high-quality training data, (2) implementing specialized model finetuning using QLoRA techniques for NL2SPARQL generation tasks to improve accuracy and reasoning capabilities, and (3) enhancing the original pipeline architecture with a LangGraph-based implementation that provides runtime configurability, expanded fallback mechanisms including Google Search integration, and comprehensive semantic logging while significantly improving adaptability, fault tolerance, and operational transparency through process visualization, RDF-based event tracking, and reviewable system diagrams that enable users to verify and audit the decision-making process.
+    \item \textbf{Definition of the objectives for a solution}: Building upon the original GraphRAG framework, our objective is to develop a significantly enhanced system that addresses the identified limitations through three main improvements: (1) developing comprehensive dataset generation methods using both template-based and random-walk approaches to create diverse, high-quality training data, ((2) implementing specialized model finetuning using QLoRA techniques for NL2SPARQL generation tasks to improve accuracy and reasoning capabilities, and (3) enhancing the original pipeline architecture with a LangGraph-based implementation that provides runtime configurability, expanded fallback mechanisms including Google Search integration, and comprehensive semantic logging while significantly improving adaptability, fault tolerance, and operational transparency through process visualization, RDF-based event tracking, and reviewable system diagrams that enable users to verify and audit the decision-making process.
     \item \textbf{Design and development}: The enhanced GraphRAG architecture is developed as three integrated components using only open-source technologies. The first component implements dual dataset generation approaches: template-based generation for linguistically diverse questions and random-walk generation for comprehensive graph coverage through automatic pattern discovery from RDF data. These datasets are designed to be interchangeable based on user needs and knowledge domain requirements. The second component involves finetuning Large Language Models using QLoRA (Quantized Low-Rank Adaptation) techniques on the generated NL2SPARQL (Natural Language to SPARQL) datasets to improve query generation capabilities and reasoning performance. The third component designs a multi-agent system using LangGraph \footnote{\url{https://langchain.com/langgraph/}} that orchestrates specialized agents for translation, entity and property extraction, strategy selection, verbalization, entity and property search, SPARQL generation, and answer synthesis, with intelligent routing between different processing paths based on query complexity and user settings.
     \item \textbf{Demonstration}: After developing the enhanced system, its functionality is demonstrated through comprehensive testing across multiple scenarios. The finetuned models are evaluated on SPARQL generation tasks using both the baseline QALD-9-Plus dataset and our newly generated synthetic datasets from template-based and random-walk approaches. The dataset generation components are tested for quality, diversity, and coverage across different knowledge domains including Wikidata and local knowledge graphs. The multi-agent architecture is demonstrated through real-time question-answering sessions with process visualization, showing adaptive routing between verbalization and SPARQL generation paths. The complete system is applied to multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and GESIS Knowledge Graph to enable comprehensive performance evaluation across different domains.
     \item \textbf{Evaluation}: The enhanced system undergoes comprehensive end-to-end quantitative evaluation. System performance is assessed using Jaccard similarity, precision, recall, F1-score, and success rate metrics on the complete question-answering workflow. This end-to-end approach evaluates the entire pipeline with finetuned models for both entity/property extraction and SPARQL generation working together within the multi-agent architecture. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
@@ -681,7 +681,7 @@ The post-processing is applied uniformly to:
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=1\linewidth]{assets/pics/asdf.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/post-new.jpg}
     \caption{SPARQL Query Post-Processing Pipeline showing the four-stage transformation process}
     \label{fig:sparql-postprocessing}
 \end{figure}
@@ -690,11 +690,11 @@ The post-processing is applied uniformly to:
 
 \section{Model Finetuning Methodology}
 \label{model-finetune}
-To overcome limitations in previous approaches that relied on few-shot prompting, we formulated a specialized model fine-tuning methodology using Quantized Low-Rank Adaptation (QLoRA) for two critical components: entity and property extraction, and SPARQL query generation. This methodological approach significantly improves performance over zero-shot or few-shot approaches by tailoring model weights specifically for knowledge graph tasks while maintaining computational efficiency. We designed distinct hyperparameter configurations for each task based on their complexity and the nature of the required outputs.
+To overcome limitations in previous approaches that relied on few-shot prompting, we formulated a specialized model fine-tuning methodology using Low-Rank Adaptation (LoRA) for two critical components: entity and property extraction, and SPARQL query generation. This methodological approach significantly improves performance over zero-shot or few-shot approaches by tailoring model weights specifically for knowledge graph tasks while maintaining computational efficiency. We designed distinct hyperparameter configurations for each task based on their complexity and the nature of the required outputs.
 
 \begin{figure}[htbp]
     \centering
-        \includegraphics[width=0.8\textwidth]{assets/pics/lora.jpg}
+        \includegraphics[width=1\textwidth]{assets/pics/qlora.jpg}
     \caption{QLoRA Architecture: Only small adapter modules are trained while the base model remains frozen, reducing trainable parameters by over 99\% compared to full fine-tuning}
     \label{fig:lora-architecture}
 \end{figure}
@@ -705,7 +705,7 @@ The entity and property extraction model methodology serves as the foundational 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.4\textwidth]{assets/pics/extract.jpg}
+    \includegraphics[width=0.5\textwidth]{assets/pics/extract.jpg}
     \caption{Entity and Property Extraction Model: Takes natural language questions as input and identifies entities and properties for SPARQL generation}
     \label{fig:entity-extraction}
 \end{figure}
@@ -848,7 +848,7 @@ We incorporated advanced methodological optimizations including gradient computa
 
 \begin{figure}[htbp]
     \centering
-        \includegraphics[width=0.8\linewidth]{assets/pics/training.jpg}
+        \includegraphics[width=1\linewidth]{assets/pics/training.jpg}
     \caption{Training Methodology: From data preparation to model selection, showing the complete fine-tuning approach}
     \label{fig:training-process}
 \end{figure}
@@ -899,7 +899,7 @@ To enable adaptation of large language models on standard research infrastructur
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/pics/eff.png}
+    \includegraphics[width=1\linewidth]{assets/pics/eff.png}
     \caption{Computational Efficiency Methodology: Enabling adaptation of 7-12B parameter models on standard research infrastructure}
     \label{fig:memory-optimization}
 \end{figure}
@@ -916,7 +916,7 @@ This methodological approach to computational efficiency enables adaptation of l
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/pics/learning2.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/learning2.jpg}
     \caption{Learning Progression: Training and validation loss patterns showing typical convergence behavior during model adaptation}
     \label{fig:learning-curves}
 \end{figure}
@@ -1069,7 +1069,7 @@ In this section, we present the comprehensive methodology used to evaluate our e
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/pics/evalframework.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/evalframework.jpg}
     \caption{Comprehensive Evaluation Framework showing the components evaluated and metrics used at each stage}
     \label{fig:eval-framework}
 \end{figure}
@@ -1139,7 +1139,7 @@ This stratification allows us to identify specific strengths and weaknesses of o
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\linewidth]{assets/pics/compareval.jpg}
+    \includegraphics[width=0.7\linewidth]{assets/pics/compareval.jpg}
     \caption{Comparative Evaluation Methodology showing how we evaluate base and fine-tuned models across different dataset types and metrics}
     \label{fig:comparative-eval}
 \end{figure}

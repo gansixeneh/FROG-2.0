@@ -290,19 +290,21 @@ Quantized Low-Rank Adaptation (QLoRA), introduced by \cite{dettmers2023qlora}, e
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{assets/pics/qlora.png}
-    \caption{QLoRA architecture: The base model weights are quantized to 4-bit precision (shown in blue), while only the adapter modules (low-rank matrices $A$ and $B$) remain in higher precision for training (shown in orange).}
+    \includegraphics[width=1\linewidth]{assets/pics/qlora.pdf}
+    \caption{Comparison of Full Fine-tuning, LoRA, and QLoRA approaches, showing memory optimization techniques. QLoRA (right) uses 4-bit model quantization and CPU-GPU memory paging, while LoRA (middle) uses adapters with a 16-bit model, and Full Fine-tuning (left) updates all parameters.}
     \label{fig:qlora-concept}
 \end{figure}
 
-As illustrated in \pic~\ref{fig:qlora-concept}, QLoRA introduces several key innovations beyond standard LoRA:
+As shown in \pic~\ref{fig:qlora-concept}, QLoRA represents a significant advancement in efficient fine-tuning compared to both full fine-tuning and standard LoRA. While full fine-tuning (left) requires updating all model parameters at 16-bit precision with large optimizer states, and standard LoRA (middle) introduces adapter modules while keeping the base model frozen at 16-bit, QLoRA (right) implements additional memory optimizations including 4-bit quantization and CPU-GPU memory paging.
+
+QLoRA introduces several key innovations beyond standard LoRA:
 
 \begin{enumerate}
     \item \textbf{4-bit NormalFloat Quantization}: Instead of standard integer quantization, QLoRA employs a 4-bit data type called NormalFloat that is specifically designed to better represent the distribution of weights in neural networks. This format allocates quantization bins according to the standard normal distribution, better preserving the fidelity of model weights.
     
     \item \textbf{Double Quantization}: QLoRA uses a technique called double quantization that quantizes the quantization constants themselves, further reducing memory requirements without significant impact on model quality.
     
-    \item \textbf{Paged Optimizers}: To manage memory more efficiently during training, QLoRA implements paged optimizers that offload optimizer states to CPU memory when not in use and fetch them back to GPU memory as needed.
+    \item \textbf{Paged Optimizers}: To manage memory more efficiently during training, QLoRA implements paged optimizers that offload optimizer states to CPU memory when not in use and fetch them back to GPU memory as needed, as illustrated by the paging flow in \pic~\ref{fig:qlora-concept}.
     
     \item \textbf{Backpropagation-Free Embedding Gradients}: QLoRA optimizes gradient computation for embedding layers, avoiding storing activation gradients for large embedding tables.
 \end{enumerate}
