@@ -236,15 +236,6 @@ class LogToRDF:
                 self.graph.remove((event_type_uri, self.LOGEX.eventCount, count_triple[0][2]))
                 self.graph.add((event_type_uri, self.LOGEX.eventCount, Literal(old_count + 1)))
         
-        # Add source information using LOGS_NS for instance data
-        source_uri = self.LOGS_NS[f"Source_{component.replace(' ', '_')}"]
-        self.graph.add((event_uri, self.LOG.hasSource, source_uri))
-        self.graph.add((source_uri, RDF.type, self.LOG.Source))
-        
-        # Source type uses LOGID (vocabulary)
-        source_type_uri = self.LOGID[f"SourceType_{component.replace(' ', '_')}"]
-        self.graph.add((source_uri, self.LOG.hasSourceType, source_type_uri))
-        
         # Process details with sophisticated patterns
         if log_entry.get('details'):
             self._process_details(event_uri, log_entry['details'], event_id)
