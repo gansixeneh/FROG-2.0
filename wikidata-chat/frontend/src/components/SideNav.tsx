@@ -108,8 +108,8 @@ const SideNav: React.FC = () => {
       
       {/* Footer with FrOG brand */}
       <div className="absolute bottom-0 left-0 right-0 p-4 text-center text-frog-light/70 text-xs">
-        <p>FrOG: Framework of Open GraphRAG</p>
-        <p className="mt-1">© 2025 FROG-2.0</p>
+        <p>MEGA-FrOG: Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG</p>
+        <p className="mt-1">© 2025 MEGA-FrOG</p>
       </div>
     </div>
   );

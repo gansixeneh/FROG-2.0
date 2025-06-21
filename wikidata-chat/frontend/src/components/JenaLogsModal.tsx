@@ -189,7 +189,7 @@ ORDER BY ?date`,
               <path d="M7 10l5 2 5-2M7 14l5 2 5-2" />
               <path d="M12 4v16" />
             </svg>
-            FrOG Execution Logs - Apache Jena
+            MEGA-FrOG Execution Logs - Apache Jena
           </h2>
           <button
             onClick={onClose}

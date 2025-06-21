@@ -68,11 +68,11 @@ const ChatArea: React.FC = () => {
         </div>
         
         <h2 className="text-xl sm:text-2xl font-bold text-frog-dark mb-2">
-          Welcome to FrOG
+          Welcome to MEGA-FrOG
         </h2>
         
         <div className="text-base sm:text-lg text-frog-dark/80 font-semibold mb-2">
-          Framework of Open GraphRAG
+          Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG
         </div>
         
         <p className="text-sm sm:text-base text-gray-700 mx-auto max-w-2xl mb-4">

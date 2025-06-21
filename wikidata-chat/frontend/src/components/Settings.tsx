@@ -43,7 +43,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
               <circle cx="12" cy="12" r="3"/>
               <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
             </svg>
-            FrOG Settings
+            MEGA-FrOG Settings
           </h2>
           <button
             onClick={onClose}

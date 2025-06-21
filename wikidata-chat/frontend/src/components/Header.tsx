@@ -74,10 +74,10 @@ const Header: React.FC = () => {
             <FrogLogo width={36} height={36} simple={true} />
             <div className="ml-3">
               <h1 className="text-xl font-bold text-white">
-                FrOG
+                MEGA-FrOG
               </h1>
               <div className="text-xs text-frog-accent font-semibold">
-                Framework of Open GraphRAG
+                Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG
               </div>
             </div>
           </div>

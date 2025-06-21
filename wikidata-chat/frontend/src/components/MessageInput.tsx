@@ -41,7 +41,7 @@ const MessageInput: React.FC = () => {
 
   // Generate the animated thinking text
   const getThinkingText = () => {
-    return `FrOG is thinking${".".repeat(dots)}`;
+    return `MEGA-FrOG is thinking${".".repeat(dots)}`;
   };
 
   // Frog lily pad
@@ -67,7 +67,7 @@ const MessageInput: React.FC = () => {
           placeholder={
             isProcessing
               ? getThinkingText()
-              : `Ask FrOG a question about ${
+              : `Ask MEGA-FrOG a question about ${
                   settings.knowledgeSource === "wikidata"
                     ? "Wikidata"
                     : settings.knowledgeSource === "curriculum"
@@ -116,7 +116,7 @@ const MessageInput: React.FC = () => {
 
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | Translation:{" "}
+        MEGA-FrOG: Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG | Translation:{" "}
         {settings.useTranslation ? "ON" : "OFF"} | Connected to:{" "}
         {settings.knowledgeSource === "wikidata"
           ? "Wikidata"
