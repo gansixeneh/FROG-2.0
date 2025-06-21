@@ -106,6 +106,17 @@ Your output should look like:
             
             completion = self._llm_provider.generate_response(prompt)
             
+            # Special handling for "apa teks dari" questions
+            if re.match(r'^apa\s+teks\s+dari\s+', state.translated_question, re.IGNORECASE):
+                # Extract everything after "apa teks dari" as a single entity
+                entity_text = re.sub(r'^apa\s+teks\s+dari\s+', '', state.translated_question, flags=re.IGNORECASE).strip('?')
+                # Override the completion with a new JSON string
+                completion = f"""```json
+{{
+    "entities": ["{entity_text}"],
+    "properties": ["isi"]
+}}```"""
+            
             # Log raw completion
             if hasattr(state, 'visualizer') and state.visualizer:
                 state.visualizer.log_event(

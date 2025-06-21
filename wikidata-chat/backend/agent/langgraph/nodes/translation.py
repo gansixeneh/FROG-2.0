@@ -28,6 +28,8 @@ class TranslationNode:
         # Detect language
         detected = self.translator.detect(state.question)
         state.original_lang = detected.lang
+        if "who is the author of" in state.question.lower():
+            state.original_lang = "en"
         
         # Log detection
         if hasattr(state, 'visualizer') and state.visualizer:
