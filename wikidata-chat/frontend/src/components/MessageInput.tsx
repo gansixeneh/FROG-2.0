@@ -1,20 +1,20 @@
 // frontend/src/components/MessageInput.tsx
-import React, { useState, useEffect } from 'react';
-import { useChat } from '../context/ChatContext';
-import { API_HOST } from '../config/api';
+import React, { useState, useEffect } from "react";
+import { useChat } from "../context/ChatContext";
+import { API_HOST } from "../config/api";
 
 const MessageInput: React.FC = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [dots, setDots] = useState(1);
   const { sendMessage, currentChat, isProcessing, settings } = useChat();
-  
+
   // Animate dots when processing
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    
+
     if (isProcessing) {
       interval = setInterval(() => {
-        setDots(prevDots => {
+        setDots((prevDots) => {
           // Cycle from 1 to 3 dots
           return prevDots >= 3 ? 1 : prevDots + 1;
         });
@@ -23,27 +23,27 @@ const MessageInput: React.FC = () => {
       // Reset to 1 dot when not processing
       setDots(1);
     }
-    
+
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
   }, [isProcessing]);
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || isProcessing) return;
-    
+
     sendMessage(message);
-    setMessage('');
+    setMessage("");
   };
-  
+
   // Generate the animated thinking text
   const getThinkingText = () => {
-    return `FrOG is thinking${'.'.repeat(dots)}`;
+    return `FrOG is thinking${".".repeat(dots)}`;
   };
-  
+
   // Frog lily pad
   const LilyPad = () => (
     <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -52,27 +52,40 @@ const MessageInput: React.FC = () => {
       </svg>
     </div>
   );
-  
+
   return (
     <div className="border-t border-frog-dark/10 bg-white p-4 fixed bottom-0 left-0 right-0 bg-opacity-90 backdrop-blur-sm z-10">
-      <form onSubmit={handleSubmit} className="flex items-center mx-auto max-w-4xl relative">
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-center mx-auto max-w-4xl relative"
+      >
         <LilyPad />
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isProcessing ? getThinkingText() : `Ask FrOG a question about ${
-            settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 
-            settings.knowledgeSource === 'curriculum' ? 'Curriculum' :
-            settings.knowledgeSource === 'legal' ? 'Legal Documents' : 'GESIS Scholarly Articles'
-          }${settings.useTranslation ? ' (auto-translation on)' : ''}...`}
+          placeholder={
+            isProcessing
+              ? getThinkingText()
+              : `Ask FrOG a question about ${
+                  settings.knowledgeSource === "wikidata"
+                    ? "Wikidata"
+                    : settings.knowledgeSource === "curriculum"
+                    ? "Curriculum"
+                    : settings.knowledgeSource === "legal"
+                    ? "Legal Documents"
+                    : "GESIS Scholarly Articles"
+                }${settings.useTranslation ? " (auto-translation on)" : ""}...`
+          }
           className="flex-grow h-12 px-4 border-2 border-frog-DEFAULT rounded-full focus:outline-none focus:ring-2 focus:ring-frog-dark focus:border-transparent shadow-md"
           disabled={!currentChat || isProcessing}
         />
         <button
           type="submit"
           className={`${
-            isProcessing ? 'bg-frog-light cursor-not-allowed' : 'bg-frog-dark hover:bg-frog-dark/90'
+            isProcessing
+              ? "bg-frog-light cursor-not-allowed"
+              : "bg-frog-dark hover:bg-frog-dark/90"
           } text-white h-12 w-12 rounded-full ml-3 transition-colors disabled:bg-frog-light flex items-center justify-center shadow-lg`}
           disabled={!message.trim() || !currentChat || isProcessing}
         >
@@ -95,22 +108,23 @@ const MessageInput: React.FC = () => {
             </svg>
           )}
         </button>
-        
+
         {/* Decorative lily pads */}
         <div className="absolute -bottom-3 left-1/4 w-8 h-2 bg-frog-DEFAULT/20 rounded-full"></div>
         <div className="absolute -bottom-4 right-1/3 w-12 h-3 bg-frog-DEFAULT/20 rounded-full"></div>
       </form>
-      
+
       {/* Footer with FrOG credit */}
       <div className="text-center text-frog-dark/50 text-xs mt-2">
-        FrOG: Framework of Open GraphRAG | 
-        Translation: {settings.useTranslation ? 'ON' : 'OFF'} | 
-        Connected to: {
-          settings.knowledgeSource === 'wikidata' ? 'Wikidata' : 
-          settings.knowledgeSource === 'curriculum' ? 'Curriculum (https://generous-lark-duly.ngrok-free.app/curi/query)' :
-          settings.knowledgeSource === 'legal' ? 'Legal Document KB (https://generous-lark-duly.ngrok-free.app/modified-lex2kg/query)' :
-          'GESIS Scholarly KB (https://generous-lark-duly.ngrok-free.app/gesis/query)'
-        }
+        FrOG: Framework of Open GraphRAG | Translation:{" "}
+        {settings.useTranslation ? "ON" : "OFF"} | Connected to:{" "}
+        {settings.knowledgeSource === "wikidata"
+          ? "Wikidata"
+          : settings.knowledgeSource === "curriculum"
+          ? "Curriculum (https://prepared-sheep-similarly.ngrok-free.app/curi/query)"
+          : settings.knowledgeSource === "legal"
+          ? "Legal Document KB (https://prepared-sheep-similarly.ngrok-free.app/modified-lex2kg/query)"
+          : "GESIS Scholarly KB (https://prepared-sheep-similarly.ngrok-free.app/gesis/query)"}
       </div>
     </div>
   );
