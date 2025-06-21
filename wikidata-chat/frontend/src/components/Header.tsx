@@ -77,7 +77,7 @@ const Header: React.FC = () => {
                 MEGA-FrOG
               </h1>
               <div className="text-xs text-frog-accent font-semibold">
-                Multi-Agent Enhanced Generation and Adaptation Framework of Open GraphRAG
+                Knowledge Graph QA System
               </div>
             </div>
           </div>
