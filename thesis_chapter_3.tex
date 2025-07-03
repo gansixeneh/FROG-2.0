@@ -495,17 +495,17 @@ For Wikidata, we leverage the established QALD-9-Plus dataset containing 558 val
 This enhancement process transforms QALD-9-Plus into a richer training dataset suitable for fine-tuning both entity/property extraction and SPARQL generation models.
 
 \subsubsection{Full Generation for Domain-Specific Knowledge Graphs}
-For Curriculum KG, Legal KG, and GESIS KG, where no existing evaluation datasets exist, we generate complete datasets from scratch using template-based and random-walk approaches with complexity stratification, as detailed in the following sections.
+For Curriculum KG, Legal KG, and GESIS KG, where no existing evaluation datasets exist, we generate complete datasets from scratch using template-based and random-walk approaches with complexity stratification, as detailed in the following sections. Figure~\ref{fig:dataset-generation-overview} illustrates our dual dataset generation methodology that combines these approaches.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{assets/pics/dataset1.png}
     \caption{Overview of the dual dataset generation methodology combining template-based and random-walk approaches}
-    \label{fig:enter-label}
+    \label{fig:dataset-generation-overview}
 \end{figure}
 
 \subsection{Template-Based Dataset Generation}
-The template-based dataset generation methodology follows a discovery-first approach where predefined question templates are instantiated with valid entity-property combinations discovered through graph exploration. This ensures that generated questions have corresponding valid and executable SPARQL queries that return meaningful results from the knowledge graph.
+The template-based dataset generation methodology follows a discovery-first approach where predefined question templates are instantiated with valid entity-property combinations discovered through graph exploration. This ensures that generated questions have corresponding valid and executable SPARQL queries that return meaningful results from the knowledge graph. Figure~\ref{fig:template-workflow} shows the complete workflow of this template-based generation process.
 
 \subsubsection{Template Structure}
 Each template contains the following components:
@@ -593,7 +593,7 @@ Templates are designed with varying complexity levels to provide comprehensive c
     \centering
     \includegraphics[width=0.75\linewidth]{assets/pics/template2.jpg}
     \caption{Workflow of the template-based dataset generation process showing the discovery-first approach and SPARQL post-processing}
-    \label{fig:enter-label}
+    \label{fig:template-workflow}
 \end{figure}
 
 \subsubsection{Discovery-First Instantiation Process}
@@ -627,12 +627,12 @@ To enhance the dataset's utility for training entity linking and property matchi
 \end{enumerate}
 
 \subsection{Random-Walk Dataset Generation}
-While the template-based approach provides high-quality, linguistically diverse questions, it may not capture the full range of structural patterns present in a knowledge graph. To address this limitation, we developed a pattern-based random walk methodology that discovers valid query patterns directly from the graph structure.
+While the template-based approach provides high-quality, linguistically diverse questions, it may not capture the full range of structural patterns present in a knowledge graph. To address this limitation, we developed a pattern-based random walk methodology that discovers valid query patterns directly from the graph structure, as illustrated in Figure~\ref{fig:random-walk-workflow}.
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{assets/pics/salib2.jpg}
     \caption{Workflow of the random-walk dataset generation process showing pattern discovery, question generation, and SPARQL post-processing}
-    \label{fig:enter-label}
+    \label{fig:random-walk-workflow}
 \end{figure}
 
 \subsubsection{Pattern Discovery}
@@ -642,6 +642,7 @@ The random walk methodology systematically explores the knowledge graph to disco
     \begin{itemize}
         \item Linear Target Pattern:  \texttt{fixedEntity property ?target}
     \end{itemize}
+    Figure~\ref{fig:1-property} visualizes this basic pattern structure.
     
     \begin{figure}[H]
         \centering
@@ -655,6 +656,7 @@ The random walk methodology systematically explores the knowledge graph to disco
         \item Linear Target Pattern: \texttt{fixedEntity prop1 ?hidden . ?hidden prop2 ?target} 
         \item Branching Pattern: \texttt{fixedEntity1 prop1 ?target . ?target prop2 fixedEntity2}
     \end{itemize}
+    Figure~\ref{fig:2-property} illustrates these intermediate pattern structures.
     
     \begin{figure}[H]
         \centering
@@ -669,6 +671,7 @@ The random walk methodology systematically explores the knowledge graph to disco
         \item Linear Middle Pattern: \texttt{entity1 prop1 ?h . ?h prop2 ?target . ?target prop3 entity2}
         \item Star Pattern: \texttt{?hidden prop1 entity1 . ?hidden prop2 entity2 . ?hidden prop3 ?target}
     \end{itemize}
+    These advanced patterns are visualized in Figure~\ref{fig:3-property}.
     
     \begin{figure}[H]
         \centering
@@ -783,7 +786,7 @@ The post-processing is applied uniformly to:
 
 \section{Model Finetuning Methodology}
 \label{model-finetune}
-To overcome limitations in previous approaches that relied on few-shot prompting, we formulated a specialized model fine-tuning methodology using Low-Rank Adaptation (LoRA) for two critical components: entity and property extraction, and SPARQL query generation. This methodological approach significantly improves performance over zero-shot or few-shot approaches by tailoring model weights specifically for knowledge graph tasks while maintaining computational efficiency. We designed distinct hyperparameter configurations for each task based on their complexity and the nature of the required outputs.
+To overcome limitations in previous approaches that relied on few-shot prompting, we formulated a specialized model fine-tuning methodology using Low-Rank Adaptation (LoRA) for two critical components: entity and property extraction, and SPARQL query generation. This methodological approach significantly improves performance over zero-shot or few-shot approaches by tailoring model weights specifically for knowledge graph tasks while maintaining computational efficiency. Figure~\ref{fig:lora-architecture} illustrates the QLoRA architecture employed in our methodology, which dramatically reduces trainable parameters while maintaining model performance. We designed distinct hyperparameter configurations for each task based on their complexity and the nature of the required outputs.
 
 \begin{figure}[htbp]
     \centering
@@ -794,7 +797,7 @@ To overcome limitations in previous approaches that relied on few-shot prompting
 
 \subsection{Entity and Property Extraction Model}
 \label{entity-prop-extract}
-The entity and property extraction model methodology serves as the foundational processing step in our pipeline, designed to identify relevant entities and properties mentioned in natural language questions. This methodology enables accurate mapping between question terms and knowledge graph elements, which is essential for generating correct SPARQL queries.
+The entity and property extraction model methodology serves as the foundational processing step in our pipeline, designed to identify relevant entities and properties mentioned in natural language questions. This methodology enables accurate mapping between question terms and knowledge graph elements, which is essential for generating correct SPARQL queries. Figure~\ref{fig:entity-extraction} illustrates how this model processes natural language questions to extract entities and properties.
 
 \begin{figure}[htbp]
     \centering
@@ -826,7 +829,7 @@ For the entity and property extraction task, we designed a lighter QLoRA configu
     \item \textbf{QLoRA configuration}: Standard approach without rank stabilization, as extraction tasks showed less susceptibility to training instabilities
 \end{itemize}
 
-This configuration approach results in approximately 40-60 million trainable parameters (depending on model size), representing less than 1\% of the original model parameters, enabling efficient adaptation while capturing domain-specific extraction patterns.
+This configuration approach results in approximately 40-60 million trainable parameters (depending on model size), representing less than 1\% of the original model parameters, enabling efficient adaptation while capturing domain-specific extraction patterns. Figure~\ref{fig:parameter-efficiency} demonstrates the dramatic reduction in trainable parameters achieved through this LoRA approach compared to full model fine-tuning.
 
 \begin{figure}[htbp]
     \centering
@@ -869,7 +872,7 @@ We employed unpacked training to preserve the structure of individual examples a
 
 \subsection{SPARQL Generation Model}
 \label{sparql-gen}
-The SPARQL generation model methodology represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries that accurately represent the user's information need. This task requires a more sophisticated methodological approach than entity extraction, as it necessitates understanding of graph query patterns, SPARQL syntax, and domain-specific knowledge graph structures.
+The SPARQL generation model methodology represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries that accurately represent the user's information need. This task requires a more sophisticated methodological approach than entity extraction, as it necessitates understanding of graph query patterns, SPARQL syntax, and domain-specific knowledge graph structures. Figure~\ref{fig:sparql-generation} illustrates the model's process of transforming natural language questions and candidate entities/properties into executable SPARQL queries with reasoning steps.
 
 \begin{figure}[htbp]
     \centering
@@ -937,7 +940,7 @@ Our SPARQL generation training methodology employed a more intensive approach:
     \item \textbf{Sequence handling}: Enabled sequence packing for varied sequence lengths
 \end{itemize}
 
-We incorporated advanced methodological optimizations including gradient computation strategies and batch organization techniques to handle the longer sequences involved in SPARQL generation training.
+We incorporated advanced methodological optimizations including gradient computation strategies and batch organization techniques to handle the longer sequences involved in SPARQL generation training. Figure~\ref{fig:training-process} illustrates our complete training methodology, from data preparation through model selection.
 
 \begin{figure}[htbp]
     \centering
@@ -949,7 +952,7 @@ We incorporated advanced methodological optimizations including gradient computa
 \subsection{Cross-Domain Adaptation Methodology}
 \label{cross-domain}
 
-A key innovation in our fine-tuning methodology is the cross-domain adaptation approach, which enables efficient development across different knowledge graph domains. We formulated a sequential experimental approach to optimize our methodology:
+A key innovation in our fine-tuning methodology is the cross-domain adaptation approach, which enables efficient development across different knowledge graph domains. We formulated a sequential experimental approach to optimize our methodology, as illustrated in Figure~\ref{fig:cross-domain}:
 
 Our methodology follows these key principles:
 
@@ -988,7 +991,7 @@ This methodological approach significantly reduces experimental overhead while e
 The workflow ensures that each domain-specific model is directly finetuned from the base model, preserving domain purity while benefiting from the methodological insights gained through our Wikidata experiments.
 
 \subsection{Computational Efficiency Methodology}
-To enable adaptation of large language models on standard research infrastructure, we developed a comprehensive methodology for computational efficiency:
+To enable adaptation of large language models on standard research infrastructure, we developed a comprehensive methodology for computational efficiency, as shown in Figure~\ref{fig:memory-optimization}:
 
 \begin{figure}[htbp]
     \centering
@@ -1005,7 +1008,7 @@ To enable adaptation of large language models on standard research infrastructur
     \item \textbf{Batch processing approach}: Application of gradient accumulation for effective batch size management
 \end{itemize}
 
-This methodological approach to computational efficiency enables adaptation of large models (7-12 billion parameters) on standard research infrastructure, making our approach accessible and reproducible for researchers with limited computational resources.
+This methodological approach to computational efficiency enables adaptation of large models (7-12 billion parameters) on standard research infrastructure, making our approach accessible and reproducible for researchers with limited computational resources. Figure~\ref{fig:learning-curves} demonstrates typical learning progression patterns during model adaptation, showing training and validation loss convergence behavior.
 
 \begin{figure}[htbp]
     \centering
@@ -1243,7 +1246,7 @@ This comprehensive visualization and transparency system enables users to unders
 \section{Evaluation Metrics}
 \label{eval-metrics}
 
-In this section, we present the comprehensive methodology used to evaluate our enhanced GraphRAG system. Our evaluation framework is designed to assess the performance of both our base model and the fine-tuned models across different knowledge domains and query complexity levels. We employ multiple complementary metrics to provide a holistic view of system performance.
+In this section, we present the comprehensive methodology used to evaluate our enhanced GraphRAG system. Our evaluation framework is designed to assess the performance of both our base model and the fine-tuned models across different knowledge domains and query complexity levels. We employ multiple complementary metrics to provide a holistic view of system performance. Figure~\ref{fig:eval-framework} illustrates our comprehensive evaluation framework, showing the components evaluated and metrics used at each stage.
 
 \begin{figure}[htbp]
     \centering
@@ -1337,7 +1340,7 @@ To provide deeper insights into system performance across different scenarios, w
 
 For Wikidata evaluation, we do not apply query complexity stratification. While the QALD-9-Plus dataset naturally contains queries of varying complexity, we evaluate them as a single unified set without complexity-based categorization.
 
-This stratification allows us to identify specific strengths and weaknesses of our system and to assess the effectiveness of our fine-tuning approach across different complexity levels (for domain-specific KGs) and knowledge domains.
+This stratification allows us to identify specific strengths and weaknesses of our system and to assess the effectiveness of our fine-tuning approach across different complexity levels (for domain-specific KGs) and knowledge domains. Figure~\ref{fig:comparative-eval} illustrates our comparative evaluation methodology for assessing base and fine-tuned models across different dataset types and metrics.
 
 \begin{figure}[htbp]
     \centering
