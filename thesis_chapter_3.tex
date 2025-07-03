@@ -775,6 +775,8 @@ The post-processing is applied uniformly to:
     \item Random-walk generated datasets for domain-specific KGs
 \end{itemize}
 
+Figure~\ref{fig:sparql-postprocessing} illustrates the complete four-stage transformation pipeline that standardizes SPARQL queries across all our datasets, ensuring consistent formatting that aligns with the natural generation patterns of language models.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\linewidth]{assets/pics/post-new.jpg}
@@ -918,7 +920,7 @@ Our SPARQL generation training data methodology focused on creating comprehensiv
     \item Syntactically correct target SPARQL queries for each knowledge graph domain
 \end{itemize}
 
-All SPARQL queries in our training datasets undergo comprehensive post-processing to align with the natural generation patterns observed in base language models. This includes converting keywords to uppercase, replacing full URIs with prefixed notation, applying consistent indentation and formatting, and normalizing whitespace. This preprocessing step ensures that our fine-tuned models learn from consistently formatted examples that match their inherent generation preferences, leading to more reliable SPARQL query generation. The post-processing pipeline is detailed in Figure~\ref{fig:sparql-postprocessing}.
+All SPARQL queries in our training datasets undergo comprehensive post-processing to align with the natural generation patterns observed in base language models. This includes converting keywords to uppercase, replacing full URIs with prefixed notation, applying consistent indentation and formatting, and normalizing whitespace. This preprocessing step ensures that our fine-tuned models learn from consistently formatted examples that match their inherent generation preferences, leading to more reliable SPARQL query generation.
 
 For Wikidata, we enhanced the QALD-9-Plus dataset by:
 \begin{itemize}
