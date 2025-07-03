@@ -932,6 +932,87 @@ This deployment approach creates a clean separation between model training and m
 
 % --------------------------
 
+
+\subsection{Iterative Prompt Engineering and Format Optimization}
+\label{iterative-prompt}
+
+Throughout the development of our finetuning methodology, we conducted systematic experiments to optimize the prompt structure and SPARQL formatting for maximum model performance. This iterative approach revealed critical insights about how formatting decisions and prompt engineering significantly impact the quality of generated SPARQL queries.
+
+\subsubsection{Experimental Progression}
+
+Our optimization process followed an incremental approach, with each experiment building upon insights from previous iterations:
+
+\begin{enumerate}
+    \item \textbf{Baseline Configuration}: Initially, we used minimal post-processing with raw SPARQL queries presented in compact format without thoughts or formatting enhancements. For example:
+    \begin{lstlisting}[language=SPARQL, caption=Baseline SPARQL format without post-processing]
+SELECT DISTINCT ?uri WHERE { ?uri wdt:P31 wd:Q194188 ; wdt:P137 wd:Q23548 . }
+\end{lstlisting}
+    This baseline configuration established our performance floor for comparison.
+
+    \item \textbf{Indentation Enhancement}: We introduced structured indentation to improve query readability and align with common SPARQL formatting practices:
+    \begin{lstlisting}[language=SPARQL, caption=SPARQL with indentation formatting]
+SELECT DISTINCT ?uri
+WHERE {
+  ?uri wdt:P31 wd:Q194188 ;
+       wdt:P137 wd:Q23548 .
+}
+\end{lstlisting}
+    This modification resulted in a measurable increase in Jaccard similarity scores compared to the baseline, suggesting that models benefit from structured formatting during training.
+
+    \item \textbf{Whitespace Normalization}: Through analysis of model outputs, we discovered that fine-tuned models consistently generated queries with specific whitespace patterns, particularly removing spaces before question marks and dots. We adapted our training data to match these patterns:
+    \begin{lstlisting}[language=SPARQL, caption=SPARQL with whitespace normalization]
+SELECT DISTINCT?uri WHERE { VALUES?types { wd:Q3918 wd:Q875538 } wd:Q567 wdt:P69?uri.?uri wdt:P31?types. }
+\end{lstlisting}
+    This alignment with the model's natural generation tendencies produced additional performance improvements.
+
+    \item \textbf{Combined Formatting}: We integrated both indentation and whitespace normalization to leverage the benefits of both approaches:
+    \begin{lstlisting}[language=SPARQL, caption=SPARQL with combined formatting optimizations]
+SELECT DISTINCT?uri
+WHERE {
+  VALUES?types { wd:Q3918 wd:Q875538 }
+  wd:Q567 wdt:P69?uri.
+  ?uri wdt:P31?types.
+}
+\end{lstlisting}
+    This combined approach yielded higher performance gains than either technique in isolation.
+
+    \item \textbf{Chain-of-Thought Integration}: The most significant improvement came from incorporating explicit reasoning steps before SPARQL generation. This approach guides the model through a structured thought process:
+    \begin{lstlisting}[language=, caption=Example of chain-of-thought reasoning followed by SPARQL generation, basicstyle=\small\ttfamily]
+Let me analyze this step by step:
+1. The question asks for the person who succeeded John F. Kennedy as President of the United States.
+2. From the provided URIs, 'Q9696' represents John F. Kennedy and 'Q11696' represents the position of President of the United States.
+3. The property 'P39' represents 'position held', and 'P1366' represents 'replaced by', which together can identify Kennedy's successor.
+4. I need to find the entity that replaced Kennedy in the position of US President.
+5. The SPARQL query should identify the statement where Kennedy held the position of US President and then retrieve the entity specified as his replacement.
+
+```sparql
+SELECT?uri
+WHERE {
+  wd:Q9696 p:P39?statement.
+  ?statement ps:P39 wd:Q11696 ;
+            pq:P1366?uri.
+}
+```
+\end{lstlisting}
+\end{enumerate}
+
+\subsubsection{Performance Impact}
+
+Each iterative improvement contributed to enhanced model performance, with the final configuration incorporating all optimizations achieving the highest Jaccard similarity scores. The progression of improvements can be summarized as follows:
+
+\begin{itemize}
+    \item \textbf{Baseline → Indentation}: Moderate improvement in query generation accuracy
+    \item \textbf{Baseline → Whitespace Normalization}: Similar moderate improvement
+    \item \textbf{Baseline → Combined Formatting}: Larger improvement than individual techniques
+    \item \textbf{Combined Formatting → Chain-of-Thought}: Substantial improvement, achieving the best overall performance
+\end{itemize}
+
+\subsubsection{Final Prompt Configuration}
+
+Based on these experiments, our final prompt configuration incorporates all discovered optimizations. The system prompt emphasizes structured reasoning and precise formatting requirements, while the assistant prompt template enforces the chain-of-thought pattern followed by properly formatted SPARQL. This configuration represents the culmination of our iterative optimization process and is used throughout all finetuning experiments reported in this thesis.
+
+These iterative experiments demonstrate the critical importance of prompt engineering and format optimization in achieving high-quality SPARQL generation. The insights gained from this process informed not only our Wikidata experiments but also transferred effectively to domain-specific knowledge graphs, validating the generalizability of our optimization approach.
+
 \section{Multi-Agent Architecture Design}
 The third core improvement of our enhanced GraphRAG system is the implementation of a sophisticated multi-agent architecture that enables intelligent routing, adaptive processing, and robust fallback mechanisms. This approach significantly enhances the capabilities of the original framework by replacing the single-agent architecture with a coordinated system of specialized agents that can collaboratively solve complex knowledge graph queries.
 

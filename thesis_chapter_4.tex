@@ -487,6 +487,39 @@ Guidelines: \\
 IMPORTANT: Before generating the SPARQL query, provide your step-by-step reasoning about how to construct the query. \\
 \end{tcolorbox}
 
+% \begin{tcolorbox}[title=SPARQL Question Generation System Prompt, colback=blue!5!white, colframe=blue!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
+% You are a SPARQL question generation expert. Your task is to generate a natural language question and step-by-step reasoning chain for the given SPARQL query. \\
+
+% SPARQL Query: \\
+% \{pattern['sparql']\} \\
+
+% Entity and Property Information: \\
+% - Entities: \{', '.join(entity\_info)\} \\
+% - Properties: \{', '.join(property\_info)\} \\
+
+% Examples from Template-Based Generation: \\
+% \{example\_context\} \\
+
+% Please generate: \\
+% 1. A clear, concise natural language question that would be answered by this SPARQL query \\
+% 2. A step-by-step reasoning chain (5-7 steps) that explains how to translate the natural language question into the SPARQL query \\
+
+% Output Format: \\
+% ```json \\
+% \{ \\
+%   "question": "Your generated natural language question here", \\
+%   "thoughts": [ \\
+%     "1. First reasoning step...", \\
+%     "2. Second reasoning step...", \\
+%     "3. Third reasoning step...", \\
+%     "..." \\
+%   ] \\
+% \} \\
+% ``` \\
+
+% Follow the style and format of the provided examples. \\
+% \end{tcolorbox}
+
 Example user prompts include the question and candidate entities and properties:
 
 \begin{tcolorbox}[title=SPARQL Generation User Prompt, colback=green!5!white, colframe=green!75!black, boxrule=0.5mm, arc=2mm, fontupper=\ttfamily\small, breakable]
