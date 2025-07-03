@@ -1,0 +1,427 @@
+\chapter{\babTiga}
+\label{bab:3}
+
+In this chapter, we will explain the research methodology we employ, including the big picture of the experiment we conduct, the dataset and knowledge bases, as well as the evaluation metrics.
+
+\section{Research Methodology}
+The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+\begin{enumerate}
+    \item \textbf{Problem identification and motivation}: Na\"{i}ve RAG systems face challenges with interpretability due to their reliance on opaque vector representations. RAG with KG as the knowledge base, i.e., GraphRAG can partially alleviate this problem. However, there are very few generic frameworks for GraphRAG that solely leverage open-source components, work for all KGs, and do not require training at all. Yet, this is crucial as it allows the users to customize the system according to their preferences while enhancing transparency and accessibility.
+    \item \textbf{Definition of the objectives for a solution}: Referring to the defined problem, our objective is to develop a RAG system with KG as the primary knowledge base using only open-source components. This framework will provide users with a transparent and flexible system that can be tailored to their specific needs without requiring additional training efforts.
+    \item \textbf{Design and development}: The GraphRAG architecture is designed using only open-source components. Following the design phase, we develop the actual artifact of the RAG system, ensuring it functions accordingly.
+    \item \textbf{Demonstration}: After developing the system, the functionality is demonstrated by applying it to the real use case, i.e., QA over Wikidata, DBpedia, and local KG.
+    \item \textbf{Evaluation}: Quantitatively, the system's performance in generating correct answers will be assessed by employing the Jaccard similarity measure. This metric will ensure that the system not only produces contextually appropriate responses but also adheres to the objective of utilizing only open-source components.
+    \item \textbf{Communication}: The architecture and implementation details of this pipeline are documented in a research report, such as this paper. Additionally, the experiment findings are also reported to ensure transparency and reproducibility.
+\end{enumerate}
+
+\section{Experiment Details}
+\label{exp-detail}
+In general, we will be experimenting with two different versions of the pipeline, with the architecture of the first pipeline being simpler than the second one. Additionally, the scope of the first pipeline is also narrower. The details are as follows.
+\begin{enumerate}
+    \item The first pipeline is used as the ``prototype'' and lays the foundation for building the second pipeline. As previously mentioned, this pipeline has a narrower scope, focusing specifically on Wikidata. The steps include the entities extraction and linking, SPARQL query generation, as well as answer generation. However, the property candidates are presented directly in the query generation prompt and obtained from the top-100 frequently used properties listed in Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}. This highlights the limitation of the types of questions the system can support, as properties are only taken from this predefined list.
+    \item Departing from the limitation of the first pipeline, we refine the architecture by incorporating auxiliary vector databases to enable the usage of larger number of properties for the second pipeline. To enhance the performance for simple (single-hop) questions, we also include the text retrieval method using dense text embeddings encoded from verbalized triples (see Subsubsubsection \ref{local-question}). The steps for this pipeline are composed of the entities extraction and linking, retrieval, and answer generation. In the retrieval stage, the system initially attempts to find whether the question can be answered using the verbalized triples of the entity obtained in the first stage or not. If the system is unsure about the answer, the system proceeds with the SPARQL query generation, with the entities retrieved from the KG's corresponding API (if any) or vector database and properties retrieved from the vector database based on the user's question being passed as the prompt context.
+\end{enumerate}
+
+Due to the more specific scope covered by the first pipeline, we designed our own dataset to be tested on it (see Subsubsection \ref{dataset-isriti}). We test this first pipeline on two LLMs: Mistral 7B and Mistral NeMo. We use the instruction fine-tuned version of both models.
+
+On the other hand, to ensure the flexibility of our pipeline, there are three knowledge bases being plugged into the second pipeline: Wikidata, DBpedia, and local KG (see Subsection \ref{knowledgebase}). The datasets we use are QALD-9-Plus \citep{perevalov2022qald9plus} for Wikidata and DBpedia, and the synthetic dataset generated by our dataset generator for the local KG (see Subsubsubsection \ref{dataset-generator}). The LLMs we use for the second pipeline are Mistral NeMo, LLaMA 3.1 8B, Qwen2.5 Coder 7B, and Qwen2.5 7B. Likewise, all models are the instruction fine-tuned versions.
+
+Greedy decoding is employed for text generation using all models for standardization and reproducibility. For the first pipeline, the maximum number of new tokens allowed for generation is 1000, whereas the second one is 1500. The remaining parameters are left the same as the default ones.
+
+Lastly, we conduct our evaluation locally using instances with GPU support that are rented on an hourly basis.
+
+\section{Knowledge Bases} \label{knowledgebase}
+In this subsection, we will explain the knowledge bases used in testing the system: Wikidata, DBpedia, and the local curriculum KG. We use Wikidata and DBpedia to represent open knowledge graphs, while the local curriculum KG serves as a representative of enterprise knowledge graphs.
+
+\subsection{Wikidata}
+Wikidata, originally launched in October 2012 by Wikimedia Foundation \citep{vrandevcic2014}, is an openly accessible, collaborative knowledge base that is editable by anyone \citep{waagmeester2020}. Consequently, the scope of knowledge covered by Wikidata is nearly boundless, just like its sister project, Wikipedia\footnote{\url{https://www.wikipedia.org/}}. However, in contrast to Wikipedia which provides knowledge primarily in the free text format, Wikidata represents information in the structured format \citep{waagmeester2020}. The core structure of Wikidata is made up of items, properties, and values, which are connected in statements that closely resemble RDF triples \citep{Cantallops2019ASL}. Finally, the knowledge in Wikidata can be retrieved by SPARQL querying through Wikidata Query Service (WDQS)\footnote{\url{https://query.wikidata.org/}}, whose interface can be seen in \pic~\ref{fig:wdqs-ui}. The query example used in \pic~\ref{fig:wdqs-ui} returns the URI of the instances (\texttt{wdt:P31}) of Cat (\texttt{wd:Q146}) alongside with its label. The Wikidata page of \texttt{wdt:P31} and \texttt{wd:Q146} can be seen in \pic~\ref{fig:wd-instanceof} and \pic~\ref{fig:wd-cat}, respectively.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/wdqs.png}
+    \caption{Wikidata Query Service's Interface}
+    \label{fig:wdqs-ui}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/wd-instanceof.png}
+    \caption{Wikidata Page of ``instance of'' (\texttt{wdt:P31})}
+    \label{fig:wd-instanceof}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/cat-wd.png}
+    \caption{Wikidata Page of ``house cat'' (\texttt{wd:Q146})}
+    \label{fig:wd-cat}
+\end{figure}
+
+\subsection{DBpedia}
+DBpedia project is an initiative to extract structured information on Wikipedia and making this information available in the Web \citep{BIZER2009154}. This structured information in the form of open linked data (KG) is represented in RDF triples. Each entity in DBpedia is identified by a URI in the form of \texttt{http://dbpedia.org/resource/\textbf{name}}, where \texttt{\textbf{name}} is obtained from the URL of the corresponding Wikipedia article, which is in the form of \texttt{http://en.wikipedia.org/wiki/\textbf{name}} \citep{auer2007dbpedia}. Similar to Wikidata, DBpedia also provides SPARQL endpoint\footnote{\url{https://dbpedia.org/sparql}} to query the knowledge base, which is hosted on Virtuoso Universal Server\footnote{\url{https://virtuoso.openlinksw.com/}}. Additionally, the ontology (schema) for DBpedia is available, created through crowdsourcing effort.
+
+The interface of the DBpedia's SPARQL Query Editor to query the knowledge base through its endpoint API can be seen in \pic~\ref{fig:dbpedia-qs}. The example query mentioned in \pic~\ref{fig:dbpedia-qs} returns the birth date (\texttt{dbo:birthDate}) of Lionel Messi (\texttt{dbr:Lionel\_Messi}). Just like Wikidata, each resource in DBpedia has its own dedicated page as well. The page for \texttt{dbo:birthDate} can be seen in \pic~\ref{fig:dbp-dob} and \texttt{dbr:Lionel\_Messi} in \pic~\ref{fig:dbp-messi}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbpedia-qs-ui.png}
+    \caption{DBpedia's SPARQL Query Editor Interface}
+    \label{fig:dbpedia-qs}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbp-dob.png}
+    \caption{DBpedia Page of ``birth date'' (\texttt{dbo:birthDate})}
+    \label{fig:dbp-dob}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets//pics/dbp-messi.png}
+    \caption{DBpedia Page of ``Lionel Messi'' (\texttt{dbr:Lionel\_Messi})}
+    \label{fig:dbp-messi}
+\end{figure}
+
+\subsection{Local KGs}
+\label{local-desc}
+For the local KG, we leverage Fasilkom UI's Computer Science Major curriculum knowledge graph built by \cite{githubdaniel} as hosted on GitHub. This KG is extracted from the Fasilkom UI's 2024 Curriculum Guidebook for Computer Science Major, which is publicly available through Fasilkom UI's LMS\footnote{\url{https://scele.cs.ui.ac.id/pluginfile.php/1279/block_html/content/buku_panduan_kur_2024_ilmu_komputer.pdf}}. Specifically, the content is obtained from page 122 to 186, covering the syllabus of all courses. Additionally, some auxiliary information is manually added by the creator. The retrieved content is then converted into KG with the help of GLiNER \citep{zaratiana2023glinergeneralistmodelnamed} to extract entities from the unstructured text data.
+
+The constructed KG is saved in the form of triples and exported into a \texttt{txt} file. In total, there are 1628 triples, containing the information of courses. The number of properties available in the dataset is 10, which includes \texttt{kode mata kuliah}, \texttt{kategori mata kuliah}, \texttt{disebut juga}, \texttt{prasyarat}, \texttt{bobot SKS}, \texttt{metode evaluasi}, \texttt{lab}, \texttt{deskripsi}, \texttt{topik}, and \texttt{cpmk}. Some triples about the ``Basis Data'' course can be seen in Code \ref{code:samples-triples}.
+
+\lstinputlisting[caption=Triples about ``Basis Data'' Course, label=code:samples-triples, style=uistyle]{assets/codes/sample-triples.txt}
+
+We convert the ``raw'' triples into RDF triples, since our system only supports SPARQL for query generation, with the total of 874 triples. Prior to this, each name is translated into English, except for the value of \texttt{disebut juga} property. We define the prefix to be \texttt{ns1:}, representing \texttt{http://example.org/}. The mapping of each property---with some exclusions on properties we think are unnecessary\footnote{The objects of such properties are not ``neat'' enough to be either entity or literal.}---is defined in Table \ref{table-propmap}. Additionally, we define \texttt{ns1:course}, \texttt{ns1:evaluation}, \texttt{ns1:course\_category}, and \texttt{ns1:research\_lab} as the classes. A more detailed ontology definition is described in Subsubsection \ref{ontology-local}. 
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.5\textwidth} | m{0.5\textwidth} |}
+    \hline
+    \RaggedRight{\textbf{Original Dataset}} & \textbf{RDF Dataset} \\
+    \hline
+    \RaggedRight{\texttt{kode mata kuliah}} & \texttt{ns1:has\_course\_code} \\
+    \hline
+    \RaggedRight{\texttt{kategori mata kuliah}} & \texttt{ns1:has\_course\_category} \\
+    \hline
+    \RaggedRight{\texttt{disebut juga}} & \texttt{ns1:also\_known\_as} \\
+    \hline
+    \RaggedRight{\texttt{prasyarat}} & \texttt{ns1:has\_prerequisite} \newline \texttt{ns1:has\_prerequisite\_course} \newline \texttt{ns1:has\_minimum\_credits} \\
+    \hline
+    \RaggedRight{\texttt{bobot SKS}} & \texttt{ns1:has\_credits} \\
+    \hline
+    \RaggedRight{\texttt{metode evaluasi}} & \texttt{ns1:has\_evaluation\_method} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Properties Mapping}
+\label{table-propmap}
+\end{table}
+
+The triples in Code \ref{code:samples-triples} if converted into RDF triples would result in the following triples, as in Code \ref{code:samples-triples-ttl}.
+
+\lstinputlisting[caption=RDF Version of Code \ref{code:samples-triples}, label={code:samples-triples-ttl}]{assets/codes/sample-triple.ttl}
+
+\section{Ontology}
+The ontology here refers to the properties and classes defined in the KG. In this section, we will delve into the ontology details for each KG.
+
+\subsection{Wikidata}
+For Wikidata, we obtain all properties that exist in the KG using its SPARQL endpoint. Specifically, the URI of each property and its human-readable label are retrieved to be provided as context using hybrid search. However, since the classes are searchable through Wikidata API (along with entities), we do not include them in this section.
+
+\subsection{DBpedia}
+For DBpedia, we use the provided DBpedia's T-Box Ontology\footnote{\url{https://www.dbpedia.org/resources/ontology/}}. This is an OWL file containing information on classes, object properties, and data properties that exist in DBpedia. However, the available information is limited to properties and classes whose prefix started with \texttt{dbo:} or \texttt{http://dbpedia.org/ontology/}. For each property or class, the human-readable label is retrieved for property and class linking purposes as in Subsubsection \ref{global-question} using hybrid search. Additionally, we also obtain the domain and range of each property (if applicable) which we include in the SPARQL query generation prompt for additional context.
+
+\subsection{Local KGs}
+\label{ontology-local}
+For the local curriculum KG as described in Subsubsection \ref{local-desc}, the properties and classes are obtained directly from the RDF graph. The complete ontology we defined is as follows in Table \ref{table-ont-localkg}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| c | c | c |}
+    \hline
+    \RaggedRight{\texttt{ns1:also\_known\_as}} & \texttt{rdfs:domain} & \texttt{ns1:course OR ns1:research\_lab}\\
+    \RaggedRight{\texttt{ns1:also\_known\_as}} & \texttt{rdfs:range} & \texttt{xsd:string}\\
+    \RaggedRight{\texttt{ns1:has\_course\_category}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_course\_category}} & \texttt{rdfs:range} & \texttt{ns1:course\_category}\\
+    \RaggedRight{\texttt{ns1:has\_course\_code}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_course\_code}} & \texttt{rdfs:range} & \texttt{xsd:string}\\
+    \RaggedRight{\texttt{ns1:has\_credits}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_credits}} & \texttt{rdfs:range} & \texttt{xsd:integer}\\
+    \RaggedRight{\texttt{ns1:has\_evaluation\_method}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_evaluation\_method}} & \texttt{rdfs:range} & \texttt{ns1:evaluation}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:range} & \texttt{xsd:integer}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:range} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_research\_group}} & \texttt{rdfs:domain} & \texttt{ns1:course}\\
+    \RaggedRight{\texttt{ns1:has\_research\_group}} & \texttt{rdfs:range} & \texttt{ns1:research\_lab}\\
+    \RaggedRight{\texttt{ns1:has\_minimum\_credits}} & \texttt{rdfs:subPropertyOf} & \texttt{ns1:has\_prerequisite}\\
+    \RaggedRight{\texttt{ns1:has\_prerequisite\_course}} & \texttt{rdfs:subPropertyOf} & \texttt{ns1:has\_prerequisite}\\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Ontology of the Local Curriculum KG}
+\label{table-ont-localkg}
+\end{table}
+
+\section{Dataset}
+We will explain the datasets we leverage to assess the performance of our proposed system.
+
+\subsection{Pipeline v1 Dataset}
+\label{dataset-isriti}
+Since the first pipeline is exclusively for Wikidata, we hand-crafted the dataset for evaluation from Wikidata as retrieved on August 28th, 2024. This was done to ensure that the dataset complies with the requirements, such as the used properties must be in the top-100 list and the SPARQL queries are designed to return a small number of rows. Additionally, this strategy helps maintain the output within the manageable limit of the LLM's context window. The questions in this evaluation dataset are also distinct from those used during few-shot learning to prevent any potential data leakage.
+
+The dataset consists of 31 rows encompassing three main domains (Wikidata classes): animal, artist, and written work. Specifically, there are 8 rows within the animal domain, 11 rows within the artist domain, and 12 rows within the written work domain. Some examples of the data are shown in Table \ref{table-queries-v1}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.35\textwidth} | m{0.55\textwidth} |  m{0.1\textwidth} |}
+    \hline
+    \textbf{Query Name} & \textbf{SPARQL Query} & \textbf{Category}\\
+    \hline
+    List of Mammals by Name & \texttt{SELECT ?mammal ?mammalLabel WHERE \{ ?mammal wdt:P31 wd:Q7377 . SERVICE wikibase:label \{ bd:serviceParam wikibase:language 'en' . \} \}\}} & Animal \\
+    \hline
+    Date of birth of Leonardo da Vinci & \texttt{SELECT ?date\_of\_birth WHERE \{ wd:Q762 wdt:P569 ?date\_of\_birth .\}} & Artist \\
+    \hline
+    Number of works authored by J. R. R. Tolkien & \texttt{SELECT (COUNT(*) AS ?count) WHERE \{ ?work wdt:P50 wd:Q892 .\}} & Written Work \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Queries from Dataset v1}
+\label{table-queries-v1}
+\end{table}
+
+
+\subsection{Pipeline v2 Dataset}
+For the second pipeline, we leverage these datasets.
+\subsubsection{Wikidata and DBpedia} \label{pipeline-v2-dataset-wikidata-dbpedia}
+For Wikidata and DBpedia, we leverage the QALD-9-Plus \citep{perevalov2022qald9plus} dataset. QALD-9-Plus is a multilingual KGQA benchmark dataset for Wikidata and DBpedia. It covers 10 languages: English, German, Russian, French, Spanish, Armenian, Belarusian, Lithuanian, Bashkir, and Ukrainian. The dataset consists of two splits: train split (408 unique questions) and test split (150 unique questions). However, in this work, we will only use the former split in the English language.
+
+Following our research scope and the obtained ontology information for DBpedia (which only supports properties and classes with the \texttt{dbo:} prefix), we filter out dataset entries whose queries incorporate resources that use other than \texttt{dbo:} prefix and return either resource or number only. We also ensure that each entry we take for DBpedia also has the equivalent Wikidata query.
+
+Upon filtering irrelevant entries, we downsample the filtered set to 14 entries for in-context learning in SPARQL generation (Subsubsection \ref{global-question}) and 65 entries for the evaluation of the entire system. We leverage the cosine similarity downsampling technique to obtain the subset of entries that are the least relevant to the others to ensure each ``cluster'' has at least a representative in the subset. The code used for this downsampling is available in Code \ref{code:downsampling}. In general, the steps taken are as follows.
+
+\begin{enumerate}
+    \item Encode all questions into \texttt{all-mpnet-base-v2} version of MPNet embeddings.
+    \item Compute pairwise cosine similarities for each question.
+    \item Average the cosine similarity values for each question.
+    \item Sort the question based on the average cosine similarity in ascending order.
+    \item Select the top-$k$ questions with the lowest average cosine similarity. In this case, we have obtained the $k$ questions that are the least similar to the rest.
+\end{enumerate}
+
+\lstinputlisting[language=python, caption=Python Code for Dataset Downsampling, label={code:downsampling}, breaklines=true]{assets/codes/downsampling.py}
+
+Some examples of downsampled data can be seen in the following Table \ref{table-queries-v2}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.2\textwidth} | m{0.4\textwidth} |  m{0.4\textwidth} |}
+    \hline
+    \textbf{Query Name} & \textbf{Wikidata Query} & \textbf{DBpedia Query}\\
+    \hline
+    Give me all movies with Tom Cruise. & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P161 wd:Q37079. \}} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:Film ; dbo:starring dbr:Tom\_Cruise \}} \\
+    \hline
+    In which countries can you pay using the West African CFA franc? & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P38 wd:Q861690 . \}} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri dbo:currency dbr:West\_African\_CFA\_franc \}} \\
+    \hline
+    How much did Pulp Fiction cost? & \texttt{SELECT DISTINCT ?value WHERE \{ wd:Q104123 wdt:P2130 ?value . \}} & \texttt{SELECT DISTINCT ?n WHERE \{ dbr:Pulp\_Fiction dbo:budget ?n \}} \\
+    \hline
+    Which countries have more than two official languages? & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri wdt:P31 wd:Q6256 . ?uri wdt:P37 ?language . \} GROUP BY ?uri HAVING(COUNT(?language)>2)} & \texttt{SELECT DISTINCT ?uri WHERE \{ ?uri a dbo:Country ; dbo:officialLanguage ?language \} GROUP BY ?uri HAVING ( COUNT(?language) > 2 )} \\
+    \hline
+    How many languages are spoken in Turkmenistan? & \texttt{SELECT (COUNT(DISTINCT ?x) AS ?c) WHERE \{ dbr:Turkmenistan dbo:language ?x \}} & \texttt{SELECT (COUNT(DISTINCT ?uri) as ?c) WHERE \{ wd:Q874 wdt:P2936 ?uri . \}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Queries from Dataset v2 for Wikidata and DBpedia (QALD)}
+\label{table-queries-v2}
+\end{table}
+
+To evaluate the multilingual capabilities of the system, we also translated the English dataset into Indonesian using the GPT-4 model of ChatGPT. This translation allows us to test the system's performance in processing non-English queries and ensures broader applicability to diverse linguistic contexts.
+
+\subsubsection{Local KGs} \label{dataset-generator}
+Given this framework's KG-agnostic nature, we also provide an automatic dataset generation system which data can be used for training and testing, especially for local KGs. This system supports the generation of four types of questions, as described in Table \ref{table-questiontype}. Additionally, queries with \texttt{COUNT} clause can also be generated, leveraging the same triple patterns. The output of this system is a dataset that consists of three columns: the question in natural language, the appropriate SPARQL query, and the category of the question. Below are the five main steps required to generate one question.
+
+\begin{enumerate}
+    \item \textbf{Entity selection}. This step involves randomly selecting one entity (i.e., the instance of a class) from the given KG. 
+    % For open KG such as Wikidata and DBpedia, users can pre-define a list of classes from which the instances are going to be selected since the random selection is not feasible to be done on all entities in the KG due to its massive size.
+    \item \textbf{Random walk}. This step involves performing a random walk on the KG based on the category of the question category, starting from the node selected in the previous step. We also provide a facility if the users would like to exclude some properties from being used in the generated question. For instance, schematic properties like \texttt{rdfs:domain} and \texttt{rdfs:range} can be excluded if the users intend to focus more on the concrete, data graph.
+    \item \textbf{Resource label resolver}. This step involves resolving the natural language label for each property and entity found in the triples. 
+    \item \textbf{SPARQL query formation}. This step involves taking the triples retrieved in the second step and encompassing them into one SPARQL query using a pre-defined template, based on the question category.
+    \item \textbf{Question generation}. This step involves generating the question in natural language based on the generated SPARQL query and the resources' labels using LLM. The generation prompt leverages the zero-shot prompt template defined by \cite{Both2024TowardsLN} with off-the-shelf instructions fine-tuned LLM.
+\end{enumerate}
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{|c | c|}
+\hline
+\RaggedRight{\textbf{Category}} & \textbf{Triple Pattern}\\
+\hline
+\RaggedRight{Simple 1} & \texttt{\{ s p ?o . \}}\\
+\RaggedRight{Simple 2} & \texttt{\{ ?s p o . \}}\\
+\RaggedRight{Complex 1} & \texttt{\{ ?s p1 o1; p2 o2 . \}}\\
+\RaggedRight{Complex 2} & \texttt{\{ ?s p1 ?o1 . ?o1 p2 o2 . \}}\\
+\hline
+\end{tabular}
+\vspace{1em}
+\caption{Supported Question Categories}
+\label{table-questiontype}
+\end{table}
+
+For the local curriculum KG, the proportion of each category for the test set includes 9 simple 1 questions, 8 simple 2 questions, 5 complex 1 questions, 5 complex 2 questions, 5 simple 1 \texttt{COUNT} questions, and 5 simple 2 \texttt{COUNT} questions. Meanwhile, the data in the train set (few-shot) composed of 2 simple 1 questions, 2 simple 2 questions, a complex 1 question, a complex 2 question, a simple 1 \texttt{COUNT} question, and a simple 2 \texttt{COUNT} question. The test set and train set are disjoint to prevent data leakage.
+
+We leverage \texttt{Qwen/Qwen2.5-3B-Instruct} for the verbalization process, i.e., converting the SPARQL query into the respective natural language question. The prompt used for generation can be seen below.\\
+
+\promptVerbalization
+
+Upon generating the set of questions, we realize that the quality of the generated sentences is quite low, due to the lack of context provided to the LLM. To ensure that the intent of the question is conveyed clearly, we refine some ambiguous questions generated by the LLM. Examples of some ready-to-use questions are mentioned in Table \ref{table-questions-local}.
+
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{| m{0.2\textwidth} | m{0.1\textwidth} |  m{0.7\textwidth} |}
+    \hline
+    \textbf{Question} & \textbf{Category} & \textbf{SPARQL Query}\\
+    \hline
+    What is the course category of 'Spoken Language Processing'? & Simple 1 & \texttt{select ?x \{ ns1:spoken\_language\_processing ns1:has\_course\_category ?x . \}} \\
+    \hline
+    What courses that have 3 credits? & Simple 2 & \texttt{select ?x \{ ?x ns1:has\_credits '3'\textasciicircum\textasciicircum xsd:integer . \}} \\
+    \hline
+    What courses have 'Group Project' and 'Test' as evaluation methods and have the course code 'CSGE603130'? & Complex 1 & \texttt{select ?x \{ ?x ns1:has\_evaluation\_method ns1:group\_project . ?x ns1:has\_evaluation\_method ns1:test . ?x ns1:has\_course\_code 'CSGE603130' . \}} \\
+    \hline
+    What courses have study program mandatory courses as their prerequisites? & Complex 2 & \texttt{select ?x \{ ?x ns1:has\_prerequisite\_course ?y . ?y ns1:has\_course\_category ns1:study\_program\_mandatory\_course . \}} \\
+    \hline
+    How many courses are prerequisites for Calculus 2? & \texttt{COUNT} Simple 1 & \texttt{select (count(?x) as ?cnt) \{ ns1:calculus\_2 ns1:has\_prerequisite\_course ?x . \}} \\
+    \hline
+    How many courses are categorized as 'Faculty Mandatory Course'? & \texttt{COUNT} Simple 2 & \texttt{select (count(?x) as ?cnt) \{ ?x ns1:has\_course\_category ns1:faculty\_mandatory\_course . \}} \\
+    \hline
+    \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\caption{Sample Questions for the Local Curriculum KG}
+\label{table-questions-local}
+\end{table}
+
+\section{Evaluation Metric}
+\label{jaccard}
+We assess the performance of our system by comparing the output of Subsubsection \ref{sparql-gener} and Subsubsection \ref{question-spec}, i.e., the generated SPARQL query execution results and the ground truth SPARQL query execution results as provided in the dataset.
+Even though the component for generating natural language is provided within the pipeline, we do not evaluate the generated natural language text for these two reasons: 
+\begin{enumerate}
+    \item The dataset we use for evaluating the second pipeline for open KGs, 
+    QALD, only provides the ground truth in the form of SPARQL query and its 
+    execution result. It does not provide the natural language text, whereas using 
+    LLM to perform verbalization over the ground truth set might introduce bias
+    and discrepancies between the result set and its natural language text due
+    to LLM's hallucination phenomenon. Notably, the QALD 9 dataset itself is 
+    specifically designed to benchmark systems that return the correct set 
+    of answers or generate a SPARQL query to retrieve those 
+    answers, not the natural language text \citep{Usbeck20189thCO}.
+    \item We reckon the retrieved result set as the main reason for the 
+    correctness of answers generated by this particular RAG system, since
+    the generator (LLM) only wraps the values in the retrieved set in the form
+    of natural language. This is in contrast to na\"{i}ve RAG which requires
+    LLM's inherent knowledge to extract specific information from the
+    retrieved document chunk in order to answer the user's question.
+\end{enumerate}
+
+An automatic tool for evaluating the answers of QA over KG using this query execution result scheme, GERBIL QA 
+\citep{benchmarkqald}, is commonly used for systems that leverage QALD
+as the benchmark dataset. In this system, the set of URIs or literals
+generated by the system is compared to the ground truth set, and the
+traditional precision, recall, and F-measure are used for the
+evaluation. To be specific, for each set of answers, if the set of
+returned resources by the QA system intersects with the ground truth set,
+the answer is considered correct, i.e., counted as a true positive.
+However, the limitation of such evaluation schema is that it primarily
+focuses on the intersection between the ground truth and generated sets only,
+without adequately penalizing for irrelevant results or fully considering
+the completeness of the retrieved answers.
+
+To remedy the limitation in GERBIL QA, different evaluation schema was introduced.
+\cite{Usbeck20189thCO} proposed using recall and precision
+to evaluate the correctness of the answer sets for each question $q$, as in Equation \ref{recall-qa}
+and \ref{prec-qa}, respectively.
+\begin{equation}
+    \label{recall-qa}
+    \text{recall}(q) = \frac{\text{number of correct system answers for }q}{\text{number of gold standard answers for }q}
+\end{equation}
+\begin{equation}
+    \label{prec-qa}
+    \text{precision}(q) = \frac{\text{number of correct system answers for }q}{\text{number of system answers for }q}
+\end{equation}
+
+This evaluation schema further computes the micro and macro F-measure of
+the system over all test questions. The micro F-measure is calculated 
+by summing up all the true and false positives and negatives, and
+compute the precision, recall, and F-measure at the end. However, for the
+macro F-measure, precision, recall, and F-measure is calculated individually
+for each test question, then the final result is obtained by averaging those
+values for each metric.
+
+On the other hand, we propose using Jaccard Similarity to evaluate the result of our system. 
+Jaccard Similarity for two sets $A$ and $B$ is defined as the number of elements in the intersection of $A$ and $B$ divided by the number of elements in their union, mathematically expressed as in the following Equation \ref{eq:jaccard}.
+    \begin{equation}
+        \textnormal{Jaccard}(A, B)=\frac{|A \cap B|}{|A \cup B|}
+        \label{eq:jaccard}
+    \end{equation}
+
+By using Jaccard Similarity, the comparison between the generated and 
+ground truth sets of answers is quantified as a single similarity 
+score, representing the overall degree of overlap between the two sets. 
+While precision and recall offer more granular insights into the system's 
+accuracy by measuring the proportion of relevant items retrieved (precision) 
+and the proportion of retrieved items that are relevant (recall), they 
+focus only on specific subsets (retrieved/relevant). As a result, they 
+may overlook the holistic alignment between the two sets. In contrast, 
+Jaccard Similarity explicitly measures the proportion of overlapping 
+items between the predicted and ground truth sets, providing a more 
+holistic and intuitive approach to interpreting retrieval results. This 
+makes it easier to understand as a direct comparison of similarity.
+
+% , instead of just binary relevance. The score provides an 
+% intuitive measure of how closely the system's output matches the
+% ground truth. A higher Jaccard Similarity indicates a better alignment
+% of the output with the ground truth, whereas lower one suggests that the
+% predicted results either miss relevant answers or include extraneous ones.
+
+However, this metric can be very sensitive to the size of the result
+sets. As the union of the predicted and ground truth sets grows larger---particularly when many irrelevant results are included in the 
+predicted set---the score can decrease significantly, even when the
+intersection contains many relevant answers. Consequently, this metric
+can exhibit bias on large datasets, especially when the predicted set
+is disproportionately large or contains many irrelevant results. In such 
+cases, Jaccard Similarity may lead to a lower score that does not fully 
+reflect the system's ability to retrieve relevant answers.
+
+% Consequently, while this metric
+% provides a straightforward and intuitive evaluation, it may not always
+% reflect the trade-offs between precision and recall.
+
+For the implementation matter, since the original 
+SPARQL query execution results take the ordering of the rows into account to accommodate the \texttt{ORDER BY} clause, we have to transform both predicted and ground truth execution results into sets prior to applying this metric. Additionally, for further standardization, each row is treated as a tuple whose elements are ordered alphabetically. Thus, the $A$ and $B$ in Equation \ref{eq:jaccard} are sets of tuples. The detailed illustration of this evaluation schema can be seen in Figure \ref{fig:eval}.
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/pics/diagram jaccard new.png}
+    \caption{Evaluation Schema}
+    \label{fig:eval}
+\end{figure*}
+
+% On the other hand, \cite{Usbeck20189thCO} proposed 
