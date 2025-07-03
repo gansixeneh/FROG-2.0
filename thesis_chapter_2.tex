@@ -95,6 +95,8 @@ An example of a simple RDF graph representing information about Julian Hillyer i
 % need to shrink this
 \begin{table}
     \centering
+    \caption{RDF Triples about Julian Hillyer \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf}
     \begin{adjustbox}{width=\textwidth}
         \begin{tabular}{|c|c|c|}
             \hline
@@ -107,12 +109,12 @@ An example of a simple RDF graph representing information about Julian Hillyer i
             \hline
         \end{tabular}
     \end{adjustbox}
-    \caption{RDF Triples about Julian Hillyer \citep{heardlibrary_serialization}}
-    \label{tab:sample-rdf}
 \end{table}
 
 \begin{table}
     \centering
+    \caption{Namespace Prefixes and Corresponding URIs \citep{heardlibrary_serialization}}
+    \label{tab:sample-rdf-qname}
     \begin{tabular}{|c|c|}
         \hline
          \textbf{Namespace Prefix} & \textbf{URI} \\
@@ -126,8 +128,6 @@ An example of a simple RDF graph representing information about Julian Hillyer i
          \texttt{mads} & http://www.loc.gov/mads/rdf/v1\# \\
         \hline
     \end{tabular}
-    \caption{Namespace Prefixes and Corresponding URIs \citep{heardlibrary_serialization}}
-    \label{tab:sample-rdf-qname}
 \end{table}
 
 RDF data can be serialized in various formats, including RDF/XML, JSON-LD, and Turtle, each with its own advantages and trade-offs. These serialization formats allow RDF data to be stored, exchanged, and processed across different systems and applications.
@@ -160,6 +160,8 @@ TDB is Jena's native persistent triple store, designed specifically for efficien
 
 TDB stores RDF data using node tables that map RDF terms to fixed-length identifiers, and triple/quad indexes that store actual triples using these identifiers. This enables efficient compression since URIs and literals are stored once in node tables while triple indexes use compact integer identifiers.
 
+TDB implements comprehensive indexing using B+trees optimized for RDF data patterns, as illustrated in Figure~\ref{fig:tdb-indexing}. For triple stores, it maintains SPO, POS, and OSP indexes, while quad stores use six indexes (GSPO, GPOS, GOSP, SPOG, POSG, OSPG) to optimize queries regardless of which components are specified \citep{dieng2022triplestoreindexing}. Each index uses concatenated node IDs as keys, enabling efficient range queries and prefix matching essential for SPARQL processing.
+
 \begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{assets/pics/tree.png}
@@ -167,13 +169,13 @@ TDB stores RDF data using node tables that map RDF terms to fixed-length identif
 \label{fig:tdb-indexing}
 \end{figure}
 
-TDB implements comprehensive indexing using B+trees optimized for RDF data patterns. For triple stores, it maintains SPO, POS, and OSP indexes, while quad stores use six indexes (GSPO, GPOS, GOSP, SPOG, POSG, OSPG) to optimize queries regardless of which components are specified \citep{dieng2022triplestoreindexing}. Each index uses concatenated node IDs as keys, enabling efficient range queries and prefix matching essential for SPARQL processing.
-
-The B+tree implementation includes optimizations such as fixed-size records, prefix compression, record-level compression, and memory-mapped files, enabling TDB to handle millions of triples per second for basic graph pattern queries \citep{fletcher2009scalable}.
+The B+tree implementation includes optimizations such as fixed-size records, prefix compression, record-level compression, and memory-mapped files, enabling TDB to handle millions of triples per second for basic graph pattern queries \citep{fletcher2009scalable}. The indexing structure shown in Figure~\ref{fig:tdb-indexing} demonstrates how TDB organizes data to achieve optimal query performance across different access patterns.
 
 \subsubsection{Fuseki and Query Optimization}
 \label{sec:fuseki}
 Fuseki provides a standardized HTTP interface for querying and updating RDF data, implementing SPARQL 1.1 Protocol and Graph Store Protocol \citep{jena2023fuseki}. It supports query operations (SELECT, CONSTRUCT, ASK, DESCRIBE), update operations, and provides both embedded and standalone deployment options.
+
+Figure~\ref{fig:fuseki-dashboard} shows the web-based dashboard interface that Fuseki provides for interactive SPARQL query execution and dataset management. This interface enables users to write, execute, and debug SPARQL queries directly through a web browser, making it accessible for both development and production use.
 
 \begin{figure}
 \centering
@@ -182,7 +184,7 @@ Fuseki provides a standardized HTTP interface for querying and updating RDF data
 \label{fig:fuseki-dashboard}
 \end{figure}
 
-Jena's ARQ query engine implements several optimization techniques including statistical optimization using data distribution, filter placement, join reordering, and property path optimization \citep{carroll2004jena}. The optimizer considers various execution strategies (index-based joins, hash joins, merge joins) and selects appropriate methods based on query patterns and data characteristics \citep{stocker2008sparqloptimization}.
+Jena's ARQ query engine implements several optimization techniques including statistical optimization using data distribution, filter placement, join reordering, and property path optimization \citep{carroll2004jena}. The optimizer considers various execution strategies (index-based joins, hash joins, merge joins) and selects appropriate methods based on query patterns and data characteristics \citep{stocker2008sparqloptimization}. The dashboard interface shown in Figure~\ref{fig:fuseki-dashboard} provides real-time feedback on query execution performance, helping developers optimize their SPARQL queries.
 
 \subsubsection{TDB2 and Applications}
 \label{sec:tdb2}
@@ -706,6 +708,8 @@ When comparing GraphRAG with traditional approaches to knowledge graph question 
 
 \begin{table}
     \centering
+    \caption{Comparison of Traditional KG-QA and GraphRAG Approaches}
+    \label{tab:kg-qa-comparison}
     \begin{tabular}{|p{3cm}|p{5cm}|p{5cm}|}
         \hline
          \textbf{Aspect} & \textbf{Traditional KG-QA} & \textbf{GraphRAG} \\
@@ -721,8 +725,6 @@ When comparing GraphRAG with traditional approaches to knowledge graph question 
          \textbf{Domain Adaptation} & Requires extensive manual adaptation & More easily adaptable to new domains \\
         \hline
     \end{tabular}
-    \caption{Comparison of Traditional KG-QA and GraphRAG Approaches}
-    \label{tab:kg-qa-comparison}
 \end{table}
 
 As shown in Table \ref{tab:kg-qa-comparison}, GraphRAG offers significant advantages in flexibility, query complexity handling, and domain adaptation, at the cost of higher computational requirements. The integration of large language models enables GraphRAG systems to handle more diverse and complex questions than traditional rule-based or template-based approaches, while the structured knowledge graph foundation provides more reliable and precise information retrieval than text-based RAG systems.
@@ -898,10 +900,10 @@ The FrOG framework implements a specialized GraphRAG approach focused on transla
     \centering
     \includegraphics[width=1\textwidth]{assets/pdfs/pipeline-ori.pdf}
     \caption{The Initial FrOG Pipeline (v1) \citep{ongris2024frog}}
-    \label{fig:pipeline_v1}
+    \label{fig:pipeline_v1_bab2}
 \end{figure}
 
-The initial pipeline, shown in Figure \ref{fig:pipeline_v1}, established a prototype focused specifically on Wikidata interaction. This pipeline implemented three key processing steps:
+The initial pipeline, shown in Figure \ref{fig:pipeline_v1_bab2}, established a prototype focused specifically on Wikidata interaction. This pipeline implemented three key processing steps:
 
 \begin{enumerate}
     \item \textbf{Entity Extraction and Linking}: The system identifies relevant entities in the natural language question and links them to corresponding Wikidata entities.
@@ -917,10 +919,10 @@ While effective for simple questions about well-known entities, this initial pip
     \centering
     \includegraphics[width=1\textwidth]{assets/pdfs/pipeline2-cropped.pdf}
     \caption{The Upgraded FrOG Pipeline (v2) \citep{ongris2024frog}}
-    \label{fig:pipeline_v2}
+    \label{fig:pipeline_v2_bab2}
 \end{figure}
 
-The upgraded pipeline, depicted in Figure \ref{fig:pipeline_v2}, addressed these limitations through several enhancements:
+The upgraded pipeline, depicted in Figure \ref{fig:pipeline_v2_bab2}, addressed these limitations through several enhancements:
 
 \begin{enumerate}
     \item \textbf{Vector Database Integration}: The system incorporated auxiliary vector databases to enable the use of a larger number of properties beyond the predefined list.

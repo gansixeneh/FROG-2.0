@@ -4,13 +4,25 @@
 In this chapter, we will explain the research methodology we employ, including the big picture of the experiment we conduct, the dataset and knowledge bases, as well as the evaluation metrics.
 
 \section{Research Methodology}
-The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}. It comprises six main activities: problem identification and motivation, definition of the objectives for a solution, design and development, demonstration, evaluation, and communication. The following is the explanation of each activity, in relation to our work.
+The research methodology we employ is the development and application studies. Specifically, we are using the design science research (DSR) studies paradigm \citep{vomBrocke2020}. This paradigm aims to enhance human knowledge by developing innovative artifacts and generating design knowledge through creative solutions to real-world problems \citep{hevner2004design}.
+
+Figure~\ref{fig:dsr-methodology} illustrates the six main activities of the Design Science Research methodology that guide our research approach. The methodology comprises a systematic process that begins with problem identification and progresses through solution design, development, demonstration, evaluation, and communication phases.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{dsr.png}
+    \caption{Design Science Research (DSR) Methodology Framework showing the six main activities and their relationships}
+    \label{fig:dsr-methodology}
+\end{figure}
+
+As shown in Figure~\ref{fig:dsr-methodology}, the DSR methodology follows a structured approach that ensures rigorous development and evaluation of our enhanced GraphRAG system. Each phase builds upon the previous one, creating a comprehensive framework for addressing the identified research challenges. The following is the explanation of each activity, in relation to our work.
+
 \begin{enumerate}
     \item \textbf{Problem identification and motivation}: While the previous GraphRAG framework provided a foundation for leveraging open-source components with knowledge graphs, several limitations were identified that hindered optimal performance and scalability. First, the original system's entity and property extraction methods were limited in their ability to handle diverse and complex question types effectively, particularly for multi-hop reasoning scenarios. Second, the original pipeline architecture lacked runtime-configurable components, expanded fallback mechanisms, and comprehensive semantic logging capabilities needed for adaptability, fault tolerance, and operational transparency when dealing with heterogeneous knowledge graph structures. Third, the absence of specialized model training meant the system could not learn domain-specific patterns for Natural Language to SPARQL (NL2SPARQL) generation, relying solely on few-shot prompting approaches. Finally, dataset generation was constrained in scope and variety, limiting the system's ability to handle diverse query types and adapt to different knowledge domains effectively.
     \item \textbf{Definition of the objectives for a solution}: Building upon the original GraphRAG framework, our objective is to develop a significantly enhanced system that addresses the identified limitations through three main improvements: (1) developing comprehensive dataset generation methods using both template-based and random-walk approaches to create diverse, high-quality training data, ((2) implementing specialized model finetuning using QLoRA techniques for NL2SPARQL generation tasks to improve accuracy and reasoning capabilities, and (3) enhancing the original pipeline architecture with a LangGraph-based implementation that provides runtime configurability, expanded fallback mechanisms including Google Search integration, and comprehensive semantic logging while significantly improving adaptability, fault tolerance, and operational transparency through process visualization, RDF-based event tracking, and reviewable system diagrams that enable users to verify and audit the decision-making process.
     \item \textbf{Design and development}: The enhanced GraphRAG architecture is developed as three integrated components using only open-source technologies. The first component implements dual dataset generation approaches: template-based generation for linguistically diverse questions and random-walk generation for comprehensive graph coverage through automatic pattern discovery from RDF data. These datasets are designed to be interchangeable based on user needs and knowledge domain requirements. The second component involves finetuning Large Language Models using QLoRA (Quantized Low-Rank Adaptation) techniques on the generated NL2SPARQL (Natural Language to SPARQL) datasets to improve query generation capabilities and reasoning performance. The third component designs a multi-agent system using LangGraph \footnote{\url{https://langchain.com/langgraph/}} that orchestrates specialized agents for translation, entity and property extraction, strategy selection, verbalization, entity and property search, SPARQL generation, and answer synthesis, with intelligent routing between different processing paths based on query complexity and user settings.
     \item \textbf{Demonstration}: After developing the enhanced system, its functionality is demonstrated through comprehensive testing across multiple scenarios. The finetuned models are evaluated on SPARQL generation tasks using both the baseline QALD-9-Plus dataset and our newly generated synthetic datasets from template-based and random-walk approaches. The dataset generation components are tested for quality, diversity, and coverage across different knowledge domains including Wikidata and local knowledge graphs. The multi-agent architecture is demonstrated through real-time question-answering sessions with process visualization, showing adaptive routing between verbalization and SPARQL generation paths. The complete system is applied to multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and GESIS Knowledge Graph to enable comprehensive performance evaluation across different domains.
-    \item \textbf{Evaluation}: The enhanced system undergoes comprehensive end-to-end quantitative evaluation. System performance is assessed using Jaccard similarity, precision, recall, F1-score, and success rate metrics on the complete question-answering workflow. This end-to-end approach evaluates the entire pipeline with finetuned models for both entity/property extraction and SPARQL generation working together within the multi-agent architecture. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
+    \item \textbf{Evaluation}: The enhanced system undergoes comprehensive end-to-end quantitative evaluation. System performance is assessed using Jaccard similarity metric on the complete question-answering workflow. This end-to-end approach evaluates the entire pipeline with finetuned models for both entity/property extraction and SPARQL generation working together within the multi-agent architecture. Dataset generation quality is evaluated through SPARQL syntax validation, query execution verification, and diversity analysis. Comparative evaluation between the original and enhanced approaches ensures that improvements are properly quantified across different query types and complexity levels.
     \item \textbf{Communication}: The enhanced architecture, implementation details, and experimental findings are documented in this research report. Additionally, the multi-agent system includes comprehensive process visualization, database logging, and semantic logging capabilities that provide enhanced transparency into the decision-making process, allowing users to review and audit system operations through saved execution traces and interactive diagrams. All code, datasets, and models are made available to ensure reproducibility and enable further research in open-source GraphRAG systems.
 \end{enumerate}
 
@@ -74,25 +86,77 @@ Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to 
 % =============================================================================
 
 \section{Knowledge Bases} \label{knowledgebase}
-Our enhanced GraphRAG system is designed to work across multiple knowledge domains to demonstrate its versatility and adaptability. We utilize four distinct knowledge bases that represent different types of structured information:
+
+\subsection{Rationale for Multi-Domain Evaluation}
+
+The decision to evaluate our enhanced GraphRAG system across multiple knowledge graphs is driven by several critical research considerations:
+
+\begin{enumerate}
+    \item \textbf{Generalizability Validation}: A key research question is whether our enhanced methodology (dataset generation, model finetuning, and multi-agent architecture) can generalize beyond a single knowledge domain. Testing on only one KG would limit our ability to claim that our approach is domain-agnostic and broadly applicable.
+    
+    \item \textbf{Diverse Structural Challenges}: Different knowledge graphs present fundamentally different structural patterns and querying challenges:
+    \begin{itemize}
+        \item \textbf{Scale variations}: From small domain-specific KGs (874 triples) to massive general-purpose KGs (billions of triples)
+        \item \textbf{Schema complexity}: From simple flat structures to complex hierarchical ontologies
+        \item \textbf{Query patterns}: From basic property lookups to complex multi-hop reasoning with aggregations
+        \item \textbf{Language characteristics}: From general natural language to domain-specific terminology
+    \end{itemize}
+    
+    \item \textbf{Methodological Robustness}: By testing across diverse domains, we can identify which aspects of our methodology are universally effective and which require domain-specific adaptations, providing valuable insights for future GraphRAG research.
+\end{enumerate}
+
+\subsubsection{Selection Criteria for Knowledge Graphs}
+
+The four specific knowledge graphs were selected based on the following criteria:
+
+\begin{enumerate}
+    \item \textbf{Wikidata}: Selected as the benchmark large-scale KG because:
+    \begin{itemize}
+        \item It serves as the de facto standard for GraphRAG evaluation with established datasets (QALD-9-Plus)
+        \item Its massive scale (117M+ entities) tests our system's scalability
+        \item It provides a baseline for comparison with existing GraphRAG systems
+    \end{itemize}
+    
+    \item \textbf{Curriculum KG}: Selected to represent educational/organizational domains because:
+    \begin{itemize}
+        \item It demonstrates our ability to work with locally-constructed, small-scale KGs
+        \item The structured nature of curriculum data provides clear evaluation criteria
+        \item It represents a common use case for institutions wanting to query their own data
+    \end{itemize}
+    
+    \item \textbf{Legal KG}: Selected to represent document-centric domains because:
+    \begin{itemize}
+        \item Legal reasoning requires precise query formulation and complex relationships
+        \item The hierarchical structure of legal documents tests multi-hop reasoning
+        \item It demonstrates applicability to governmental and regulatory use cases
+    \end{itemize}
+    
+    \item \textbf{GESIS KG}: Selected to represent scholarly/research domains because:
+    \begin{itemize}
+        \item It tests our system's ability to handle bibliographic and citation networks
+        \item The rich metadata structure challenges our entity/property extraction
+        \item It represents the growing need for scientific literature analysis
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Data Availability and Access}
+
+All knowledge graphs used in our evaluation are based on openly available data sources:
 
 \begin{itemize}
-    \item A large-scale public knowledge graph (Wikidata)
-    \item A domain-specific curriculum knowledge graph
-    \item A legal document knowledge graph
-    \item A scholarly research knowledge graph
+    \item \textbf{Wikidata}: Fully open access via public SPARQL endpoint and APIs
+    \item \textbf{Curriculum KG}: Constructed from publicly available curriculum documents (accessible via Fasilkom UI's LMS)
+    \item \textbf{Legal KG}: Based on the open Lex2KG dataset of Indonesian legal documents
+    \item \textbf{GESIS KG}: Publicly accessible research metadata
 \end{itemize}
 
-Each knowledge base presents unique challenges and characteristics that allow us to comprehensively evaluate our enhanced approach across diverse domains and query complexities.
+This ensures our experiments are fully reproducible and our methodology can be validated by other researchers without requiring special access permissions.
 
-Originally, we planned to include DBpedia as one of our evaluation knowledge bases to demonstrate cross-platform compatibility. However, during our implementation phase, we discovered that the DBpedia Lookup service\footnote{\url{https://lookup.dbpedia.org/}} was unavailable, preventing us from implementing the necessary entity retrieval functionality. Figure~\ref{fig:dbpedia-down} shows the error encountered when attempting to access the service. It should be noted that while the service was down during the development process of this thesis, it became operational again on June 6, 2025. Consequently, we focused our evaluation on the four knowledge bases described below: Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and GESIS Knowledge Graph.
+Having established the rationale for multi-domain evaluation, we now describe each knowledge graph in detail. These four knowledge bases—spanning general knowledge, educational curricula, legal documents, and scholarly research—collectively provide a comprehensive testbed for evaluating our enhanced GraphRAG methodology.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{assets/pics/dbpedia-down.png}
-    \caption{Screenshot showing DBpedia Lookup service unavailability}
-    \label{fig:dbpedia-down}
-\end{figure}
+As discussed in our selection criteria, each knowledge base was specifically chosen to test different aspects of our system. Below, we provide detailed technical descriptions of their structure, content, and the specific preprocessing steps we applied to ensure data quality.
+
+Having established the rationale for multi-domain evaluation, we now describe each knowledge graph in detail. These four knowledge bases\footnote{Originally, we planned to include DBpedia as a fifth evaluation knowledge base. However, during our implementation phase, we discovered that the DBpedia Lookup service (\url{https://lookup.dbpedia.org/}) was unavailable, preventing us from implementing the necessary entity retrieval functionality. While the service became operational again on June 6, 2025, we had already completed our evaluation framework focusing on the four selected knowledge bases.}---spanning general knowledge, educational curricula, legal documents, and scholarly research---collectively provide a comprehensive testbed for evaluating our enhanced GraphRAG methodology.
 
 \subsection{Wikidata}
 
@@ -126,6 +190,7 @@ The curriculum knowledge graph utilizes a custom ontology with the prefix \textt
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Curriculum Knowledge Graph Properties}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.6\textwidth} |}
     \hline
@@ -149,7 +214,6 @@ The curriculum knowledge graph utilizes a custom ontology with the prefix \textt
     \hline
     \end{tabular}
 \end{adjustbox}
-\caption{Curriculum Knowledge Graph Properties}
 \label{table-curriculum-properties}
 \end{table}
 
@@ -174,6 +238,7 @@ The legal knowledge graph captures various types of legal information including 
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Legal Knowledge Graph Statistics (Before Modification)}
 \begin{tabular}{| l | r |}
 \hline
 \textbf{Information Type} & \textbf{Number of Triples} \\
@@ -190,7 +255,6 @@ Class assignments & 256,416 \\
 \textbf{Total} & \textbf{1,163,051} \\
 \hline
 \end{tabular}
-\caption{Legal Knowledge Graph Statistics (Before Modification)}
 \label{table-legal-statistics}
 \end{table}
 
@@ -257,6 +321,7 @@ The GESIS Knowledge Graph comprises several types of scientific resources and en
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{GESIS Knowledge Graph Resources (Before Modification)}
 \begin{tabular}{| l | l | r |}
 \hline
 \textbf{Resource Type} & \textbf{Class} & \textbf{Count} \\
@@ -278,7 +343,6 @@ Keywords/Concepts & schema:DefinedTerm & 18,297 \\
 \textbf{Total Scientific Resources} & & \textbf{1,986,662} \\
 \hline
 \end{tabular}
-\caption{GESIS Knowledge Graph Resources (Before Modification)}
 \label{table-gesis-resources}
 \end{table}
 
@@ -342,6 +406,7 @@ The GESIS Knowledge Graph contains extensive linking between resources, enabling
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{GESIS Knowledge Graph Link Statistics (Before Modification)}
 \begin{tabular}{| l | r |}
 \hline
 \textbf{Link Type} & \textbf{Count} \\
@@ -356,7 +421,6 @@ Links between publications and variables & 2,954 \\
 \textbf{Total Links} & \textbf{1,861,964} \\
 \hline
 \end{tabular}
-\caption{GESIS Knowledge Graph Link Statistics (Before Modification)}
 \label{table-gesis-links}
 \end{table}
 
@@ -374,14 +438,43 @@ Our enhanced GraphRAG system's ability to work across these four diverse knowled
     \item \textbf{Vector Database Integration}: All knowledge graphs are supported by Weaviate collections for efficient semantic search, with collection sizes ranging from 108 entities (University) to 358,530 entities (GESIS)
 \end{itemize}
 
-This diversity enables comprehensive evaluation of our enhanced dataset generation methods, finetuned models, and multi-agent architecture across different knowledge representation challenges and domain-specific reasoning requirements. The careful data cleaning and quality improvements applied to each knowledge graph ensure that our enhanced GraphRAG system operates on high-quality, consistent data foundations.
-
 \section{Dataset Generation Methodology}
 To overcome the limitations of existing GraphRAG systems that rely on limited dataset coverage and diversity, we develop a comprehensive methodology for creating high-quality Natural Language to SPARQL (NL2SPARQL) training datasets. Our approach differs based on the knowledge graph:
 
 For domain-specific knowledge graphs (Curriculum KG, Legal KG, and GESIS KG), we employ two complementary strategies: template-based generation and random-walk generation to create datasets from scratch. These methods enable us to generate diverse question-SPARQL pairs with varying complexity levels.
 
 For Wikidata, we enhance the existing QALD-9-Plus dataset by augmenting it with: (1) step-by-step reasoning chains (thoughts) generated using Large Language Models, (2) entity matches retrieved from the Wikidata API, and (3) property matches from our Weaviate vector database. This enhancement process adds crucial training signals for entity/property extraction and reasoning, while preserving the high-quality question-SPARQL pairs from QALD-9-Plus.
+
+\subsection{Chain-of-Thought Reasoning: A Core Design Principle}
+\label{cot-principle}
+
+A fundamental design decision in our dataset generation methodology is the systematic incorporation of chain-of-thought (CoT) reasoning---referred to as ``thoughts" throughout this work. This decision stems from extensive preliminary experimentation that revealed thoughts are not merely a performance optimization but an essential component for building effective and trustworthy GraphRAG systems.
+
+Our methodology incorporates thoughts for several critical reasons:
+
+\begin{enumerate}
+    \item \textbf{Bridging the Semantic Gap}: Natural language questions and SPARQL queries represent fundamentally different ways of expressing information needs. Thoughts provide explicit intermediate steps that bridge this semantic gap, making the transformation process learnable by models. For example, transforming ``Who succeeded Kennedy as president?" into a complex SPARQL query with qualifier properties requires multiple reasoning steps that would be opaque without explicit thoughts.
+    
+    \item \textbf{Improving Model Accuracy}: Our preliminary experiments showed that models trained with thoughts achieved significantly higher accuracy compared to direct question-to-SPARQL mapping. The structured reasoning process guides models through the logical steps required for correct query construction, particularly crucial for complex multi-hop queries.
+    
+    \item \textbf{Providing Training Signals}: Thoughts serve as crucial intermediate supervision signals during model training. They help models learn how to decompose complex questions into manageable sub-tasks, identify relevant entities and properties for different question types, construct appropriate SPARQL patterns, and determine when to use specific SPARQL features (e.g., qualifiers, filters, aggregations). This scaffolding effect is particularly important for questions requiring multiple reasoning steps, where direct supervision would be insufficient.
+    
+    \item \textbf{Enabling System Transparency}: In knowledge-intensive domains like legal and medical information retrieval, understanding how an answer was derived is as important as the answer itself. Thoughts make the reasoning process explicit and auditable, allowing users to verify the system's logic.
+    
+    \item \textbf{Facilitating Debugging and Error Analysis}: When queries produce incorrect results, thoughts provide a clear trace of the reasoning process. Developers can identify exactly where the logic failed---whether in entity recognition, property selection, or query structure formulation---significantly reducing debugging time.
+    
+    \item \textbf{Supporting Multi-Stakeholder Needs}: Different stakeholders benefit from thoughts in distinct ways:
+    \begin{itemize}
+        \item \textit{End users} gain transparency into how answers are derived
+        \item \textit{Developers} can debug and improve the system more effectively
+        \item \textit{Domain experts} can validate reasoning against domain knowledge
+        \item \textit{Researchers} can analyze reasoning patterns and failure modes
+    \end{itemize}
+\end{enumerate}
+
+Our methodology ensures consistent thought integration across all dataset generation approaches. For QALD-9-Plus Enhancement (Wikidata), we use Large Language Models to generate step-by-step reasoning chains for existing question-SPARQL pairs. In template-based generation, thoughts are embedded directly in templates as parameterized reasoning chains. For random-walk generation, we use LLMs to create contextually appropriate thoughts that explain the reasoning behind each discovered query pattern.
+
+The importance of thoughts extends throughout our entire system architecture. Fine-tuned models are trained to generate thoughts alongside SPARQL queries, providing real-time reasoning transparency. The multi-agent architecture captures and logs thoughts during query processing (see Section~\ref{vis-transparency}), enabling comprehensive analysis of the reasoning process. This integration ensures that the benefits of chain-of-thought reasoning---improved accuracy, transparency, and debuggability---are realized throughout the entire GraphRAG pipeline, from dataset creation through model training to end-user interaction.
 
 \subsection{Dataset Enhancement Strategy}
 Our dataset preparation follows two distinct approaches based on data availability:
@@ -976,7 +1069,7 @@ WHERE {
 \end{lstlisting}
     This combined approach yielded higher performance gains than either technique in isolation.
 
-    \item \textbf{Chain-of-Thought Integration}: The most significant improvement came from incorporating explicit reasoning steps before SPARQL generation. This approach guides the model through a structured thought process:
+    \item \textbf{Chain-of-Thought Integration}: The most significant improvement came from incorporating explicit reasoning steps before SPARQL generation, as detailed in Section~\ref{cot-principle}. As explained in our dataset generation methodology, thoughts serve multiple critical purposes including accuracy enhancement, debugging facilitation, and system transparency. In our experiments, this approach yielded the most substantial performance gains:
     \begin{lstlisting}[language=, caption=Example of chain-of-thought reasoning followed by SPARQL generation, basicstyle=\small\ttfamily]
 Let me analyze this step by step:
 1. The question asks for the person who succeeded John F. Kennedy as President of the United States.
@@ -993,7 +1086,9 @@ WHERE {
             pq:P1366?uri.
 }
 ```
-\end{lstlisting}
+    \end{lstlisting}
+    
+    The inclusion of thoughts aligned with our core design principle (Section~\ref{cot-principle}) and resulted in the highest accuracy improvements across all experimental configurations.
 \end{enumerate}
 
 \subsubsection{Performance Impact}
@@ -1007,9 +1102,11 @@ Each iterative improvement contributed to enhanced model performance, with the f
     \item \textbf{Combined Formatting → Chain-of-Thought}: Substantial improvement, achieving the best overall performance
 \end{itemize}
 
+The dramatic improvement from incorporating chain-of-thought reasoning validates our design decision to make thoughts a core component of our dataset generation methodology (Section~\ref{cot-principle}). This experimental validation, combined with the broader benefits of transparency and debugging described earlier, informed our decision to systematically incorporate thoughts throughout our entire pipeline.
+
 \subsubsection{Final Prompt Configuration}
 
-Based on these experiments, our final prompt configuration incorporates all discovered optimizations. The system prompt emphasizes structured reasoning and precise formatting requirements, while the assistant prompt template enforces the chain-of-thought pattern followed by properly formatted SPARQL. This configuration represents the culmination of our iterative optimization process and is used throughout all finetuning experiments reported in this thesis.
+Based on these experiments, our final prompt configuration incorporates all discovered optimizations. The system prompt emphasizes structured reasoning and precise formatting requirements, while the assistant prompt template enforces the chain-of-thought pattern followed by properly formatted SPARQL. This configuration, which operationalizes the chain-of-thought principle described in Section~\ref{cot-principle}, represents the culmination of our iterative optimization process and is used throughout all finetuning experiments reported in this thesis.
 
 These iterative experiments demonstrate the critical importance of prompt engineering and format optimization in achieving high-quality SPARQL generation. The insights gained from this process informed not only our Wikidata experiments but also transferred effectively to domain-specific knowledge graphs, validating the generalizability of our optimization approach.
 
@@ -1150,7 +1247,7 @@ In this section, we present the comprehensive methodology used to evaluate our e
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=1\linewidth]{assets/pics/evalframework.jpg}
+    \includegraphics[width=1\linewidth]{assets/pics/eval_new.jpg}
     \caption{Comprehensive Evaluation Framework showing the components evaluated and metrics used at each stage}
     \label{fig:eval-framework}
 \end{figure}
@@ -1166,33 +1263,57 @@ The evaluation of SPARQL query generation involves both syntactic and semantic a
 For queries that require multiple generation attempts, we analyze the types of errors encountered and how the model adapts its generation strategy based on error feedback.
 
 \subsection{Result Evaluation}
-The most critical aspect of our evaluation is the assessment of query results. We use the following metrics to compare the results returned by generated queries against those from ground truth queries:
+\label{result-evaluation-methodology}
+The most critical aspect of our evaluation is the assessment of query results. We use the Jaccard similarity coefficient to compare the results returned by generated queries against those from ground truth queries. This metric measures the overall similarity between two result sets by calculating the size of the intersection divided by the size of the union of the sets.
 
-\begin{itemize}
-    \item \textbf{Jaccard Similarity}: The size of the intersection divided by the size of the union of the result sets, measuring overall similarity
-    \item \textbf{Precision}: The proportion of correct results returned by the generated query out of all results it returns
-    \item \textbf{Recall}: The proportion of correct results returned by the generated query out of all results in the ground truth
-    \item \textbf{F1 Score}: The harmonic mean of precision and recall, providing a balanced measure of result quality
-\end{itemize}
+Jaccard Similarity for two sets $A$ and $B$ is defined as the number of elements in the intersection of $A$ and $B$ divided by the number of elements in their union, mathematically expressed as in the following Equation \ref{eq:jaccard}.
+    \begin{equation}
+        \textnormal{Jaccard}(A, B)=\frac{|A \cap B|}{|A \cup B|}
+        \label{eq:jaccard}
+    \end{equation}
 
-These metrics are calculated using the following formulations:
+By using Jaccard Similarity, the comparison between the generated and 
+ground truth sets of answers is quantified as a single similarity 
+score, representing the overall degree of overlap between the two sets. 
+While precision and recall offer more granular insights into the system's 
+accuracy by measuring the proportion of relevant items retrieved (precision) 
+and the proportion of retrieved items that are relevant (recall), they 
+focus only on specific subsets (retrieved/relevant). As a result, they 
+may overlook the holistic alignment between the two sets. In contrast, 
+Jaccard Similarity explicitly measures the proportion of overlapping 
+items between the predicted and ground truth sets, providing a more 
+holistic and intuitive approach to interpreting retrieval results. This 
+makes it easier to understand as a direct comparison of similarity.
 
-Let $S_1$ be the set of results from the ground truth query and $S_2$ be the set of results from the generated query. Then:
+% , instead of just binary relevance. The score provides an 
+% intuitive measure of how closely the system's output matches the
+% ground truth. A higher Jaccard Similarity indicates a better alignment
+% of the output with the ground truth, whereas lower one suggests that the
+% predicted results either miss relevant answers or include extraneous ones.
 
-\begin{align}
-\text{Jaccard} &= \frac{|S_1 \cap S_2|}{|S_1 \cup S_2|} \\
-\text{Precision} &= \frac{|S_1 \cap S_2|}{|S_2|} \\
-\text{Recall} &= \frac{|S_1 \cap S_2|}{|S_1|} \\
-\text{F1} &= \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
-\end{align}
+However, this metric can be very sensitive to the size of the result
+sets. As the union of the predicted and ground truth sets grows larger---particularly when many irrelevant results are included in the 
+predicted set---the score can decrease significantly, even when the
+intersection contains many relevant answers. Consequently, this metric
+can exhibit bias on large datasets, especially when the predicted set
+is disproportionately large or contains many irrelevant results. In such 
+cases, Jaccard Similarity may lead to a lower score that does not fully 
+reflect the system's ability to retrieve relevant answers.
 
-\subsection{Verbalization Evaluation}
-For the verbalization approach, which provides direct natural language answers without generating SPARQL queries, we use:
+% Consequently, while this metric
+% provides a straightforward and intuitive evaluation, it may not always
+% reflect the trade-offs between precision and recall.
 
-\begin{itemize}
-    \item \textbf{Verbalization Score}: A similarity score (0.0-1.0) that measures the semantic alignment between the question and the verbalized response
-    \item \textbf{Verbalization Usage Rate}: The percentage of questions that were successfully answered using verbalization (verbalization score greater or equal than a certain threshold) without requiring SPARQL generation
-\end{itemize}
+For the implementation matter, since the original 
+SPARQL query execution results take the ordering of the rows into account to accommodate the \texttt{ORDER BY} clause, we have to transform both predicted and ground truth execution results into sets prior to applying this metric. Additionally, for further standardization, each row is treated as a tuple whose elements are ordered alphabetically. Thus, the $A$ and $B$ in Equation \ref{eq:jaccard} are sets of tuples. The detailed illustration of this evaluation schema can be seen in Figure \ref{fig:eval}.
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/pics/diagram jaccard new.png}
+    \caption{Evaluation Schema}
+    \label{fig:eval}
+\end{figure*}
+
 
 \subsection{Stratified Evaluation}
 To provide deeper insights into system performance across different scenarios, we stratify our evaluation based on the following approach:
@@ -1220,7 +1341,7 @@ This stratification allows us to identify specific strengths and weaknesses of o
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{assets/pics/compareval.jpg}
+    \includegraphics[width=0.6\linewidth]{assets/pics/compar_new.jpg}
     \caption{Comparative Evaluation Methodology showing how we evaluate base and fine-tuned models across different dataset types and metrics}
     \label{fig:comparative-eval}
 \end{figure}

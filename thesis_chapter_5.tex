@@ -4,7 +4,7 @@
 In this chapter, we will discuss our experiment results and provide a thorough analysis of the enhanced GraphRAG system. The analysis will cover all components including model fine-tuning, dataset generation methods, and the multi-agent architecture across different knowledge graph domains.
 
 \section{Experiment Results}
-We conduct several experiments to evaluate the performance of our enhanced GraphRAG system against the baseline system from the previous work, FrOG. We assess the system holistically using Jaccard Similarity as our primary metric. Additionally, we evaluate the effectiveness of our fine-tuning approach by comparing our system with base models against our system with fine-tuned counterparts. It is important to note that while FrOG's original evaluation in their paper used full models, our evaluation (including our reimplementation of FrOG) uses quantized models due to resource constraints. Furthermore, FrOG relies on few-shot examples for its operation, while our system---both with base and fine-tuned models---does not use any few-shot prompting. The information provided in this section is organized based on the knowledge graph domain.
+We conduct several experiments to evaluate the performance of our enhanced GraphRAG system against the baseline system from the previous work, FrOG. We assess the system holistically using Jaccard Similarity, as explained in Section \ref{result-evaluation-methodology}. Additionally, we evaluate the effectiveness of our fine-tuning approach by comparing our system with base models against our system with fine-tuned counterparts. It is important to note that while FrOG's original evaluation in their paper used full models, our evaluation (including our reimplementation of FrOG) uses quantized models due to resource constraints. Furthermore, FrOG relies on few-shot examples for its operation, while our system---both with base and fine-tuned models---does not use any few-shot prompting. The information provided in this section is organized based on the knowledge graph domain.
 
 \subsection{Wikidata}
 \label{wikidata-results}
@@ -15,6 +15,8 @@ Using the QALD-9-Plus dataset for Wikidata, we evaluate the performance of both 
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Wikidata (Jaccard Similarity)}
+\label{table-wikidata-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.5\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -28,8 +30,6 @@ Using the QALD-9-Plus dataset for Wikidata, we evaluate the performance of both 
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on Wikidata (Jaccard Similarity)}
-\label{table-wikidata-results}
 \end{table}
 
 The results demonstrate several important findings. First, all of our fine-tuned models outperform their base model counterparts. Most of our fine-tuned models also outperform FrOG, despite the fact that FrOG leverages few-shot examples while our system does not use any few-shot prompting. The most significant improvement is observed with the Llama-3.1-8B model, which shows a dramatic increase from a near-zero base model performance ($0.0079$) to achieving the highest overall score ($0.3237$) after fine-tuning. This represents an absolute gain of $0.0353$ over the FrOG implementation.
@@ -167,6 +167,8 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Curriculum KG - Template Dataset (Jaccard Similarity)}
+\label{table-curriculum-template-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -180,14 +182,14 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on Curriculum KG - Template Dataset (Jaccard Similarity)}
-\label{table-curriculum-template-results}
 \end{table}
 
 \begin{table}
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Curriculum KG - Random-Walk Dataset (Jaccard Similarity)}
+\label{table-curriculum-random-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -201,8 +203,6 @@ For the Curriculum Knowledge Graph, we evaluate performance using both template-
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on Curriculum KG - Random-Walk Dataset (Jaccard Similarity)}
-\label{table-curriculum-random-results}
 \end{table}
 
 The results on the Curriculum Knowledge Graph demonstrate substantial improvements over the FrOG implementation across all models, even though FrOG benefits from few-shot examples while our system does not. Several key observations can be made:
@@ -342,6 +342,8 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Legal KG - Template Dataset (Jaccard Similarity)}
+\label{table-legal-template-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -355,14 +357,14 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on Legal KG - Template Dataset (Jaccard Similarity)}
-\label{table-legal-template-results}
 \end{table}
 
 \begin{table}
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Legal KG - Random-Walk Dataset (Jaccard Similarity)}
+\label{table-legal-random-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -376,8 +378,6 @@ For the Legal Knowledge Graph, we also evaluate performance using both template-
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on Legal KG - Random-Walk Dataset (Jaccard Similarity)}
-\label{table-legal-random-results}
 \end{table}
 
 The results on the Legal Knowledge Graph show substantial improvements over both FrOG and our base models. Key observations include:
@@ -485,6 +485,8 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on GESIS KG - Template Dataset (Jaccard Similarity)}
+\label{table-gesis-template-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -498,14 +500,14 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on GESIS KG - Template Dataset (Jaccard Similarity)}
-\label{table-gesis-template-results}
 \end{table}
 
 \begin{table}
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on GESIS KG - Random-Walk Dataset (Jaccard Similarity)}
+\label{table-gesis-random-results}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -519,8 +521,6 @@ For the GESIS Knowledge Graph, we again evaluate performance using both template
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Experiment Results on GESIS KG - Random-Walk Dataset (Jaccard Similarity)}
-\label{table-gesis-random-results}
 \end{table}
 
 The results on the GESIS Knowledge Graph demonstrate the largest improvements over the FrOG implementation among all knowledge graph domains, despite FrOG's advantage of using few-shot examples. Key observations include:
@@ -615,6 +615,8 @@ Our experiments evaluated four different large language models across multiple k
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Model Comparison Across All Knowledge Graphs}
+\label{table-model-comparison}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.25\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -628,8 +630,6 @@ Our experiments evaluated four different large language models across multiple k
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Model Comparison Across All Knowledge Graphs}
-\label{table-model-comparison}
 \end{table}
 
 Several key observations can be made based on our comprehensive evaluation:
@@ -667,6 +667,8 @@ Our experiments across four diverse knowledge graphs reveal significant patterns
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Knowledge Graph Comparison Across All Models}
+\label{table-kg-comparison}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.2\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -680,8 +682,6 @@ Our experiments across four diverse knowledge graphs reveal significant patterns
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Knowledge Graph Comparison Across All Models}
-\label{table-kg-comparison}
 \end{table}
 
 Based on our analysis, we identify two critical factors that significantly impact model performance across knowledge graphs:
@@ -725,6 +725,8 @@ Our experiment results demonstrate the substantial impact of our fine-tuning met
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Fine-tuning Results on Wikidata}
+\label{table-wikidata-finetune}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.4\textwidth} | m{0.2\textwidth} | m{0.2\textwidth} | m{0.2\textwidth} |}
     \hline
@@ -740,14 +742,14 @@ Our experiment results demonstrate the substantial impact of our fine-tuning met
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Fine-tuning Results on Wikidata}
-\label{table-wikidata-finetune}
 \end{table}
 
 \begin{table}
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Fine-tuning Approach Comparison for Knowledge Graphs with Multiple Dataset Types}
+\label{table-finetune-comparison}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.25\textwidth} | m{0.15\textwidth} | m{0.18\textwidth} | m{0.18\textwidth} | m{0.18\textwidth} |}
     \hline
@@ -763,8 +765,6 @@ Our experiment results demonstrate the substantial impact of our fine-tuning met
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Fine-tuning Approach Comparison for Knowledge Graphs with Multiple Dataset Types}
-\label{table-finetune-comparison}
 \end{table}
 
 Several important patterns emerge from our analysis:
@@ -802,6 +802,8 @@ Our comprehensive evaluation demonstrates the substantial advantages of our fine
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{System Performance Comparison: Our Fine-tuned System vs. FrOG}
+\label{table-system-comparison}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.25\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
     \hline
@@ -815,8 +817,6 @@ Our comprehensive evaluation demonstrates the substantial advantages of our fine
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{System Performance Comparison: Our Fine-tuned System vs. FrOG}
-\label{table-system-comparison}
 \end{table}
 
 Several critical insights emerge from this comprehensive comparison:
@@ -862,6 +862,8 @@ Our experiment results provide valuable insights into the effectiveness of diffe
 \centering
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{12pt}
+\caption{Dataset Generation Method Comparison}
+\label{table-dataset-comparison}
 \begin{adjustbox}{width=\textwidth}
     \begin{tabular}{| m{0.25\textwidth} | m{0.35\textwidth} | m{0.35\textwidth} |}
     \hline
@@ -874,8 +876,6 @@ Our experiment results provide valuable insights into the effectiveness of diffe
     \end{tabular}
 \end{adjustbox}
 \vspace{1em}
-\caption{Dataset Generation Method Comparison}
-\label{table-dataset-comparison}
 \end{table}
 
 Based on our analysis of performance across dataset types, we observe several important patterns:
