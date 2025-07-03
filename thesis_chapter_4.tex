@@ -26,13 +26,13 @@ The implementation follows a modular design pattern where each component is impl
 
 \subsection{Knowledge Graph Schema Extraction}
 
-The foundation of our dataset generation system is the knowledge graph schema extractor, which provides a unified interface for extracting schema information from different knowledge graph sources, including remote SPARQL endpoints and local RDF files.
+The foundation of our dataset generation system is the knowledge graph schema extractor, which provides a unified interface for extracting schema information from different knowledge graph sources, including remote SPARQL endpoints and local RDF files. Figure~\ref{fig:kg-schema-extraction} illustrates the complete schema extraction pipeline and its integration with various knowledge graph sources.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.65\linewidth]{kgschema_41.jpg}
     \caption{Knowledge Graph Schema Extraction Pipeline}
-    \label{fig:enter-label}
+    \label{fig:kg-schema-extraction}
 \end{figure}
 
 \subsubsection{Unified Schema Extraction Interface}
@@ -147,13 +147,13 @@ By systematically identifying and optimizing slow-performing queries, we signifi
 
 \subsection{Vector Search Integration}
 
-To enable efficient entity and property matching, we integrated Weaviate vector search capabilities with n-gram processing and sentence embeddings. This integration is critical for both template-based and random-walk approaches.
+To enable efficient entity and property matching, we integrated Weaviate vector search capabilities with n-gram processing and sentence embeddings. This integration is critical for both template-based and random-walk approaches. Figure~\ref{fig:ngram-matching} demonstrates the n-gram based entity and property matching system architecture.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{assets/pics/ngram_coba_lagi.jpg}
     \caption{N-gram Based Entity and Property Matching System}
-    \label{fig:enter-label}
+    \label{fig:ngram-matching}
 \end{figure}
 
 \subsubsection{N-gram Processing Implementation}
@@ -214,13 +214,13 @@ This integrated approach for entity and property matching is used by both the te
 
 \subsection{Template-Based Dataset Generation}
 
-The template-based generator creates diverse question-SPARQL pairs by defining question templates with placeholders that are instantiated with valid entity-property combinations discovered from the knowledge graph.
+The template-based generator creates diverse question-SPARQL pairs by defining question templates with placeholders that are instantiated with valid entity-property combinations discovered from the knowledge graph. Figure~\ref{fig:discovery-process} illustrates the discovery-first template instantiation process.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{assets/pics/discovery-new.jpg}
     \caption{Discovery-First Template Instantiation Process}
-    \label{fig:enter-label}
+    \label{fig:discovery-process}
 \end{figure}
 
 \subsubsection{Template Structure and Initialization}
@@ -271,13 +271,13 @@ Our implementation includes the generation of step-by-step reasoning chains that
 
 \subsection{Random-Walk Dataset Generation}
 
-The random-walk generator complements the template-based approach by discovering valid query patterns directly from the knowledge graph structure, ensuring comprehensive coverage of possible query patterns.
+The random-walk generator complements the template-based approach by discovering valid query patterns directly from the knowledge graph structure, ensuring comprehensive coverage of possible query patterns. Figure~\ref{fig:random-walk-generation} illustrates the random-walk pattern discovery and question generation process.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets/pics/rw-gen-new.jpg}
     \caption{Random-Walk Pattern Discovery and Question Generation}
-    \label{fig:enter-label}
+    \label{fig:random-walk-generation}
 \end{figure}
 
 \subsubsection{Pattern Discovery Implementation}
@@ -312,13 +312,13 @@ For the GESIS Knowledge Graph, we implemented specialized components to handle s
 
 \subsection{Post-Processing Pipeline}
 
-The post-processing pipeline is essential for standardizing the format of SPARQL queries in the generated datasets. This standardization improves training efficiency by providing consistent formatting patterns that align with the natural generation tendencies of language models.
+The post-processing pipeline is essential for standardizing the format of SPARQL queries in the generated datasets. This standardization improves training efficiency by providing consistent formatting patterns that align with the natural generation tendencies of language models. Figure~\ref{fig:sparql-standardization} demonstrates the SPARQL query standardization and dataset preparation process.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{assets/pics/hitorinbo.jpg}
     \caption{SPARQL Query Standardization and Dataset Preparation}
-    \label{fig:enter-label}
+    \label{fig:sparql-standardization}
 \end{figure}
 
 \subsubsection{SPARQL Query Formatting}
@@ -341,7 +341,7 @@ Our model finetuning implementation builds upon the dataset generation system to
 
 \subsection{Finetuning Infrastructure and Model Selection}
 
-The foundation of our finetuning approach is a modular, efficient infrastructure designed to enable adaptation of large language models with minimal computational requirements. We implement parameter-efficient fine-tuning techniques that allow us to adapt models containing billions of parameters using standard research hardware.
+The foundation of our finetuning approach is a modular, efficient infrastructure designed to enable adaptation of large language models with minimal computational requirements. We implement parameter-efficient fine-tuning techniques that allow us to adapt models containing billions of parameters using standard research hardware. Figure~\ref{fig:finetuning-infrastructure} illustrates the model finetuning infrastructure with parameter-efficient techniques.
 
 \begin{figure}
     \centering
@@ -369,12 +369,13 @@ Our implementation is built on the Unsloth library, which provides optimized fin
 
 \subsubsection{Memory Optimization Techniques}
 
-A key challenge in fine-tuning large language models is managing memory constraints. Our implementation incorporates several memory optimization techniques. The complete implementation is provided in \hyperref[code:memory-optimization]{Appendix~\ref{sec:implementation-code}}.
+A key challenge in fine-tuning large language models is managing memory constraints. Our implementation incorporates several memory optimization techniques. The complete implementation is provided in \hyperref[code:memory-optimization]{Appendix~\ref{sec:implementation-code}}. Figure~\ref{fig:memory-optimization} demonstrates the memory optimization techniques and their impact on GPU memory usage.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.85\linewidth]{assets/pics/memory_optimization_4.jpg}
     \caption{Memory Optimization Techniques and Their Impact on GPU Memory Usage}
+    \label{fig:memory-optimization}
 \end{figure}
 
 The memory optimization techniques include:
@@ -393,7 +394,7 @@ These optimizations enable us to fine-tune 7-8 billion parameter models on a sin
 
 \subsection{Entity and Property Extraction Model}
 
-The Entity and Property Extraction model serves as the foundation for our question-answering pipeline, transforming natural language questions into structured entity and property identifications that can be used for subsequent SPARQL generation.
+The Entity and Property Extraction model serves as the foundation for our question-answering pipeline, transforming natural language questions into structured entity and property identifications that can be used for subsequent SPARQL generation. Figure~\ref{fig:entity-extraction-model} illustrates the entity and property extraction model architecture.
 
 
 \begin{figure}
@@ -453,7 +454,7 @@ This configuration uses a moderate rank (r=16) which we determined empirically t
 
 \subsection{SPARQL Generation Model}
 
-The SPARQL Generation model represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries. This task requires more sophisticated adaptation to capture complex syntax patterns and domain-specific knowledge.
+The SPARQL Generation model represents the core reasoning component of our system, transforming identified entities and properties into executable SPARQL queries. This task requires more sophisticated adaptation to capture complex syntax patterns and domain-specific knowledge. Figure~\ref{fig:sparql-generation-model} illustrates the SPARQL generation model with enhanced LoRA configuration.
 
 \begin{figure}
     \centering
@@ -767,7 +768,7 @@ By implementing this export and deployment pipeline, we enable seamless transiti
 
 \subsection{Training Process and Hyperparameter Selection}
 
-Our training process involves careful hyperparameter selection and monitoring to ensure optimal model performance. We implemented comprehensive logging and validation to track model progress throughout training.
+Our training process involves careful hyperparameter selection and monitoring to ensure optimal model performance. We implemented comprehensive logging and validation to track model progress throughout training. Figure~\ref{fig:training-process} illustrates the training process with learning curves and validation monitoring.
 
 \begin{figure}
     \centering
@@ -959,11 +960,13 @@ The state graph implementation offers several technical advantages over a linear
     \item \textbf{Modular Component Replacement}: Individual nodes can be replaced or modified without affecting the overall graph structure, enabling easy experimentation with different implementations.
 \end{enumerate}
 
+Figure~\ref{fig:langgraph-architecture} illustrates the LangGraph multi-agent workflow architecture.
+
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{assets//pics/langgraph_architecture_4.jpg}
     \caption{LangGraph Multi-Agent Workflow Architecture}
-    \label{fig:enter-label}
+    \label{fig:langgraph-architecture}
 \end{figure}
 
 \subsubsection{State Management Implementation}
@@ -1023,10 +1026,13 @@ This factory pattern is applied to multiple services in our architecture, includ
     \item \textbf{SPARQL Execution}: For executing queries against different endpoints
 \end{itemize}
 
+Figure~\ref{fig:kg-architecture} illustrates the multi-source knowledge graph architecture.
+
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets//pics/kg_extractor_uml.jpg}
     \caption{Multi-Source Knowledge Graph Architecture}
+    \label{fig:kg-architecture}
 \end{figure}
 
 \subsection{Specialized Agent Nodes}
@@ -1050,12 +1056,13 @@ The implementation integrates with the \texttt{llm\_factory} to access fine-tune
 \subsubsection{Strategy Selection Node}
 The Strategy Selection Node analyzes the question complexity and extracted entities to determine the optimal processing approach. The complete implementation is provided in \hyperref[code:strategy-selection-node]{Appendix~\ref{sec:implementation-code}}.
 
-The strategy selection implements a heuristic approach to determine whether verbalization (direct property lookup) or SPARQL generation is more appropriate for a given question. This decision is based on linguistic analysis of the question text and user settings. The node sets the \texttt{next} field in the state object, which is used by the conditional routing logic in the LangGraph framework.
+The strategy selection implements a heuristic approach to determine whether verbalization (direct property lookup) or SPARQL generation is more appropriate for a given question. This decision is based on linguistic analysis of the question text and user settings. The node sets the \texttt{next} field in the state object, which is used by the conditional routing logic in the LangGraph framework. Figure~\ref{fig:strategy-selection} illustrates the strategy selection decision tree.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]{assets/pics/strategy_selection_4.jpg}
     \caption{Strategy Selection Decision Tree}
+    \label{fig:strategy-selection}
 \end{figure}
 
 \subsubsection{Property Generation Node}
@@ -1115,10 +1122,13 @@ For optimal performance, particularly with large knowledge graphs like GESIS, we
     \item \textbf{Result Limit Control}: Adding LIMIT clauses to prevent excessive result sizes
 \end{itemize}
 
+Figure~\ref{fig:sparql-generation-retry} illustrates the SPARQL generation retry mechanism.
+
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets//pics/sparql_generation_4.jpg}
     \caption{SPARQL Generation Retry Mechanism}
+    \label{fig:sparql-generation-retry}
 \end{figure}
 
 \subsubsection{Google Search Node}
@@ -1180,10 +1190,13 @@ The LLM factory is designed to support multiple provider types, with each provid
     \item \textbf{Ollama Provider}: For running local models via Ollama
 \end{enumerate}
 
+Figure~\ref{fig:llm-factory} illustrates the multi-provider LLM factory architecture.
+
 \begin{figure}
     \centering
     \includegraphics[width=0.75\linewidth]{assets//pics/llm_factory.jpg}
     \caption{Multi-Provider LLM Factory Architecture}
+    \label{fig:llm-factory}
 \end{figure}
 
 Each specialized agent node retrieves its appropriate model from the factory using the designated getter methods. This allows for specialized models to be used for each task, optimizing the performance of the overall system.
@@ -1209,7 +1222,7 @@ These settings can be controlled through the frontend interface, allowing users 
 \section{System Integration and Communication}
 \label{sec:system-integration}
 
-The integration between the different components of the FROG system relies on a robust communication architecture that enables real-time interactions between the frontend, backend, and knowledge graph services. This section details the technical implementation of the backend architecture, frontend integration, and the real-time communication mechanisms that enable seamless data flow throughout the system.
+The integration between the different components of the FROG system relies on a robust communication architecture that enables real-time interactions between the frontend, backend, and knowledge graph services. This section details the technical implementation of the backend architecture, frontend integration, and the real-time communication mechanisms that enable seamless data flow throughout the system. Figure~\ref{fig:system-integration} provides an overview of the system integration architecture.
 
 \begin{figure}
     \centering
@@ -1311,7 +1324,7 @@ def connect(self):
     logger.info(f"Connected WebSocket for chat_id: {self.chat_id}, using shared agent instance")
 \end{lstlisting}
 
-This implementation ensures that system resources are used efficiently while maintaining state consistency across multiple client connections.
+This implementation ensures that system resources are used efficiently while maintaining state consistency across multiple client connections. Figure~\ref{fig:backend-architecture} illustrates the backend architecture and communication flow.
 
 \begin{figure}
     \centering
@@ -1324,7 +1337,7 @@ This implementation ensures that system resources are used efficiently while mai
 The frontend is built using React with TypeScript, providing a type-safe and component-based architecture. The implementation follows modern React practices with context-based state management and functional components.
 \subsubsection{User Interface Implementation}
 
-The frontend implementation provides an intuitive chat-based interface for interacting with the FROG system. The interface is designed to facilitate natural language queries while providing comprehensive feedback about the system's processing steps.
+The frontend implementation provides an intuitive chat-based interface for interacting with the FROG system. The interface is designed to facilitate natural language queries while providing comprehensive feedback about the system's processing steps. Figure~\ref{fig:homepage-interface} shows the FROG system homepage interface with the main chat interface, sidebar navigation, and settings panel.
 
 \begin{figure}[htbp]
     \centering
@@ -1340,7 +1353,7 @@ The frontend implementation provides an intuitive chat-based interface for inter
     \label{fig:chat-example}
 \end{figure}
 
-The user interface successfully integrates all the backend components discussed in the previous sections, providing a seamless experience for users to interact with the multi-agent knowledge graph querying system.
+The user interface successfully integrates all the backend components discussed in the previous sections, providing a seamless experience for users to interact with the multi-agent knowledge graph querying system. Figure~\ref{fig:chat-example} demonstrates an example chat interaction showing the FROG system processing a natural language question with real-time feedback from each agent node.
 
 \subsubsection{React Component Structure}
 The frontend is organized in a hierarchical component structure that enhances maintainability and reusability:
@@ -1364,7 +1377,7 @@ frontend/src/
     └── sparqlFormatter.ts  # SPARQL formatting utilities
 \end{lstlisting}
 
-The component architecture implements a unidirectional data flow, where state changes propagate downward through the component tree, while user interactions trigger events that are handled by the context provider.
+The component architecture implements a unidirectional data flow, where state changes propagate downward through the component tree, while user interactions trigger events that are handled by the context provider. Figure~\ref{fig:frontend-architecture} illustrates the frontend component architecture and data flow.
 
 \subsubsection{Context-Based State Management}
 The application uses the React Context API for state management, implemented through the \texttt{ChatContext} provider:
@@ -1630,6 +1643,8 @@ This message processing logic handles different types of messages:
     \item Special messages containing visualization file references
 \end{itemize}
 
+Figure~\ref{fig:realtime-communication} illustrates the real-time communication flow between frontend and backend.
+
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{assets/pics/febe_4.jpg}
@@ -1696,7 +1711,7 @@ export const PUSHER_CONFIG = {
 
 This approach allows developers to easily switch between different environments by setting environment variables or modifying configuration files, facilitating testing and deployment.
 
-Through this comprehensive implementation of backend architecture, frontend integration, and real-time communication, the FROG system achieves seamless integration between its various components, enabling efficient processing of natural language queries and delivery of results to users in real-time.
+Through this comprehensive implementation of backend architecture, frontend integration, and real-time communication, the FROG system achieves seamless integration between its various components, enabling efficient processing of natural language queries and delivery of results to users in real-time. Figure~\ref{fig:data-flow-diagram} illustrates the end-to-end data flow in the FROG system.
 
 \begin{figure}
     \centering
@@ -1810,7 +1825,7 @@ A key feature of the visualization system is the generation of Mermaid diagrams,
 A key feature of the visualization system is the generation of Mermaid diagrams, which provide a visual representation of the agent's execution process. The complete implementation is provided in \hyperref[code:mermaid-generation]{Appendix~\ref{sec:implementation-code}}.
 
 \subsubsection{Example Mermaid Diagram}
-Below is an example Mermaid diagram generated by our visualization system:
+Below is an example Mermaid diagram generated by our visualization system. Figure~\ref{fig:mermaid-example} shows the Mermaid visualization of the agent execution process.
 
 \begin{figure}
     \centering
@@ -1871,7 +1886,7 @@ The JSON export is generated alongside the Mermaid diagram and TTL file when the
 The RDF-based logging system is integrated with Apache Jena Fuseki, a semantic web server that enables sophisticated SPARQL querying of execution logs. This integration allows for advanced analysis of execution patterns, component performance, and knowledge graph usage.
 
 \subsubsection{SPARQL Query Results and Dashboard}
-The Apache Jena Fuseki server provides a web-based interface for executing SPARQL queries and visualizing the results. The results can be exported in various formats (JSON, CSV, XML, etc.) for further analysis or visualization.
+The Apache Jena Fuseki server provides a web-based interface for executing SPARQL queries and visualizing the results. The results can be exported in various formats (JSON, CSV, XML, etc.) for further analysis or visualization. Figure~\ref{fig:jena-dashboard} shows the Apache Jena Fuseki dashboard for SPARQL query execution and visualization.
 
 \begin{figure}
     \centering
@@ -1981,7 +1996,7 @@ The integration with Apache Jena Fuseki enables a wide range of analytical capab
     \item \textbf{Temporal Trends}: Analyzing performance and behavior changes over time
 \end{itemize}
 
-These analytical capabilities provide valuable insights into the agent's behavior and performance, enabling continuous improvement and optimization of the system.
+These analytical capabilities provide valuable insights into the agent's behavior and performance, enabling continuous improvement and optimization of the system. Figure~\ref{fig:jena-results} shows the Apache Jena Fuseki SPARQL query results displaying execution statistics.
 
 \subsection{Integration with Multi-Agent System}
 The visualization and logging system is tightly integrated with the multi-agent system described in Section \ref{sec:system-integration}. Each agent node calls the visualizer's \texttt{log\_event} method at key points during execution, providing detailed information about the node's operations.
@@ -1998,7 +2013,7 @@ This integration enables comprehensive monitoring and analysis of the agent's ex
     \item Execution times and performance metrics
 \end{itemize}
 
-The tight integration between the visualization system and the multi-agent architecture enables a transparent and explainable execution process, allowing users to understand how the agent arrives at its answers.
+The tight integration between the visualization system and the multi-agent architecture enables a transparent and explainable execution process, allowing users to understand how the agent arrives at its answers. Figure~\ref{fig:vis-architecture} illustrates the architecture of the visualization and logging system and its integration with the multi-agent system.
 
 \begin{figure}
     \centering
@@ -2083,7 +2098,7 @@ volumes:
 The configuration exposes Weaviate on the default ports (8080 for HTTP and 50052 for gRPC) and enables persistent storage through a Docker volume. The backend on Device 1 connects to Weaviate on Device 2 using the local network IP address within the same WiFi network.
 
 \subsection{Apache Jena Fuseki}
-The Apache Jena Fuseki semantic web server is also deployed on Device 2, running on its default port (3030). This server provides SPARQL query capabilities for the RDF-based logging system, enabling sophisticated analysis of agent execution patterns.
+The Apache Jena Fuseki semantic web server is also deployed on Device 2, running on its default port (3030). This server provides SPARQL query capabilities for the RDF-based logging system, enabling sophisticated analysis of agent execution patterns. Figure~\ref{fig:connectivity-diagram} shows the component connectivity diagram with communication paths between devices.
 
 \begin{figure}[htbp]
     \centering
