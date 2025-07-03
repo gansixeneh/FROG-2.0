@@ -28,19 +28,16 @@ As shown in Figure~\ref{fig:dsr-methodology}, the DSR methodology follows a stru
 
 \section{Experiment Details}
 \label{exp-detail}
-In general, we will be experimenting with an enhanced GraphRAG system that builds upon the original pipeline through three main improvements. The enhanced system integrates specialized model finetuning for both entity property extraction and SPARQL generation, comprehensive dataset generation, and a sophisticated multi-agent architecture. Additionally, the scope of our enhanced system extends beyond the original framework to provide more robust question-answering capabilities with intelligent strategy selection and adaptive processing paths, while significantly enhancing transparency through comprehensive process visualization, database logging, and reviewable system diagrams. The details are as follows.
-
-\subsection{Overall Architecture Overview}
-The enhanced GraphRAG system operates through a coordinated workflow that integrates our three main improvements into a cohesive question-answering pipeline. The system begins with a multi-agent orchestration layer that intelligently routes incoming questions through specialized processing agents. These agents leverage finetuned models for improved entity property extraction and SPARQL generation, and utilize enhanced datasets for training and evaluation purposes.
-
-The overall workflow follows this pattern: (1) a user question enters the multi-agent system through the translation and entity extraction agents, (2) the strategy selection agent determines the optimal processing path based on query complexity and user settings, (3) the system either follows a direct verbalization approach for simple queries or generates SPARQL queries using finetuned models for complex questions, with verbalization failure automatically falling back to SPARQL generation, (4) entity and property search agents utilize the comprehensive generated datasets to improve entity and property matching, and (5) the answer generation agent synthesizes the final response with appropriate fallback mechanisms.
-
-This integrated approach addresses the limitations of the previous adaptive processing system by providing enhanced routing mechanisms, specialized model capabilities for both entity property extraction and SPARQL generation, and comprehensive knowledge coverage through enhanced dataset generation.
+In this section, we present the experimental setup for evaluating our enhanced GraphRAG system against the original baseline. We begin by describing the original pipeline architecture that serves as our baseline, followed by an overview of the enhancements we propose to address its limitations.
 
 \subsection{Original Pipeline (Baseline)}
-To establish a proper comparison baseline, we maintain the original GraphRAG framework as described in the previous work \citep{ongris2024frog}. The original system consists of two pipeline versions: a prototype pipeline (v1) focused specifically on Wikidata with limited property scope, and a refined pipeline (v2) that supports multiple knowledge bases but lacks sophisticated reasoning capabilities.
+\label{subsec:original-pipeline}
 
-The original pipeline v1 (Figure \ref{fig:pipeline_v1}) serves as our initial baseline, with steps including entity extraction and linking, SPARQL query generation, and answer generation using a predefined list of top-100 frequently used Wikidata properties. The original pipeline v2 (Figure \ref{fig:pipeline_v2}) provides our main baseline comparison, incorporating entities extraction and linking, retrieval mechanisms, and answer generation with support for Wikidata, DBpedia, and local KGs.
+The original FrOG (Framework of Open GraphRAG) system was developed through two pipeline iterations, each addressing different aspects of the knowledge graph question answering challenge. We describe both pipelines in detail as they collectively form our baseline for comparison.
+
+\subsubsection{Pipeline v1: Initial Prototype}
+
+The first pipeline, illustrated in Figure~\ref{fig:pipeline_v1}, was designed as a prototype specifically focused on Wikidata. This initial implementation established the foundational approach for translating natural language questions into SPARQL queries.
 
 \begin{figure}[htbp]
     \centering
@@ -49,6 +46,22 @@ The original pipeline v1 (Figure \ref{fig:pipeline_v1}) serves as our initial ba
     \label{fig:pipeline_v1}
 \end{figure}
 
+The pipeline consists of three main components:
+
+\begin{enumerate}
+    \item \textbf{Entity Extraction and Linking}: Identifies entities mentioned in the natural language question and links them to corresponding Wikidata entities using the Wikidata API.
+    
+    \item \textbf{SPARQL Query Generation}: Generates SPARQL queries using few-shot prompting with Large Language Models. The property candidates are directly included in the generation prompt, obtained from the top-100 frequently used properties listed on Wikidata's website\footnote{\url{https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/Top100}}.
+    
+    \item \textbf{Answer Generation}: Executes the generated SPARQL query against Wikidata Query Service and formats the results into a natural language response.
+\end{enumerate}
+
+While this prototype demonstrated the feasibility of the approach, it had significant limitations. The reliance on a predefined list of only 100 properties severely restricted the types of questions the system could handle. Additionally, the narrow focus on Wikidata meant the approach could not be easily adapted to other knowledge graphs with different schemas and property structures.
+
+\subsubsection{Pipeline v2: Enhanced Architecture}
+
+Recognizing the limitations of the initial prototype, the second pipeline was developed to address the property limitation and enable multi-knowledge graph support. Figure~\ref{fig:pipeline_v2} illustrates this enhanced architecture.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{assets/pdfs/pipeline2-cropped.pdf}
@@ -56,32 +69,160 @@ The original pipeline v1 (Figure \ref{fig:pipeline_v1}) serves as our initial ba
     \label{fig:pipeline_v2}
 \end{figure}
 
-However, both original pipelines are limited by their fixed workflow architecture lacking runtime configuration options, absence of expanded fallback mechanisms, limited operational transparency, lack of specialized model training, and constrained dataset generation capabilities.
-
-\subsection{Enhanced Pipeline Architecture}
-Departing from the limitations of the original pipelines, we develop a significantly enhanced architecture through our three main improvements. The enhanced system, implemented as the FrOG (Framework of Open GraphRAG) system, incorporates a sophisticated multi-agent workflow that can adaptively process questions of varying complexity.
-
-The enhanced pipeline operates through the following conceptual components:
+The main improvements in Pipeline v2 include:
 
 \begin{enumerate}
-    \item \textbf{Multi-Agent Orchestration}: The system employs a LangGraph-based workflow that coordinates multiple specialized agents, each responsible for specific aspects of the question-answering process. This includes translation agents for multilingual support, entity extraction agents using finetuned models, strategy selection agents for intelligent routing, and specialized processing agents for different query types.
+    \item \textbf{Vector Database Integration}: Incorporation of auxiliary vector databases to store and retrieve a much larger number of properties beyond the predefined top-100 list, enabling the system to handle more diverse question types.
     
-    \item \textbf{Adaptive Strategy Selection}: Unlike the fixed processing paths of the original system, our enhanced architecture intelligently determines the optimal approach based on question complexity. Simple questions follow a direct verbalization path, while complex multi-hop queries utilize the sophisticated SPARQL generation pipeline with finetuned models. In cases where verbalization fails for simple questions, the system automatically falls back to SPARQL generation to ensure robust query processing.
+    \item \textbf{Dual Processing Approach}: Introduction of a verbalization path for simple (single-hop) questions, where the system first attempts to answer using direct property retrieval before falling back to SPARQL generation. This approach uses dense text embeddings encoded from verbalized triples to measure semantic similarity with the user's question.
     
-    \item \textbf{Enhanced Model Integration}: The system incorporates finetuned Large Language Models specifically trained on both entity property extraction and NL2SPARQL tasks using our comprehensive generated datasets. These models provide improved accuracy in both entity and property identification as well as SPARQL query generation, offering better reasoning capabilities for complex knowledge graph queries.
+    \item \textbf{Multi-Knowledge Graph Support}: Extension to support multiple knowledge bases including Wikidata, DBpedia, and local knowledge graphs, demonstrating the framework's flexibility across different domains.
     
-    \item \textbf{Comprehensive Dataset Utilization}: The enhanced pipeline leverages both template-based and pattern-based generated datasets for training, evaluation, and property enhancement. This provides broader coverage of query types and improved handling of diverse knowledge domains beyond the limitations of predefined property lists.
-    
-    \item \textbf{Robust Fallback Mechanisms}: The system includes multiple levels of fallback processing, from verbalization failure to SPARQL generation, and from knowledge graph querying to web search when enabled, ensuring robust performance across different query scenarios.
-    
-    \item \textbf{Comprehensive Logging and Traceability}: The system implements detailed semantic logging of all processing steps, capturing agent operations, decisions, and reasoning paths in RDF format. This provides complete traceability of the question-answering process, enabling verification, debugging, and transparency into how answers are derived.
+    \item \textbf{Enhanced Retrieval Stage}: The system implements a more sophisticated retrieval process where:
+    \begin{itemize}
+        \item Entities are retrieved from the knowledge graph's API (if available) or vector database
+        \item Properties are retrieved from the vector database based on semantic similarity with the question
+        \item The retrieval results provide better context for SPARQL generation
+    \end{itemize}
 \end{enumerate}
 
-The enhanced architecture supports multiple knowledge bases including Wikidata, Curriculum Knowledge Graph, Legal Knowledge Graph, and GESIS Knowledge Graph, while providing significantly improved processing capabilities, broader query coverage, and more reliable performance through its integrated multi-component design.
+\subsubsection{Dataset Generation for Local Knowledge Graphs}
 
-For model selection, we utilize multiple finetuned versions of state-of-the-art models. The LLMs we use for the enhanced pipeline are \texttt{Mistral NeMo}, \texttt{LLaMA 3.1}, \texttt{Qwen2.5 Coder}, and \texttt{Qwen2.5}. Likewise, all models are the instruction fine-tuned versions. The multi-agent system supports configurable model providers for different processing tasks. The evaluation encompasses both the original Jaccard similarity metrics and additional comprehensive metrics for component-wise analysis.
+A notable contribution of the original framework was the development of an automatic dataset generation system for local knowledge graphs where no existing evaluation datasets exist. This system supports the generation of four types of questions, as described in Table~\ref{table-questiontype-original}.
 
-Finally, we conduct our evaluation using Kaggle's cloud-based infrastructure to ensure computational scalability and reproducibility of our enhanced approach compared to the original baseline systems.
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Supported Question Categories in Original Dataset Generator}
+\begin{tabular}{|c | c|}
+\hline
+\RaggedRight{\textbf{Category}} & \textbf{Triple Pattern}\\
+\hline
+\RaggedRight{Simple 1} & \texttt{\{ s p ?o . \}}\\
+\RaggedRight{Simple 2} & \texttt{\{ ?s p o . \}}\\
+\RaggedRight{Complex 1} & \texttt{\{ ?s p1 o1; p2 o2 . \}}\\
+\RaggedRight{Complex 2} & \texttt{\{ ?s p1 ?o1 . ?o1 p2 o2 . \}}\\
+\hline
+\end{tabular}
+\label{table-questiontype-original}
+\end{table}
+
+The dataset generation process follows five main steps:
+
+\begin{enumerate}
+    \item \textbf{Entity Selection}: Randomly selects one entity from the knowledge graph
+    \item \textbf{Random Walk}: Performs a random walk based on the question category to discover valid query patterns
+    \item \textbf{Resource Label Resolution}: Resolves natural language labels for properties and entities
+    \item \textbf{SPARQL Query Formation}: Constructs SPARQL queries using predefined templates
+    \item \textbf{Question Generation}: Uses LLMs to generate natural language questions from the SPARQL queries
+\end{enumerate}
+
+This dataset generation approach enabled evaluation on local knowledge graphs by creating synthetic question-SPARQL pairs. However, the generated datasets had limitations in terms of linguistic diversity and the quality of the generated natural language questions.
+
+\subsubsection{Limitations of the Original Pipeline}
+
+Despite the improvements in Pipeline v2, several fundamental limitations remained that motivated our enhanced approach:
+
+\begin{enumerate}
+    \item \textbf{Limited Dataset Quality and Diversity}: The dataset generation relied on simple random walks and basic LLM prompting, resulting in:
+    \begin{itemize}
+        \item Limited linguistic diversity in generated questions
+        \item Lack of comprehensive coverage of possible query patterns
+        \item No systematic approach to ensure balanced complexity distribution
+        \item Absence of chain-of-thought reasoning in the datasets
+    \end{itemize}
+    
+    \item \textbf{Heavy Reliance on Few-Shot Prompting}: The system's dependence on few-shot prompting for both entity/property extraction and SPARQL generation led to:
+    \begin{itemize}
+        \item Inconsistent performance across different question types
+        \item Inability to learn domain-specific patterns effectively
+        \item High sensitivity to the quality and selection of few-shot examples
+        \item Limited capability to handle complex multi-hop queries
+    \end{itemize}
+    
+    \item \textbf{Rigid and Black-Box Architecture}: The pipeline implementation suffered from:
+    \begin{itemize}
+        \item Fixed processing paths with limited adaptability
+        \item Lack of comprehensive fallback mechanisms beyond basic verbalization
+        \item No visibility into the reasoning process or decision-making
+        \item Absence of logging and visualization capabilities for debugging
+        \item Limited runtime configurability for different use cases
+    \end{itemize}
+\end{enumerate}
+
+These limitations highlighted the need for a more sophisticated approach that could provide better dataset generation, specialized model capabilities through fine-tuning, and a flexible, transparent architecture with comprehensive fallback mechanisms.
+
+\subsection{Overall Enhancement Strategy}
+\label{subsec:enhancement-strategy}
+
+To address the limitations identified in the original pipeline, we propose a comprehensive enhancement strategy consisting of three main improvements that work synergistically to create a more robust and capable GraphRAG system. Figure~\ref{fig:enhancement-overview} illustrates these three core components of our enhancement strategy: dataset generation, model fine-tuning, and multi-agent architecture.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/pics/enhancement.png}
+    \caption{Three core components of the enhanced GraphRAG system: (1) Dataset Generation creates high-quality training data through template-based and random-walk approaches, (2) Model Fine-tuning specializes LLMs for entity/property extraction and SPARQL generation tasks, and (3) Multi-Agent Architecture orchestrates specialized agents with intelligent routing and comprehensive fallback mechanisms}
+    \label{fig:enhancement-overview}
+\end{figure}
+
+As shown in Figure~\ref{fig:enhancement-overview}, our enhancement strategy addresses the original system's limitations through a coordinated approach that improves data quality, model capabilities, and system architecture. Each component plays a crucial role in creating a more capable and transparent GraphRAG system.
+
+\subsubsection{Enhanced Dataset Generation}
+
+We develop sophisticated dataset generation methods that significantly improve upon the original approach:
+
+\begin{itemize}
+    \item \textbf{Dual Generation Approaches}: We implement both template-based and random-walk generation methods:
+    \begin{itemize}
+        \item Template-based generation ensures linguistic diversity and high-quality natural language questions
+        \item Random-walk generation discovers comprehensive graph patterns beyond predefined templates
+    \end{itemize}
+    
+    \item \textbf{Chain-of-Thought Integration}: All generated datasets include step-by-step reasoning chains that explain the translation from natural language to SPARQL, providing valuable training signals for models
+    
+    \item \textbf{Systematic Complexity Distribution}: Questions are stratified across three complexity levels (basic, intermediate, advanced) to ensure balanced training data
+    
+    \item \textbf{SPARQL Post-Processing}: Generated queries undergo comprehensive formatting to align with natural language model generation patterns
+\end{itemize}
+
+\subsubsection{Specialized Model Fine-tuning}
+
+Instead of relying on few-shot prompting, we implement parameter-efficient fine-tuning to create specialized models:
+
+\begin{itemize}
+    \item \textbf{Entity and Property Extraction Model}: Fine-tuned specifically for identifying entities and properties in natural language questions, providing more consistent and accurate extraction
+    
+    \item \textbf{SPARQL Generation Model}: Fine-tuned on our enhanced datasets to generate syntactically correct and semantically appropriate SPARQL queries with chain-of-thought reasoning
+    
+    \item \textbf{Domain-Specific Adaptation}: Models are fine-tuned separately for each knowledge graph domain to capture domain-specific patterns and terminology
+    
+    \item \textbf{QLoRA Implementation}: We use Quantized Low-Rank Adaptation to enable efficient fine-tuning on standard hardware while maintaining model quality
+\end{itemize}
+
+\subsubsection{Multi-Agent Architecture with LangGraph}
+
+We replace the rigid pipeline with a sophisticated multi-agent system that provides:
+
+\begin{itemize}
+    \item \textbf{Intelligent Routing}: Adaptive processing paths based on query complexity and runtime settings, with specialized agents for different tasks
+    
+    \item \textbf{Comprehensive Fallback Mechanisms}: Multiple layers of fallback including verbalization to SPARQL and knowledge graph to web search
+    
+    \item \textbf{Complete Transparency}: Detailed logging and visualization of the entire reasoning process through:
+    \begin{itemize}
+        \item RDF-based semantic logging for SPARQL-queryable execution traces
+        \item Real-time process visualization with Mermaid diagrams
+        \item JSON export of complete execution logs
+    \end{itemize}
+    
+    \item \textbf{Runtime Configurability}: Flexible settings for enabling/disabling features, selecting knowledge sources, and controlling processing strategies
+\end{itemize}
+
+These three enhancements, as depicted in Figure~\ref{fig:enhancement-overview}, work together to create a system that is more accurate, transparent, and adaptable than the original pipeline, while maintaining the commitment to using only open-source components. The following sections detail the implementation of each enhancement component.
+
+% [Continue with the rest of the chapter as in the original...]
+% \section{Knowledge Bases} \label{knowledgebase}
+% [Rest of the chapter continues unchanged...]
 
 % =============================================================================
 

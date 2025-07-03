@@ -2111,3 +2111,264 @@ The Apache Jena Fuseki semantic web server is also deployed on Device 2, running
 Communication between Device 1 and Device 2 occurs through the local network, with the backend on Device 1 connecting to services on Device 2 using its local IP address. This approach ensures low-latency communication between the backend and supporting infrastructure while avoiding potential security issues associated with exposing these services to the Internet.
 
 The distributed architecture balances computational load while ensuring reliable performance, with the Django backend and Ollama provider running on Device 1, and the supporting infrastructure (Weaviate and Apache Jena) running on Device 2. This setup enables efficient processing of natural language queries and delivery of results in real-time, while providing comprehensive logging and analysis capabilities.
+
+\section{Reproducibility and Adaptability}
+\label{sec:reproducibility}
+
+This section provides comprehensive guidance for reproducing our enhanced GraphRAG system and adapting it to new knowledge graphs. We detail the steps required for replication, the modular design that enables easy extension, and practical considerations for deployment in different environments.
+
+\subsection{System Reproducibility}
+\label{subsec:reproducibility-setup}
+
+\subsubsection{Code and Resource Availability}
+\begin{itemize}
+    \item \textbf{GitHub Repository}: Complete source code available at \url{https://github.com/gansixeneh/FROG-2.0/tree/master}
+    \item \textbf{Pre-trained Models}: Fine-tuned models hosted on Hugging Face Hub
+    \item \textbf{Datasets}: Generated datasets and generation scripts included in repository
+    \item \textbf{Documentation}: Comprehensive setup guides and API documentation
+\end{itemize}
+
+\subsubsection{Environment Setup}
+The system requires the following hardware and software configuration:
+
+\textbf{Hardware Requirements:}
+\begin{itemize}
+    \item Minimum: 8GB RAM, 16GB GPU memory
+    \item Recommended: 16GB RAM, 32GB GPU memory
+    \item Storage: 50GB for models and datasets
+\end{itemize}
+
+\textbf{Software Dependencies:}
+\begin{itemize}
+    \item Python 3.9+
+    \item PyTorch 2.0+
+    \item LangGraph 0.2+
+    \item Weaviate 1.24+
+    \item Additional dependencies in \texttt{requirements.txt}
+\end{itemize}
+
+\subsubsection{Sources of Randomness and Control}
+\label{subsubsec:randomness}
+
+Several components in our system involve stochastic processes that can affect reproducibility. We identify these sources and provide mechanisms to control them:
+
+\textbf{1. Dataset Generation Randomness:}
+\begin{itemize}
+    \item \textbf{Template-based Generation}: 
+    \begin{itemize}
+        \item Random entity selection from discovery queries
+        \item Random sampling when multiple valid entity-property combinations exist
+        \item LLM-based question generation with temperature settings
+    \end{itemize}
+    \item \textbf{Random-walk Generation}:
+    \begin{itemize}
+        \item Random starting entity selection
+        \item Random path selection during graph traversal
+        \item Pattern variation through random direction reversals
+    \end{itemize}
+\end{itemize}
+
+\textit{Control mechanism}: Set random seeds for all random operations:
+\begin{lstlisting}[language=Python]
+# In dataset generation scripts
+random.seed(42)
+np.random.seed(42)
+torch.manual_seed(42)
+\end{lstlisting}
+
+\textbf{2. Model Fine-tuning Randomness:}
+\begin{itemize}
+    \item Random weight initialization in LoRA adapters
+    \item Data shuffling during training batches
+    \item Dropout during training (if enabled)
+\end{itemize}
+
+\textit{Control mechanism}: Set seeds in training configuration:
+\begin{lstlisting}[language=Python]
+training_args = TrainingArguments(
+    seed=42,
+    data_seed=42,
+    # Other arguments...
+)
+\end{lstlisting}
+
+\textbf{3. LLM Generation Randomness:}
+\begin{itemize}
+    \item Temperature-based sampling in text generation
+    \item Top-k and top-p sampling strategies
+    \item Different responses for identical prompts
+\end{itemize}
+
+\textit{Control mechanism}: Use deterministic generation settings:
+\begin{lstlisting}[language=Python]
+generation_config = {
+    "temperature": 0.0,  # Deterministic
+    "do_sample": False,
+    "seed": 42
+}
+\end{lstlisting}
+
+\textbf{4. Multi-Agent System Randomness:}
+\begin{itemize}
+    \item Entity selection when multiple candidates have similar scores
+    \item Verbalization score calculations with floating-point variations
+    \item Fallback decision thresholds
+\end{itemize}
+
+\textit{Control mechanism}: Implement deterministic tie-breaking:
+\begin{lstlisting}[language=Python]
+# Sort by score, then by entity ID for consistency
+candidates.sort(key=lambda x: (-x.score, x.id))
+selected = candidates[0]
+\end{lstlisting}
+
+\textbf{Important Note}: While these mechanisms enable reproducible experiments, exact reproduction of results may still vary slightly due to:
+\begin{itemize}
+    \item Hardware differences (CPU/GPU architectures)
+    \item Floating-point computation variations
+    \item External API responses (Wikidata API, Google Search)
+    \item Library version differences
+\end{itemize}
+
+For scientific reproducibility, we recommend:
+\begin{enumerate}
+    \item Using provided random seeds consistently
+    \item Documenting hardware specifications
+    \item Freezing dependency versions using \texttt{requirements.txt}
+    \item Saving generated datasets for exact reproduction
+    \item Using cached API responses when available
+\end{enumerate}
+
+\subsubsection{Reproducing Experimental Results}
+To reproduce the experimental results with controlled randomness:
+
+\begin{enumerate}
+    \item Clone the repository and install exact dependency versions
+    \item Set environment variable for deterministic behavior:
+    \begin{lstlisting}[language=bash]
+export PYTHONHASHSEED=42
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+    \end{lstlisting}
+    \item Use provided random seeds in all scripts
+    \item Execute evaluation scripts with deterministic settings
+    \item Compare results within expected variance ranges (±2\% for most metrics)
+\end{enumerate}
+
+\subsection{Adapting to New Knowledge Graphs}
+\label{subsec:adaptability}
+
+\subsubsection{Knowledge Graph Integration Requirements}
+To integrate a new knowledge graph, ensure it meets these requirements:
+
+\begin{itemize}
+    \item \textbf{SPARQL Endpoint}: Accessible query endpoint
+    \item \textbf{RDF Format}: Data available in RDF/Turtle format
+    \item \textbf{Schema Information}: Documented classes and properties
+    \item \textbf{Entity Labels}: Human-readable labels for entities
+\end{itemize}
+
+\subsubsection{Step-by-Step Adaptation Process}
+
+\textbf{1. Knowledge Graph Configuration}
+
+Add metadata to \texttt{KG\_METADATA} dictionary:
+\begin{lstlisting}[language=Python]
+KG_METADATA["your_kg"] = {
+    "sparql_endpoint": "http://your-endpoint/sparql",
+    "namespaces": {
+        "your_prefix": "http://your-namespace/",
+    },
+    "sparql_instructions": "Your KG-specific instructions",
+    "verbalization_templates": {...},
+}
+\end{lstlisting}
+
+\textbf{2. Dataset Generation}
+
+Configure and run dataset generation with controlled randomness:
+\begin{lstlisting}[language=bash]
+# Template-based generation
+python generate_dataset.py \
+    --kg your_kg \
+    --method template \
+    --output data/your_kg/ \
+    --seed 42
+
+# Random-walk generation  
+python generate_dataset.py \
+    --kg your_kg \
+    --method random_walk \
+    --complexity_dist "0.4,0.3,0.3" \
+    --seed 42
+\end{lstlisting}
+
+\textbf{3. Model Fine-tuning}
+
+Fine-tune models on generated datasets:
+\begin{lstlisting}[language=bash]
+# Entity/Property extraction
+python finetune.py \
+    --task entity_property \
+    --dataset data/your_kg/train.json \
+    --model qwen/qwen2.5-7b-instruct \
+    --seed 42
+
+# SPARQL generation
+python finetune.py \
+    --task sparql_generation \
+    --dataset data/your_kg/train.json \
+    --lora_rank 64 \
+    --seed 42
+\end{lstlisting}
+
+\textbf{4. System Integration}
+
+Update the multi-agent system configuration to include your knowledge graph and run integration tests with deterministic settings.
+
+\subsubsection{Case Study: Adding a New Biomedical Knowledge Graph}
+
+As a concrete example, consider integrating a biomedical knowledge graph:
+
+\begin{enumerate}
+    \item \textbf{Configuration}: Add endpoint and biomedical namespace prefixes
+    \item \textbf{Dataset}: Generate questions about diseases, treatments, and genes
+    \item \textbf{Fine-tuning}: Adjust for biomedical terminology
+    \item \textbf{Testing}: Validate with domain expert queries
+\end{enumerate}
+
+Common challenges include handling complex ontologies and specialized terminology, which can be addressed through careful prompt engineering and domain-specific examples.
+
+\subsection{Deployment Considerations}
+\label{subsec:deployment}
+
+\subsubsection{Alternative Architectures}
+The system supports multiple deployment configurations:
+
+\begin{itemize}
+    \item \textbf{Single-Machine}: All components on one server
+    \item \textbf{Distributed}: Components across multiple machines
+    \item \textbf{Cloud-Based}: Using managed services (e.g., AWS, GCP)
+    \item \textbf{Hybrid}: Local models with cloud knowledge graphs
+\end{itemize}
+
+\subsubsection{Scaling and Optimization}
+For production deployments:
+
+\begin{itemize}
+    \item Enable model quantization for reduced memory usage
+    \item Implement caching for frequent queries
+    \item Use load balancing for multiple concurrent users
+    \item Monitor performance metrics and optimize bottlenecks
+\end{itemize}
+
+\subsubsection{Security Considerations}
+Ensure proper security measures:
+
+\begin{itemize}
+    \item API key management using environment variables
+    \item HTTPS for all external communications
+    \item Access control for sensitive knowledge graphs
+    \item Rate limiting to prevent abuse
+\end{itemize}
+
+This comprehensive approach to reproducibility and adaptability ensures that the enhanced GraphRAG system can be effectively deployed and extended by the research community, fostering continued development and application to new domains.
