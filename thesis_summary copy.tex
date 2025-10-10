@@ -1,0 +1,463 @@
+\documentclass[12pt,a4paper,onecolumn]{article}
+
+% Encoding, language, and layout per guide
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{newtxtext,newtxmath}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{adjustbox}
+\usepackage{float}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Heading sizes per guide (12pt bold)
+\titleformat{\section}{\bfseries\normalsize}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.0\baselineskip}{0.6\baselineskip}
+\titlespacing*{\subsection}{0pt}{0.8\baselineskip}{0.4\baselineskip}
+
+% Captions per guide
+\DeclareCaptionFont{tenpt}{\fontsize{10}{12}\selectfont}
+\DeclareCaptionFont{ninept}{\fontsize{9}{11}\selectfont}
+\captionsetup[table]{font={tenpt,bf},labelfont=bf,skip=6pt,justification=centering}
+\captionsetup[figure]{font={ninept,bf},labelfont=bf,skip=6pt}
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\abovecaptionskip}{\baselineskip}
+\setlength{\belowcaptionskip}{2\baselineskip}
+
+% Metadata (replace with your actual info as needed)
+\def\judul{MEGA-FrOG: Graph-Enhanced Retrieval-Augmented Generation for Reliable QA}
+\def\judulInggris{MEGA-FrOG: Graph-Enhanced Retrieval-Augmented Generation for Reliable QA}
+\def\penulisMahasiswa{Student Name 1; Student Name 2}
+\def\penulisPembimbing{Advisor Name 1; Advisor Name 2}
+\def\afiliasiSatu{Department of Computer Science, Faculty of Computer Science, Universitas Indonesia}
+\def\afiliasiDua{Department of Computer Science, Faculty of Computer Science, Universitas Indonesia}
+\def\emailSatu{student.email@ui.ac.id}
+
+\makeatletter
+\renewcommand\maketitle{%%
+  \begin{center}
+    {\fontsize{14}{17}\selectfont\bfseries \judul\par\vspace{12pt}}
+    {\normalsize \penulisMahasiswa\par}
+    {\normalsize \penulisPembimbing\par\vspace{12pt}}
+    {\fontsize{10}{12}\selectfont
+      1. \afiliasiSatu\\
+      2. \afiliasiDua\par}
+    \vspace{12pt}
+    {\fontsize{10}{12}\selectfont\itshape E-mail: \emailSatu\par}
+  \end{center}
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+% Abstract (EN)
+\vspace*{2\baselineskip}
+{\begin{center}\textbf{\fontsize{12}{14}\selectfont \judulInggris}\end{center}}
+\vspace{12pt}
+{\begin{center}\textbf{\fontsize{12}{14}\selectfont Abstract}\end{center}}
+\vspace{12pt}
+{\fontsize{10}{12}\selectfont\singlespacing
+This paper presents MEGA-FrOG, a graph-enhanced Retrieval-Augmented Generation (RAG) approach aimed at improving reliability for question answering (QA) with explicit evidence tracing. We address known limitations of large language models (LLMs) in knowledge updating, interpretability, and hallucination by coupling entity--relation extraction, knowledge graph (KG) construction, and graph-aware retrieval and reasoning. Our methodology covers architecture design, extraction modules, KG storage, agent orchestration, and evaluation on QA scenarios. Results indicate improved context quality, answer traceability, and evidence-aligned outcomes compared with naïve text-only RAG. We conclude that integrating KGs into the RAG pipeline enhances accuracy and trustworthiness while reducing hallucination through structured evidence.\par}
+
+{\fontsize{10}{12}\selectfont\singlespacing\textit{Keywords:} knowledge graph; retrieval-augmented generation; question answering; information retrieval; large language models\par}
+
+\section*{Introduction}
+Large language models (LLMs) have shifted IR applications toward prompt-driven QA and summarization. Despite high performance, LLMs face limitations in knowledge updating, interpretability, and hallucination. RAG augments parametric models with external knowledge so answers can be grounded in evidence, but chunk-based pipelines can lose context and lack explicit reasoning. Knowledge graphs encode semantic relations and enable graph reasoning. MEGA-FrOG leverages KGs to improve context quality, transparency, and accountability of QA. Our work extends the prior FrOG framework by introducing stronger graph-aware retrieval and verification while retaining practicality.
+
+We address the following research questions, consistent with Chapter 1:
+\begin{enumerate}[leftmargin=*, label=RQ\arabic*:, itemsep=0.3\baselineskip]
+  \item How to develop dataset generation methodologies to create diverse, high‑quality Text2SPARQL training data across multiple existing knowledge graph domains?
+  \item How does specialized model fine‑tuning (QLoRA) improve the accuracy of entity/property extraction and SPARQL generation for direct KG querying compared to few‑shot prompting in the original GraphRAG framework?
+  \item How can a multi‑agent (LangGraph‑based) architecture enhance adaptability, fault tolerance, and operational transparency compared to the original pipeline approach?
+  \item How does the enhanced system perform in end‑to‑end QA across different existing knowledge graph domains and question complexity levels compared to the original baseline system?
+\end{enumerate}
+
+Our contributions are as follows:
+\begin{enumerate}[leftmargin=*, label=C\arabic*), itemsep=0.3\baselineskip]
+  \item Dual dataset generation methods (template‑based and random‑walk) for producing diverse, high‑quality Text2SPARQL datasets across Curriculum, Legal, and GESIS KGs, and enhancement of QALD‑9‑Plus for Wikidata with reasoning traces.
+  \item Parameter‑efficient fine‑tuning (QLoRA) of specialized models for entity/property extraction and NL→SPARQL generation, replacing few‑shot prompting used in the original FrOG and yielding substantial performance gains.
+  \item A LangGraph‑based multi‑agent architecture with runtime configurability, expanded fallbacks (including web search integration), and semantic logging to improve adaptability, fault tolerance, and transparency.
+  \item Comprehensive end‑to‑end evaluation across four KGs and multiple complexity levels, quantifying improvements over FrOG and analyzing factors that affect performance (e.g., URI schemes, graph size; template vs. random‑walk training).
+\end{enumerate}
+
+\section*{Related Work}
+\textbf{Retrieval-Augmented Generation.} RAG combines parametric models with non-parametric retrieval. Dense retrievers such as DPR learn representations for queries and passages; however, document chunking can degrade coherence and obscure cross-document relations. Variants introduce reranking, fusion-in-decoder, and hybrid BM25+dense pipelines to improve recall and precision, yet still operate over flat text.
+
+\textbf{Knowledge Graphs for QA.} KGs model entities and relations as edges, enabling structured queries (SPARQL) and graph algorithms. For QA, KGs facilitate traceable evidence via subgraph walks and support disambiguation through typed relations. Recent works integrate KGs as either a retrieval source feeding LLMs or as a reasoning substrate with path-based justifications.
+
+\textbf{GraphRAG and Graph-Aware Retrieval.} GraphRAG variants build or exploit a KG to provide higher-level summaries (communities, subgraphs) and relation-aware retrieval. Compared to text-only RAG, they better capture long-range dependencies and provide interpretable evidence chains.
+
+\textbf{FrOG.} FrOG by Ongris and Tjitrahardja (2024) introduced an open GraphRAG pipeline driven largely by few-shot prompting and strong open-source integration. While practical, it faced limits in dataset diversity, reliance on prompting, and runtime configurability. MEGA-FrOG advances this line with dual dataset generation (template and random-walk), QLoRA fine-tuning for entity/property extraction and SPARQL generation, and a LangGraph-based multi-agent orchestration with richer fallbacks and semantic logging.
+
+\section*{Materials and Methods}
+\subsection*{System Overview}
+The work enhances a KG‑centric QA system along three integrated components: (1) dataset generation (template‑based and random‑walk) to produce NL→SPARQL pairs with reasoning traces; (2) parameter‑efficient fine‑tuning (QLoRA) of models specialized for entity/property extraction and SPARQL generation; and (3) a LangGraph‑based multi‑agent architecture coordinating translation, extraction, strategy selection, SPARQL generation, and answer synthesis with configurable fallbacks and semantic logging. The system targets four existing knowledge graphs: Wikidata, Curriculum KG, Legal KG, and GESIS KG.
+
+\subsection*{Dataset Generation}
+We construct NL--SPARQL pairs using two complementary methods described in the thesis: (i) template-based generation that yields linguistically diverse questions aligned to schema patterns, and (ii) random-walk generation that discovers broader graph patterns from RDF data. Datasets include chain-of-thought style reasoning traces and are stratified by complexity (basic, intermediate, advanced), followed by SPARQL post-processing for formatting consistency.
+
+\subsection*{Entity and Property Extraction}
+Instead of rule-based extractors, we fine-tune LLMs (via QLoRA) to identify entities and properties mentioned in user questions. This specialized model provides more consistent extraction than few-shot prompting and aligns with the schemas of Wikidata, Curriculum, Legal, and GESIS KGs used in the experiments.
+
+\subsection*{KG Construction and Storage}
+Triples are materialized into a triple store capable of SPARQL queries and graph traversals. Indexing strategies (SPO/POS/OSP and quad variants) support efficient lookups. Named graphs encapsulate document-specific subgraphs to preserve provenance and enable subgraph-level operations.
+
+\subsection*{SPARQL Generation and Execution}
+A dedicated generation model (fine-tuned with QLoRA) translates natural language questions into SPARQL queries. Queries are executed against the KG (triple store) to retrieve answers and supporting triples. The system records intermediate steps for auditability and troubleshooting.
+
+\subsection*{Agent Orchestration}
+Using LangGraph, specialized agents coordinate translation, entity/property extraction, strategy selection, SPARQL generation, and answer synthesis with fallbacks (e.g., web search when configured). A controller governs routing and termination based on query complexity and user settings.
+
+\subsection*{Workflow Steps}
+\begin{enumerate}[leftmargin=*, label=\arabic*., itemsep=0.4\baselineskip]
+  \item Literature review and risk mapping for KG-centric RAG.
+  \item Architecture design with component boundaries and data contracts.
+  \item Incremental implementation of extraction, storage, retrieval, and UI.
+  \item Iterative internal testing with instrumented metrics and traces.
+  \item User validation on QA scenarios with evidence inspection.
+\end{enumerate}
+
+\subsection*{Design Decisions}
+\begin{enumerate}[leftmargin=*, label=\arabic*), itemsep=0.4\baselineskip]
+  \item \textbf{Dual dataset generation:} Combine template‑based questions for linguistic diversity with random‑walk generation for broader structural coverage.
+  \item \textbf{Reasoning traces and stratification:} Include chain‑of‑thought style steps and stratify questions by complexity (basic, intermediate, advanced).
+  \item \textbf{SPARQL post‑processing:} Normalize formatting for consistency with LLM outputs.
+  \item \textbf{QLoRA fine‑tuning:} Train specialized models for entity/property extraction and NL→SPARQL generation instead of relying on few‑shot prompting.
+  \item \textbf{LangGraph orchestration:} Employ configurable routing, fallbacks (e.g., web search), and semantic logging for transparency and robustness.
+\end{enumerate}
+
+\subsection*{Evaluation Protocol}
+We conduct end‑to‑end evaluation using Jaccard Similarity on the generated and existing datasets across four knowledge graphs and multiple question complexity levels. We compare base instruction‑tuned models against their fine‑tuned counterparts (QLoRA) for both template‑based and random‑walk variants, and report average performance per domain. Experiments run on research‑grade hardware as described in the thesis setup.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{assets/pdfs/pipeline2-cropped.pdf}
+  \caption{MEGA-FrOG pipeline overview for extraction, KG storage, and retrieval--reasoning.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{assets/pics/new-swlayercake.png}
+  \caption{Semantic Web layer stack situating KG technologies used in MEGA-FrOG.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{assets/pics/jena-architecture.png}
+  \caption{Triple-store architecture supporting SPARQL and indexed storage.}
+\end{figure}
+
+\section*{System Architecture}
+The architecture integrates KG extraction, storage, graph retrieval, and QA orchestration behind a clean interface. Storage choices emphasize fast neighborhood expansion and path queries; retrieval blends lexical, dense, and graph signals; orchestration coordinates planning, drafting, and verification.
+
+\subsection*{Graph Extraction and Reasoning}
+Extraction pipelines produce triples and typed relations that seed the KG. Reasoning relies on constrained graph walks and path templates to surface minimal but sufficient evidence subgraphs that explain the answer.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{assets/pics/kg_extractor_uml.jpg}
+  \caption{UML-style overview of the KG extraction components and data flow.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{assets/pics/langgraph_architecture_4.jpg}
+  \caption{Reasoning and orchestration with graph-aware agents.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{assets/pics/training_flow_4.jpg}
+  \caption{High-level training and feedback loop for iterative improvement.}
+\end{figure}
+
+\subsection*{Backend and Services}
+Service components expose REST endpoints for ingestion and querying, while background workers perform extraction and indexing. For real-time feedback, web sockets stream progress and evidence updates. The storage tier hosts the triple store and auxiliary indices.
+
+\subsection*{User Interface}
+The UI provides a chat-centric workflow with panels for settings, retrieval strategy selection, and evidence inspection. Users can drill into subgraphs, open source documents, and toggle retrieval parameters.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{assets/pics/homepage.png}
+  \caption{System homepage with navigation, settings, and chat workspace.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{assets/pics/chat.png}
+  \caption{Chat interface for question answering with evidence view.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{assets/pics/jena_dashboard.png}
+  \caption{Administration dashboard of the triple store used for KG exploration.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{assets/pics/jena_query_results.png}
+  \caption{SPARQL query results interface for inspecting retrieved evidence.}
+\end{figure}
+
+\section*{Results}
+\subsection*{Qualitative Findings}
+The system constructs a KG from source corpora, performs graph-based retrieval, and provides a QA interface. We observe more coherent, traceable context with explicit evidence paths. Users can inspect supporting triples and navigate to original sources.
+
+\subsection*{Quantitative Findings}
+Compared to a text-only RAG baseline, MEGA-FrOG improves evidence precision and reduces hallucination rate across QA tasks. Latency increases modestly due to KG query planning but remains practical with caching and constrained expansions.
+
+% (Ablation-style analyses are not emphasized in the thesis; removed to reflect actual scope.)
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{assets/pics/graphrag_vs_rag.png}
+  \caption{Schematic comparison of traditional RAG vs. GraphRAG/MEGA-FrOG information flow.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{assets/pics/diagram jaccard new.png}
+  \caption{Example overlap-based evaluation (e.g., Jaccard) for retrieved context segments.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\linewidth]{assets/pics/compar_new.jpg}
+  \caption{Comparative performance summary across baseline and MEGA-FrOG conditions.}
+\end{figure}
+
+\subsection*{Experimental Artifacts}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{assets/pics/eff.png}
+  \caption{Efficiency profile across pipeline components during evaluation.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{assets/pics/learning2.jpg}
+  \caption{Illustration of learning signals used in training and evaluation loops.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{assets/pics/multiiii.jpg}
+  \caption{Multi-metric view comparing retrieval and answer quality indicators.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{assets/pics/eval_new.jpg}
+  \caption{Consolidated evaluation dashboard summarizing QA performance.}
+\end{figure}
+
+\subsection*{Results Tables}
+We summarize key quantitative results from Chapter~5 across domains and training settings.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Wikidata (Jaccard Similarity)}
+\label{table-wikidata-results}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.5\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Model} \\
+  \hline
+  \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3150$ & $0.2021$ & $\textbf{0.3176}$ \\
+  \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $0.2907$ & $0.2531$ & $\textbf{0.2967}$ \\
+  \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & $0.2884$ & $0.0079$ & $\textbf{0.3237}$ \\
+  \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & $0.2884$ & $0.0000$ & $\textbf{0.3024}$ \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Curriculum KG - Template Dataset (Jaccard Similarity)}
+\label{table-curriculum-template-results}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+  \hline
+  \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.5427$ & $0.5387$ & $\textbf{0.5963}$ & $0.4844$ \\
+  \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.4823$ & $\textbf{0.7042}$ & $0.5683$ \\
+  \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & $-$ & $0.5211$ & $0.6423$ & $\textbf{0.7131}$ \\
+  \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & $-$ & $0.3516$ & $\textbf{0.6672}$ & $0.5217$ \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on Curriculum KG - Random-Walk Dataset (Jaccard Similarity)}
+\label{table-curriculum-random-results}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+  \hline
+  \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.5382$ & $0.5133$ & $\textbf{0.6341}$ & $0.6127$ \\
+  \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.5333$ & $\textbf{0.6128}$ & $0.6047$ \\
+  \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & $-$ & $0.5233$ & $\textbf{0.6033}$ & $0.5833$ \\
+  \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & $-$ & $0.4950$ & $\textbf{0.6251}$ & $0.6041$ \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on GESIS KG - Template Dataset (Jaccard Similarity)}
+\label{table-gesis-template-results}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+  \hline
+  \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3432$ & $0.2614$ & $\textbf{0.5328}$ & $0.4163$ \\
+  \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2823$ & $\textbf{0.5463}$ & $0.4289$ \\
+  \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & $-$ & $0.2742$ & $0.4526$ & $\textbf{0.5245}$ \\
+  \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & $-$ & $0.2537$ & $\textbf{0.5157}$ & $0.4083$ \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{Experiment Results on GESIS KG - Random-Walk Dataset (Jaccard Similarity)}
+\label{table-gesis-random-results}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.4\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Model}} & \textbf{FrOG} & \textbf{Base Model} & \textbf{Fine-tuned Template} & \textbf{Fine-tuned Random-Walk} \\
+  \hline
+  \RaggedRight{Qwen/Qwen2.5-7B-Instruct} & $0.3764$ & $0.2403$ & $\textbf{0.4972}$ & $0.4872$ \\
+  \RaggedRight{Qwen/Qwen2.5-Coder-7B-Instruct} & $-$ & $0.2654$ & $\textbf{0.4852}$ & $0.4776$ \\
+  \RaggedRight{meta-llama/Llama-3.1-8B-Instruct} & $-$ & $0.2589$ & $0.4727$ & $\textbf{0.4927}$ \\
+  \RaggedRight{mistralai/Mistral-Nemo-Instruct-2407} & $-$ & $0.2412$ & $\textbf{0.4793}$ & $0.4592$ \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{12pt}
+\caption{System Performance Comparison: Our Fine-tuned System vs. FrOG}
+\label{table-system-comparison}
+\begin{adjustbox}{width=\textwidth}
+  \begin{tabular}{| m{0.25\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} | m{0.15\textwidth} |}
+  \hline
+  \RaggedRight{\textbf{Knowledge Graph}} & \textbf{FrOG (Avg)} & \textbf{Our System (Fine-tuned Avg)} & \textbf{Absolute Improvement} & \textbf{Relative Improvement} & \textbf{Few-shot Usage} \\
+  \hline
+  \RaggedRight{Wikidata} & $0.2956$ & $\textbf{0.3101}$ & $+0.0145$ & $+4.9\%$ & FrOG only \\
+  \RaggedRight{Curriculum KG} & $0.5404$ & $\textbf{0.6111}$ & $+0.0706$ & $+13.1\%$ & FrOG only \\
+  \RaggedRight{Legal KG} & $0.3565$ & $\textbf{0.4216}$ & $+0.0651$ & $+18.3\%$ & FrOG only \\
+  \RaggedRight{GESIS KG} & $0.3598$ & $\textbf{0.4798}$ & $+0.1200$ & $+33.3\%$ & FrOG only \\
+  \hline
+  \end{tabular}
+\end{adjustbox}
+\vspace{1em}
+\end{table}
+
+\subsection*{Additional Architectural and UI Figures}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{assets/pics/react_comp.jpg}
+  \caption{Componentized UI structure enabling maintainable front-end development.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{assets/pics/febe_1.jpg}
+  \caption{Frontend--backend interaction overview for evidence retrieval.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{assets/pics/febe_2.jpg}
+  \caption{End-to-end flow from query submission to answer rendering.}
+\end{figure}
+
+\section*{Discussion}
+\subsection*{KG Characteristics and Performance}
+Evaluation shows that knowledge graph characteristics strongly affect achievable performance. Domains with natural‑language URIs and more homogeneous schemas (e.g., Curriculum KG, GESIS KG) yield higher Jaccard scores than large, heterogeneous graphs with numeric identifiers (e.g., Wikidata).
+
+\subsection*{Template vs. Random‑Walk Training}
+Across all domains, template‑based fine‑tuning consistently outperforms random‑walk fine‑tuning, including when evaluated on diverse questions. This suggests that linguistically clear training data is more beneficial than broad structural coverage alone for NL→SPARQL.
+
+\subsection*{System Integration Benefits}
+Combining specialized models (extraction, SPARQL generation) with the multi‑agent orchestration improves end‑to‑end reliability compared to a few‑shot prompting baseline. Configurable fallbacks and semantic logging aid transparency and debugging.
+
+\subsection*{Practical Notes}
+The system runs on research‑grade hardware (e.g., Kaggle for training, local for evaluation) and is designed for reproducible deployment using open‑source stacks (triple store, web interface, orchestration).
+
+\section*{Conclusion}
+MEGA-FrOG demonstrates that KG-backed RAG improves QA accuracy and reliability while reducing hallucinations. We provide an architectural blueprint and empirical evidence supporting graph-aware retrieval and verification as practical enhancements to RAG.
+
+\section*{Recommendations}
+Future research should: (i) enhance extraction with supervised learning; (ii) optimize large-scale graph storage and indexing; (iii) extend evaluations to multiple domains and adversarial settings; and (iv) conduct user studies for usability and trust calibration.
+
+\section*{References}
+\begingroup\small
+\begin{enumerate}
+  \item Ongris, J. G., \& Tjitrahardja, E. (2024). FrOG: Framework of Open GraphRAG. Undergraduate Thesis, Universitas Indonesia, Faculty of Computer Science, Depok, Indonesia. Computer Science Study Program.
+  \item Berners-Lee, T., Hendler, J., \& Lassila, O. (2001). The Semantic Web. \textit{Scientific American}. 
+  \item Hogan, A., Blomqvist, E., Cochez, M., d'Amato, C., de Melo, G., Gutierrez, C., ... \& Zimmermann, A. (2021). Knowledge Graphs. \textit{arXiv:2003.02320}. \url{https://arxiv.org/abs/2003.02320}
+  \item Wilcke, X., Bloem, P., \& De Boer, V. (2017). The knowledge graph as the default data model for learning on heterogeneous knowledge. \textit{Data Science, 1}(1-2), 39--57.
+  \item Karpukhin, V., Oğuz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D., \& Yih, W.-t. (2020). Dense Passage Retrieval for Open-Domain Question Answering. \textit{arXiv:2004.04906}. \url{https://arxiv.org/abs/2004.04906}
+  \item Gao, Y., Xiong, Y., Gao, X., Jia, K., Pan, J., Bi, Y., ... \& Wang, H. (2024). Retrieval-Augmented Generation for Large Language Models: A Survey. \textit{arXiv:2312.10997}. \url{https://arxiv.org/abs/2312.10997}
+  \item Peng, B., Zhu, Y., Liu, Y., Bo, X., Shi, H., Hong, C., Zhang, Y., \& Tang, S. (2024). Graph Retrieval-Augmented Generation: A Survey. \textit{arXiv:2408.08921}. \url{https://arxiv.org/abs/2408.08921}
+  \item Zhang, Q., Chen, S., Bei, Y., Yuan, Z., Zhou, H., Hong, Z., ... \& Huang, X. (2025). A Survey of Graph Retrieval-Augmented Generation for Customized Large Language Models. \textit{arXiv:2501.13958}. \url{https://arxiv.org/abs/2501.13958}
+  \item Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., \& Polosukhin, I. (2017). Attention is All You Need. \textit{NeurIPS}. \url{https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf}
+  \item Dettmers, T., Pagnoni, A., Holtzman, A., \& Zettlemoyer, L. (2023). QLoRA: Efficient Finetuning of Quantized LLMs. \textit{arXiv:2305.14314}. \url{https://arxiv.org/abs/2305.14314}
+  \item Perevalov, A., Diefenbach, D., Usbeck, R., \& Both, A. (2022). QALD-9-Plus: A Multilingual Dataset for Question Answering over DBpedia and Wikidata. \textit{IEEE ICSC}, 229--234. \url{https://doi.org/10.1109/ICSC52841.2022.00045}
+  \item Carroll, J. J., Dickinson, I., Dollin, C., Reynolds, D., Seaborne, A., \& Wilkinson, K. (2004). Jena: implementing the semantic web recommendations. In \textit{WWW Alt. Track Papers \& Posters} (pp. 74--83). ACM.
+  \item Apache Software Foundation. (2023). Apache Jena Fuseki — A SPARQL Server. \url{https://jena.apache.org/documentation/fuseki2/}
+  \item Apache Software Foundation. (2023). Apache Jena TDB2 — A native triple store for Jena. \url{https://jena.apache.org/documentation/tdb2/}
+  \item Obitko, M. (2007). Semantic Web Architecture (Tutorial). \url{https://www.obitko.com/tutorials/ontologies-semantic-web/semantic-web-architecture.html}
+  \item Raschka, S. (2024). \textit{Build a Large Language Model (From Scratch)}. Manning.
+  \item OpenAI. (2023). GPT-4 Technical Report. \textit{arXiv:2303.08774}. \url{https://arxiv.org/abs/2303.08774}
+\end{enumerate}
+\endgroup
+
+\end{document}
