@@ -204,10 +204,18 @@ The UI uses a chat-style layout. Users pick the target knowledge graph and model
 
 \section*{Results}
 \subsection*{Qualitative Findings}
-The system constructs a KG from source corpora, performs graph-based retrieval, and provides a QA interface. We observe more coherent, traceable context with explicit evidence paths. Users can inspect supporting triples and navigate to original sources.
+The system works directly on existing knowledge graphs and returns a natural‑language answer grounded in SPARQL results, alongside the SPARQL and tabular output for verification. Across domains, fine‑tuned models produce queries that use the correct schema and direction of properties, while base or few‑shot approaches often misuse predicates or reverse subject/object roles.
+
+Representative cases:
+\begin{itemize}[leftmargin=*, itemsep=0.25\baselineskip]
+  \item \textbf{Wikidata} (QALD‑9‑Plus): for “Who is the mayor of Berlin?”, the fine‑tuned model correctly uses \texttt{wd:Q64 wdt:P6 ?uri}, whereas the baseline variant sometimes selects an unrelated predicate.
+  \item \textbf{Curriculum KG}: for “Alternative name for a course that uses Demo and has Programming Basics 1 as a prerequisite”, the fine‑tuned query selects the intended variable (\texttt{?alt\_name}) and predicates (e.g., \texttt{ns1:also\_known\_as}), while baseline variants produce noisier variable choices.
+  \item \textbf{GESIS KG}: for “How many publications were published in 2000?”, the fine‑tuned query uses \texttt{schema:datePublished} correctly, while base models sometimes introduce non‑existent datatypes or properties.
+  \item \textbf{Legal KG}: complex multi‑constraint questions remain challenging across systems; however, fine‑tuned models still adhere more closely to the domain schema than baselines.
+\end{itemize}
 
 \subsection*{Quantitative Findings}
-Compared to a text-only RAG baseline, MEGA-FrOG improves evidence precision and reduces hallucination rate across QA tasks. Latency increases modestly due to KG query planning but remains practical with caching and constrained expansions.
+Fine‑tuned models consistently outperform both base models and the FrOG baseline on Jaccard Similarity across all knowledge graphs. In Wikidata (QALD‑9‑Plus test set), LLaMA‑3.1‑8B jumps from near‑zero base (0.0079) to 0.3237, and Mistral‑Nemo improves from 0.0000 to 0.3024; Qwen2.5‑7B slightly surpasses FrOG (0.3176 vs. 0.3150). In Curriculum KG, template‑trained variants reach up to 0.7131, outperforming random‑walk training. In GESIS KG, gains are largest overall (average 0.4798; +33.3\% over FrOG). Legal KG also improves markedly (average 0.4216; +18.3\% over FrOG). Qwen2.5‑Coder‑7B attains the highest average after fine‑tuning. Notably, these gains are achieved without few‑shot prompts (FrOG relies on them).
 
 % (Ablation-style analyses are not emphasized in the thesis; removed to reflect actual scope.)
 
