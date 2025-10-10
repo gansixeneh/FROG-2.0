@@ -1,0 +1,386 @@
+\documentclass[12pt,a4paper,onecolumn]{article}
+
+% Encoding dan bahasa
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[bahasa,english]{babel}
+
+% Tata letak dan tipografi
+\usepackage[margin=2.5cm]{geometry} % semua margin 2.5 cm
+\usepackage{setspace}               % spasi 1.5 utk teks utama
+\usepackage{newtxtext,newtxmath}    % Times New Roman-like fonts
+\usepackage{titlesec}               % kontrol ukuran heading
+\usepackage{caption}                % kontrol caption tabel/gambar
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{siunitx}
+
+% Makro kecil untuk italic istilah Inggris umum (bukan merek)
+\newcommand{\f}[1]{\textit{#1}}
+
+% Spasi utama 1.5 baris
+\onehalfspacing
+
+% Tidak ada inden paragraf (rata kiri), beri jarak antar paragraf tipis
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Heading 12pt bold (sesuai pedoman)
+\titleformat{\section}{\bfseries\normalsize}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.0\baselineskip}{0.6\baselineskip}
+\titlespacing*{\subsection}{0pt}{0.8\baselineskip}{0.4\baselineskip}
+
+% Caption dan jarak sesuai pedoman:
+\DeclareCaptionFont{tenpt}{\fontsize{10}{12}\selectfont}
+\DeclareCaptionFont{ninept}{\fontsize{9}{11}\selectfont}
+\captionsetup[table]{font={tenpt,bf},labelfont=bf,skip=6pt,justification=centering}
+\captionsetup[figure]{font={ninept,bf},labelfont=bf,skip=6pt}
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\abovecaptionskip}{\baselineskip}
+\setlength{\belowcaptionskip}{2\baselineskip}
+
+% ==================== METADATA ====================
+\def\judul{Pengembangan Prices-IDE dari Platform Eclipse Menuju Arsitektur Berbasis Web dan VS Code}
+\def\judulInggris{Development of Prices-IDE from the Eclipse Platform to a Web-Based and VS Code Architecture}
+
+% Penulis (tanpa gelar untuk daftar penulis)
+\def\penulisMahasiswa{Abdul Rafi; Fernando Nathaniel Sutanto; Valencius Apriady Primayudha}
+\def\penulisPembimbing{Ade Azurat; Daya Adianto}
+
+% Afiliasi
+\def\afiliasiSatu{Program Studi Ilmu Komputer, Fakultas Ilmu Komputer, Universitas Indonesia}
+\def\afiliasiDua{Program Studi Ilmu Komputer, Fakultas Ilmu Komputer, Universitas Indonesia}
+\def\afiliasiTiga{Program Studi Ilmu Komputer, Fakultas Ilmu Komputer, Universitas Indonesia}
+\def\afiliasiEmpat{Fakultas Ilmu Komputer, Universitas Indonesia}
+\def\afiliasiLima{Fakultas Ilmu Komputer, Universitas Indonesia}
+
+% Email penulis pertama
+\def\emailSatu{abdulrafi907@gmail.com, fernandonathanielsutanto@gmail.com, valenciusprimayudha@gmail.com, ade@cs.ui.ac.id, dayaadianto@cs.ui.ac.id}
+
+% Judul 14pt bold, centered (sesuai pedoman)
+\makeatletter
+\renewcommand\maketitle{%%
+  \begin{center}
+    {\fontsize{14}{17}\selectfont\bfseries \judul\par\vspace{12pt}}
+    {\normalsize \penulisMahasiswa\par}
+    {\normalsize \penulisPembimbing\par\vspace{12pt}}
+    {\fontsize{10}{12}\selectfont
+      1. \afiliasiSatu\\
+      2. \afiliasiDua\\
+      3. \afiliasiTiga\\
+      4. \afiliasiEmpat\\
+      5. \afiliasiLima\par}
+    \vspace{12pt}
+    {\fontsize{10}{12}\selectfont\itshape E-mail: \emailSatu\par}
+  \end{center}
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+% ==================== ABSTRAK (ID) ====================
+\vspace*{1\baselineskip}
+{\begin{center}\textbf{\fontsize{12}{14}\selectfont Abstrak}\end{center}}
+\vspace{12pt}
+{\fontsize{10}{12}\selectfont
+\singlespacing
+\f{Software product line engineering} (SPLE) merupakan pendekatan untuk mempercepat pengembangan varian produk perangkat lunak dengan mengelola \f{variability} dan memanfaatkan kembali \f{core assets}. Prices-IDE adalah lingkungan pengembangan berbasis Eclipse yang terdiri atas tiga komponen utama: WinVMJ Composer, IFML UI Generator, dan UML to WinVMJ. Keterikatan pada Eclipse menimbulkan kendala ukuran instalasi, kompleksitas konfigurasi, serta \f{startup time}. Penelitian ini memigrasikan Prices-IDE menuju arsitektur berbasis \f{web} menggunakan Spring Boot dan RabbitMQ, serta mengintegrasikannya dengan Visual Studio Code melalui \f{extension}. Implementasi meliputi penggantian Eclipse API (mis. \f{IProject}, \f{IFolder}) menjadi operasi \f{file-path} (\texttt{java.nio.file.Path}), kompilasi Acceleo secara \f{standalone}, dan komunikasi \f{real-time} menggunakan WebSocket. \f{User acceptance testing} (UAT) pada 13 skenario untuk platform \f{web} dan 13 skenario untuk \f{extension} menunjukkan replikasi 7 dari 8 fitur inti, dengan tingkat keberhasilan $\geq86\%$ (web) dan $\geq90\%$ (VS Code). Hasil ini memvalidasi modernisasi ekosistem Prices-IDE sekaligus mengurangi ketergantungan pada Eclipse.\par}
+
+% ==================== JUDUL INGGRIS + ABSTRACT (EN) ====================
+\vspace*{2\baselineskip}
+{\begin{center}\textbf{\fontsize{12}{14}\selectfont \judulInggris}\end{center}}
+\vspace{12pt}
+{\begin{center}\textbf{\fontsize{12}{14}\selectfont Abstract}\end{center}}
+\vspace{12pt}
+{\fontsize{10}{12}\selectfont
+\singlespacing
+Software Product Line Engineering (SPLE) enables efficient development of software product families by managing variability and reusing core assets. Prices-IDE is an Eclipse-based environment comprising three main components: WinVMJ Composer, IFML UI Generator, and UML to WinVMJ. The dependency on Eclipse leads to a heavy installation footprint, configuration complexity, and longer startup times. This work migrates Prices-IDE to a web-based architecture using Spring Boot and RabbitMQ, and integrates it with Visual Studio Code via an extension. The implementation replaces Eclipse-specific APIs (e.g., IProject, IFolder) with file-path operations (java.nio.file.Path), compiles Acceleo in standalone mode, and provides real-time communication using WebSocket. User Acceptance Testing (13 scenarios for the web platform and 13 for the extension) shows replication of 7 out of 8 core features, achieving success rates of $\geq 86\%$ (web) and $\geq 90\%$ (VS Code). The results validate the modernization of the Prices-IDE ecosystem while reducing reliance on Eclipse.\par}
+
+% ==================== KEYWORDS ====================
+\vspace{12pt}
+{\fontsize{10}{12}\selectfont\itshape
+Keywords: IFML UI Generator; Prices-IDE; RabbitMQ; Software Product Line Engineering; Visual Studio Code Extension\par}
+
+% ==================== PENDAHULUAN ====================
+\vspace*{3\baselineskip}
+\selectlanguage{bahasa}
+\section*{Pendahuluan}
+SPLE ditujukan untuk menghasilkan keluarga produk perangkat lunak melalui pemanfaatan kembali \f{core assets} dan pengelolaan \f{variability} secara sistematis. Di lingkungan akademik, Prices-IDE telah dikembangkan untuk mendukung praktik SPLE dengan menyediakan alur \f{model-driven engineering} dari model UML/IFML menuju artefak \textit{backend} dan \textit{frontend}. Versi Prices-IDE yang bergantung pada Eclipse berhasil mengintegrasikan \textit{plugin} pada ekosistem EMF dan Acceleo, namun menghadapi hambatan praktis seperti ukuran instalasi yang besar (hingga \si{\giga\byte}), waktu mula aplikasi yang relatif lambat, serta kurva adaptasi bagi pengembang yang terbiasa dengan editor modern seperti Visual Studio Code.
+
+Penelitian ini merespons kebutuhan untuk memodernisasi ekosistem Prices-IDE melalui migrasi ke arsitektur berbasis web dan integrasi extension pada VS Code. Pertanyaan kunci yang dijawab: (1) sejauh mana fungsionalitas Prices-IDE dapat direplikasi pada platform web; (2) bagaimana kapabilitas extension VS Code dalam menyediakan pengalaman pengembangan yang setara; (3) apakah penggantian Eclipse API menuju operasi \f{file-path} cukup untuk menjaga fidelitas logika dan kompatibilitas teknis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.25\textwidth]{posisi_penelitian.png}
+  \caption{Posisi Penelitian.}
+  \label{fig:research_position}
+\end{figure}
+
+Tujuan penelitian adalah merancang, mengimplementasikan, dan mengevaluasi Prices-IDE berbasis web serta extension VS Code dengan fokus pada replikasi fitur inti: Compile All Modules, Compile Selected Module, Compile Project, Set Configuration, Feature Model (UVL), UML to WinVMJ, dan IFML UI Generator. Manfaat yang diharapkan adalah terbentuknya alternatif yang lebih ringan, mudah diakses, dan selaras dengan ekosistem pengembangan modern.
+
+Selain itu, penelitian memformulasikan batasan kerja yang tegas: fokus pada tiga fitur inti Prices-IDE (IFML UI Generator, UML to WinVMJ, WinVMJ Composer), pengujian pada lingkungan peramban Google Chrome dan sistem operasi Windows 10/11 serta macOS, serta asumsi validitas struktur proyek masukan. Fokus ini memungkinkan evaluasi fungsional yang tajam tanpa menambah kompleksitas pada aspek non-fungsional seperti keamanan mendalam atau studi UX komprehensif. Dengan garis besar ini, kontribusi yang ditargetkan bukan sekadar reimplementasi teknis, melainkan pengurangan hambatan adopsi dan peningkatan pengalaman pengembangan dalam ekosistem modern yang lebih umum digunakan.
+
+% ==================== TINJAUAN TEORETIS ====================
+\section*{Tinjauan Teoritis}
+
+\underline{\textit{SPLE}} \vspace{5pt} \\
+SPLE memisahkan \f{domain engineering} (pembangunan \f{core assets}) dan \f{application engineering} (perakitan produk individual). Praktik utama meliputi pemodelan fitur, pemetaan fitur ke modul variatif, dan otomatisasi \f{model-to-text}. Keuntungan SPLE adalah konsistensi kualitas dan percepatan \f{time-to-market}, dengan prasyarat disiplin rekayasa variabilitas dan \f{tooling} yang memadai.
+
+Dalam ekosistem Prices-IDE, proses \f{model-driven} diakselerasi oleh Acceleo sebagai \f{model-to-text} engine, baik untuk jalur UML to WinVMJ maupun IFML UI Generator. Ketika dipindahkan dari Eclipse ke mode \f{standalone}, \textit{template} Acceleo (\texttt{.mtl}) perlu dikompilasi menjadi \texttt{.emtl} dan registrasi paket/\f{resource factory} dilakukan secara eksplisit agar generator dapat berjalan di luar \f{runtime} Eclipse. Migrasi dari abstraksi Eclipse (\texttt{IProject}/\texttt{IFolder}) ke \texttt{java.nio.file.Path} juga menuntut pemetaan ulang URI seperti \texttt{platform:/resource} dan \texttt{pathmap:/model/...} ke sistem berkas lokal.
+
+\vspace*{0.5\baselineskip}
+
+\underline{\textit{Prices-IDE}} \vspace{5pt} \\
+Prices-IDE adalah sebuah framework yang dibangun di atas Eclipse untuk mendukung Software Product Line Engineering (SPLE) dengan menyediakan alat untuk manajemen fitur dan konfigurasi produk. \textit{Framework} ini memungkinkan generasi produk aplikasi Java secara otomatis dan cepat berdasarkan konfigurasi fitur yang dipilih oleh pengguna. Tiga komponen utama:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{WinVMJ Composer} menghasilkan komposisi artefak \textit{backend} berbasis modularitas Java; menyatukan modul inti dan varian fitur menjadi produk akhir yang dapat dikompilasi.
+  \item \textbf{IFML UI Generator} menghasilkan struktur proyek \textit{frontend} (React) dari model IFML menggunakan pendekatan berbasis \f{template}
+  \item \textbf{UML to WinVMJ} mentransformasikan UML menjadi \f{skeleton code} WinVMJ melalui Acceleo.
+\end{itemize}
+
+\vspace*{0.5\baselineskip}
+
+\underline{\textit{Acceleo dan MOFM2T}} \vspace{5pt} \\
+Acceleo menerapkan standar MOFM2T untuk menghasilkan kode dari model EMF. Pada versi Eclipse, Acceleo memanfaatkan runtime Eclipse untuk memuat bundle dan resource. Untuk lingkungan di luar Eclipse, \textit{template} \texttt{.mtl} dikompilasi menjadi \texttt{.emtl} dengan AcceleoStandaloneCompiler dan dibundel ke JAR.
+
+\vspace*{0.5\baselineskip}
+
+\underline{\textit{Migrasi ke Operasi \f{file-path}}} \vspace{5pt} \\
+Ketergantungan pada IProject/IFolder digantikan oleh \texttt{java.nio.file.Path}. Hal ini menuntut pemetaan URI semisal \texttt{platform:/resource} atau \texttt{pathmap:/model/...} ke path sistem berkas lokal, serta penanganan \textit{workspace} di luar Eclipse.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Spring Boot dan RabbitMQ} \vspace{5pt} \\
+Spring Boot digunakan sebagai \textit{framework} \textit{backend} untuk REST API dan orkestrasi pekerjaan. RabbitMQ berperan sebagai message broker untuk job kompilasi/transformasi yang berat agar sistem responsif.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Visual Studio Code Extension} \vspace{5pt} \\
+Ekstensi Visual Studio Code (VS Code) adalah \textit{plugin} yang dikembangkan oleh komunitas untuk meningkatkan fungsionalitas editor kode sumber ini. Dikembangkan oleh Microsoft sebagai proyek \textit{open source}, VS Code telah menjadi salah satu editor paling populer yang mendukung pengembangan dalam berbagai bahasa pemrograman. Dalam penelitian ini, API integrasi VS Code dimanfaatkan untuk mengembangkan sebuah ekstensi yang melengkapi \textit{framework} Prices-IDE, dengan tujuan menyediakan lingkungan pengembangan terintegrasi (IDE) yang \textit{reliable}.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Pengembangan \textit{Backend} API dengan Java} \vspace{5pt} \\
+Bab tinjauan juga menyoroti landasan pengembangan API berbasis Java yang relevan untuk arsitektur Prices-IDE terkini. Java dipilih karena portabilitas (JVM), kinerja, dan ekosistem enterprise yang matang. Spring Boot menyederhanakan pembuatan REST API melalui anotasi deklaratif (mis. \texttt{@RestController}, \texttt{@PostMapping}/\texttt{@GetMapping}) dan otomatisasi serialisasi respons (JSON). Maven digunakan untuk pengelolaan dependensi dan proses build, sehingga penggabungan pustaka EMF/Acceleo dan JAR spesifik dapat dikelola sistematis. Integrasi \textit{messaging} (RabbitMQ) mengalihkan operasi berat ke antrian dan worker, sedangkan WebSocket menyampaikan pembaruan status \textit{real-time} ke UI. Kombinasi ini menghasilkan \textit{backend} yang modular, dapat diskalakan, dan mudah dioperasikan.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Docker} \vspace{5pt} \\
+Docker dimanfaatkan untuk menjamin konsistensi lingkungan pengembangan dan \textit{deployment}. \texttt{Dockerfile.dev} membundel runtime (OpenJDK 17, Maven), kode sumber, serta instalasi JAR lokal yang tidak tersedia di repositori publik. \texttt{docker-compose.yml} mengatur orkestrasi layanan \texttt{app} (Spring Boot) dan \texttt{rabbitmq} (broker), pemetaan port (8080, 5672/15672), volume persisten (mis. folder unggahan, data broker), dan \textit{healthcheck} agar \texttt{app} hanya naik ketika broker siap. Dengan kontainerisasi, perbedaan konfigurasi mesin lokal dapat diminimalkan dan \textit{deployment} ke server (mis. GCP VM) dapat dilakukan berulang dan andal.
+
+% ==================== METODE PENELITIAN ====================
+\section*{Metode Penelitian}
+
+Penelitian ini mengadopsi pendekatan iteratif dan berbasis eksplorasi dengan tujuan mengembangkan dua antarmuka baru, yaitu ekstensi VS Code dan website, sebagai alternatif dalam menggunakan \textit{framework} Prices-IDE. Metodologi yang diterapkan difokuskan pada pencarian solusi melalui pengembangan dan pengujian bertahap, dengan lima tahapan utama sebagai berikut:
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.25\textwidth]{Metodologi.drawio (1)}
+  \caption{Tahapan-Tahapan Penelitian}
+\end{figure}
+
+\begin{enumerate}[leftmargin=*, label=\arabic*., itemsep=0.5\baselineskip]
+    \item \textbf{Studi Literatur}: Membangun landasan teoretis melalui kajian mendalam tentang Software Product Line Engineering dan Prices-IDE, serta eksplorasi ide solusi melalui diskusi dan penelaahan kode sumber.
+    
+    \item \textbf{Perancangan Solusi}: Merancang arsitektur sistem, fitur utama, dan melakukan dekomposisi masalah untuk memecahkan tantangan menjadi bagian-bagian yang lebih terkelola.
+    
+    \item \textbf{Implementasi Berjenjang}: Mengembangkan solusi secara bertahap sesuai prioritas dan kompleksitas modul, dengan fokus pada realisasi fitur-fitur inti terlebih dahulu.
+    
+    \item \textbf{Pengujian Internal Iteratif}: Melakukan evaluasi fungsionalitas dan efisiensi secara siklikal, dimana hasil pengujian menjadi dasar untuk perbaikan dan penyempurnaan berulang.
+    
+    \item \textbf{Validasi Pengguna Akhir}: Menguji solusi yang telah stabil dengan pengguna untuk menilai kesesuaian kebutuhan dan kemudahan penggunaan, dengan umpan balik sebagai bahan validasi akhir.
+\end{enumerate}
+
+Proses pengembangan yang siklikal pada tahap implementasi dan pengujian internal memastikan terjadinya penyempurnaan berkelanjutan sebelum solusi diuji secara eksternal. Pendekatan ini tidak hanya menjamin kualitas dan keandalan kedua antarmuka yang dikembangkan, tetapi juga memungkinkan adaptasi yang cepat terhadap temuan-temuan baru selama proses penelitian berlangsung.
+
+\textbf{Variabel dan Analisis.} Variabel yang diukur: tingkat keberhasilan fungsional, kompatibilitas dengan proyek SPLE, performa operasional, dan pengalaman pengguna. Analisis menggabungkan perhitungan persentase keberhasilan dan penelusuran akar masalah pada kasus gagal.
+
+Rangkaian UAT memisahkan skenario untuk platform web dan extension VS Code agar efek lingkungan eksekusi dapat diamati secara objektif. Setiap skenario memodelkan aktivitas pengembang yang realistis: unggah proyek, set konfigurasi fitur, kompilasi modul/proyek, generasi artefak (
+WinVMJ/UI), hingga menjalankan hasilnya. Hasil kuantitatif kemudian dilengkapi catatan kualitatif untuk mengaitkan kegagalan dengan akar teknis (mis. pemetaan \texttt{pathmap}, perbedaan \textit{tooling} React, atau kompatibilitas JAR).
+
+Tahapan penelitian yang diikuti:
+\begin{enumerate}[leftmargin=*, label=\arabic*., itemsep=0.5\baselineskip]
+    \item \textbf{Studi Literatur}: membangun landasan teoretis tentang SPLE dan Prices-IDE, serta eksplorasi ide solusi melalui diskusi dan penelaahan kode sumber. Keluaran tahap ini berupa peta risiko migrasi Eclipse API (\texttt{IProject}/\texttt{IFolder}) menuju \texttt{java.nio.file.Path}, daftar kebutuhan kompilasi Acceleo secara \textit{standalone}, serta opsi integrasi antrian (RabbitMQ) untuk operasi berat.
+    \item \textbf{Perancangan Solusi}: perancangan arsitektur sistem, fitur utama, dan dekomposisi masalah ke bagian-bagian yang lebih terkelola. Artefak yang dihasilkan meliputi diagram arsitektur (komponen \textit{backend}, antrean, dan WebSocket), REST API (\textit{endpoint} \textit{upload/compile/download}), serta desain \textit{worker}/\textit{queues} (\textit{exchange}, \textit{routing key}, antrean \textit{request/result}).
+    \item \textbf{Implementasi Berjenjang}: pengembangan solusi secara bertahap sesuai prioritas/kompleksitas modul, dengan fokus pada realisasi fitur inti terlebih dahulu. Urutan prioritas modul: WinVMJ Composer, UML to WinVMJ, dan IFML UI Generator; alasan: ketergantungan artefak hasil kompilasi dan ketersediaan JAR/\textit{template} pendukung.
+    \item \textbf{Pengujian Internal Iteratif}: evaluasi fungsionalitas dan efisiensi secara siklikal, hasilnya menjadi dasar perbaikan berulang. Metrik per fitur: kompilasi sukses tanpa \textit{error}, artefak terbentuk di direktori target (mis. \texttt{build/}, \texttt{winvmj-gen}, \texttt{src-gen}), dan status proses tersampaikan ke UI melalui kanal WebSocket.
+    \item \textbf{Validasi Pengguna Akhir}: pengujian dengan pengguna untuk menilai kesesuaian kebutuhan dan kemudahan penggunaan (UAT) sebagai validasi akhir. Kriteria lulus per skenario: langkah uji tuntas tanpa intervensi manual di luar panduan, artefak/hasil sesuai \textit{expected output}, dan tidak ada hambatan lingkungan (terminal/EOL) yang menghalangi eksekusi.
+\end{enumerate}
+
+Solusi yang dipilih untuk pengembangan:
+\begin{enumerate}[leftmargin=*, label=\arabic*), itemsep=0.4\baselineskip]
+  \item \textbf{Implementasi Sistem Manajemen File}: perancangan penyimpanan dan penggunaan file proyek (unggah ZIP, ekstraksi, isolasi per-\textit{{userId}}) agar \textit{plugin} dan ekstensi dapat mengakses/mengelola file secara efisien. \textit{Workspace} tersusun di \texttt{/app/uploads/<userId>}, sedangkan hasil kompresi untuk \textit{download} ditempatkan pada direktori terpisah agar higienis dan mudah dibersihkan (\texttt{cron cleanup}).
+  \item \textbf{\textit{Interface} Web-based \& ekstensi VS Code}: inisialisasi proyek Spring Boot, implementasi kode untuk masing-masing \textit{plugin}, pembuatan struktur proyek, dan \textit{pipeline deployment}; pada ekstensi, pembuatan struktur proyek, konfigurasi dependensi, implementasi perintah, dan persiapan publikasi ke Marketplace VS Code (VSCE). Ekstensi memanfaatkan API VS Code (\texttt{commands}, \texttt{Memento}, \texttt{secrets}) dan menyajikan progres melalui notifikasi.
+  \item \textbf{Implementasi \textit{Plugin} Prices-IDE}: adaptasi WinVMJ Composer, IFML UI Generator, dan UML to WinVMJ ke lingkungan web; penyelarasan fitur antara lingkungan desktop (ekstensi) dan web agar fungsi konsisten. Porting \texttt{IProject}/\texttt{IFile} ke \texttt{Path}/IO standar dan kompilasi Acceleo ke \texttt{.emtl} memungkinkan eksekusi \textit{standalone} tanpa Eclipse.
+  \item \textbf{Peningkatan Infrastruktur Sistem}: penggunaan sistem antrian (\textit{queueing}) untuk operasi berat, WebSocket untuk komunikasi waktu nyata, serta refaktorisasi kode agar lebih modular, efisien, dan mudah dikembangkan. Pola \texttt{exchange}/\texttt{routing key}/antrean \texttt{request\&result} dan topik WebSocket per \texttt{userId} memastikan proses tertib dan notifikasi tepat sasaran.
+  \item \textbf{UAT dan Evaluasi}: pengujian penerimaan pengguna terhadap solusi yang telah stabil untuk memastikan kesesuaian kebutuhan dan fungsi utama berjalan baik; umpan balik dipakai sebagai validasi akhir. Verifikasi mencakup terbentuknya artefak sesuai skenario, keberhasilan eksekusi (compile/run/generate), dan konsistensi hasil unduhan.
+\end{enumerate}
+
+% ==================== HASIL PENELITIAN ====================
+\section*{Hasil Penelitian}
+\vspace{10pt}
+
+Hasil pengembangan yang dilakukan pada penelitian ini adalah dua buah tampilan depan, yang terdiri dari website dan juga ekstensi VS Code, dan tentunya sistem \textit{backend} yang berjalan di atas \textit{framework} Spring Boot dengan bahasa pemrograman Java. Kedua tampilan depan tersebut menggunakan sistem \textit{backend} yang sama dan terpusat, oleh karena itu penelitian ini juga tidak hanya memastikan fungsionalitas berjalan pada masing-masing tampilan, namun juga dapat digunakan dalam skala kecil. 
+
+Analisis yang dilakukan pada penelitian ini dilakukan dengan membuat dokumen User Acceptability Testing (UAT). Pada dokumen UAT ini sudah dibuat berbagai skenario yang dibedakan dari aspek input sampai kepada aspek perangkat elektronik yang digunakan. Berbagai skenario ini dibuat untuk memastikan hasil pengembangan dari ekspekteasi ketercapaian terkecil sampai terbesar. 
+
+UAT mencakup 13 skenario platform web dan 13 skenario extension. Ringkasan tingkat keberhasilan tersedia pada Tabel~\ref{tab:hasil-uat}. Secara umum, \textit{upload/download} stabil; \textit{compile all/selected} berhasil tinggi; compile project penuh dan UI generate menunjukkan beberapa kasus gagal karena ketergantungan JAR dan penyesuaian proyek React.
+
+Untuk \textbf{platform web}, skenario yang melibatkan unggah proyek (ZIP) diikuti ekstraksi dan pemindaian subfolder proyek berjalan mulus, menghasilkan keberhasilan 21/21 pada unggah dan unduh proyek. Pada skenario kompilasi, \textit{Compile All Module} dan \textit{Set Configuration} mencapai 6/7 berkat pemetaan modul berbasis struktur berkas yang stabil; sementara \textit{Compile Project} menunjukkan 4/7 keberhasilan, dengan kegagalan yang berkorelasi dengan ketidaksesuaian JAR WinVMJ (yang memerlukan upgrade) dan penempatan file konfigurasi yang tidak seragam. Pada alur generasi artefak, \textit{Generate WinVMJ} dan \textit{Generate UI} masing-masing berada di 4/7; faktor pembatas utama adalah profil UML dengan URI \texttt{pathmap:/model/...} yang tidak otomatis terpetakan di luar Eclipse serta \textit{template} React yang perlu konsolidasi agar \textit{zero-modification run}. Skenario \textit{Run Frontend Project UI} (\texttt{npm install, json server, start}) berhasil ketika \textit{template} memenuhi prasyarat dependensi.
+
+Untuk \textbf{extension VS Code}, \textit{Upload Workspace} dan \textit{Download Project} konsisten berhasil (23/23), menunjukkan jalur  \textit{zip} $\rightarrow$ \textit{upload} $\rightarrow$ \textit{unzip} $\rightarrow$ \textit{download} yang stabil melalui \textit{backend}. \textit{Compile All/Selected Module} dan \textit{Set Configuration} mencapai 8/8 berkat \textit{command} yang jelas dan umpan balik \textit{real-time} via WebSocket; \textit{Compile Project} 7/8 dan \textit{Run Compiled Project} 5/8 terutama dipengaruhi perbedaan \textit{terminal default} (CMD vs PowerShell) dan EOL (Windows vs macOS). Pada jalur generasi, \textit{Generate WinVMJ} 6/9 dan \textit{Generate UI} 7/9, sedangkan \textit{Run Generated UI} 9/9. Hasil ini mengindikasikan bahwa proses generasi berjalan baik namun masih memerlukan \textit{fine-tuning} pada \textit{template} dan kompatibilitas dependensi.
+
+Dari 8 fitur inti Prices-IDE versi Eclipse, 7 fitur berhasil direplikasi pada versi web dan extension. Configuration Editor belum tersedia. Tiga isu utama yang tercatat: (1) referensi profil UML bertipe \texttt{pathmap:/model/...} yang tidak langsung terpetakan; (2) proyek React hasil IFML UI Generator kadang memerlukan penyesuaian manual; (3) kompatibilitas JAR pada WinVMJ Composer (perlu upgrade ke v3.4.0).
+
+Pada platform web, proses unggah/unduh menunjukkan reliabilitas tinggi (100\%), sementara variasi keberhasilan terlihat pada \f{compile project} penuh dan generasi artefak yang sensitif terhadap dependensi proyek. Pada extension VS Code, kompilasi modul dan operasi UI cenderung stabil, namun eksekusi \texttt{run} dipengaruhi perbedaan \f{end-of-line} dan \textit{terminal default} (CMD vs PowerShell vs shell di macOS). Pengamatan ini selaras dengan perbedaan lingkungan eksekusi dan memperkuat perlunya standardisasi \textit{script} lintas OS dan deteksi terminal.
+
+\begin{table}[H]
+\centering
+\caption{Ringkasan Hasil UAT}
+\label{tab:hasil-uat}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+\textbf{Platform} & \textbf{Fitur Utama} & \textbf{Tingkat Keberhasilan} \\
+\midrule
+Prices-IDE Web & Upload Project & 100\% (21/21) \\
+& Download Project & 100\% (21/21) \\
+& Compile Project & 57\% (4/7) \\
+& Compile All Module & 86\% (6/7) \\
+& Set Configuration & 86\% (6/7) \\
+& Generate WinVMJ & 57\% (4/7) \\
+& Generate UI & 57\% (4/7) \\
+\midrule
+Extension VS Code & Upload Workspace & 100\% (23/23) \\
+& Download Project & 100\% (23/23) \\
+& Compile Project & 88\% (7/8) \\
+& Run Compiled Project & 63\% (5/8) \\
+& Compile All Module & 100\% (8/8) \\
+& Compile Selected Module & 100\% (8/8) \\
+& Set Configuration & 100\% (8/8) \\
+& Generate WinVMJ & 67\% (6/9) \\
+& Generate UI & 78\% (7/9) \\
+& Run Generated UI & 100\% (9/9) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ==================== PEMBAHASAN ====================
+\section*{Pembahasan}
+\underline{Keberhasilan Replikasi} \vspace{5pt} \\
+Migrasi dari Eclipse API ke operasi file-path berhasil menjaga aliran kerja inti. Tingginya keberhasilan \textit{Compile All Module} dan \textit{Compile Selected Module} menggambarkan bahwa komposisi modul berbasis struktur berkas dapat diandalkan. Extension VS Code memperbaiki pengalaman pengembangan berkat \textit{command} yang lebih dikenal dan umpan balik \textit{real-time}.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Akar Masalah Kasus Gagal} \vspace{5pt} \\
+Kegagalan UML to WinVMJ lebih sering terkait belum menjangkau proyek yang memakai URI profil bertipe \texttt{pathmap:/model/...} alih-alih \texttt{platform:/resource/....}. Berkas profil UML yang direferensikan dengan \texttt{pathmap} tidak disertakan secara langsung di dalam struktur
+proyek. Solusi jangka pendek adalah sertakan berkas UML profil dan ubah URI profil memakai \texttt{platform:/resource/....}, sedangkan solusi jangka panjang adalah membuat mekanisme agar menjangkau segala jenis yang mungkin mengenai bagaimana menaruh URI profil di proyek.
+
+Selain itu, perbedaan versi WinVMJ (3.3.0 di platform web vs 3.4.0 di sebagian proyek pengguna) turut memengaruhi kompatibilitas JAR dan keberhasilan \f{run}. Di sisi extension, kegagalan aktivasi dapat dipicu oleh \textit{extension host} ketika ekstensi lain mengalami error; mitigasi sementara adalah meminimalkan ketergantungan eksternal dan mendokumentasikan prasyarat aktivasi. Ditemukan pula bahwa keberadaan direktori non-kode (mis. \texttt{.vscode} di \texttt{modules}) dapat mengganggu proses kompilasi, sehingga diperlukan mekanisme penyaringan berkas mirip \texttt{.gitignore}.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Implikasi Praktis} \vspace{5pt} \\
+Platform web dan VS Code menurunkan \textit{barrier to entry} karena menghilangkan instalasi Eclipse. Ini berpotensi memperluas adopsi SPLE di kalangan pengembang yang terbiasa dengan ekosistem VS Code. Dari sisi pemeliharaan, pembaruan versi cukup pada server dan extension tanpa menyentuh runtime Eclipse.
+
+\vspace*{0.5\baselineskip}
+
+\underline{Keterbatasan} \vspace{5pt} \\
+Pengujian \textit{performance} dan \textit{scalability multi-user} belum komprehensif; evaluasi UX mendalam belum dilakukan; sebagian mekanisme pemetaan URI masih belum otomatis.
+
+% ==================== KESIMPULAN ====================
+\section*{Kesimpulan}
+\vspace{10pt}
+
+Kesimpulan dari penelitian ini menunjukkan bahwa Prices-IDE berhasil diadaptasi ke dalam dua platform baru, yaitu berbasis web dan ekstensi Visual Studio Code. Pada versi web, Prices-IDE dirancang untuk menghilangkan ketergantungan terhadap Eclipse IDE sehingga pengguna cukup mengaksesnya melalui \textit{browser} tanpa perlu instalasi atau konfigurasi tambahan. Pendekatan ini tetap mempertahankan fungsionalitas utama, seperti pemilihan konfigurasi, komposisi produk, serta kompilasi kode berbasis Software Product Line Engineering (SPLE). Arsitektur berbasis Spring Boot dan RabbitMQ memastikan proses kompilasi berjalan secara \textit{asynchronous}, menjaga performa sistem tetap responsif.  
+
+Pada ekstensi VS Code, pengembangan difokuskan untuk mendukung kebutuhan pengembang perangkat lunak yang terbiasa mengubah dan menyesuaikan kode dalam lingkungan editor populer ini. Ekstensi dibangun dengan memanfaatkan API yang disediakan VS Code, sehingga dapat menangani perubahan kode, mengelola tampilan editor, dan memfasilitasi interaksi dengan \textit{backend}. Tantangan utama pada tahap ini terletak pada perancangan alur kerja yang mudah dipahami serta optimalisasi pemanfaatan API, termasuk dukungan \textit{FileServer} untuk pengelolaan proyek dan hasil kompilasi.  
+
+Pengujian penerimaan pengguna (UAT) membuktikan bahwa Prices-IDE berbasis web memiliki tingkat keberhasilan 86\%, sementara ekstensi VS Code mencapai 90\%. Temuan penting dari evaluasi ini adalah sebagian kegagalan bukanlah akibat adaptasi ke platform baru, melainkan \textit{bug} yang sudah ada pada Prices-IDE versi Eclipse. Hal ini mengindikasikan bahwa baik platform web maupun ekstensi VS Code berhasil mereplikasi perilaku sistem lama dengan fidelitas tinggi, termasuk replikasi keterbatasan yang diwarisi.  
+
+Secara keseluruhan, dari delapan fitur inti Prices-IDE versi Eclipse, tujuh fitur telah berhasil direplikasi pada platform web dan ekstensi VS Code. Satu fitur yang belum diimplementasikan adalah \textit{Configuration Editor}, karena kompleksitasnya yang tinggi dan keterbatasan waktu pengembangan. Dengan capaian ini, dapat disimpulkan bahwa tingkat kelengkapan dan kompatibilitas teknis Prices-IDE versi web dan ekstensi VS Code mencapai 87.5\%, menandakan keberhasilan signifikan dalam mengadaptasi fungsionalitas utama ke dalam ekosistem pengembangan yang lebih modern dan fleksibel.  
+
+% ==================== SARAN ====================
+\section*{Saran}
+
+Arah pengembangan lanjutan yang direkomendasikan:
+\begin{enumerate}[leftmargin=*]
+
+\item \textbf{Melakukan analisis lebih lanjut terhadap perbedaan performa eksekusi \texttt{run.bat} antara ekstensi VS Code Prices-IDE (Eclipse), terutama pada proyek yang mengandung banyak perintah SQL}. Pengujian menunjukkan bahwa eksekusi di VS Code membutuhkan waktu hingga 10 menit, sedangkan di Eclipse jauh lebih cepat pada proyek yang sama. Analisis ini penting untuk mengidentifikasi faktor penyebab keterlambatan, seperti perbedaan lingkungan runtime, konfigurasi terminal, atau mekanisme pemanggilan skrip batch. Namun, analisis ini belum sempat dilakukan karena masalah tersebut baru ditemukan pada tahap akhir pengerjaan skripsi, yaitu saat pelaksanaan \textit{User Acceptance Test} (UAT).
+
+\item \textbf{Implementasi Configuration Editor}. Satu-satunya fitur yang belum tersedia adalah \textit{Configuration Editor}, yang secara sengaja tidak diimplementasikan. Hal ini disebabkan oleh keterbatasan waktu dan tingkat kompleksitas yang tinggi. Dengan capaian ini, dapat disimpulkan bahwa aspek kelengkapan dan kompatibilitas teknis dari Prices-IDE versi web dan ekstensi VS Code telah berhasil mencakup 87.5\% fungsionalitas inti dari versi Eclipse.
+  
+\item \textbf{Pembaruan WinVMJ Composer ke v3.4.0}. Hasil UAT menunjukkan adanya kegagalan kompilasi akibat ketidakcocokan versi JAR, di mana platform web menggunakan v3.3.0 sementara beberapa proyek pengguna sudah memakai v3.4.0. Pembaruan versi pada \textit{backend} akan menyelesaikan masalah kompatibilitas ini secara langsung.
+
+
+\item Menambahkan dukungan pada ekstensi VS Code agar dapat mengenali file model \texttt{.core} atau \texttt{.uml} yang tidak berada di direktori root, seperti yang telah didukung oleh Prices-IDE berbasis Web. Saat ini, ekstensi VS Code mengharuskan file \texttt{.core} atau \texttt{.uml} berada langsung di root project, sedangkan Prices-IDE berbasis Web sudah memperbolehkan file tersebut berada pada tingkat direktori yang lebih dalam (misalnya di dalam folder \texttt{model}). Dukungan ini akan meningkatkan fleksibilitas struktur proyek dan konsistensi antar platform. Namun, analisis ini belum sempat dilakukan karena masalah tersebut baru ditemukan pada tahap akhir pengerjaan skripsi, yaitu saat pelaksanaan \textit{User Acceptance Testing} (UAT).
+
+\item \textbf{Melakukan analisis lebih lanjut terhadap penggunaan \textit{pathmap} pada berkas model UML profil}, karena berdasarkan temuan dalam penelitian ini, proyek-proyek dengan konfigurasi tersebut cenderung gagal menghasilkan folder \texttt{winvmj-gen} saat dijalankan di Prices-IDE berbasis Web maupun ekstensi VS Code. Hal ini mengindikasikan adanya ketergantungan terhadap UML profil berbasis \textit{platform resource}, sehingga perlu ditelusuri lebih dalam apakah terdapat mekanisme tertentu yang diperlukan agar \textit{pathmap} dapat terdeteksi dengan benar di Prices-IDE berbasis Web maupun ekstensi VS Code. Namun, analisis ini belum sempat dilakukan karena masalah tersebut baru ditemukan pada tahap akhir pengerjaan skripsi, yaitu saat pelaksanaan \textit{User Acceptance Testing} (UAT) di mana beberapa proyek kelas SPLE memakai metode ini tidak seperti pada beberapa kasus studi yang ada di Lab RSE.
+
+\item \textbf{Perbaikan pada file-file yang dipilih untuk melakukan kompilasi}. Dalam beberapa kasus, terdapat berkas atau folder (misalnya direktori .VS Code) yang tidak diharapkan muncul di dalam folder modul. Keberadaan file semacam ini dapat menyebabkan kegagalan kompilasi karena kelebihan input yang tidak valid. Sebagai solusinya, perlu diterapkan konsep serupa dengan file .gitignore, yaitu daftar pengecualian yang secara otomatis melewatkan (ignore) berkas-berkas atau direktori di luar cakupan kompilasi. Misalnya, sebelum memanggil perintah kompilasi, sistem dapat memfilter semua file dengan ekstensi atau lokasi tertentu dan hanya mengompilasi berkas-berkas sumber yang relevan saja. Dengan begitu, proses build akan menjadi lebih andal dan tidak mudah terganggu oleh file terselubung yang tidak diperlukan. Namun, analisis ini belum sempat dilakukan karena masalah tersebut baru ditemukan pada tahap akhir pengerjaan skripsi, yaitu saat pelaksanaan \textit{User Acceptance Testing} (UAT).
+
+
+\item \textbf{Optimisasi fungsi compile}.  Saat ini setiap kali pengguna melakukan perubahan kecil di dalam proyek melalui VSCode, sistem mengunggah ulang seluruh kumpulan berkas ke server, padahal hanya sebagian file yang benar-benar termodifikasi. Untuk meningkatkan performa dan efisiensi, sebaiknya diimplementasikan mekanisme deteksi perbedaan antara file lokal dan yang ada di server. Dengan cara ini, hanya berkas-berkas yang belum sinkron atau mengalami perubahan yang akan dikirimkan. Misalnya, kita bisa menggunakan checksum atau timestamp untuk membandingkan setiap file, lalu mengunggah hanya file yang nilai checksum-nya berbeda atau yang timestamp-nya lebih baru. Pendekatan ini akan sangat mengurangi beban jaringan dan mempercepat proses sinkronisasi saat perubahan berskala kecil. Namun, langkah ini belum sempat direalisasikan karena permasalahan ini termasuk ke dalam ruang lingkup pengembangan lanjutan yang membutuhkan riset mendalam mengenai metode yang tepat dan bukan merupakan kebutuhan prioritas dalam pengerjaan skripsi ini.
+
+
+\item \textbf{Melakukan analisis lebih lanjut terkait cara kerja ekstensi \texttt{uvls-code} yang menjadi dependensi bagi ekstensi Prices-IDE}. Mengingat dampak besar yang ditimbulkannya terhadap fungsionalitas ekstensi Prices-IDE, yaitu berupa ketidakaktifan atau error seperti yang disebutkan pada bab sebelumnya, masalah pada \texttt{uvls-code} perlu segera diatasi. Dikarenakan kode sumber ekstensi \texttt{uvls-code} dapat diakses secara publik, salah satu alternatif yang dapat dipertimbangkan adalah melakukan recode pada fungsionalitas terkait di dalam ekstensi Prices-IDE. Pendekatan ini bertujuan untuk menghilangkan sifat dependen dan mengurangi risiko ketergantungan pada ekstensi eksternal, yang aspek pengendaliannya cenderung lebih terbatas. Pendekatan ini belum diimplementasikan karena idetifikasi masalah baru ditemukan saat UAT dijalankan. Hal lain yang dapat dijadikan alternatif adalah dengan berdiskusi secara langsung dengan pembuat dari ekstensi \textit{uvls-code}.
+
+\item \textbf{Penggunaan WebSocket yang ekstensif pada hampir setiap perintah dalam ekstensi Prices-IDE menghadirkan tantangan dalam manajemen informasi di VS Code}. Frekuensi tinggi pemanggilan WebSocket secara berulang mempersulit identifikasi dan pembedaan proses dari masing-masing perintah. Oleh karena itu, struktur pengaturan pesan atau informasi perlu ditinjau ulang secara komprehensif. Tujuan dari peninjauan ini adalah untuk memastikan bahwa keterangan yang ditampilkan kepada pengguna menjadi lebih terbaca dan setiap informasinya lebih informatif. Saat ini sebagian dari penanggulangan berupa perubahan pesan pada setiap tahapannya sudah dilakukan, namun pesan kurang terbaca karena perubahan pesan terjadi pada setiap tahap. Maka dapat ditinjau kembali pesan-pesan penting yang perlu ditampilkan pada setiap proses yang sedang berjalan.
+
+\item \textbf{Menggunakan layanan \textit{cloud storage} untuk kebutuhan \textit{scalability}}. Daripada menyimpan file hanya pada server lokal, pertimbangkan untuk memanfaatkan platform seperti \textit{Amazon S3}, \textit{Google Cloud Storage}, atau \textit{Azure Blob Storage}. Dengan pendekatan ini, kapasitas penyimpanan dapat meningkat secara dinamis sesuai dengan lonjakan jumlah pengguna maupun besarnya artefak yang dihasilkan oleh sistem. Selain itu, fitur seperti \textit{bucket versioning}, \textit{lifecycle policy}, dan \textit{Object Lock} akan mempermudah pengelolaan versi file (kode sumber, artefak build, dan lain-lain) sehingga menjaga konsistensi data. Namun, langkah ini belum sempat direalisasikan karena permasalahan ini termasuk ke dalam ruang lingkup pengembangan lanjutan dan bukan merupakan kebutuhan prioritas dalam pengerjaan skripsi ini.
+
+\item \textbf{Fitur \textit{multi-project} pada ekstensi VSCode}. Fitur \textit{multi-project} pada platform web sudah tersedia. Namun, pada ekstensi VSCode fitur ini belum tersedia, sehingga dapat diintegrasikan fitur ini pada versi ekstensi VSCode.
+  
+\item \textbf{Pengkajian ulang arsitektur IFML UI Generator}. Saat ini, fitur-fitur terpilih (\textit{selected features}) langsung dihasilkan ke folder \texttt{src-gen} dalam satu proyek utama, berbeda dengan pendekatan berbasis Eclipse di mana hasil \textit{feature selection} ditempatkan pada proyek terpisah. Dapat ditentukan apakah arsitektur yang sekarang sudah lebih baik dibandingkan pada Eclipse atau harus menyesuaikan dengan Eclipse. Namun, langkah ini belum sempat dilakukan karena permasalahan ini lebih berkaitan dengan preferensi arsitektural, yaitu antara membangun struktur baru yang lebih mudah dikembangkan atau menyesuaikan dengan struktur yang sudah ada di Prices-IDE (Eclipse).
+
+\item \textbf{Pengujian Pengalaman Pengguna}. Penelitian ini berfokus pada implementasi fungsional dari fitur-fitur utama, sehingga pengujian terhadap antarmuka dan pengalaman pengguna belum dilakukan secara mendalam. Untuk pengembangan selanjutnya, disarankan untuk melakukan evaluasi UI/UX secara komprehensif pada sistem Prices-IDE berbasis web dan ekstensi VS Code untuk Prices-IDE.
+
+\end{enumerate}
+
+
+
+% ==================== REFERENSI ====================
+\section*{Daftar Referensi}
+\begingroup
+\small
+\begin{enumerate}
+  \item Metzger, A., \& Pohl, K. (2014). Software product line engineering and variability management: Achievements and challenges. \textit{Communications of the ACM}.
+  
+  \item Pohl, K., Böckle, G., \& van der Linden, F. J. (2005). \textit{Software product line engineering}. Springer.
+  
+  \item Setyautami, M. R. A. (2023). \textit{Model-driven engineering for delta-oriented software product lines}. Universitas Indonesia.
+  
+  \item Waluyo, F. P., Setyautami, M. R. A., \& Azurat, A. (2022). UML transformation to Java-based software product lines. \textit{Jurnal Ilmu Komputer dan Informasi, 15}(2), 119--129.
+  
+  \item Object Management Group (OMG). (2013). \textit{Interaction Flow Modeling Language (IFML) Specification, Version 1.0}. \url{https://www.omg.org/spec/IFML/}
+  
+  \item Eclipse Foundation. (n.d.). \textit{Acceleo: Standalone Application Documentation}. \url{https://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.acceleo.doc%2Fpages%2Freference%2Fstandalone.html}
+  
+  \item Visual Studio Code Team. (n.d.). \textit{Your first extension}. \url{https://code.visualstudio.com/api/get-started/your-first-extension}
+  
+  \item Visual Studio Code Team. (2024). \textit{Publishing extensions}. \url{https://code.visualstudio.com/api/working-with-extensions/publishing-extension}
+  
+  \item Oracle Corporation. (2023). \textit{Java platform, standard edition documentation}. \url{https://docs.oracle.com/en/java/javase/}
+  
+  \item Webb, P., Syer, D., Long, J., Nicoll, S., Winch, R., Wilkinson, A., Overdijk, M., Dupuis, C., Deleuze, S., Simons, M., Clarkson, R., Turnquist, G., \& Heckler, M. (2015). \textit{Spring Boot reference documentation}. \url{https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/htmlsingle/}
+  
+  \item Hykes, S. (2013). \textit{The Docker project}. \url{https://www.docker.com}
+  
+  \item IETF. (2011). \textit{The WebSocket protocol (RFC 6455)}. \url{https://www.rfc-editor.org/rfc/rfc6455}
+  
+  \item Setyautami, M. R. A., \& Hähnle, R. (2021). An architectural pattern to realize multi SPLs in Java. In \textit{Proceedings of VaMoS '21}. ACM.
+  
+  \item Reliable Software Engineering Lab, Fasilkom UI. (2021). \textit{Prices-IDE}. \url{https://rse.cs.ui.ac.id/?open=priceside/index}
+\end{enumerate}
+\endgroup
+
+
+\end{document}
